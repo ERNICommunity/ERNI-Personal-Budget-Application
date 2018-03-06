@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace ERNI.PBA.Server
+namespace ERNI.PBA.Server.Host
 {
     public class Startup
     {

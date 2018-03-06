@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace ERNI.PBA.Server
+namespace ERNI.PBA.Server.Host
 {
     public class Program
     {
