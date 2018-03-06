@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Threading.Tasks;
+using ERNI.PBA.Server.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace ERNI.PBA.Server.Host
+namespace ERNI.PBA.Server
 {
     public class Startup
     {
@@ -34,6 +32,8 @@ namespace ERNI.PBA.Server.Host
                                         .AllowAnyMethod()
                                         .AllowAnyHeader()
                                         .AllowCredentials()));
+
+            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
@@ -61,7 +61,21 @@ namespace ERNI.PBA.Server.Host
                         // IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
+
+                                        cfg.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async context =>
+                    {
+
+                        var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
+
+                        var claims = context.Principal.Claims;
+
+                    }
+                    };
+
                 });
+                
 
             services.AddAuthorization();
 
