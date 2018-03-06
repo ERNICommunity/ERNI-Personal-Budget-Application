@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,20 +64,42 @@ namespace ERNI.PBA.Server
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
 
-                                        cfg.Events = new JwtBearerEvents
+                    cfg.Events = new JwtBearerEvents
                     {
                         OnTokenValidated = async context =>
-                    {
+                        {
+                            var db = context.HttpContext.RequestServices.GetRequiredService<DatabaseContext>();
 
-                        var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
+                            var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
 
-                        var claims = context.Principal.Claims;
+                            var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
 
-                    }
+                            if (user == null)
+                            {
+                                user = new User
+                                {
+                                    UniqueIdentifier = sub,
+                                    FirstName = context.Principal.Claims.Single(c => c.Type == "given_name").Value,
+                                    LastName = context.Principal.Claims.Single(c => c.Type == "family_name").Value,
+                                    Username = context.Principal.Claims.Single(c => c.Type == "upn").Value
+                                };
+                                db.Users.Add(user);
+                                db.SaveChanges();
+                            }
+
+                            var claims = new List<System.Security.Claims.Claim>();
+
+                            if (user.IsAdmin)
+                            {
+                                claims.Add(new System.Security.Claims.Claim("role", "admin"));
+                            }
+
+                            context.Principal.AddIdentity(new System.Security.Claims.ClaimsIdentity(claims, null, null, "role"));
+                        }
                     };
 
                 });
-                
+
 
             services.AddAuthorization();
 
