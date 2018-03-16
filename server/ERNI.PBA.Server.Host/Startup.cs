@@ -89,12 +89,15 @@ namespace ERNI.PBA.Server
 
                             var claims = new List<System.Security.Claims.Claim>();
 
+                            claims.Add(new System.Security.Claims.Claim(Claims.FirstName, user.FirstName));
+                            claims.Add(new System.Security.Claims.Claim(Claims.LastName, user.LastName));
+
                             if (user.IsAdmin)
                             {
-                                claims.Add(new System.Security.Claims.Claim("role", "admin"));
+                                claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
                             }
 
-                            context.Principal.AddIdentity(new System.Security.Claims.ClaimsIdentity(claims, null, null, "role"));
+                            context.Principal.AddIdentity(new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
                         }
                     };
 
