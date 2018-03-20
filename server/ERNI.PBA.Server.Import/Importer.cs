@@ -59,7 +59,8 @@ namespace ERNI.PBA.Server.Import
                         Year = budgets.Single(e => e.OldId == _.budgetId).Budget.Year,
                         UserId = budgets.Single(e => e.OldId == _.budgetId).Budget.UserId,
                         Title = _.title,
-                        Amount = _.amount
+                        Amount = _.amount,
+                        Date = _.date
                     }
                 }).ToArray();
 

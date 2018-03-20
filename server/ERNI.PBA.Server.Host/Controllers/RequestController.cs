@@ -27,7 +27,8 @@ namespace server.Controllers
 
             var result = requests.Select(_ => new {
                 Title = _.Title,
-                Amount = _.Amount
+                Amount = _.Amount,
+                Date = _.Date
             });
 
             return Ok(result);
