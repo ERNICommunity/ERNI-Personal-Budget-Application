@@ -40,6 +40,7 @@ namespace ERNI.PBA.Server
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IBudgetRepository, BudgetRepository>();
+            services.AddTransient<IRequestRepository, RequestRepository>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();

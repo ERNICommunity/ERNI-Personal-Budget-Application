@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
@@ -18,6 +19,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<User> GetUser(int id)
         {
             return _context.Users.Where(_ => _.Id == id).FirstOrDefaultAsync();
+        }
+
+        public Task<User[]> GetUsers(CancellationToken cancellationToken)
+        {
+            return _context.Users.ToArrayAsync(cancellationToken);
         }
     }
 }

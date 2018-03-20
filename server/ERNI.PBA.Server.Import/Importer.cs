@@ -19,6 +19,7 @@ namespace ERNI.PBA.Server.Import
                 var oldBudgets = GetBudgets(con);
                 var oldRequests = GetRequests(con);
                 var oldOccasions = GetOccasions(con);
+                var links = GetSuperiorLinks(con);
 
                 var newEmployees = oldEmployees.Select(_ => new
                 {
@@ -28,11 +29,23 @@ namespace ERNI.PBA.Server.Import
                         FirstName = _.firstName,
                         LastName = _.lastName,
                         IsAdmin = _.isAdmin,
-                        Username = _.shortName + "@" + _.mail.Split('@')[1]
+                        Username = _.shortName + "@" + _.mail.Split('@')[1],
                     }
                 }).ToArray();
 
                 context.Users.AddRange(newEmployees.Select(_ => _.User));
+
+                context.SaveChanges();
+
+                foreach (var emp in newEmployees)
+                {
+                    if (links.Any(_ => _.employeeId == emp.OldId))
+                    {
+                        var oldSuperiorId = links.Single(_ => _.employeeId == emp.OldId).superiorId;
+
+                        emp.User.Superior = newEmployees.SingleOrDefault(_ => _.OldId == oldSuperiorId).User;
+                    }
+                }
 
                 context.SaveChanges();
 
@@ -180,6 +193,32 @@ namespace ERNI.PBA.Server.Import
                     );
 
                     l.Add(employee);
+                }
+                rdr.Close();
+                return l.ToArray();
+            }
+        }
+
+        private static (int superiorId, int employeeId)[] GetSuperiorLinks(SqlConnection con)
+        {
+            string sqlQuery = "SELECT * FROM SupperiorToEmployees WHERE \"Order\" = 0";
+            using (SqlCommand cmd = new SqlCommand(sqlQuery, con))
+            {
+
+                // con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                var l = new List<(int superiorId, int employeeId)>();
+
+                while (rdr.Read())
+                {
+                    var link =
+                    (
+                        superiorId: Convert.ToInt32(rdr["SuperiorId"]),
+                        employeeId: Convert.ToInt32(rdr["EmployeeID"])
+                    );
+
+                    l.Add(link);
                 }
                 rdr.Close();
                 return l.ToArray();
