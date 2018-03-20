@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ERNI.PBA.Server.DataAccess\ERNI.PBA.Server.DataAccess.csproj" />
+    <ProjectReference Include="..\ERNI.PBA.Server.Import\ERNI.PBA.Server.Import.csproj" />
   </ItemGroup>
 
 </Project>

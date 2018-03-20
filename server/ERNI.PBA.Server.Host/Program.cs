@@ -23,8 +23,10 @@ namespace ERNI.PBA.Server.Host
                 var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
                 // context.Database.Migrate();
-
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
+
+                ERNI.PBA.Server.Import.Importer.Import(context);
             }
 
             host.Run();
