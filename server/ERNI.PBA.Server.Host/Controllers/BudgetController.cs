@@ -25,23 +25,47 @@ namespace server.Controllers
         {
             var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
 
-            return Ok(budget);
+            var result = new
+            {
+                Year = budget.Year,
+                Amount = budget.Amount,
+            };
+
+            return Ok(result);
         }
 
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUsersBudgets(int userId, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
+            var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
 
-            return Ok(budget);
+            var result = budgets.Select(_ => new
+            {
+                Year = _.Year,
+                Amount = _.Amount,
+            });
+
+            return Ok(result);
         }
 
         [HttpGet("year/{year}")]
         public async Task<IActionResult> GetBudgetsOfYear(int year, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
+            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
 
-            return Ok(budget);
+            var result = budgets.Select(_ => new
+            {
+                Year = _.Year,
+                User = new
+                {
+                    Id = _.UserId,
+                    FirstName = _.User.FirstName,
+                    LastName = _.User.LastName
+                },
+                Amount = _.Amount,
+            });
+
+            return Ok(result);
         }
     }
 }
