@@ -17,5 +17,9 @@ namespace ERNI.PBA.Server.DataAccess.Model
         public string LastName { get; set; }
 
         public string Username { get; set; }
+
+        public User Superior { get; set; }
+
+        public int? SuperiorId { get; set; }
     }
 }
