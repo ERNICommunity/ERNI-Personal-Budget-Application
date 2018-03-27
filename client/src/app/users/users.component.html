@@ -1,3 +1,18 @@
-<ul class="heroes">
-    <li *ngFor="let user of users"><span>{{user.id}}</span> {{user.firstName}} {{user.lastName}}
-</ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr *ngFor="let user of users">
+            <th>{{user.id}}</th>
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+        </tr>
+    </tbody>
+</table>
