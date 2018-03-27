@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { RouterModule } from '@angular/router';
@@ -18,7 +17,7 @@ import { RequestService } from './services/request.service';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersComponent } from './users/users.component';
 import { UserService } from './services/user.service';
-
+import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -29,6 +28,7 @@ import { UserService } from './services/user.service';
     UsersComponent
   ],
   imports: [
+    NgbModule.forRoot(),
     HttpClientModule,
     BrowserModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: true }),
