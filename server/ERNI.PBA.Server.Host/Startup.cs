@@ -93,7 +93,7 @@ namespace ERNI.PBA.Server
                             }
 
                             var claims = new List<System.Security.Claims.Claim>();
-
+                            claims.Add(new System.Security.Claims.Claim(Claims.Id, user.Id.ToString()));
                             claims.Add(new System.Security.Claims.Claim(Claims.FirstName, user.FirstName));
                             claims.Add(new System.Security.Claims.Claim(Claims.LastName, user.LastName));
 
