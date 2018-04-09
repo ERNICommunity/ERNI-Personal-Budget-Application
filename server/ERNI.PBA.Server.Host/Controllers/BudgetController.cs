@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,6 +63,34 @@ namespace server.Controllers
                     FirstName = _.User.FirstName,
                     LastName = _.User.LastName
                 },
+                Amount = _.Amount,
+            });
+
+            return Ok(result);
+        }
+
+        [HttpGet("user/current/year/{year}")]
+        public async Task<IActionResult> GetCurrentUsersBudget(int year, CancellationToken cancellationToken)
+        {
+            var budget = await _budgetRepository.GetBudget(HttpContext.User.GetId(), year, cancellationToken);
+
+            var result = new
+            {
+                Year = budget.Year,
+                Amount = budget.Amount,
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet("user/current")]
+        public async Task<IActionResult> GetCurrentUsersBudgets(CancellationToken cancellationToken)
+        {
+            var budgets = await _budgetRepository.GetBudgetsByUser(HttpContext.User.GetId(), cancellationToken);
+
+            var result = budgets.Select(_ => new
+            {
+                Year = _.Year,
                 Amount = _.Amount,
             });
 
