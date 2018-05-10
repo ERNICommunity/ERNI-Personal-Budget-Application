@@ -4,20 +4,22 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdalService } from './adal.service';
+import { User } from '../model/user';
+import { Budget } from '../model/budget';
 
 @Injectable()
-export class RequestService {
+export class BudgetService {
 
-  heroesUrl = "http://localhost:64246/api/Request/user/current/year/";
+  url = "http://localhost:64246/api/Budget/user/current";
 
   constructor(private http: HttpClient, private adalService: AdalService) { }
 
-  public getRequests(year: number): Observable<Request[]> {
+  public getCurrentUsersBudgets(): Observable<Budget[]> {
     var httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json', 
       'Authorization': 'Bearer ' +  this.adalService.accessToken })
     };
 
-    return this.http.get<Request[]>(this.heroesUrl + year, httpOptions)
+    return this.http.get<Budget[]>(this.url, httpOptions)
   }
 }

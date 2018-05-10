@@ -1,4 +1,5 @@
 export class Request {
-    id: number;
-    name: string;
+    amount: number;
+    title: string;
+    date: Date;
   } 

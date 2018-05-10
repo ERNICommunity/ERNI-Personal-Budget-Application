@@ -18,6 +18,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { UsersComponent } from './users/users.component';
 import { UserService } from './services/user.service';
 import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
+import { UserListComponent } from './users/userList/userList.component';
+import { UserDetailComponent } from './users/userDetail/userDetail.component';
+import { BudgetsComponent } from './budgets/budgets.component';
+import { BudgetService } from './services/budget.service';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -25,17 +30,21 @@ import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
     HomeComponent,
     LoginComponent,
     RequestsComponent,
-    UsersComponent
+    UsersComponent,
+    UserListComponent,
+    UserDetailComponent,
+    BudgetsComponent
   ],
   imports: [
     NgbModule.forRoot(),
+    FormsModule,
     HttpClientModule,
     BrowserModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: true }),
     OAuthHandshakeModule
   ],
   providers: [
-    AdalService, ConfigService, AuthenticationGuard, RequestService, UserService
+    AdalService, ConfigService, AuthenticationGuard, RequestService, UserService, BudgetService
   ],
   bootstrap: [AppComponent]
 })

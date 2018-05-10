@@ -17,7 +17,7 @@ export class RequestsComponent implements OnInit {
   }
 
   getHeroes(): void {
-    this.valueService.getRequests()
+    this.valueService.getRequests(2018)
       .subscribe(heroes => this.requests = heroes);
   }
 
