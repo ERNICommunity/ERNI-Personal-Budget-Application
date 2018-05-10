@@ -18,12 +18,16 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public Task<User> GetUser(int id)
         {
-            return _context.Users.Where(_ => _.Id == id).FirstOrDefaultAsync();
+            return _context.Users.Where(_ => _.Id == id)
+                .Include(u => u.Superior)
+                .FirstOrDefaultAsync();
         }
 
         public Task<User[]> GetUsers(CancellationToken cancellationToken)
         {
-            return _context.Users.ToArrayAsync(cancellationToken);
+            return _context.Users
+                .Include(u => u.Superior)
+                .ToArrayAsync(cancellationToken);
         }
     }
 }
