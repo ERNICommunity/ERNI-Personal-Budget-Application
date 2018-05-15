@@ -1,16 +1,13 @@
-/// <reference path="../../../node_modules/@types/adal/index.d.ts" />
 import { ConfigService } from './config.service'; 
 import { Injectable } from '@angular/core'; 
-// import { adal } from 'adal-angular';
-import "expose-loader?AuthenticationContext!../../../node_modules/adal-angular/lib/adal.js";
 
-let createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext; 
+import * as AuthenticationContext from 'adal-angular'; 
 
 @Injectable() 
 export class AdalService { 
-private context: adal.AuthenticationContext; 
+private context: AuthenticationContext; 
 constructor(private configService: ConfigService) { 
-    this.context = new createAuthContextFn(configService.getAdalConfig); 
+    this.context = new AuthenticationContext(configService.getAdalConfig); 
 } 
 
 login() { 

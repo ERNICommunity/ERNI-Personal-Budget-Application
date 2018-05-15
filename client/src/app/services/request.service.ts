@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Request } from '../model/request';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import { Observable ,  of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdalService } from './adal.service';
 
