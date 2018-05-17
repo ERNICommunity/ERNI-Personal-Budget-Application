@@ -1,0 +1,9 @@
+<ul class="nav nav-pills">
+    <li class="nav-item" *ngFor="let budget of budgets">
+        <a class="nav-link active" href="#">{{budget.year}}</a>
+    </li>
+</ul>
+
+<ul class="heroes">
+    <li *ngFor="let request of requests"><span>{{request.title}}</span> {{request.amount}} {{request.date}}
+</ul>
