@@ -26,7 +26,7 @@ namespace ERNI.PBA.Server.Host
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
-                ERNI.PBA.Server.Import.Importer.Import(context);
+                // ERNI.PBA.Server.Import.Importer.Import(context);
             }
 
             host.Run();
