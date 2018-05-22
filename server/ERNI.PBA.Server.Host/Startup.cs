@@ -127,10 +127,10 @@ namespace ERNI.PBA.Server
         {
             app.UseCors("CorsPolicy");
 
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 app.UseDeveloperExceptionPage();
-            }
+            //}
             app.UseAuthentication();
 
             app.UseSwagger();
