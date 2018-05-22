@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Examples;
+using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,8 @@ namespace server.Controllers
         {
             var requests = await _requestRepository.GetRequests(year, HttpContext.User.GetId(), cancellationToken);
 
-            var result = requests.Select(_ => new {
+            var result = requests.Select(_ => new
+            {
                 Title = _.Title,
                 Amount = _.Amount,
                 Date = _.Date
@@ -42,7 +44,8 @@ namespace server.Controllers
         {
             var requests = await _requestRepository.GetRequests(year, userId, cancellationToken);
 
-            var result = requests.Select(_ => new {
+            var result = requests.Select(_ => new
+            {
                 Title = _.Title,
                 Amount = _.Amount,
                 Date = _.Date
@@ -55,7 +58,24 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(PendingRequestExample))]
         public async Task<IActionResult> GetPendingRequests(CancellationToken cancellationToken)
         {
-            return null;
+            var requests = await _requestRepository.GetPendingRequests(cancellationToken);
+
+            var result = requests.Select(_ =>
+                new RequestModel
+                {
+                    Id = _.Id,
+                    Title = _.Title,
+                    Amount = _.Amount,
+                    Year = _.Year,
+                    User = new ERNI.PBA.Server.Host.Model.PendingRequests.UserModel
+                    {
+                        Id = _.UserId,
+                        FirtName = _.Budget.User.FirstName,
+                        LastName = _.Budget.User.LastName
+                    }
+                }).ToArray();
+
+            return Ok(result);
         }
     }
 }

@@ -20,5 +20,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Where(_ => _.Year == year && _.UserId == userId)
                 .ToArrayAsync(cancellationToken);
         }
+
+        public Task<Request[]> GetPendingRequests(CancellationToken cancellationToken)
+        {
+            return _context.Requests
+                .Where(_ => _.State != RequestState.Approved && _.State != RequestState.Rejected)
+                .Include(_ => _.Budget)
+                .ThenInclude(_ => _.User)
+                .ToArrayAsync(cancellationToken);
+        }
     }
 }
