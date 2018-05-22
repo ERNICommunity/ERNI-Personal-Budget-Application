@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Examples;
 
 namespace server.Controllers
 {
@@ -47,6 +49,13 @@ namespace server.Controllers
             });
 
             return Ok(result);
+        }
+
+        [HttpGet("pending")]
+        [SwaggerResponseExample(200, typeof(PendingRequestExample))]
+        public async Task<IActionResult> GetPendingRequests(CancellationToken cancellationToken)
+        {
+            return null;
         }
     }
 }
