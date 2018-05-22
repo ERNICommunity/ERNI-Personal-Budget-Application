@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
@@ -18,9 +19,11 @@ namespace server.Controllers
     public class RequestController : Controller
     {
         private readonly IRequestRepository _requestRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RequestController(IRequestRepository requestRepository)
+        public RequestController(IRequestRepository requestRepository, IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _requestRepository = requestRepository;
         }
 
@@ -53,6 +56,31 @@ namespace server.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("{id}/approve")]
+        public async Task<IActionResult> ApproveRequest(int id, CancellationToken cancellationToken)
+        {
+            var request = await _requestRepository.GetRequest(id, cancellationToken);
+
+            request.State = RequestState.Approved;
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/reject")]
+        public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
+        {
+            var request = await _requestRepository.GetRequest(id, cancellationToken);
+
+            request.State = RequestState.Rejected;
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
 
         [HttpGet("pending")]
         [SwaggerResponseExample(200, typeof(PendingRequestExample))]
