@@ -15,4 +15,6 @@ public class Request
     public decimal Amount { get; set; }
 
     public DateTime Date { get; set; }
+
+    public RequestState State { get; set; }
 }
