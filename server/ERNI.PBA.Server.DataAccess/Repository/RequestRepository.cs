@@ -29,5 +29,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ThenInclude(_ => _.User)
                 .ToArrayAsync(cancellationToken);
         }
+
+        public Task<Request> GetRequest(int id, CancellationToken cancellationToken)
+        {
+            return _context.Requests.SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
+        }
     }
 }
