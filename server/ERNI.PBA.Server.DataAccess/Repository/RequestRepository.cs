@@ -34,5 +34,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Requests.SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
         }
+
+        public void AddRequest(Request request)
+        {
+            _context.Requests.Add(request);
+        }
     }
 }
