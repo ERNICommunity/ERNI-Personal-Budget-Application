@@ -39,6 +39,7 @@ namespace ERNI.PBA.Server
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IBudgetRepository, BudgetRepository>();
             services.AddTransient<IRequestRepository, RequestRepository>();
