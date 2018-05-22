@@ -1,0 +1,70 @@
+using System;
+using System.Linq;
+using ERNI.PBA.Server.DataAccess;
+
+namespace ERNI.PBA.Server.Host
+{
+    public class DbSeed
+    {
+        internal static void Seed(DatabaseContext context)
+        {
+            var names = new[] {
+                "Emmanuel", "Walter", "Freddy", "Ho", "Bradleigh", "Cain", "Saskia", "Needham", "Betty", "Bautista",
+                "Kain", "Caldwell", "Molly", "Parry", "Emelia", "Cresswell", "Bree", "Brook", "Kayla", "Woodley"
+            };
+
+            var users = Enumerable.Range(0, 10).Select(_ =>
+            new DataAccess.Model.User
+            {
+                UniqueIdentifier = Guid.NewGuid().ToString(),
+
+                IsAdmin = _ == 0,
+                FirstName = names[_ * 2],
+                LastName = names[_ * 2 + 1],
+                Username = $"{names[_ * 2]}.{names[_ * 2 + 1]}",
+                SuperiorId = null,
+                IsActive = true
+            }).ToArray();
+
+            context.Users.AddRange(users);
+
+            context.SaveChanges();
+
+            foreach (var user in users)
+            {
+                context.Budgets.Add(new Budget
+                {
+                    User = user,
+                    Year = 2017,
+                    Amount = 300
+                });
+
+                context.Budgets.Add(new Budget
+                {
+                    User = user,
+                    Year = 2018,
+                    Amount = 350
+                });
+            }
+
+            context.SaveChanges();
+
+            var budgets = context.Budgets.ToArray();
+
+            foreach (var budget in budgets)
+            {
+                context.Requests.AddRange(Enumerable.Range(1, 10).Select(_ =>
+                new Request
+                {
+                    Budget = budget,
+                    Title = _.ToString(),
+                    Amount = _ * 1878 % 50 + 10,
+                    Date = new DateTime(budget.Year, _, 5),
+                }
+                ));
+            }
+
+            context.SaveChanges();
+        }
+    }
+}

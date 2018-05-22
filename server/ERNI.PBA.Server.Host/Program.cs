@@ -24,6 +24,11 @@ namespace ERNI.PBA.Server.Host
 
                 // context.Database.Migrate();
                 context.Database.EnsureCreated();
+
+                if (!context.Users.Any())
+                {
+                    DbSeed.Seed(context);
+                }
             }
 
             host.Run();
