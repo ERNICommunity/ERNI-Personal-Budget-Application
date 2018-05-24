@@ -84,7 +84,7 @@ namespace server.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> PutRequest([FromBody]PutRequestModel payload, CancellationToken cancellationToken)
         {
             var request = new Request
@@ -104,8 +104,8 @@ namespace server.Controllers
             return Ok();
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchRequest(int id, [FromBody]PatchRequestModel payload, CancellationToken cancellationToken)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRequest(int id, [FromBody]PatchRequestModel payload, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
 
