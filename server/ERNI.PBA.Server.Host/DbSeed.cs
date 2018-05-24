@@ -30,6 +30,13 @@ namespace ERNI.PBA.Server.Host
 
             context.SaveChanges();
 
+            foreach (var user in context.Users.Where(u => u.Id != 1))
+            {
+                user.SuperiorId = 1;
+            }
+
+            context.SaveChanges();
+
             foreach (var user in users)
             {
                 context.Budgets.Add(new Budget
