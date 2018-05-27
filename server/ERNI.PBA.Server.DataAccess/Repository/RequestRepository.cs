@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
@@ -27,6 +28,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Where(_ => _.State != RequestState.Approved && _.State != RequestState.Rejected)
                 .Include(_ => _.Budget)
                 .ThenInclude(_ => _.User)
+                .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
         }
 

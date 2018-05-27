@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -12,6 +13,17 @@ namespace ERNI.PBA.Server.Host
                 "Emmanuel", "Walter", "Freddy", "Ho", "Bradleigh", "Cain", "Saskia", "Needham", "Betty", "Bautista",
                 "Kain", "Caldwell", "Molly", "Parry", "Emelia", "Cresswell", "Bree", "Brook", "Kayla", "Woodley"
             };
+
+            var categories = new[] {
+                new RequestCategory { Title = "Sport" },
+                new RequestCategory { Title = "Education" },
+                new RequestCategory { Title = "Health" },
+                new RequestCategory { Title = "Other" }
+            };
+
+            context.RequestCategories.AddRange(categories);
+
+            context.SaveChanges();
 
             var users = Enumerable.Range(0, 10).Select(_ =>
             new DataAccess.Model.User
@@ -67,6 +79,7 @@ namespace ERNI.PBA.Server.Host
                     Title = _.ToString(),
                     Amount = _ * 1878 % 50 + 10,
                     Date = new DateTime(budget.Year, _, 5),
+                    Category = categories[_ % categories.Count()]
                 }
                 ));
             }
