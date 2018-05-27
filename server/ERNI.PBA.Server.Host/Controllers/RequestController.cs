@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Host.Model;
@@ -94,7 +95,8 @@ namespace server.Controllers
                 Title = payload.Title,
                 Amount = payload.Amount,
                 Date = payload.Date,
-                State = RequestState.Pending
+                State = RequestState.Pending,
+                CategoryId = payload.CategoryId
             };
 
             _requestRepository.AddRequest(request);
@@ -113,6 +115,7 @@ namespace server.Controllers
             request.Amount = payload.Amount;
             request.Date = payload.Date;
             request.State = RequestState.Pending;
+            request.CategoryId = payload.CategoryId;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
@@ -138,6 +141,11 @@ namespace server.Controllers
                         Id = _.UserId,
                         FirtName = _.Budget.User.FirstName,
                         LastName = _.Budget.User.LastName
+                    },
+                    Category = new ERNI.PBA.Server.Host.Model.PendingRequests.CategoryModel
+                    {
+                        Id = _.CategoryId,
+                        Title = _.Category.Title
                     }
                 }).ToArray();
 

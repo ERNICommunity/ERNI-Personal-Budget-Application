@@ -19,6 +19,11 @@ namespace ERNI.PBA.Server.Host.Examples
                         Id = 1,
                         FirtName = "Johnny",
                         LastName = "Cash"
+                    },
+                    Category = new Model.PendingRequests.CategoryModel
+                    {
+                        Id = 1,
+                        Title = "Culture"
                     }
                 },
                 new Model.PendingRequests.RequestModel
@@ -32,6 +37,11 @@ namespace ERNI.PBA.Server.Host.Examples
                         Id = 1,
                         FirtName = "Hans",
                         LastName = "Gruber"
+                    },
+                    Category = new Model.PendingRequests.CategoryModel
+                    {
+                        Id = 1,
+                        Title = "Sport"
                     }
                 },
             };
