@@ -13,12 +13,12 @@ export class RequestsComponent implements OnInit {
   constructor(private valueService: RequestService) { }
 
   ngOnInit() {
-    this.getHeroes();
+    this.getPendingRequests();
   }
 
-  getHeroes(): void {
-    this.valueService.getRequests(2018)
-      .subscribe(heroes => this.requests = heroes);
+  getPendingRequests(): void {
+    this.valueService.getPendingRequests()
+      .subscribe(requests => this.requests = requests);
   }
 
 }

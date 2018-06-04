@@ -1,8 +1,7 @@
-<h3>Login</h3>
 <div *ngIf="!isLoggedIn">
-    <button (click)="login()">Login with my AAD account</button>
+    <button (click)="login()" class="btn btn-primary">Login with my AAD account</button>
 </div>
 
 <div *ngIf="isLoggedIn">
-    <button (click)="logout()">Logout</button>
+    <button (click)="logout()" class="btn btn-primary">Logout</button>
 </div>

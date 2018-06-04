@@ -4,10 +4,10 @@ import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-users',
-  templateUrl: './userList.component.html',
-  styleUrls: ['./userList.component.css']
+  templateUrl: 'budgetDetail.component.html',
+  styleUrls: ['budgetDetail.component.css']
 })
-export class UserListComponent implements OnInit {
+export class UserDetailComponent implements OnInit {
   users: User[];
 
   constructor(private valueService: UserService) { }

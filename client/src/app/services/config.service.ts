@@ -9,9 +9,9 @@ export class ConfigService {
     public get getAdalConfig(): any { 
 
         return { 
-            tenant: 'TENANT_ID', 
-            clientId: 'CLIENT_ID', 
-            redirectUri: "window.location.origin + '/'", 
+            tenant: 'erni.ch',
+            clientId: '7eb7f3c1-377e-433f-92fe-d657272d4b79',
+            redirectUri: window.location.origin + '/',
             postLogoutRedirectUri: window.location.origin + '/' 
         }; 
     } 

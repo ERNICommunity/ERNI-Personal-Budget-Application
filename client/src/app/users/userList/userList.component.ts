@@ -1,24 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../model/user';
-import { UserService } from '../../services/user.service';
+import {Component, OnInit} from '@angular/core';
+import {UserService} from '../../services/user.service';
+import {User} from '../../model/user';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './userList.component.html',
-  styleUrls: ['./userList.component.css']
+    selector: 'app-users',
+    templateUrl: './userList.component.html',
+    styleUrls: ['./userList.component.css']
 })
 export class UserListComponent implements OnInit {
-  users: User[];
+    users: User[];
 
-  constructor(private valueService: UserService) { }
+    constructor(private valueService: UserService) {
+    }
 
-  ngOnInit() {
-    this.getHeroes();
-  }
+    ngOnInit() {
+        this.getUsers();
+    }
 
-  getHeroes(): void {
-    this.valueService.getRequests()
-      .subscribe(users => this.users = users);
-  }
+    getUsers(): void {
+        this.valueService.getRequests()
+            .subscribe(users => this.users = users);
+    }
 
 }
