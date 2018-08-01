@@ -1,38 +1,19 @@
-DETAIL
-
-{{user.id}}
-
-asd
-
-{{user.firstName}}
-
 <div *ngIf="user">
-
-    <h2>{{ user.firstName | uppercase }} Details</h2>
-    <div><span>id: </span>{{user.id}}</div>
-    <div>
-      <label>name:
-        <input [(ngModel)]="user.firstName" class="form-control" placeholder="name"/>
-      </label>
+    <h2>{{user.firstName}} {{user.lastName}}</h2>
+    <div class="form-check">
+        <label class="form-check-label">
+            <input type="checkbox" [(ngModel)]="user.isAdmin" class="form-check-input" placeholder="name"/>
+            is admin
+        </label>
     </div>
-    <div>
-        <label>name:
-          <input [(ngModel)]="user.firstName" class="form-control" placeholder="name"/>
-        </label>
-      </div>
+    <div class="form-group">
+        <label for="">Superior</label>
+        <select class="form-control form-control-sm">
+            <option *ngFor="let userItem of users" [ngValue]="theme" [selected]="userItem.id === user?.superior?.id">
+                {{userItem.firstName}} {{userItem.lastName}}
+            </option>
+        </select>
+    </div>
 
-      <div>
-        <label>Is admin:
-          <input type="checkbox" [(ngModel)]="user.isAdmin" class="form-check-input" placeholder="name"/>
-        </label>
-      </div>
-  
-
-      <select class="form-control form-control-sm">
-        <option *ngFor="let userItem of users" [ngValue]="theme" [selected]="userItem.id === user?.superior?.id">  
-            {{userItem.firstName}} {{userItem.lastName}}
-        </option>
-      </select>
-
-      <button (click)="save()">save</button>
-  </div>
+    <button (click)="save()" class="btn btn-primary">save</button>
+</div>

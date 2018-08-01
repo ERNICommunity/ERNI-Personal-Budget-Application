@@ -9,7 +9,7 @@ import { Budget } from '../model/budget';
 @Injectable()
 export class BudgetService {
 
-  url = "http://localhost:64246/api/Budget/user/current";
+  url = "http://pbaserver.azurewebsites.net/api/Budget/user/current";
 
   constructor(private http: HttpClient, private adalService: AdalService) { }
 

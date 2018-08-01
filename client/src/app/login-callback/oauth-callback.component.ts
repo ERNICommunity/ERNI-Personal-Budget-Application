@@ -15,7 +15,7 @@ export class OAuthCallbackComponent implements OnInit {
         if (!this.adalService.userInfo) {
             this.router.navigate(['login']);
         } else {
-            this.router.navigate(['home']);
+            this.router.navigate(['my-budget']);
         }
     }
 }
