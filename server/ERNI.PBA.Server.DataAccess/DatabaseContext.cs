@@ -15,6 +15,8 @@ namespace ERNI.PBA.Server.DataAccess
 
         public DbSet<Request> Requests { get; set; }
 
+        public DbSet<RequestCategory> RequestCategories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var user = modelBuilder.Entity<User>();
@@ -29,6 +31,8 @@ namespace ERNI.PBA.Server.DataAccess
                 .HasForeignKey(r => new { r.UserId, r.Year })
                 .HasPrincipalKey(b => new { b.UserId, b.Year });
 
+            request.HasOne(_ => _.Category)
+                .WithMany();
         }
     }
 }

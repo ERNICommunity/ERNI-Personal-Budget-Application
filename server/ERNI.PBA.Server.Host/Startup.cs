@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ERNI.PBA.Server
@@ -38,9 +39,11 @@ namespace ERNI.PBA.Server
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IBudgetRepository, BudgetRepository>();
             services.AddTransient<IRequestRepository, RequestRepository>();
+            services.AddTransient<IRequestCategoryRepository, RequestCategoryRepository>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
@@ -116,6 +119,7 @@ namespace ERNI.PBA.Server
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.OperationFilter<ExamplesOperationFilter>();
             });
         }
 
@@ -124,10 +128,10 @@ namespace ERNI.PBA.Server
         {
             app.UseCors("CorsPolicy");
 
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 app.UseDeveloperExceptionPage();
-            }
+            //}
             app.UseAuthentication();
 
             app.UseSwagger();
