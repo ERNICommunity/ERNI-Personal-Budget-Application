@@ -7,16 +7,26 @@ import { AdalService } from './adal.service';
 @Injectable()
 export class RequestService {
 
-  heroesUrl = "http://localhost:64246/api/Request/user/current/year/";
+  requestUrl = "http://pbaserver.azurewebsites.net/api/Request/";
 
   constructor(private http: HttpClient, private adalService: AdalService) { }
 
-  public getRequests(year: number): Observable<Request[]> {
+
+  public getPendingRequests(): Observable<Request[]> {
     var httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 
+      headers: new HttpHeaders({ 'Content-Type': 'application/json',
       'Authorization': 'Bearer ' +  this.adalService.accessToken })
     };
 
-    return this.http.get<Request[]>(this.heroesUrl + year, httpOptions)
+    return this.http.get<Request[]>(this.requestUrl + '/pending', httpOptions)
+  }
+
+  public getRequests(year): Observable<Request[]> {
+    var httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' +  this.adalService.accessToken })
+    };
+
+    return this.http.get<Request[]>(this.requestUrl + 'user/current/year/' + year, httpOptions)
   }
 }

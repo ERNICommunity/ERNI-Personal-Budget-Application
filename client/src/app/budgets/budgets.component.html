@@ -1,9 +1,36 @@
-<ul class="nav nav-pills">
-    <li class="nav-item" *ngFor="let budget of budgets">
-        <a class="nav-link active" href="#">{{budget.year}}</a>
-    </li>
-</ul>
+<div *ngIf="user">
+    <h2>Budget Overview - 2018 - {{user.firstName}} {{user.lastName}}</h2>
 
-<ul class="heroes">
-    <li *ngFor="let request of requests"><span>{{request.title}}</span> {{request.amount}} {{request.date}}
-</ul>
+    <div *ngIf="requests">
+        <h2>Requests</h2>
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active">2018</a>
+            </li>
+        </ul>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Category</th>
+                <th scope="col">Date</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr *ngFor="let request of requests">
+                <td>{{request.title}}</td>
+                <td>{{request.amount}}</td>
+                <td>{{request.category.title}}</td>
+                <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
+                <td><a class="btn btn-primary float-right" href="#" role="button"
+                       routerLink="/requests/{{request.id}}">Detail</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

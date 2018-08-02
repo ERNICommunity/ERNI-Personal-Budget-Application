@@ -1,0 +1,19 @@
+<h2>Categories</h2>
+<a href="" class="btn btn-primary float-right">Add New</a>
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th scope="col">Title</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let category of categories">
+        <th>{{category.title}}</th>
+        <td><a class="btn btn-primary float-right" href="#" role="button"
+               routerLink="/categories/{{category.id}}">Edit</a>
+        </td>
+    </tr>
+    </tbody>
+</table>

@@ -16,10 +16,10 @@ export class UserDetailComponent implements OnInit {
   constructor(private userService: UserService, private requestService: RequestService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.getUser();
+    this.getHeroes();
   }
 
-  getUser(): void {
+  getHeroes(): void {
 
     const id = this.route.snapshot.paramMap.get('id');
 
