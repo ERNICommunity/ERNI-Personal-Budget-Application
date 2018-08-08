@@ -1,37 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../model/user';
-import { UserService } from '../../services/user.service';
-import { RequestService } from '../../services/request.service';
+import { Component, OnInit} from '@angular/core';
+import { Location } from '@angular/common';
+import { Category } from '../../model/category';
+import {CategoryService} from '../../services/category.service';
 import { ActivatedRoute } from '@angular/router';
 
-@Component({
-  selector: 'app-users',
-  templateUrl: './userDetail.component.html',
-  styleUrls: ['./userDetail.component.css']
-})
-export class UserDetailComponent implements OnInit {
-  user: User;
-  users: User[];
 
-  constructor(private userService: UserService, private requestService: RequestService, private route: ActivatedRoute) { }
+@Component({
+  selector: 'app-category-detail',
+  templateUrl: './categoryDetail.component.html',
+  styleUrls: ['./categoryDetail.component.css']
+})
+export class CategoryDetailComponent implements OnInit {
+  category: Category;
+  
+  constructor(private categoryService: CategoryService, private route: ActivatedRoute, private location: Location) { }
 
   ngOnInit() {
-    this.getHeroes();
+    this.getCategory();
   }
 
-  getHeroes(): void {
+  getCategory(): void {
 
     const id = this.route.snapshot.paramMap.get('id');
 
-    this.userService.getUser(Number(id))
-      .subscribe(user => this.user = user);
+    this.categoryService.getCategory(id)
+      .subscribe(category => this.category = category);
+  }
 
-      this.userService.getRequests()
-      .subscribe(users => this.users = users);
+  goBack(): void {
+    this.location.back();
   }
 
   save() : void {
-    this.userService.updateUser(this.user);
-      // .subscribe(() => this.goBack())
+    this.categoryService.updateCategory(this.category)
+       .subscribe(() => this.goBack())
   }
 }

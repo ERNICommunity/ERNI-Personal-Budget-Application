@@ -7,7 +7,7 @@ import {Category} from '../model/category';
 @Injectable()
 export class CategoryService {
 
-    url = "http://pbaserver.azurewebsites.net/api/RequestCategory";
+    url = "http://localhost:64244/api/RequestCategory";
 
     constructor(private http: HttpClient, private adalService: AdalService) {
     }
@@ -67,11 +67,24 @@ export class CategoryService {
                 'Authorization': 'Bearer ' + this.adalService.accessToken
             })
         };
-
+        
         return this.http.post<Category>(this.url, category, httpOptions);
         /*.pipe(
          tap((hero: Hero) => this.log(`added hero w/ id=${hero.id}`)),
          catchError(this.handleError<Hero>('addHero'))
          );*/
+    }
+
+    public deleteCategory(category: Category | number): Observable<Category> {
+        const id = typeof category === 'number' ? category : category.id;
+        const deleteUrl = `${this.url}?id=${id}`;
+        var httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.adalService.accessToken
+            })
+        };
+        
+        return this.http.delete<Category>(deleteUrl, httpOptions);
     }
 }
