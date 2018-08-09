@@ -13,6 +13,7 @@ import {UserListComponent} from './users/userList/userList.component';
 import {BudgetsComponent} from './budgets/budgets.component';
 import {CategoriesComponent} from './categories/categories.component';
 import {CategoryListComponent} from './categories/categoryList/categoryList.component';
+import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetail.component';
 import {RequestsComponent} from './requests/requests.component';
 import {RequestListComponent} from './requests/requestList/requestList.component';
 
@@ -23,6 +24,7 @@ export const rootRouterConfig: Routes = [
     {path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler]},
     {path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard]},
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
+    {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
     {path: 'requests', component: RequestListComponent, canActivate: [AuthenticationGuard]},
     {
         path: 'users', component: UsersComponent, canActivate: [AuthenticationGuard],

@@ -26,6 +26,7 @@ import {BudgetsComponent} from './budgets/budgets.component';
 import {BudgetService} from './services/budget.service';
 import {FormsModule} from '@angular/forms';
 import {CategoryListComponent} from "./categories/categoryList/categoryList.component";
+import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetail.component";
 import {CategoryService} from "./services/category.service";
 
 @NgModule({
@@ -40,7 +41,10 @@ import {CategoryService} from "./services/category.service";
         UserListComponent,
         UserDetailComponent,
         BudgetsComponent,
-        CategoryListComponent
+        CategoriesComponent,
+        CategoryListComponent,
+        CategoryDetailComponent
+
     ],
     imports: [
         NgbModule.forRoot(),
