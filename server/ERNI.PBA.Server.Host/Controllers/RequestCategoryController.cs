@@ -63,8 +63,6 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             requestCategory.Title = payload.Title;
 
-            _requestCategoryRepository.UpdateRequestCategory(requestCategory);
-
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();

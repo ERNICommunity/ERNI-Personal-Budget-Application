@@ -12,8 +12,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         void AddRequestCategory(RequestCategory requestCategory);
 
-        void UpdateRequestCategory(RequestCategory requestCategory);
-
         void DeleteRequestCategory(RequestCategory requestCategory);
     }
 }

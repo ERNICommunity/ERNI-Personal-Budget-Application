@@ -30,11 +30,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             return _context.RequestCategories.Where(rc => rc.Id == id).FirstOrDefaultAsync();
         }
        
-        public void UpdateRequestCategory(RequestCategory requestCategory)
-        {
-            _context.RequestCategories.Update(requestCategory);
-        }
-
         public void DeleteRequestCategory(RequestCategory requestCategory)
         {
             _context.RequestCategories.Remove(requestCategory);
