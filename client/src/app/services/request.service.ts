@@ -3,13 +3,14 @@ import { Request } from '../model/request';
 import { Observable ,  of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdalService } from './adal.service';
+import { ConfigService } from './config.service';
 
 @Injectable()
 export class RequestService {
 
-  requestUrl = "http://pbaserver.azurewebsites.net/api/Request/";
+  requestUrl = "Request/";
 
-  constructor(private http: HttpClient, private adalService: AdalService) { }
+  constructor(private http: HttpClient, private adalService: AdalService, private configService: ConfigService) { }
 
 
   public getPendingRequests(): Observable<Request[]> {
@@ -18,7 +19,7 @@ export class RequestService {
       'Authorization': 'Bearer ' +  this.adalService.accessToken })
     };
 
-    return this.http.get<Request[]>(this.requestUrl + '/pending', httpOptions)
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + '/pending', httpOptions)
   }
 
   public getRequests(year): Observable<Request[]> {
@@ -27,6 +28,6 @@ export class RequestService {
       'Authorization': 'Bearer ' +  this.adalService.accessToken })
     };
 
-    return this.http.get<Request[]>(this.requestUrl + 'user/current/year/' + year, httpOptions)
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, httpOptions)
   }
 }

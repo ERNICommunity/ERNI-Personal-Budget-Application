@@ -4,7 +4,11 @@ import { Injectable } from '@angular/core';
 
 export class ConfigService { 
     constructor() { 
-    } 
+    }
+
+    public get apiUrlBase(): any {
+        return 'http://localhost:64246/api/';
+    }
 
     public get getAdalConfig(): any { 
 

@@ -3,13 +3,14 @@ import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {AdalService} from './adal.service';
 import {Category} from '../model/category';
+import { ConfigService } from './config.service';
 
 @Injectable()
 export class CategoryService {
 
-    url = "http://localhost:64244/api/RequestCategory";
+    url = "RequestCategory";
 
-    constructor(private http: HttpClient, private adalService: AdalService) {
+    constructor(private http: HttpClient, private adalService: AdalService, private configService: ConfigService) {
     }
 
     public getRequests(): Observable<Category[]> {
@@ -20,7 +21,7 @@ export class CategoryService {
             })
         };
 
-        return this.http.get<Category[]>(this.url, httpOptions)
+        return this.http.get<Category[]>(this.configService.apiUrlBase + this.url, httpOptions)
     }
 
     public getCategory(id): Observable<Category> {
@@ -31,7 +32,7 @@ export class CategoryService {
             })
         };
 
-        return this.http.get<Category>(this.url + "/" + id, httpOptions)
+        return this.http.get<Category>(this.configService.apiUrlBase + this.url + "/" + id, httpOptions)
     }
 
     public getCategories(): Observable<Category[]> {
@@ -42,7 +43,7 @@ export class CategoryService {
             })
         };
 
-        return this.http.get<Category[]>(this.url, httpOptions)
+        return this.http.get<Category[]>(this.configService.apiUrlBase + this.url, httpOptions)
     }
 
     public updateCategory(category: Category): Observable<any> {
@@ -53,7 +54,7 @@ export class CategoryService {
             })
         };
 
-        return this.http.put(this.url, category, httpOptions);
+        return this.http.put(this.configService.apiUrlBase + this.url, category, httpOptions);
         /*.pipe(
          tap(_ => this.log(`updated hero id=${hero.id}`)),
          catchError(this.handleError<any>('updateHero'))
@@ -68,7 +69,7 @@ export class CategoryService {
             })
         };
         
-        return this.http.post<Category>(this.url, category, httpOptions);
+        return this.http.post<Category>(this.configService.apiUrlBase + this.url, category, httpOptions);
         /*.pipe(
          tap((hero: Hero) => this.log(`added hero w/ id=${hero.id}`)),
          catchError(this.handleError<Hero>('addHero'))
@@ -85,6 +86,6 @@ export class CategoryService {
             })
         };
         
-        return this.http.delete<Category>(deleteUrl, httpOptions);
+        return this.http.delete<Category>(this.configService.apiUrlBase + deleteUrl, httpOptions);
     }
 }
