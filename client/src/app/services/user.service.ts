@@ -4,13 +4,14 @@ import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {AdalService} from './adal.service';
 import {User} from '../model/user';
+import { ConfigService } from './config.service';
 
 @Injectable()
 export class UserService {
 
-    url = "http://pbaserver.azurewebsites.net/api/User";
+    url = "User";
 
-    constructor(private http: HttpClient, private adalService: AdalService) {
+    constructor(private http: HttpClient, private adalService: AdalService, private configService: ConfigService) {
     }
 
     public getRequests(): Observable<User[]> {
@@ -21,7 +22,7 @@ export class UserService {
             })
         };
 
-        return this.http.get<User[]>(this.url, httpOptions)
+        return this.http.get<User[]>(this.configService.apiUrlBase + this.url, httpOptions)
     }
 
     public getUser(id): Observable<User> {
@@ -32,7 +33,7 @@ export class UserService {
             })
         };
 
-        return this.http.get<User>(this.url + "/" + id, httpOptions)
+        return this.http.get<User>(this.configService.apiUrlBase + this.url + "/" + id, httpOptions)
     }
 
     public getCurrentUser(): Observable<User> {
@@ -43,7 +44,7 @@ export class UserService {
             })
         };
 
-        return this.http.get<User>(this.url + "/current", httpOptions)
+        return this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", httpOptions)
     }
 
     public updateUser(user: User): Observable<any> {
@@ -54,7 +55,7 @@ export class UserService {
             })
         };
 
-        return this.http.put(this.url, user, httpOptions);
+        return this.http.put(this.configService.apiUrlBase + this.url, user, httpOptions);
         /*.pipe(
          tap(_ => this.log(`updated hero id=${hero.id}`)),
          catchError(this.handleError<any>('updateHero'))
@@ -69,7 +70,7 @@ export class UserService {
             })
         };
 
-        return this.http.post<User>(this.url, user, httpOptions);
+        return this.http.post<User>(this.configService.apiUrlBase + this.url, user, httpOptions);
         /*.pipe(
          tap((hero: Hero) => this.log(`added hero w/ id=${hero.id}`)),
          catchError(this.handleError<Hero>('addHero'))
