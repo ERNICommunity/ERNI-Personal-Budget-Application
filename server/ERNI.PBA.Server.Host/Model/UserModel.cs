@@ -1,3 +1,5 @@
+using ERNI.PBA.Server.DataAccess.Model;
+
 public class UserModel
 {
     public int Id { get; internal set; }
@@ -5,4 +7,5 @@ public class UserModel
     public string FirstName { get; internal set; }
     public string LastName { get; internal set; }
     public SuperiorModel Superior { get; internal set; }
+    public UserState State { get; internal set; }
 }

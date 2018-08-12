@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Host
                 LastName = names[_ * 2 + 1],
                 Username = $"{names[_ * 2]}.{names[_ * 2 + 1]}",
                 SuperiorId = null,
-                IsActive = true
+                State = (UserState)(_ % 3)
             }).ToArray();
 
             context.Users.AddRange(users);
