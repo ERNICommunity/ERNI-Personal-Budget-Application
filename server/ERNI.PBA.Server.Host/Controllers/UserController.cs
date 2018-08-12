@@ -51,6 +51,7 @@ namespace server.Controllers
                 IsAdmin = user.IsAdmin,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                State = user.State,
                 Superior = user.Superior != null ? new SuperiorModel
                 {
                     Id = user.Superior.Id,
@@ -71,6 +72,7 @@ namespace server.Controllers
                 IsAdmin = user.IsAdmin,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                State = user.State,
                 Superior = user.Superior != null ? new SuperiorModel
                 {
                     Id = user.Superior.Id,
@@ -91,6 +93,7 @@ namespace server.Controllers
                 IsAdmin = _.IsAdmin,
                 FirstName = _.FirstName,
                 LastName = _.LastName,
+                State = _.State,
                 Superior = _.Superior != null ? new SuperiorModel
                 {
                     Id = _.Superior.Id,

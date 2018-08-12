@@ -1,13 +1,13 @@
 <h2>Employees</h2>
-<ul class="nav nav-pills">
+<ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" routerLink="/users/active">Active</a>
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/active">Active</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" routerLink="/users/new">New</a>
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/new">New</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link disabled" routerLink="/users/inactive">Inactive</a>
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/inactive">Inactive</a>
     </li>
 </ul>
 

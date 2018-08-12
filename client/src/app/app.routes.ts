@@ -16,6 +16,7 @@ import {CategoryListComponent} from './categories/categoryList/categoryList.comp
 import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetail.component';
 import {RequestsComponent} from './requests/requests.component';
 import {RequestListComponent} from './requests/requestList/requestList.component';
+import { UserState } from './model/userState';
 
 export const rootRouterConfig: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -30,9 +31,9 @@ export const rootRouterConfig: Routes = [
         path: 'users', component: UsersComponent, canActivate: [AuthenticationGuard],
         children: [
             {path: '', redirectTo: 'active', pathMatch: 'full'},
-            {path: 'active', component: UserListComponent, canActivate: [AuthenticationGuard]},
-            {path: 'new', component: UserListComponent, canActivate: [AuthenticationGuard]},
-            {path: 'inactive', component: UserListComponent, canActivate: [AuthenticationGuard]},
+            {path: 'active', component: UserListComponent, data: { filter: UserState.Active }, canActivate: [AuthenticationGuard]},
+            {path: 'new', component: UserListComponent, data: { filter: UserState.New }, canActivate: [AuthenticationGuard]},
+            {path: 'inactive', component: UserListComponent, data: { filter: UserState.Inactive }, canActivate: [AuthenticationGuard]},
             {path: ':id', component: UserDetailComponent, canActivate: [AuthenticationGuard]}
         ]
     }

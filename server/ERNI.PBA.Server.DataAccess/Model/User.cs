@@ -22,6 +22,6 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public int? SuperiorId { get; set; }
 
-        public bool IsActive { get; set; }
+        public UserState State { get; set; }
     }
 }
