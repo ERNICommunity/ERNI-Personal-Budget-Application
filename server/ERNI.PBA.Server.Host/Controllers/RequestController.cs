@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
@@ -86,11 +87,11 @@ namespace server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PutRequest([FromBody]PutRequestModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddRequest([FromBody]PostRequestModel payload, CancellationToken cancellationToken)
         {
             var request = new Request
             {
-                UserId = 1,
+                UserId =Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == Claims.Id).Value),
                 Year = 2018,
                 Title = payload.Title,
                 Amount = payload.Amount,
@@ -142,7 +143,7 @@ namespace server.Controllers
                         FirtName = _.Budget.User.FirstName,
                         LastName = _.Budget.User.LastName
                     },
-                    Category = new ERNI.PBA.Server.Host.Model.PendingRequests.CategoryModel
+                    Category = new CategoryModel
                     {
                         Id = _.CategoryId,
                         Title = _.Category.Title

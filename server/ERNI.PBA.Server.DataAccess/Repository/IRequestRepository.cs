@@ -11,6 +11,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         Task<Request[]> GetPendingRequests(CancellationToken cancellationToken);
 
         Task<Request> GetRequest(int id, CancellationToken cancellationToken);
+
         void AddRequest(Request request);
     }
 }

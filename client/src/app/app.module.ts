@@ -28,6 +28,8 @@ import {FormsModule} from '@angular/forms';
 import {CategoryListComponent} from "./categories/categoryList/categoryList.component";
 import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetail.component";
 import {CategoryService} from "./services/category.service";
+import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
+
 
 @NgModule({
     declarations: [
@@ -43,8 +45,8 @@ import {CategoryService} from "./services/category.service";
         BudgetsComponent,
         CategoriesComponent,
         CategoryListComponent,
-        CategoryDetailComponent
-
+        CategoryDetailComponent,
+        RequestAddComponent
     ],
     imports: [
         NgbModule.forRoot(),

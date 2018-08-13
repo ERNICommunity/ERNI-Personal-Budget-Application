@@ -30,4 +30,15 @@ export class RequestService {
 
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, httpOptions)
   }
+
+  public addRequest(request: Request): Observable<Request> {
+    var httpOptions = {
+        headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.adalService.accessToken
+        })
+    };
+    
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, httpOptions);
+  }
 }

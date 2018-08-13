@@ -16,6 +16,7 @@ import {CategoryListComponent} from './categories/categoryList/categoryList.comp
 import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetail.component';
 import {RequestsComponent} from './requests/requests.component';
 import {RequestListComponent} from './requests/requestList/requestList.component';
+import {RequestAddComponent} from './requests/requestAdd/requestAdd.component';
 
 export const rootRouterConfig: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -25,7 +26,8 @@ export const rootRouterConfig: Routes = [
     {path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard]},
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
     {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
-    {path: 'requests', component: RequestListComponent, canActivate: [AuthenticationGuard]},
+    {path: 'requests', component: RequestListComponent, canActivate: [AuthenticationGuard],},
+    {path: 'request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
     {
         path: 'users', component: UsersComponent, canActivate: [AuthenticationGuard],
         children: [
