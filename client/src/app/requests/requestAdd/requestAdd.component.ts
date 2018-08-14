@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { RequestService } from '../../services/request.service';
-import { AdalService } from '../../services/adal.service';
 import { Category } from '../../model/category';
 import { Request } from '../../model/request';
 import { Location } from '@angular/common';
@@ -16,7 +15,7 @@ export class RequestAddComponent implements OnInit {
   categories: Category[];
   selectedValue :number;
 
-  constructor(private categoryService: CategoryService, private requestService: RequestService, private location: Location, private route: ActivatedRoute, private adalService: AdalService) { }
+  constructor(private categoryService: CategoryService, private requestService: RequestService, private location: Location, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.getCategories();

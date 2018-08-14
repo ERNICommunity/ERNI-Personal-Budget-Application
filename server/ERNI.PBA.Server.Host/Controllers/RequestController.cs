@@ -91,8 +91,8 @@ namespace server.Controllers
         {
             var request = new Request
             {
-                UserId =Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == Claims.Id).Value),
-                Year = 2018,
+                UserId = User.GetId(),
+                Year = DateTime.Now.Year,
                 Title = payload.Title,
                 Amount = payload.Amount,
                 Date = payload.Date,
