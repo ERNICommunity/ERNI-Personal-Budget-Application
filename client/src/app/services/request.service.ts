@@ -4,22 +4,18 @@ import { Observable ,  of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdalService } from './adal.service';
 import { ConfigService } from './config.service';
+import { ServiceHelper } from './service.helper';
 
 @Injectable()
 export class RequestService {
 
   requestUrl = "Request/";
 
-  constructor(private http: HttpClient, private adalService: AdalService, private configService: ConfigService) { }
+  constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
 
-  public getPendingRequests(year: number): Observable<Request[]> {
-    var httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' +  this.adalService.accessToken })
-    };
-
-    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', httpOptions)
+  public getPendingRequests(): Observable<Request[]> {
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', this.serviceHelper.getHttpOptions())
   }
 
   public getApprovedRequests(year: number): Observable<Request[]> {
@@ -41,11 +37,6 @@ export class RequestService {
   }
 
   public getRequests(year): Observable<Request[]> {
-    var httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' +  this.adalService.accessToken })
-    };
-
-    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, httpOptions)
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, this.serviceHelper.getHttpOptions())
   }
 }
