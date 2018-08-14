@@ -14,26 +14,16 @@ export class RequestService {
   constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
 
-  public getPendingRequests(): Observable<Request[]> {
+  public getPendingRequests(year: number): Observable<Request[]> {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', this.serviceHelper.getHttpOptions())
   }
 
   public getApprovedRequests(year: number): Observable<Request[]> {
-    var httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' +  this.adalService.accessToken })
-    };
-
-    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approved', httpOptions)
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approved', this.serviceHelper.getHttpOptions())
   }
 
   public getRejectedRequests(year: number): Observable<Request[]> {
-    var httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' +  this.adalService.accessToken })
-    };
-
-    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/rejected', httpOptions)
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/rejected', this.serviceHelper.getHttpOptions())
   }
 
   public getRequests(year): Observable<Request[]> {
