@@ -28,6 +28,7 @@ import {FormsModule} from '@angular/forms';
 import {CategoryListComponent} from "./categories/categoryList/categoryList.component";
 import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetail.component";
 import {CategoryService} from "./services/category.service";
+import { ServiceHelper } from './services/service.helper';
 
 @NgModule({
     declarations: [
@@ -55,7 +56,7 @@ import {CategoryService} from "./services/category.service";
         OAuthHandshakeModule
     ],
     providers: [
-        AdalService, ConfigService, AuthenticationGuard, RequestService, UserService, BudgetService, CategoryService
+        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService
     ],
     bootstrap: [AppComponent]
 })
