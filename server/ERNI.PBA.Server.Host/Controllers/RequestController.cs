@@ -122,34 +122,66 @@ namespace server.Controllers
             return Ok();
         }
 
-        [HttpGet("pending")]
-        [SwaggerResponseExample(200, typeof(PendingRequestExample))]
-        public async Task<IActionResult> GetPendingRequests(CancellationToken cancellationToken)
+        [HttpGet("{year}/pending")]
+        [SwaggerResponseExample(200, typeof(RequestExample))]
+        public async Task<IActionResult> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-            var requests = await _requestRepository.GetPendingRequests(cancellationToken);
+            var requests = await _requestRepository.GetRequests(
+                _ => _.Year == year && _.State != RequestState.Approved && _.State != RequestState.Rejected,
+                cancellationToken);
 
-            var result = requests.Select(_ =>
-                new RequestModel
+            var result = requests.Select(GetModel).ToArray();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{year}/approved")]
+        [SwaggerResponseExample(200, typeof(RequestExample))]
+        public async Task<IActionResult> GetApprovedRequests(int year, CancellationToken cancellationToken)
+        {
+            var requests = await _requestRepository.GetRequests(
+                _ => _.Year == year && _.State == RequestState.Approved,
+                cancellationToken);
+
+            var result = requests.Select(GetModel).ToArray();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{year}/rejected")]
+        [SwaggerResponseExample(200, typeof(RequestExample))]
+        public async Task<IActionResult> GetRejectedRequests(int year, CancellationToken cancellationToken)
+        {
+            var requests = await _requestRepository.GetRequests(
+                _ => _.Year == year && _.State == RequestState.Rejected,
+                cancellationToken);
+
+            var result = requests.Select(GetModel).ToArray();
+
+            return Ok(result);
+        }
+
+        private static RequestModel GetModel(Request request)
+        {
+            return new RequestModel
                 {
-                    Id = _.Id,
-                    Title = _.Title,
-                    Amount = _.Amount,
-                    Year = _.Year,
-                    Date = _.Date,
+                    Id = request.Id,
+                    Title = request.Title,
+                    Amount = request.Amount,
+                    Year = request.Year,
+                    Date = request.Date,
                     User = new ERNI.PBA.Server.Host.Model.PendingRequests.UserModel
                     {
-                        Id = _.UserId,
-                        FirtName = _.Budget.User.FirstName,
-                        LastName = _.Budget.User.LastName
+                        Id = request.UserId,
+                        FirtName = request.Budget.User.FirstName,
+                        LastName = request.Budget.User.LastName
                     },
                     Category = new ERNI.PBA.Server.Host.Model.PendingRequests.CategoryModel
                     {
-                        Id = _.CategoryId,
-                        Title = _.Category.Title
+                        Id = request.CategoryId,
+                        Title = request.Category.Title
                     }
-                }).ToArray();
-
-            return Ok(result);
+                };
         }
     }
 }

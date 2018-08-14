@@ -5,6 +5,18 @@
     </li>
 </ul>
 
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/requests/pending">Pending</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/requests/approved">Approved</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/requests/rejected">Rejected</a>
+    </li>
+</ul>
+
 <table class="table">
     <thead>
     <tr>
@@ -13,6 +25,8 @@
         <th scope="col">Amount</th>
         <th scope="col">Category</th>
         <th scope="col">Date</th>
+        <th scope="col">Approve</th>
+        <th scope="col">Reject</th>
         <th scope="col"></th>
     </tr>
     </thead>
@@ -24,6 +38,13 @@
         <td>{{request.amount}}</td>
         <td>{{request.category.title}}</td>
         <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
+        <td><a class="btn btn-success float-right" href="#" role="button"
+            routerLink="/requests/{{request.id}}">Approve</a>
+        </td>
+        <td>
+            <a class="btn btn-danger float-right" href="#" role="button"
+            routerLink="/requests/{{request.id}}">Reject</a>
+        </td>
         <td><a class="btn btn-primary float-right" href="#" role="button"
                routerLink="/requests/{{request.id}}">Detail</a>
         </td>

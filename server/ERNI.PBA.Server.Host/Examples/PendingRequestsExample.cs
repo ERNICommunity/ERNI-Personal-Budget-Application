@@ -2,7 +2,7 @@ using Swashbuckle.AspNetCore.Examples;
 
 namespace ERNI.PBA.Server.Host.Examples
 {
-    public class PendingRequestExample : IExamplesProvider
+    public class RequestExample : IExamplesProvider
     {
         public object GetExamples()
         {
