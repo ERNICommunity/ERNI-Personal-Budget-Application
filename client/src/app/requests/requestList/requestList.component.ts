@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class RequestListComponent implements OnInit {
     requests: Request[];
+    requestFilter : RequestFilter;
 
     constructor(private requestService: RequestService, private route: ActivatedRoute) {
     }
@@ -30,17 +31,30 @@ export class RequestListComponent implements OnInit {
         switch (filter) {
             case RequestFilter.Approved:
                 requests = this.requestService.getApprovedRequests(year);
+                this.requestFilter = filter;
                 break;
             case RequestFilter.Pending:
                 requests = this.requestService.getPendingRequests(year);
+                this.requestFilter = filter;
                 break;
             case RequestFilter.Rejected:
                 requests = this.requestService.getRejectedRequests(year);
+                this.requestFilter = filter;
                 break;
             default:
                 break;
         }
 
         requests.subscribe(requests => this.requests = requests);
+    }
+
+    approveRequest(id: number): void {
+        this.requests = this.requests.filter(req => req.id !== id);
+        this.requestService.approveRequest(id).subscribe();
+      }
+
+    rejectRequest(id: number): void {
+        this.requests = this.requests.filter(req => req.id !== id);
+        this.requestService.rejectRequest(id).subscribe();
     }
 }

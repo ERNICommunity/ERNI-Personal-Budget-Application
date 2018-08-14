@@ -66,6 +66,11 @@ namespace server.Controllers
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
 
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
             request.State = RequestState.Approved;
 
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -77,6 +82,11 @@ namespace server.Controllers
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
+
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
 
             request.State = RequestState.Rejected;
 

@@ -1,5 +1,6 @@
 export enum RequestFilter {
     Pending = 0,
-    Approved = 1,
-    Rejected = 2
+    ApprovedBySuperior = 1,
+    Approved = 2,
+    Rejected = 3
 }

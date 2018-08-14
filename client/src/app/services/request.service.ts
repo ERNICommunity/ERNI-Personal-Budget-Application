@@ -29,4 +29,12 @@ export class RequestService {
   public getRequests(year): Observable<Request[]> {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, this.serviceHelper.getHttpOptions())
   }
+
+  public approveRequest(id: number): Observable<Request> {
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/approve', this.serviceHelper.getHttpOptions())
+  }
+
+  public rejectRequest(id: number): Observable<Request> {
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
+  }
 }
