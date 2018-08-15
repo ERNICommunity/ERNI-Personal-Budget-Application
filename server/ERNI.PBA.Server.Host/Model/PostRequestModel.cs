@@ -1,6 +1,6 @@
 namespace ERNI.PBA.Server.Host.Model
 {
-    public class PutRequestModel
+    public class PostRequestModel
     {
         public System.DateTime Date { get; set; }
 

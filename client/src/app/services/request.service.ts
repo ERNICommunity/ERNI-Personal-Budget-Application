@@ -37,4 +37,15 @@ export class RequestService {
   public rejectRequest(id: number): Observable<Request> {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
   }
+
+  public addRequest(request: Request): Observable<Request> {
+    var httpOptions = {
+        headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.adalService.accessToken
+        })
+    };
+    
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, httpOptions);
+  }
 }
