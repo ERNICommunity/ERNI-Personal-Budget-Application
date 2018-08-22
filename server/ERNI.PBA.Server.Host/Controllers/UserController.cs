@@ -25,13 +25,19 @@ namespace server.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody]UpdateUserModel payload, CancellationToken cancellationToken)
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(id);
+            var user = await _userRepository.GetUser(payload.Id, cancellationToken);
+
+            if (user == null)
+            {
+                return BadRequest("Not a valid id");
+            }
 
             user.IsAdmin = payload.IsAdmin;
-            user.SuperiorId = payload.SuperiorId;
+            user.SuperiorId = payload.Superior?.Id;
+            user.State = payload.State;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
@@ -43,7 +49,7 @@ namespace server.Controllers
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
             // var user = await _userRepository.GetUser(HttpContext.User.GetId());
-            var user = await _userRepository.GetUser(1);
+            var user = await _userRepository.GetUser(1, cancellationToken);
 
             return Ok(new UserModel
             {
@@ -64,7 +70,7 @@ namespace server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var user = await _userRepository.GetUser(id);
+            var user = await _userRepository.GetUser(id, CancellationToken.None);
 
             return Ok(new UserModel
             {

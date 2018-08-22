@@ -17,7 +17,7 @@ export class UserListComponent implements OnInit {
   }
 
   getHeroes(): void {
-    this.valueService.getRequests()
+    this.valueService.getUsers()
       .subscribe(users => this.users = users);
   }
 

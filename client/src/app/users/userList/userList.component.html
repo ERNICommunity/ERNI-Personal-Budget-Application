@@ -15,8 +15,8 @@
     <thead>
     <tr>
         <th scope="col">#</th>
-        <th scope="col">First</th>
         <th scope="col">Last</th>
+        <th scope="col">First</th>
         <th scope="col"></th>
     </tr>
     </thead>
@@ -24,9 +24,21 @@
 
     <tr *ngFor="let user of users">
         <th>{{user.id}}</th>
-        <td>{{user.firstName}}</td>
         <td>{{user.lastName}}</td>
-        <td><a class="btn btn-primary float-right" href="#" role="button" routerLink="/users/{{user.id}}">Detail</a>
+        <td>{{user.firstName}}</td>
+
+        <td *ngIf="userState != userStateType.Active">
+            <button class="btn btn-success float-right" title="activate employee"
+            (click)="activateEmployee(user)">Activate</button>
+        </td>
+
+        <td *ngIf="userState != userStateType.Inactive">
+            <button class="btn btn-danger float-right" title="deactivate employee"
+            (click)="deactivateEmployee(user)">Deactivate</button>
+        </td>
+
+        <td>
+            <a class="btn btn-primary float-right" href="#" role="button" routerLink="/users/{{user.id}}">Detail</a>
         </td>
     </tr>
     </tbody>
