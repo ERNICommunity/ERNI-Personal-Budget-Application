@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../services/user.service';
-import {User} from '../../model/user';
+import { Component, OnInit} from '@angular/core';
+import { UserService } from '../../services/user.service';
+import { User } from '../../model/user';
 import { ActivatedRoute } from '@angular/router';
 import { UserState } from '../../model/userState';
 
@@ -11,19 +11,30 @@ import { UserState } from '../../model/userState';
 })
 export class UserListComponent implements OnInit {
     users: User[];
+    userState : UserState;
+    userStateType = UserState;
 
-    constructor(private valueService: UserService, private route: ActivatedRoute) {
+    constructor(private userService: UserService, private route: ActivatedRoute) {
     }
 
     ngOnInit() {
-        var filter = <UserState>this.route.snapshot.data['filter'];
-
-        this.getUsers(filter);
+        this.userState = <UserState>this.route.snapshot.data['filter'];
+        this.getUsers(this.userState);
     }
 
     getUsers(filter: UserState): void {
-        this.valueService.getRequests()
-            .subscribe(users => this.users = users.filter(u => u.state == filter));
+        this.userService.getUsers().subscribe(users => this.users = users.filter(u => u.state == filter));
     }
 
+    activateEmployee(user: User): void {
+        this.users = this.users.filter(u => u.id !== user.id);
+        user.state = UserState.Active;
+        this.userService.updateUser(user).subscribe(); 
+    }
+
+    deactivateEmployee(user: User): void {
+        this.users = this.users.filter(u => u.id !== user.id);
+        user.state = UserState.Inactive;
+        this.userService.updateUser(user).subscribe();
+    }
 }

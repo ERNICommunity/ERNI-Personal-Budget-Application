@@ -6,7 +6,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 {
     public interface IUserRepository
     {
-        Task<User> GetUser(int id);
+        Task<User> GetUser(int id, CancellationToken cancellationToken);
 
         Task<User[]> GetUsers(CancellationToken cancellationToken);
     }
