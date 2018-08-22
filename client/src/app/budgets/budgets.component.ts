@@ -6,15 +6,17 @@ import {Request} from '../model/request';
 import {RequestService} from '../services/request.service';
 import {UserService} from '../services/user.service';
 import {ActivatedRoute} from '@angular/router';
+import {RequestFilter} from '../requests/requestFilter';
 
 @Component({
-    selector: 'app-users',
+    selector: 'app-budget',
     templateUrl: './budgets.component.html',
     styleUrls: ['./budgets.component.css']
 })
 export class BudgetsComponent implements OnInit {
     budgets: Budget[];
     requests: Request[];
+    requestStateType = RequestFilter;
     user: User;
 
     constructor(private budgetService: BudgetService,
@@ -34,7 +36,7 @@ export class BudgetsComponent implements OnInit {
         this.budgetService.getCurrentUsersBudgets()
             .subscribe(budgets => this.budgets = budgets);
     }
-
+   
     getRequests(year: number): void {
         this.requestService.getRequests(2018)
             .subscribe(requests => this.requests = requests);
@@ -45,5 +47,7 @@ export class BudgetsComponent implements OnInit {
             .subscribe(user => this.user = user);
     }
 
-
+    deleteRequest(id: number): void {
+        this.requestService.deleteRequest(id).subscribe(() => this.requests = this.requests.filter(req => req.id !== id));
+      }
 }

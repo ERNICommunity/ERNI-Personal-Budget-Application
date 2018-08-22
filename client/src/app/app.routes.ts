@@ -16,6 +16,8 @@ import {CategoryListComponent} from './categories/categoryList/categoryList.comp
 import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetail.component';
 import {RequestsComponent} from './requests/requests.component';
 import {RequestListComponent} from './requests/requestList/requestList.component';
+import {RequestAddComponent} from './requests/requestAdd/requestAdd.component';
+import {RequestDetailComponent} from './requests/requestDetail/requestDetail.component';
 import { UserState } from './model/userState';
 import { RequestFilter } from './requests/requestFilter';
 
@@ -25,6 +27,8 @@ export const rootRouterConfig: Routes = [
     {path: 'login', component: LoginComponent},
     {path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler]},
     {path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard]},
+    {path: 'my-budget/request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
+    {path: 'my-budget/request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard]},
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
     {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
     {

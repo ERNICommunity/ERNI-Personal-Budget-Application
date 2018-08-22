@@ -1,0 +1,39 @@
+  <h2>Create Request</h2>
+  <br>
+  <div class="form-group ">
+    <h5><label class="col-md-6">Title
+    <textarea #requestTitle class="form-control" type="textarea"></textarea>
+  </label></h5>
+  </div>
+
+  <div class="input-group">
+    <h5><label class="col-md-6">Date of occasion
+      <input class="rect-border full-width"
+            placeholder="DDMMYYYY"
+            #requestDate
+            ngbDatepicker
+            #datePickerInput="ngbDatepicker"
+            [readonly]="true"
+            [ngClass]="{'input-required': required, 'normal-color': valid, 'picker-disabled': disabled}"
+            (click)="disabled ? true : datePickerInput.toggle()">
+    </label></h5>
+  </div>
+
+  <div class="form-group ">
+      <h5><label class="col-md-6">Amount
+      <input #requestAmount class="form-control" type="text" placeholder="0.00">
+    </label></h5>
+  </div>
+
+  <div class="form-group">
+      <h5><label class="col-md-6">Occasion
+      <select class="form-control form-control-sm" [(ngModel)]="selectedValue">
+          <option *ngFor="let categoryItem of categories" [ngValue]="categoryItem">
+              {{categoryItem.title}}
+          </option>
+      </select>
+    </label></h5>
+  </div>
+
+  <button  class="btn btn-primary mr-1 " (click)="goBack()">back</button>
+  <button (click)="save(requestTitle.value, requestAmount.value, requestDate.value)" class="btn btn-primary">save</button>

@@ -29,6 +29,9 @@ import {CategoryListComponent} from "./categories/categoryList/categoryList.comp
 import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetail.component";
 import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
+import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
+import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
+
 
 @NgModule({
     declarations: [
@@ -44,8 +47,9 @@ import { ServiceHelper } from './services/service.helper';
         BudgetsComponent,
         CategoriesComponent,
         CategoryListComponent,
-        CategoryDetailComponent
-
+        CategoryDetailComponent,
+        RequestAddComponent,
+        RequestDetailComponent
     ],
     imports: [
         NgbModule.forRoot(),

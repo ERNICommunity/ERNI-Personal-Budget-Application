@@ -1,6 +1,6 @@
-import { Injectable } from "../../../node_modules/@angular/core";
+import { Injectable } from "@angular/core";
 import { AdalService } from "./adal.service";
-import { HttpHeaders, HttpParams } from "../../../node_modules/@angular/common/http";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
 
 @Injectable()
 export class ServiceHelper {

@@ -1,6 +1,8 @@
+using ERNI.PBA.Server.DataAccess.Model;
+
 namespace ERNI.PBA.Server.Host.Model
 {
-    public class PutRequestModel
+    public class PostRequestModel
     {
         public System.DateTime Date { get; set; }
 
@@ -8,6 +10,6 @@ namespace ERNI.PBA.Server.Host.Model
 
         public decimal Amount { get; set; }
 
-        public int CategoryId { get; set; }
+        public RequestCategory Category { get; set; }
     }
 }

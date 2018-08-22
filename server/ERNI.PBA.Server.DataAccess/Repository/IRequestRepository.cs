@@ -13,6 +13,9 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         Task<Request[]> GetRequests(Expression<Func<Request, bool>> filter, CancellationToken cancellationToken);
 
         Task<Request> GetRequest(int id, CancellationToken cancellationToken);
+
         void AddRequest(Request request);
+
+        void DeleteRequest(Request request);
     }
 }

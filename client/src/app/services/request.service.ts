@@ -30,11 +30,27 @@ export class RequestService {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, this.serviceHelper.getHttpOptions())
   }
 
+  public getRequest(id): Observable<Request> {
+    return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + "/" + id, this.serviceHelper.getHttpOptions())
+  }
+
   public approveRequest(id: number): Observable<Request> {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/approve', this.serviceHelper.getHttpOptions())
   }
 
   public rejectRequest(id: number): Observable<Request> {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
+  }
+
+  public addRequest(request: Request): Observable<Request> {
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  }
+
+  public updateRequest(request: Request): Observable<any> {
+    return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  }
+
+  public deleteRequest(id : number): Observable<Request> {
+    return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + '/' + id, this.serviceHelper.getHttpOptions());
   }
 }
