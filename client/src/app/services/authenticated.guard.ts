@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, NavigationExtras } from '@angular/router';
-import { AdalService } from './../services/adal.service';
+import { AdalService } from './adal.service';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {

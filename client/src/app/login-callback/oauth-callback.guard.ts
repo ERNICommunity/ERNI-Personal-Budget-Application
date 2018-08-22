@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-import { AdalService } from './../services/adal.service';
+import { AdalService } from '../services/adal.service';
 
 @Injectable()
 export class OAuthCallbackHandler implements CanActivate {

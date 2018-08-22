@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AdalService } from './../services/adal.service';
+import { AdalService } from '../services/adal.service';
 
 @Component({
     template: '<div>Please wait...</div>'

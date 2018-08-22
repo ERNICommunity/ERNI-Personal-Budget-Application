@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Request} from '../model/request';
-import {Observable, of} from 'rxjs';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {AdalService} from './adal.service';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
 import {User} from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
@@ -15,7 +13,7 @@ export class UserService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
     }
 
-    public getRequests(): Observable<User[]> {
+    public getUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url, this.serviceHelper.getHttpOptions())
     }
 

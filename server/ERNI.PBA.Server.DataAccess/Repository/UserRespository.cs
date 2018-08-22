@@ -16,11 +16,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context = context;
         }
 
-        public Task<User> GetUser(int id)
+        public Task<User> GetUser(int id, CancellationToken cancellationToken)
         {
             return _context.Users.Where(_ => _.Id == id)
                 .Include(u => u.Superior)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         public Task<User[]> GetUsers(CancellationToken cancellationToken)

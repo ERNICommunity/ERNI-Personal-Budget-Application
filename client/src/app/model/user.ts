@@ -1,4 +1,3 @@
-import { UserTag } from "./usertag";
 import { UserState } from "./userState";
 
 export class User {
@@ -6,6 +5,6 @@ export class User {
     isAdmin: boolean;
     firstName: string;
     lastName: string;
-    superior: UserTag;
+    superior: User;
     state: UserState;
   } 

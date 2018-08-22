@@ -6,14 +6,16 @@
             is admin
         </label>
     </div>
+    <br>
     <div class="form-group">
         <label for="">Superior</label>
-        <select class="form-control form-control-sm">
-            <option *ngFor="let userItem of users" [ngValue]="theme" [selected]="userItem.id === user?.superior?.id">
-                {{userItem.firstName}} {{userItem.lastName}}
+        <select class="form-control form-control-sm" [(ngModel)]="user.superior" [compareWith]="compareUsers">
+            <option [ngValue]="null" disabled></option>
+            <option *ngFor="let userItem of users" [ngValue]="userItem">
+                {{userItem.lastName}} {{userItem.firstName}}
             </option>
         </select>
     </div>
 
-    <button (click)="save()" class="btn btn-primary">save</button>
+    <button (click)="save()" class="btn btn-primary">Save</button>
 </div>

@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
@@ -22,10 +24,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public Task<Request[]> GetPendingRequests(CancellationToken cancellationToken)
+        public Task<Request[]> GetRequests(Expression<Func<Request, bool>> filter, CancellationToken cancellationToken)
         {
             return _context.Requests
-                .Where(_ => _.State != RequestState.Approved && _.State != RequestState.Rejected)
+                .Where(filter)
                 .Include(_ => _.Budget)
                 .ThenInclude(_ => _.User)
                 .Include(_ => _.Category)

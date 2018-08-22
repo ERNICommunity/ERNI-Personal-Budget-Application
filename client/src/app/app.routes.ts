@@ -17,6 +17,7 @@ import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetai
 import {RequestsComponent} from './requests/requests.component';
 import {RequestListComponent} from './requests/requestList/requestList.component';
 import { UserState } from './model/userState';
+import { RequestFilter } from './requests/requestFilter';
 
 export const rootRouterConfig: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -26,7 +27,15 @@ export const rootRouterConfig: Routes = [
     {path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard]},
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
     {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
-    {path: 'requests', component: RequestListComponent, canActivate: [AuthenticationGuard]},
+    {
+        path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
+        children: [
+            {path: '', redirectTo: 'pending', pathMatch: 'full'},
+            {path: 'pending', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
+            {path: 'approved', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
+            {path: 'rejected', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
+        ]
+    },
     {
         path: 'users', component: UsersComponent, canActivate: [AuthenticationGuard],
         children: [
