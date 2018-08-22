@@ -4,8 +4,8 @@ import {Category} from "./category";
 export class Request {
     id:number;
     amount: number;
-    userId: number;
-    categoryId: number
+    user: User;
+    category: Category
     title: string;
     date: Date;
 }

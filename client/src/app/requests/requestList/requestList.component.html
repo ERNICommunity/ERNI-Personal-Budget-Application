@@ -36,11 +36,11 @@
         <td>{{request.amount}}</td>
         <td>{{request.category.title}}</td>
         <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
-        <td *ngIf="requestFilter != 2">  <!-- 2 = Approved -->
+        <td *ngIf="requestFilter != requestFilterType.Approved">
             <button class="btn btn-success float-right" title="approve request"
             (click)="approveRequest(request.id)">Approve</button>
         </td>
-        <td *ngIf="requestFilter != 3">  <!-- 3 = Rejected -->
+        <td *ngIf="requestFilter != requestFilterType.Rejected">
             <button class="btn btn-danger float-right" title="reject request"
             (click)="rejectRequest(request.id)">Reject</button>
         </td>

@@ -21,6 +21,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Requests
                 .Where(_ => _.Year == year && _.UserId == userId)
+                .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
         }
 
@@ -42,6 +43,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public void AddRequest(Request request)
         {
             _context.Requests.Add(request);
+        }
+
+        public void DeleteRequest(Request request)
+        {
+            _context.Requests.Remove(request);
         }
     }
 }

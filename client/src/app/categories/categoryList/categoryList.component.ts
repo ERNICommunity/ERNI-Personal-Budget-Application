@@ -10,7 +10,7 @@ import {Category} from "../../model/category";
 export class CategoryListComponent implements OnInit {
     categories: Category[];
 
-    constructor(private valueService: CategoryService) {
+    constructor(private categoryService: CategoryService) {
     }
 
     ngOnInit() {
@@ -18,19 +18,18 @@ export class CategoryListComponent implements OnInit {
     }
 
     getCategories(): void {
-        this.valueService.getCategories()
+        this.categoryService.getCategories()
             .subscribe(categories => this.categories = categories);
     }
 
     add(title: string): void {
         title = title.trim();
         if (!title) { return; }
-        this.valueService.addCategory({ title } as Category)
+        this.categoryService.addCategory({ title } as Category)
             .subscribe(category => this.categories.push(category));
       }
 
-      delete(category: Category): void {
-        this.categories = this.categories.filter(cat => cat !== category);
-        this.valueService.deleteCategory(category).subscribe();
+      delete(id: number): void {
+        this.categoryService.deleteCategory(id).subscribe(() => this.categories = this.categories.filter(cat => cat.id !== id));
       }
 }

@@ -52,7 +52,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateRequestedCategory([FromBody] UpdateCategoryModel payload,CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryModel payload,CancellationToken cancellationToken)
         {
             var requestCategory = await _requestCategoryRepository.GetRequestCategory(payload.Id, cancellationToken);
 

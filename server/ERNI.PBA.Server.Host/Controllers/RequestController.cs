@@ -33,15 +33,18 @@ namespace server.Controllers
         }
 
         [HttpGet("user/current/year/{year}")]
-        public async Task<IActionResult> GetCurrentUsersBudget(int year, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCurrentUsersRequests(int year, CancellationToken cancellationToken)
         {
             var requests = await _requestRepository.GetRequests(year, HttpContext.User.GetId(), cancellationToken);
 
             var result = requests.Select(_ => new
             {
+                Id = _.Id,
                 Title = _.Title,
                 Amount = _.Amount,
-                Date = _.Date
+                Date = _.Date,
+                State = _.State,
+                Category = _.Category
             });
 
             return Ok(result);
@@ -60,6 +63,14 @@ namespace server.Controllers
             });
 
             return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
+        {
+            var request = await _requestRepository.GetRequest(id, cancellationToken);
+
+            return Ok(request);
         }
 
         [HttpPost("{id}/approve")]
@@ -107,7 +118,7 @@ namespace server.Controllers
                 Amount = payload.Amount,
                 Date = payload.Date,
                 State = RequestState.Pending,
-                CategoryId = payload.CategoryId
+                CategoryId = payload.Category.Id
             };
 
             _requestRepository.AddRequest(request);
@@ -172,6 +183,44 @@ namespace server.Controllers
             return Ok(result);
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
+        {
+            var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
+
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
+            request.Title = payload.Title;
+            request.Amount = payload.Amount;
+            request.CategoryId = payload.CategoryId;
+            request.Date = payload.Date;
+
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRequest(int id, CancellationToken cancellationToken)
+        {
+            var request = await _requestRepository.GetRequest(id, cancellationToken);
+
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
+            _requestRepository.DeleteRequest(request);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
         private static RequestModel GetModel(Request request)
         {
             return new RequestModel
@@ -181,6 +230,7 @@ namespace server.Controllers
                     Amount = request.Amount,
                     Year = request.Year,
                     Date = request.Date,
+                    State = request.State,
                     User = new ERNI.PBA.Server.Host.Model.PendingRequests.UserModel
                     {
                         Id = request.UserId,

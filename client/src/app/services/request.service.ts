@@ -30,6 +30,10 @@ export class RequestService {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'user/current/year/' + year, this.serviceHelper.getHttpOptions())
   }
 
+  public getRequest(id): Observable<Request> {
+    return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + "/" + id, this.serviceHelper.getHttpOptions())
+  }
+
   public approveRequest(id: number): Observable<Request> {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/approve', this.serviceHelper.getHttpOptions())
   }
@@ -39,13 +43,14 @@ export class RequestService {
   }
 
   public addRequest(request: Request): Observable<Request> {
-    var httpOptions = {
-        headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + this.adalService.accessToken
-        })
-    };
-    
-    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, httpOptions);
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  }
+
+  public updateRequest(request: Request): Observable<any> {
+    return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  }
+
+  public deleteRequest(id : number): Observable<Request> {
+    return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + '?id=' + id, this.serviceHelper.getHttpOptions());
   }
 }

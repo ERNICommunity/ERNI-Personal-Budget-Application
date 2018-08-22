@@ -10,6 +10,8 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
 
         public decimal Amount { get; set; }
 
+        public RequestState State { get; set; }
+
         public UserModel User { get; set; }
 
         public CategoryModel Category { get; set; }

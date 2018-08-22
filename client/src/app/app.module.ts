@@ -30,6 +30,7 @@ import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetai
 import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
+import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { RequestAddComponent } from './requests/requestAdd/requestAdd.component'
         CategoriesComponent,
         CategoryListComponent,
         CategoryDetailComponent,
-        RequestAddComponent
+        RequestAddComponent,
+        RequestDetailComponent
     ],
     imports: [
         NgbModule.forRoot(),

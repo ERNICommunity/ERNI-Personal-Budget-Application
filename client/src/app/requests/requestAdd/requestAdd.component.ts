@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class RequestAddComponent implements OnInit {
   categories: Category[];
-  selectedValue :number;
+  selectedValue :Category;
 
   constructor(private categoryService: CategoryService, private requestService: RequestService, private location: Location, private route: ActivatedRoute) { }
 
@@ -32,9 +32,9 @@ export class RequestAddComponent implements OnInit {
   }
   
   save(title: string, amount: number, date: Date) : void {
-    var categoryId = this.selectedValue;
- 
-    this.requestService.addRequest({ title, amount, date, categoryId} as Request)
+    var category = this.selectedValue;
+
+    this.requestService.addRequest({ title, amount, date, category} as Request)
        .subscribe(() => this.goBack())
   }
 

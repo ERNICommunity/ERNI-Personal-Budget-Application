@@ -6,19 +6,21 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'app-users',
+    selector: 'app-request-list',
     templateUrl: 'requestList.component.html',
     styleUrls: ['requestList.component.css']
 })
 export class RequestListComponent implements OnInit {
     requests: Request[];
     requestFilter : RequestFilter;
+    requestFilterType = RequestFilter;
 
     constructor(private requestService: RequestService, private route: ActivatedRoute) {
     }
 
     ngOnInit() {
         var filter = <RequestFilter>this.route.snapshot.data['filter'];
+        this.requestFilter = filter;
 
         var year = <number>this.route.snapshot.paramMap['year'];
 
@@ -31,15 +33,12 @@ export class RequestListComponent implements OnInit {
         switch (filter) {
             case RequestFilter.Approved:
                 requests = this.requestService.getApprovedRequests(year);
-                this.requestFilter = filter;
                 break;
             case RequestFilter.Pending:
                 requests = this.requestService.getPendingRequests(year);
-                this.requestFilter = filter;
                 break;
             case RequestFilter.Rejected:
                 requests = this.requestService.getRejectedRequests(year);
-                this.requestFilter = filter;
                 break;
             default:
                 break;

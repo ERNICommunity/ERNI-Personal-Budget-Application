@@ -1,9 +1,9 @@
 <h2>Categories</h2>
 <br>
 <label>Category title:
-    <input #categoryTitle placeholder="new category"/>
+    <input #categoryTitle placeholder="new category" class="mr-2"/>
 </label>
-<button  (click)="add(categoryTitle.value); categoryTitle.value =''" class="btn btn-primary float-right">Add New</button>
+<button  (click)="add(categoryTitle.value); categoryTitle.value =''" class="btn btn-success">Add New</button>
 
 <table class="table table-condensed">
     <thead>
@@ -17,8 +17,8 @@
     <tr *ngFor="let category of categories">
         <th>{{category.title}}</th>
         <td>
-            <button class="btn btn-primary float-right" title="delete category"
-            (click)="delete(category)">Delete</button>
+            <button class="btn btn-danger float-right" title="delete category"
+            (click)="delete(category.id)">Delete</button>
 
             <a class="btn btn-primary float-right mr-1"  role="button"
                 routerLink="/category/{{category.id}}">Edit</a>

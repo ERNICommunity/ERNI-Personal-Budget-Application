@@ -28,7 +28,7 @@
   <div class="form-group">
       <h5><label class="col-md-6">Occasion
       <select class="form-control form-control-sm" [(ngModel)]="selectedValue">
-          <option *ngFor="let categoryItem of categories" [ngValue]="categoryItem.id">
+          <option *ngFor="let categoryItem of categories" [ngValue]="categoryItem">
               {{categoryItem.title}}
           </option>
       </select>

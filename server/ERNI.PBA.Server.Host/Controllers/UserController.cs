@@ -42,8 +42,7 @@ namespace server.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
-            // var user = await _userRepository.GetUser(HttpContext.User.GetId());
-            var user = await _userRepository.GetUser(1);
+            var user = await _userRepository.GetUser(HttpContext.User.GetId());
 
             return Ok(new UserModel
             {
