@@ -51,6 +51,6 @@ export class RequestService {
   }
 
   public deleteRequest(id : number): Observable<Request> {
-    return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + '?id=' + id, this.serviceHelper.getHttpOptions());
+    return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + '/' + id, this.serviceHelper.getHttpOptions());
   }
 }

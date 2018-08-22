@@ -204,7 +204,7 @@ namespace server.Controllers
             return Ok();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);

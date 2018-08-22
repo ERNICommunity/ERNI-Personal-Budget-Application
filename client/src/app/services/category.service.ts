@@ -34,6 +34,6 @@ export class CategoryService {
     }
 
     public deleteCategory(id: number): Observable<Category> {
-        return this.http.delete<Category>(this.configService.apiUrlBase + this.url + '?id=' + id, this.serviceHelper.getHttpOptions());
+        return this.http.delete<Category>(this.configService.apiUrlBase + this.url + '/' + id, this.serviceHelper.getHttpOptions());
     }
 }
