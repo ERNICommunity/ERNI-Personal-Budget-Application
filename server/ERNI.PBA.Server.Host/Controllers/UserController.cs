@@ -90,7 +90,7 @@ namespace server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
         {
-            var users = await _userRepository.GetUsers(cancellationToken);
+            var users = await _userRepository.GetInferiorUsers(HttpContext.User.GetId(), cancellationToken);
 
             var result = users.Select(_ => new UserModel
             {

@@ -148,39 +148,21 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<IActionResult> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-            var requests = await _requestRepository.GetRequests(
-                _ => _.Year == year && _.State != RequestState.Approved && _.State != RequestState.Rejected,
-                cancellationToken);
-
-            var result = requests.Select(GetModel).ToArray();
-
-            return Ok(result);
+            return await GetRequests(year, RequestState.Pending, cancellationToken);
         }
 
         [HttpGet("{year}/approved")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<IActionResult> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
-            var requests = await _requestRepository.GetRequests(
-                _ => _.Year == year && _.State == RequestState.Approved,
-                cancellationToken);
-
-            var result = requests.Select(GetModel).ToArray();
-
-            return Ok(result);
+            return await GetRequests(year, RequestState.Approved, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<IActionResult> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
-            var requests = await _requestRepository.GetRequests(
-                _ => _.Year == year && _.State == RequestState.Rejected,
-                cancellationToken);
-
-            var result = requests.Select(GetModel).ToArray();
-
-            return Ok(result);
+            return await GetRequests(year, RequestState.Rejected, cancellationToken);
         }
 
         [HttpPut]
@@ -219,6 +201,19 @@ namespace server.Controllers
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();
+        }
+
+        private async Task<IActionResult> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
+        {
+            var inferiorUsers = _userRepository.GetInferiorUsers(HttpContext.User.GetId(), cancellationToken).Result.Select(u => u.Id);
+
+            var requests = await _requestRepository.GetRequests(
+                _ => _.Year == year && _.State == requestState && inferiorUsers.Contains(_.UserId),
+                cancellationToken);
+
+            var result = requests.Select(GetModel).ToArray();
+
+            return Ok(result);
         }
 
         private static RequestModel GetModel(Request request)

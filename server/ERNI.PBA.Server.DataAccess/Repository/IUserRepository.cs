@@ -8,6 +8,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         Task<User> GetUser(int id, CancellationToken cancellationToken);
 
-        Task<User[]> GetUsers(CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets the inferior users for the superior. 
+        /// If superior is admin, gets all users.
+        /// </summary>
+        Task<User[]> GetInferiorUsers(int superiorId, CancellationToken cancellationToken);
     }
 }
