@@ -3,6 +3,7 @@ import {Request} from '../../model/request';
 import {RequestService} from '../../services/request.service';
 import { RequestFilter } from '../requestFilter';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -11,20 +12,32 @@ import { Observable } from 'rxjs';
     styleUrls: ['requestList.component.css']
 })
 export class RequestListComponent implements OnInit {
+    pendingRoute: string = "/requests/pending";
+    approvedRoute: string= "/requests/approved";
+    rejectedRoute: string= "/requests/rejected";
+
     requests: Request[];
     requestFilter : RequestFilter;
     requestFilterType = RequestFilter;
+    selectedYear: number;
+    currentYear: number;
+    years : number[];
 
-    constructor(private requestService: RequestService, private route: ActivatedRoute) {
+    constructor(private requestService: RequestService, private route: ActivatedRoute, private router: Router) {
+        this.years = []; 
+        this.currentYear = (new Date()).getFullYear();
+                
+        for (var year = 2008; year <= this.currentYear + 1; year++) {
+             this.years.push(year);
+        }
     }
 
     ngOnInit() {
-        var filter = <RequestFilter>this.route.snapshot.data['filter'];
-        this.requestFilter = filter;
-
-        var year = <number>this.route.snapshot.paramMap['year'];
-
-        this.getRequests(filter, 2018); // year);
+        this.requestFilter = <RequestFilter>this.route.snapshot.data['filter'];
+                
+        var yearParam = this.route.snapshot.paramMap.get('year');
+        this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
+        this.getRequests(this.requestFilter, this.selectedYear);
     }
 
     getRequests(filter: RequestFilter, year: number): void {

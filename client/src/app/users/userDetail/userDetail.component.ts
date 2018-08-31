@@ -20,7 +20,7 @@ export class UserDetailComponent implements OnInit {
       const id = this.route.snapshot.paramMap.get('id');
 
       this.userService.getUser(Number(id)).subscribe(user => this.user = user);
-      this.userService.getUsers().subscribe(users => this.users = users.sort((first, second) => first.lastName.localeCompare(second.lastName)));
+      this.userService.getInferiorUsers().subscribe(users => this.users = users.sort((first, second) => first.lastName.localeCompare(second.lastName)));
     }
 
     compareUsers(user1: User, user2: User) {

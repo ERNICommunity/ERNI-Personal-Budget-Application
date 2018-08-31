@@ -23,6 +23,13 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
+        public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Include(u => u.Superior)
+                .ToArrayAsync(cancellationToken);
+        }
+
         /// <summary>
         /// Gets the inferior users for the superior. 
         /// If superior is admin, gets all users.
@@ -31,14 +38,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             var user = GetUser(superiorId, cancellationToken).Result;
 
-            var users = _context.Users.Include(u => u.Superior);
-
-            if (user.IsAdmin)
-            {
-                return users.ToArrayAsync(cancellationToken);
-            }
-
-            return users
+            return _context.Users
+                .Include(u => u.Superior)
                 .Where(u => u.SuperiorId == superiorId)
                 .ToArrayAsync(cancellationToken);
         }

@@ -1,7 +1,9 @@
 <h2>Pending requests</h2>
 <ul class="nav nav-pills">
-    <li class="nav-item">
-        <a class="nav-link active">2018</a>
+    <li class="nav-item" *ngFor="let year of years" [ngSwitch]="requestFilter">
+        <a *ngSwitchCase="requestFilterType.Pending" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[pendingRoute, year]">{{year}}</a>
+        <a *ngSwitchCase="requestFilterType.Approved" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, year]">{{year}}</a>
+        <a *ngSwitchCase="requestFilterType.Rejected" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, year]">{{year}}</a>
     </li>
 </ul>
 
@@ -9,13 +11,13 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/requests/pending">Pending</a>
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[pendingRoute, selectedYear]">Pending</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/requests/approved">Approved</a>
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, selectedYear]">Approved</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/requests/rejected">Rejected</a>
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, selectedYear]">Rejected</a>
     </li>
 </ul>
 

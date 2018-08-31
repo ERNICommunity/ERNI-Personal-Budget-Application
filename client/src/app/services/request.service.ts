@@ -13,7 +13,6 @@ export class RequestService {
 
   constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
-
   public getPendingRequests(year: number): Observable<Request[]> {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', this.serviceHelper.getHttpOptions())
   }

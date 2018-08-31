@@ -146,21 +146,21 @@ namespace server.Controllers
 
         [HttpGet("{year}/pending")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
-        public async Task<IActionResult> GetPendingRequests(int year, CancellationToken cancellationToken)
+        public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
             return await GetRequests(year, RequestState.Pending, cancellationToken);
         }
 
         [HttpGet("{year}/approved")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
-        public async Task<IActionResult> GetApprovedRequests(int year, CancellationToken cancellationToken)
+        public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
             return await GetRequests(year, RequestState.Approved, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
-        public async Task<IActionResult> GetRejectedRequests(int year, CancellationToken cancellationToken)
+        public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
             return await GetRequests(year, RequestState.Rejected, cancellationToken);
         }
@@ -203,7 +203,7 @@ namespace server.Controllers
             return Ok();
         }
 
-        private async Task<IActionResult> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
+        private async Task<RequestModel[]> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
         {
             var inferiorUsers = _userRepository.GetInferiorUsers(HttpContext.User.GetId(), cancellationToken).Result.Select(u => u.Id);
 
@@ -213,7 +213,7 @@ namespace server.Controllers
 
             var result = requests.Select(GetModel).ToArray();
 
-            return Ok(result);
+            return result;
         }
 
         private static RequestModel GetModel(Request request)

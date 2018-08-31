@@ -8,7 +8,6 @@ import { UserService } from './services/user.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Zeroes app';
   isAdmin: boolean;
   isSuperior: boolean;
   initialized: boolean;
@@ -18,10 +17,8 @@ export class AppComponent {
   }
 
   ngDoCheck() {
-    // console.log("ngDoCheck");
     if (!this.initialized && this.adalService.userInfo)
     {
-      // console.log("initializing");
       this.getIsAdminOrSuperior();
       this.initialized = true;
     }  
@@ -33,7 +30,7 @@ export class AppComponent {
         this.isAdmin = u.isAdmin;
         if (!this.isAdmin)
         {
-          this.userService.getUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
+          this.userService.getInferiorUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
         }
       });
    }
