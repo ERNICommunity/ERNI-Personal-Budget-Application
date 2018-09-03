@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Request} from '../../model/request';
 import {RequestService} from '../../services/request.service';
 import { RequestFilter } from '../requestFilter';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -23,6 +23,8 @@ export class RequestListComponent implements OnInit {
     currentYear: number;
     years : number[];
 
+    rlao: object;
+
     constructor(private requestService: RequestService, private route: ActivatedRoute, private router: Router) {
         this.years = []; 
         this.currentYear = (new Date()).getFullYear();
@@ -33,11 +35,21 @@ export class RequestListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.requestFilter = <RequestFilter>this.route.snapshot.data['filter'];
-                
-        var yearParam = this.route.snapshot.paramMap.get('year');
-        this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
-        this.getRequests(this.requestFilter, this.selectedYear);
+        this.requestFilter = RequestFilter.Pending;
+         this.route.data.subscribe((data: Data) => {
+            this.requestFilter = <RequestFilter>data['filter'];
+         });
+
+        this.route.params.subscribe((params: Params) => {
+
+            // the following line forces routerLinkActive to update even if the route did nto change
+            // see see https://github.com/angular/angular/issues/13865 for futher info
+            this.rlao = {dummy: true};
+
+            var yearParam = this.route.snapshot.paramMap.get('year');
+            this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
+            this.getRequests(this.requestFilter, this.selectedYear);
+          });
     }
 
     getRequests(filter: RequestFilter, year: number): void {

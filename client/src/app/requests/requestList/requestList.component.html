@@ -11,13 +11,13 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[pendingRoute, selectedYear]">Pending</a>
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[pendingRoute, selectedYear]" [routerLinkActiveOptions]="rlao">Pending</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, selectedYear]">Approved</a>
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, selectedYear]" [routerLinkActiveOptions]="rlao">Approved</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, selectedYear]">Rejected</a>
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, selectedYear]" [routerLinkActiveOptions]="rlao">Rejected</a>
     </li>
 </ul>
 

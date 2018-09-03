@@ -30,8 +30,7 @@ export const rootRouterConfig: Routes = [
     {
         path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
         children: [
-            {path: '', redirectTo: 'pending', pathMatch: 'full' },
-            {path: 'pending', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
+            {path: '', redirectTo: 'pending/2018', pathMatch: 'full' },
             {path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
             {path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
             {path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
