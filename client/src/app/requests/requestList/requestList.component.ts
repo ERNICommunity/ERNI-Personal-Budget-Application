@@ -46,7 +46,9 @@ export class RequestListComponent implements OnInit {
             // see see https://github.com/angular/angular/issues/13865 for futher info
             this.rlao = {dummy: true};
 
-            var yearParam = this.route.snapshot.paramMap.get('year');
+            //var yearParam = this.route.snapshot.paramMap.get('year');
+            var yearParam = params['year']; 
+
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
             this.getRequests(this.requestFilter, this.selectedYear);
           });
@@ -80,12 +82,5 @@ export class RequestListComponent implements OnInit {
     rejectRequest(id: number): void {
         this.requests = this.requests.filter(req => req.id !== id);
         this.requestService.rejectRequest(id).subscribe();
-    }
-
-    clicked(): void {
-        console.log("clicked");
-        this.router.navigate([this.pendingRoute]);
-        console.log("navigated");
-        
     }
 }
