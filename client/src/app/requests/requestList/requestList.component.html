@@ -1,9 +1,9 @@
 <h2>Pending requests</h2>
 <ul class="nav nav-pills">
     <li class="nav-item" *ngFor="let year of years" [ngSwitch]="requestFilter">
-        <a *ngSwitchCase="requestFilterType.Pending" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[pendingRoute, year]">{{year}}</a>
-        <a *ngSwitchCase="requestFilterType.Approved" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, year]">{{year}}</a>
-        <a *ngSwitchCase="requestFilterType.Rejected" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, year]">{{year}}</a>
+        <a *ngSwitchCase="requestFilterType.Pending" class="nav-link" [routerLink]="[pendingRoute, {year:year}]" (click)="clicked()">{{year}}</a>
+        <a *ngSwitchCase="requestFilterType.Approved" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, {year:year}]">{{year}}</a>
+        <a *ngSwitchCase="requestFilterType.Rejected" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, {year:year}]">{{year}}</a>
     </li>
 </ul>
 

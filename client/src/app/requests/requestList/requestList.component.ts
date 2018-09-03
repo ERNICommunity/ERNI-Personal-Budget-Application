@@ -81,4 +81,11 @@ export class RequestListComponent implements OnInit {
         this.requests = this.requests.filter(req => req.id !== id);
         this.requestService.rejectRequest(id).subscribe();
     }
+
+    clicked(): void {
+        console.log("clicked");
+        this.router.navigate([this.pendingRoute]);
+        console.log("navigated");
+        
+    }
 }
