@@ -17,6 +17,8 @@ import {RequestDetailComponent} from './requests/requestDetail/requestDetail.com
 import { UserState } from './model/userState';
 import { RequestFilter } from './requests/requestFilter';
 
+const currentYear = (new Date()).getFullYear();
+
 export const rootRouterConfig: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard]},
@@ -30,7 +32,7 @@ export const rootRouterConfig: Routes = [
     {
         path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
         children: [
-            {path: '', redirectTo: 'pending/2018', pathMatch: 'full' },
+            {path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
             {path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
             {path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
             {path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
