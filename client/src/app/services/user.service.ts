@@ -13,7 +13,7 @@ export class UserService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
     }
 
-    public getInferiorUsers(): Observable<User[]> {
+    public getSubordinateUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url, this.serviceHelper.getHttpOptions())
     }
 

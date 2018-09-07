@@ -45,13 +45,18 @@
         <td>{{request.amount}}</td>
         <td>{{request.category.title}}</td>
         <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
+        
         <td *ngIf="requestFilter != requestFilterType.Approved">
-            <button class="btn btn-success float-right" title="approve request"
-            (click)="approveRequest(request.id)">Approve</button>
+            <button class="btn btn-success float-right" title="approve request" (click)="approveRequest(request.id)">Approve</button>
         </td>
+        
         <td *ngIf="requestFilter != requestFilterType.Rejected">
-            <button class="btn btn-danger float-right" title="reject request"
-            (click)="rejectRequest(request.id)">Reject</button>
+            <div *ngIf="canRejectRequest(request.id); else cannotReject">
+                <button class="btn btn-danger float-right" title="reject request" (click)="rejectRequest(request.id)">Reject</button>
+            </div>
+            <ng-template #cannotReject>
+                <button class="btn btn-danger float-right disabled" title="Cannot reject the request. It was approved by administrator.">Reject</button>
+            </ng-template>
         </td>
     </tr>
     </tbody>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace server.Controllers
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
-
+        
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -77,13 +78,27 @@ namespace server.Controllers
         public async Task<IActionResult> ApproveRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
-
             if (request == null)
             {
                 return BadRequest("Not a valid id");
             }
 
-            request.State = RequestState.Approved;
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (currentUser.IsAdmin)
+            {
+                request.State = RequestState.Approved;
+            }
+            else
+            {
+                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
+                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                if (!subordinatesIds.Contains(request.UserId))
+                {
+                    return BadRequest($"User cannot manipulate the request id={request.Id}");
+                }
+
+                request.State = RequestState.ApprovedBySuperior;
+            }
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
@@ -94,12 +109,29 @@ namespace server.Controllers
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
-
             if (request == null)
             {
                 return BadRequest("Not a valid id");
             }
 
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (!currentUser.IsAdmin)
+            {
+                // current user must be superior of request's user
+                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
+                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                if (!subordinatesIds.Contains(request.UserId))
+                {
+                    return BadRequest($"User cannot manipulate the request id={request.Id}");
+                }
+
+                // if request was approved by admin, it cannot be rejected by superior
+                if (request.State == RequestState.Approved)
+                {
+                    return BadRequest($"Superior cannot reject the request approved by admin. Request id={request.Id}");
+                }
+            }      
+            
             request.State = RequestState.Rejected;
 
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -148,21 +180,29 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, RequestState.Pending, cancellationToken);
+            return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
         }
 
         [HttpGet("{year}/approved")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, RequestState.Approved, cancellationToken);
+            List<RequestState> requestStates = new List<RequestState>() { RequestState.Approved };
+
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (!currentUser.IsAdmin)
+            {
+                requestStates.Add(RequestState.ApprovedBySuperior);
+            }
+
+            return await GetRequests(year, requestStates, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, RequestState.Rejected, cancellationToken);
+            return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
         }
 
         [HttpPut]
@@ -203,13 +243,23 @@ namespace server.Controllers
             return Ok();
         }
 
-        private async Task<RequestModel[]> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
+        private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
         {
-            var inferiorUsers = _userRepository.GetInferiorUsers(HttpContext.User.GetId(), cancellationToken).Result.Select(u => u.Id);
+            Expression<Func<Request, bool>> predicate;
 
-            var requests = await _requestRepository.GetRequests(
-                _ => _.Year == year && _.State == requestState && inferiorUsers.Contains(_.UserId),
-                cancellationToken);
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (currentUser.IsAdmin)
+            {
+                predicate = request => request.Year == year && requestStates.Contains(request.State);
+            }
+            else
+            {
+                var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
+                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
+            }
+            
+            var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
 
             var result = requests.Select(GetModel).ToArray();
 

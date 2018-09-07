@@ -31,13 +31,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         }
 
         /// <summary>
-        /// Gets the inferior users for the superior. 
-        /// If superior is admin, gets all users.
+        /// Gets the subordinate users for the superior. 
         /// </summary>
-        public Task<User[]> GetInferiorUsers(int superiorId, CancellationToken cancellationToken)
+        public Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken)
         {
-            var user = GetUser(superiorId, cancellationToken).Result;
-
             return _context.Users
                 .Include(u => u.Superior)
                 .Where(u => u.SuperiorId == superiorId)

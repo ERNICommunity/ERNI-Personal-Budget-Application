@@ -4,6 +4,8 @@ import {RequestService} from '../../services/request.service';
 import { RequestFilter } from '../requestFilter';
 import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
+import { UserService } from '../../services/user.service';
+import { RequestState } from '../../model/requestState';
 
 @Component({
     selector: 'app-request-list',
@@ -15,6 +17,7 @@ export class RequestListComponent implements OnInit {
     approvedRoute: string= "/requests/approved";
     rejectedRoute: string= "/requests/rejected";
 
+    isAdmin: boolean;
     requests: Request[];
     requestFilter : RequestFilter;
     requestFilterType = RequestFilter;
@@ -23,7 +26,7 @@ export class RequestListComponent implements OnInit {
     years : number[];
     rlao: object;
 
-    constructor(private requestService: RequestService, private route: ActivatedRoute) {
+    constructor(private requestService: RequestService, private userService: UserService, private route: ActivatedRoute) {
         this.years = []; 
         this.currentYear = (new Date()).getFullYear();
                 
@@ -50,6 +53,8 @@ export class RequestListComponent implements OnInit {
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
             this.getRequests(this.requestFilter, this.selectedYear);
           });
+
+          this.userService.getCurrentUser().subscribe(u => this.isAdmin = u.isAdmin);
     }
 
     getRequests(filter: RequestFilter, year: number): void {
@@ -80,5 +85,14 @@ export class RequestListComponent implements OnInit {
     rejectRequest(id: number): void {
         this.requests = this.requests.filter(req => req.id !== id);
         this.requestService.rejectRequest(id).subscribe();
+    }
+
+    canRejectRequest(id: number): boolean {
+        if (this.isAdmin) {
+            return this.requestFilter != this.requestFilterType.Rejected;
+        }
+
+        var request = this.requests.find(req => req.id == id);
+        return this.requestFilter != this.requestFilterType.Rejected && request.state != RequestState.Approved;
     }
 }

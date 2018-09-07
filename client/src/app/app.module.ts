@@ -31,6 +31,8 @@ import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
 import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
+import { AuthInterceptor } from './interceptors/authInterceptor'
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 
 @NgModule({
@@ -60,7 +62,12 @@ import { RequestDetailComponent } from './requests/requestDetail/requestDetail.c
         OAuthHandshakeModule
     ],
     providers: [
-        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService
+        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService, 
+        {
+             provide: HTTP_INTERCEPTORS,
+             useClass: AuthInterceptor,
+             multi: true 
+        }
     ],
     bootstrap: [AppComponent]
 })

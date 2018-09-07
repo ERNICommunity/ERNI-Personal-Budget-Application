@@ -89,7 +89,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetInferiorUsers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetSubordinateUsers(CancellationToken cancellationToken)
         {
             User[] users;
 
@@ -101,7 +101,7 @@ namespace server.Controllers
             }
             else
             {
-                users = await _userRepository.GetInferiorUsers(user.Id, cancellationToken);
+                users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
             }
             
             var result = users.Select(_ => new UserModel

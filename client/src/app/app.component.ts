@@ -30,7 +30,7 @@ export class AppComponent {
         this.isAdmin = u.isAdmin;
         if (!this.isAdmin)
         {
-          this.userService.getInferiorUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
+          this.userService.getSubordinateUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
         }
       });
    }
