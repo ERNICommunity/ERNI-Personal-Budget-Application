@@ -30,14 +30,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             return _context.Requests
                 .Where(filter)
                 .Include(_ => _.Budget)
-                .ThenInclude(_ => _.User)
+                .Include(_ => _.User.Superior)
                 .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
         }
 
         public Task<Request> GetRequest(int id, CancellationToken cancellationToken)
         {
-            return _context.Requests.SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
+            return _context.Requests.Include(_ => _.User).SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
         }
 
         public void AddRequest(Request request)

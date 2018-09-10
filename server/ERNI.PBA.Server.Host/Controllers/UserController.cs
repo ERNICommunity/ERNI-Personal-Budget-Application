@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
@@ -88,10 +89,21 @@ namespace server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetSubordinateUsers(CancellationToken cancellationToken)
         {
-            var users = await _userRepository.GetUsers(cancellationToken);
+            User[] users;
 
+            var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+
+            if (user.IsAdmin)
+            {
+                users = await _userRepository.GetAllUsers(cancellationToken);
+            }
+            else
+            {
+                users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
+            }
+            
             var result = users.Select(_ => new UserModel
             {
                 Id = _.Id,
@@ -105,6 +117,21 @@ namespace server.Controllers
                     FirstName = _.Superior.FirstName,
                     LastName = _.Superior.LastName,
                 } : null
+            });
+
+            return Ok(result);
+        }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveUsers(int year, CancellationToken cancellationToken)
+        {
+            var users = await _userRepository.GetAllUsers(_=>_.State == UserState.Active, cancellationToken);
+
+            var result = users.Select(_ => new UserModel
+            {
+                Id = _.Id,
+                FirstName = _.FirstName,
+                LastName = _.LastName,
             });
 
             return Ok(result);

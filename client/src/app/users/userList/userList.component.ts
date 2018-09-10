@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UserState } from '../../model/userState';
 
 @Component({
-    selector: 'app-users',
+    selector: 'app-users-list',
     templateUrl: './userList.component.html',
     styleUrls: ['./userList.component.css']
 })
@@ -23,7 +23,7 @@ export class UserListComponent implements OnInit {
     }
 
     getUsers(filter: UserState): void {
-        this.userService.getUsers().subscribe(users => this.users = users.filter(u => u.state == filter));
+        this.userService.getSubordinateUsers().subscribe(users => this.users = users.filter(u => u.state == filter));
     }
 
     activateEmployee(user: User): void {

@@ -2,8 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {Request} from '../../model/request';
 import {RequestService} from '../../services/request.service';
 import { RequestFilter } from '../requestFilter';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
+import { UserService } from '../../services/user.service';
+import { RequestState } from '../../model/requestState';
 
 @Component({
     selector: 'app-request-list',
@@ -11,20 +13,48 @@ import { Observable } from 'rxjs';
     styleUrls: ['requestList.component.css']
 })
 export class RequestListComponent implements OnInit {
+    pendingRoute: string = "/requests/pending";
+    approvedRoute: string= "/requests/approved";
+    rejectedRoute: string= "/requests/rejected";
+
+    isAdmin: boolean;
     requests: Request[];
     requestFilter : RequestFilter;
     requestFilterType = RequestFilter;
+    selectedYear: number;
+    currentYear: number;
+    years : number[];
+    rlao: object;
 
-    constructor(private requestService: RequestService, private route: ActivatedRoute) {
+    constructor(private requestService: RequestService, private userService: UserService, private route: ActivatedRoute) {
+        this.years = []; 
+        this.currentYear = (new Date()).getFullYear();
+                
+        for (var year = 2017; year <= this.currentYear + 1; year++) {
+             this.years.push(year);
+        }
     }
 
     ngOnInit() {
-        var filter = <RequestFilter>this.route.snapshot.data['filter'];
-        this.requestFilter = filter;
+        this.requestFilter = RequestFilter.Pending;
+         this.route.data.subscribe((data: Data) => {
+            this.requestFilter = <RequestFilter>data['filter'];
+         });
 
-        var year = <number>this.route.snapshot.paramMap['year'];
+        this.route.params.subscribe((params: Params) => {
 
-        this.getRequests(filter, 2018); // year);
+            // the following line forces routerLinkActive to update even if the route did nto change
+            // see see https://github.com/angular/angular/issues/13865 for futher info
+            this.rlao = {dummy: true};
+
+            //var yearParam = this.route.snapshot.paramMap.get('year');
+            var yearParam = params['year']; 
+
+            this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
+            this.getRequests(this.requestFilter, this.selectedYear);
+          });
+
+          this.userService.getCurrentUser().subscribe(u => this.isAdmin = u.isAdmin);
     }
 
     getRequests(filter: RequestFilter, year: number): void {
@@ -55,5 +85,14 @@ export class RequestListComponent implements OnInit {
     rejectRequest(id: number): void {
         this.requests = this.requests.filter(req => req.id !== id);
         this.requestService.rejectRequest(id).subscribe();
+    }
+
+    canRejectRequest(id: number): boolean {
+        if (this.isAdmin) {
+            return this.requestFilter != this.requestFilterType.Rejected;
+        }
+
+        var request = this.requests.find(req => req.id == id);
+        return this.requestFilter != this.requestFilterType.Rejected && request.state != RequestState.Approved;
     }
 }

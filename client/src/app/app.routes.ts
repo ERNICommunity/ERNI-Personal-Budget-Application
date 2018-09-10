@@ -1,7 +1,4 @@
-import {Component} from '@angular/core';
-
 import {Routes} from '@angular/router';
-
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
 import {OAuthCallbackHandler} from './login-callback/oauth-callback.guard';
@@ -10,7 +7,7 @@ import {AuthenticationGuard} from "./services/authenticated.guard";
 import {UsersComponent} from './users/users.component';
 import {UserDetailComponent} from './users/userDetail/userDetail.component';
 import {UserListComponent} from './users/userList/userList.component';
-import {BudgetsComponent} from './budgets/budgets.component';
+import {MyBudgetComponent} from './budgets/myBudget/myBudget.component';
 import {CategoriesComponent} from './categories/categories.component';
 import {CategoryListComponent} from './categories/categoryList/categoryList.component';
 import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetail.component';
@@ -20,24 +17,30 @@ import {RequestAddComponent} from './requests/requestAdd/requestAdd.component';
 import {RequestDetailComponent} from './requests/requestDetail/requestDetail.component';
 import { UserState } from './model/userState';
 import { RequestFilter } from './requests/requestFilter';
+import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
+import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
+
+const currentYear = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard]},
     {path: 'login', component: LoginComponent},
     {path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler]},
-    {path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard]},
+    {path: 'my-budget', component: MyBudgetComponent, canActivate: [AuthenticationGuard]},
     {path: 'my-budget/request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
     {path: 'my-budget/request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard]},
+    {path: 'other-budgets', component: OtherBudgetsComponent, canActivate: [AuthenticationGuard]},
+    {path: 'other-budgets/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AuthenticationGuard]},
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
     {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
     {
         path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
         children: [
-            {path: '', redirectTo: 'pending', pathMatch: 'full'},
-            {path: 'pending', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
-            {path: 'approved', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
-            {path: 'rejected', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
+            {path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
+            {path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
+            {path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
+            {path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
         ]
     },
     {

@@ -23,9 +23,12 @@
                 <a class="nav-link" routerLink="/my-budget">My budget</a>
             </li>
             <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo">
+                <a class="nav-link" routerLink="/other-budgets">Other Budgets</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && (isAdmin || isSuperior)">
                 <a class="nav-link" routerLink="/requests">Requests</a>
             </li>
-            <li class="nav-item" *ngIf="adalService.userInfo">
+            <li class="nav-item" *ngIf="adalService.userInfo && isAdmin">
                 <a class="nav-link" routerLink="/users">Employees</a>
             </li>
             <li class="nav-item" *ngIf="adalService.userInfo">

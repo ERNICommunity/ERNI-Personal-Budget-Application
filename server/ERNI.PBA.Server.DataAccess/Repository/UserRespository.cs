@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
@@ -23,10 +25,28 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public Task<User[]> GetUsers(CancellationToken cancellationToken)
+        public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {
             return _context.Users
                 .Include(u => u.Superior)
+                .ToArrayAsync(cancellationToken);
+        }
+        
+         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Where(filter)
+                .ToArrayAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Gets the subordinate users for the superior. 
+        /// </summary>
+        public Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Include(u => u.Superior)
+                .Where(u => u.SuperiorId == superiorId)
                 .ToArrayAsync(cancellationToken);
         }
     }

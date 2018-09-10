@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Request } from '../model/request';
 import { Observable ,  of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AdalService } from './adal.service';
+import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 
@@ -12,7 +11,6 @@ export class RequestService {
   requestUrl = "Request/";
 
   constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
-
 
   public getPendingRequests(year: number): Observable<Request[]> {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', this.serviceHelper.getHttpOptions())

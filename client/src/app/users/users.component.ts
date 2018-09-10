@@ -17,8 +17,8 @@ export class UsersComponent implements OnInit {
   }
 
   getHeroes(): void {
-    this.valueService.getUsers()
-      .subscribe(users => this.users = users);
+    // this.valueService.getUsers()
+    //   .subscribe(users => this.users = users);
   }
 
 }

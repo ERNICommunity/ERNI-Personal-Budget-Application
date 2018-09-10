@@ -1,0 +1,12 @@
+<div *ngIf="budget">
+    <h2>Budget Edit - {{budget.year}} - {{budget.user.firstName}} {{budget.user.lastName}}</h2>
+    <br>
+    <div>
+      <label>Amount:
+        <input [(ngModel)]="budget.amount" placeholder="0.00"/>
+      </label>
+    </div>
+    <br>
+    <button  class="btn btn-primary mr-1 " (click)="goBack()">go back</button>
+    <button  class="btn btn-primary " (click)="save()">save</button>
+  </div>

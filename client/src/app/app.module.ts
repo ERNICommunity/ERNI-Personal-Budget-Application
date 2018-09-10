@@ -22,7 +22,7 @@ import {UserService} from './services/user.service';
 import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
 import {UserListComponent} from './users/userList/userList.component';
 import {UserDetailComponent} from './users/userDetail/userDetail.component';
-import {BudgetsComponent} from './budgets/budgets.component';
+import {MyBudgetComponent} from './budgets/myBudget/myBudget.component';
 import {BudgetService} from './services/budget.service';
 import {FormsModule} from '@angular/forms';
 import {CategoryListComponent} from "./categories/categoryList/categoryList.component";
@@ -31,6 +31,10 @@ import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
 import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
+import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
+import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
+import { AuthInterceptor } from './interceptors/authInterceptor'
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 
 @NgModule({
@@ -44,12 +48,14 @@ import { RequestDetailComponent } from './requests/requestDetail/requestDetail.c
         CategoriesComponent,
         UserListComponent,
         UserDetailComponent,
-        BudgetsComponent,
+        MyBudgetComponent,
         CategoriesComponent,
         CategoryListComponent,
         CategoryDetailComponent,
         RequestAddComponent,
-        RequestDetailComponent
+        RequestDetailComponent,
+        OtherBudgetsComponent,
+        OtherBudgetsDetailComponent
     ],
     imports: [
         NgbModule.forRoot(),
@@ -60,7 +66,12 @@ import { RequestDetailComponent } from './requests/requestDetail/requestDetail.c
         OAuthHandshakeModule
     ],
     providers: [
-        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService
+        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService, 
+        {
+             provide: HTTP_INTERCEPTORS,
+             useClass: AuthInterceptor,
+             multi: true 
+        }
     ],
     bootstrap: [AppComponent]
 })

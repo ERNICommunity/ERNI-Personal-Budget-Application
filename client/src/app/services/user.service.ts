@@ -12,6 +12,14 @@ export class UserService {
 
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
     }
+    
+    public getSubordinateUsers(): Observable<User[]> {
+        return this.http.get<User[]>(this.configService.apiUrlBase + this.url, this.serviceHelper.getHttpOptions())
+    }
+
+    public getActiveUsers(): Observable<User[]> {
+        return this.http.get<User[]>(this.configService.apiUrlBase + this.url + '/active', this.serviceHelper.getHttpOptions())
+    }
 
     public getUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url, this.serviceHelper.getHttpOptions())
@@ -27,17 +35,9 @@ export class UserService {
 
     public updateUser(user: User): Observable<any> {
         return this.http.put(this.configService.apiUrlBase + this.url, user, this.serviceHelper.getHttpOptions());
-        /*.pipe(
-         tap(_ => this.log(`updated hero id=${hero.id}`)),
-         catchError(this.handleError<any>('updateHero'))
-         );*/
     }
 
     public addUser(user: User): Observable<User> {
         return this.http.post<User>(this.configService.apiUrlBase + this.url, user, this.serviceHelper.getHttpOptions());
-        /*.pipe(
-         tap((hero: Hero) => this.log(`added hero w/ id=${hero.id}`)),
-         catchError(this.handleError<Hero>('addHero'))
-         );*/
     }
 }
