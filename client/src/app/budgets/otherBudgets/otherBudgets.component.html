@@ -1,0 +1,44 @@
+<h2>Other Budgets - {{year}}</h2>
+
+<br>
+<ul class="nav nav-pills">
+    <li class="nav-item" *ngFor="let year of years">
+        <button class="btn btn-primary mr-1" (click)="getActiveUsersBudgets(year)">{{year}}</button>
+    </li>
+</ul>
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <label>Amount:
+            <input [(ngModel)]="amount"/>
+        </label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="c(setBudgetsForCurrentYear())">Save</button>
+    </div>
+</ng-template>
+
+<button class="btn btn-primary float-right" (click)="openAmountModal(content)">Set budgets for current year</button>
+
+<table class="table">
+  <thead>
+  <tr>
+      <th scope="col">Last</th>
+      <th scope="col">First</th>
+      <th scope="col">Amount</th>
+      <th scope="col"></th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <tr *ngFor="let budget of budgets">
+      <td>{{budget.user.lastName}}</td>
+      <td>{{budget.user.firstName}}</td>
+      <td>{{budget.amount}}</td>
+
+      <td>
+          <a class="btn btn-primary float-right" href="#" role="button" routerLink="edit/{{budget.user.id}}">Edit</a>
+      </td>
+  </tr>
+  </tbody>
+</table>

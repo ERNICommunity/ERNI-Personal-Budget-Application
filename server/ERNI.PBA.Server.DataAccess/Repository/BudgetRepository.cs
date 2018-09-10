@@ -14,9 +14,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context = context;
         }
 
+        public void AddBudget(Budget budget)
+        {
+            _context.Budgets.Add(budget);
+        }
+
         public Task<Budget> GetBudget(int userId, int year, CancellationToken cancellationToken)
         {
-            return _context.Budgets.SingleOrDefaultAsync(_ => _.UserId == userId && _.Year == year, cancellationToken);
+            return _context.Budgets.Include(_ => _.User).SingleOrDefaultAsync(_ => _.UserId == userId && _.Year == year, cancellationToken);
         }
 
         public Task<Budget[]> GetBudgetsByYear(int year, CancellationToken cancellationToken)

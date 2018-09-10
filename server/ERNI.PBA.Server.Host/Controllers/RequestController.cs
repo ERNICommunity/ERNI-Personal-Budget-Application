@@ -11,9 +11,11 @@ using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
+using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Examples;
 
 namespace server.Controllers
@@ -25,12 +27,14 @@ namespace server.Controllers
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
-        
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        private readonly MailService _mailService;
+
+        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
+            _mailService = new MailService(configuration);
         }
 
         [HttpGet("user/current/year/{year}")]
@@ -102,6 +106,8 @@ namespace server.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
+            _mailService.SendMail("Your request " + request.Title + " has been " + request.State + ".", request.User.Username);
+
             return Ok();
         }
 
@@ -135,6 +141,8 @@ namespace server.Controllers
             request.State = RequestState.Rejected;
 
             await _unitOfWork.SaveChanges(cancellationToken);
+
+            _mailService.SendMail("Your request " + request.Title + " has been " + request.State + ".", request.User.Username);
 
             return Ok();
         }
@@ -239,6 +247,28 @@ namespace server.Controllers
             _requestRepository.DeleteRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpGet("pending/notifications")]
+        public async Task<IActionResult> SendNotificationsForPendingRequests(CancellationToken cancellationToken)
+        {
+            var pendingRequests = await _requestRepository.GetRequests(
+                _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
+
+            if (pendingRequests.Any())
+            {
+                var superiorsMails = pendingRequests.Select(_ => new
+                {
+                    _.User.Superior.Username,
+                });
+
+                foreach (var mail in superiorsMails)
+                {
+                    _mailService.SendMail("You have new requests to handle", mail.Username);
+                }
+            }
 
             return Ok();
         }

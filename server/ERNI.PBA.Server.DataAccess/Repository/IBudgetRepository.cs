@@ -5,6 +5,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 {
     public interface IBudgetRepository
     {
+        void AddBudget(Budget budget);
+
         Task<Budget> GetBudget(int userId, int year, CancellationToken cancellationToken);
 
         Task<Budget[]> GetBudgetsByUser(int userId, CancellationToken cancellationToken);

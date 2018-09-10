@@ -1,17 +1,21 @@
 <div *ngIf="user">
-    <h2>Budget Overview - 2018 - {{user.firstName}} {{user.lastName}}</h2>
+    <h2>Budget Overview - {{year}} - {{user.firstName}} {{user.lastName}}</h2>
+    <br>
+    <div>Allowed amount : {{budget.amount}}</div>
+    <div>Current amount : {{currentAmount}}</div>
+    <div>Superior : {{user.superior.firstName}} {{user.superior.lastName}}</div>
+    <br>
+    <h2>Requests</h2>
+    <br>
+    <ul class="nav nav-pills">
+        <li class="nav-item" *ngFor="let year of years">
+            <button class="btn btn-primary mr-1" (click)="getBudget(year)">{{year}}</button>
+        </li>
+    </ul>
+
+    <a class="btn btn-link float-right" href="#" routerLink="request/create">Create new request</a>
 
     <div *ngIf="requests">
-        <h2>Requests</h2>
-        <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a class="nav-link active">2018</a>
-            </li>
-        </ul>
-
-        <a class="btn btn-link float-right" href="#" routerLink="request/create">Create new request</a>
-
-
         <table class="table">
             <thead>
             <tr>
@@ -31,7 +35,8 @@
                 <td>{{request.category.title}}</td>
                 <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
                 <td>{{requestStateType[request.state]}}</td>
-                <td>
+                <td *ngIf="request.state == requestStateType.Pending">
+
                     <button class="btn btn-danger float-right" title="delete request"
                         (click)="deleteRequest(request.id)">Delete</button>
 

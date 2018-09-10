@@ -121,5 +121,20 @@ namespace server.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveUsers(int year, CancellationToken cancellationToken)
+        {
+            var users = await _userRepository.GetAllUsers(_=>_.State == UserState.Active, cancellationToken);
+
+            var result = users.Select(_ => new UserModel
+            {
+                Id = _.Id,
+                FirstName = _.FirstName,
+                LastName = _.LastName,
+            });
+
+            return Ok(result);
+        }
     }
 }

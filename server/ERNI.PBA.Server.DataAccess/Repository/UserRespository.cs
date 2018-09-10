@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
@@ -27,6 +29,13 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Users
                 .Include(u => u.Superior)
+                .ToArrayAsync(cancellationToken);
+        }
+        
+         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Where(filter)
                 .ToArrayAsync(cancellationToken);
         }
 
