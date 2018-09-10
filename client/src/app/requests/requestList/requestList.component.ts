@@ -6,6 +6,7 @@ import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { RequestState } from '../../model/requestState';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
     selector: 'app-request-list',
@@ -26,11 +27,11 @@ export class RequestListComponent implements OnInit {
     years : number[];
     rlao: object;
 
-    constructor(private requestService: RequestService, private userService: UserService, private route: ActivatedRoute) {
+    constructor(private requestService: RequestService, private userService: UserService, private route: ActivatedRoute, private config: ConfigService) {
         this.years = []; 
         this.currentYear = (new Date()).getFullYear();
                 
-        for (var year = 2017; year <= this.currentYear + 1; year++) {
+        for (var year = this.currentYear; year >= config.getOldestYear; year--) {
              this.years.push(year);
         }
     }

@@ -18,5 +18,9 @@ export class ConfigService {
             redirectUri: "window.location.origin + '/'",
             postLogoutRedirectUri: window.location.origin + '/'
         }; 
-    } 
+    }
+    
+    public get getOldestYear(): number {
+        return 2015;
+    }
 }
