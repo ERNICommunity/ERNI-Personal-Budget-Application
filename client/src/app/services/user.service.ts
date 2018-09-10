@@ -21,7 +21,7 @@ export class UserService {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url + '/active', this.serviceHelper.getHttpOptions())
     }
 
-    public getUsers(): Observable<User[]> {
+    public getSubordinateUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url, this.serviceHelper.getHttpOptions())
     }
 
