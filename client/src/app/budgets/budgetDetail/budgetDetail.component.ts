@@ -24,8 +24,8 @@ export class UserDetailComponent implements OnInit {
     }
 
     getRequests(): void {
-        this.requestService.getRequests(2018)
-            .subscribe(requests => this.requests = requests);
+        // this.requestService.getRequests(2018)
+        //     .subscribe(requests => this.requests = requests);
     }
 
 }

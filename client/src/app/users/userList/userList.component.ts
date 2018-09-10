@@ -23,7 +23,7 @@ export class UserListComponent implements OnInit {
     }
 
     getUsers(filter: UserState): void {
-        this.userService.getUsers().subscribe(users => this.users = users.filter(u => u.state == filter));
+        this.userService.getSubordinateUsers().subscribe(users => this.users = users.filter(u => u.state == filter));
     }
 
     activateEmployee(user: User): void {

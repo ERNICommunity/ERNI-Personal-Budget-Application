@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core";
-import { AdalService } from "./adal.service";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
 
 @Injectable()
 export class ServiceHelper {
-    constructor(private adalService: AdalService) {
+    constructor() {
     }
 
     public getHttpOptions(): {
@@ -21,8 +20,7 @@ export class ServiceHelper {
     } {
         return {
             headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.adalService.accessToken
+                'Content-Type': 'application/json'
             })
         };
     }

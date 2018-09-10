@@ -1,7 +1,4 @@
-import {Component} from '@angular/core';
-
 import {Routes} from '@angular/router';
-
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
 import {OAuthCallbackHandler} from './login-callback/oauth-callback.guard';
@@ -11,7 +8,6 @@ import {UsersComponent} from './users/users.component';
 import {UserDetailComponent} from './users/userDetail/userDetail.component';
 import {UserListComponent} from './users/userList/userList.component';
 import {BudgetsComponent} from './budgets/budgets.component';
-import {CategoriesComponent} from './categories/categories.component';
 import {CategoryListComponent} from './categories/categoryList/categoryList.component';
 import {CategoryDetailComponent} from './categories/categoryDetail/categoryDetail.component';
 import {RequestsComponent} from './requests/requests.component';
@@ -20,6 +16,8 @@ import {RequestAddComponent} from './requests/requestAdd/requestAdd.component';
 import {RequestDetailComponent} from './requests/requestDetail/requestDetail.component';
 import { UserState } from './model/userState';
 import { RequestFilter } from './requests/requestFilter';
+
+const currentYear = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -34,10 +32,10 @@ export const rootRouterConfig: Routes = [
     {
         path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
         children: [
-            {path: '', redirectTo: 'pending', pathMatch: 'full'},
-            {path: 'pending', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
-            {path: 'approved', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
-            {path: 'rejected', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
+            {path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
+            {path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
+            {path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
+            {path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
         ]
     },
     {
