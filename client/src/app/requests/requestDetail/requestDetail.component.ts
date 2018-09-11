@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Data } from '@angular/router';
+import { ActivatedRoute, Params} from '@angular/router';
 import { Location } from '@angular/common';
 import { Request } from '../../model/request';
 import { Category } from '../../model/category';

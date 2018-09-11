@@ -28,9 +28,7 @@ export const rootRouterConfig: Routes = [
     {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard]},
     {path: 'login', component: LoginComponent},
     {path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler]},
-    // {path: 'my-budget', component: MyBudgetComponent, canActivate: [AuthenticationGuard]},
-    // {path: 'my-budget/request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
-    //{path: 'my-budget/request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard]},
+    {path: 'my-budget/request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
     {path: 'other-budgets', component: OtherBudgetsComponent, canActivate: [AuthenticationGuard]},
     {path: 'other-budgets/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AuthenticationGuard]},
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
@@ -39,8 +37,7 @@ export const rootRouterConfig: Routes = [
         path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard],
         children: [
             {path: '', redirectTo: currentYear.toString(), pathMatch: 'full' },
-            {path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard]},
-            //{path: 'request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]}
+            {path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard]}
         ]
     },
     {path: 'request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard]},

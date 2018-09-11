@@ -6,7 +6,9 @@ import {Request} from '../../model/request';
 import {RequestService} from '../../services/request.service';
 import {UserService} from '../../services/user.service';
 import {RequestFilter} from '../../requests/requestFilter';
-import { ActivatedRoute, Params } from '@angular/router';
+import {ActivatedRoute, Params } from '@angular/router';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
     selector: 'app-my-Budget',
@@ -28,20 +30,22 @@ export class MyBudgetComponent implements OnInit {
     constructor(private budgetService: BudgetService,
                 private requestService: RequestService,
                 private userService: UserService,
-                private route: ActivatedRoute)
+                private modalService: NgbModal,
+                private route: ActivatedRoute,
+                private config: ConfigService)
     {
         this.years = []; 
         this.currentYear = (new Date()).getFullYear();
                 
-        for (var year = 2017; year <= this.currentYear + 1; year++) {
+        for (var year = this.currentYear; year >= config.getOldestYear; year--) {
              this.years.push(year);
         }
     }
 
     ngOnInit() {
-
+        
         this.getUser();
-
+       
         this.route.params.subscribe((params: Params) => {
 
             // the following line forces routerLinkActive to update even if the route did nto change
@@ -50,10 +54,9 @@ export class MyBudgetComponent implements OnInit {
 
             //var yearParam = this.route.snapshot.paramMap.get('year');
             var yearParam = params['year']; 
-            console.log('yearParam=' + yearParam);
 
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
-            //console.log(this.selectedYear);
+            
             this.getBudget(this.selectedYear);
           });
     }
@@ -85,7 +88,14 @@ export class MyBudgetComponent implements OnInit {
         this.currentAmount = this.budget.amount - requestsSum;
     }
 
+    openDeleteConfirmationModal(content) {
+        this.modalService.open(content, { centered : true  });
+      }
+
     deleteRequest(id: number): void {
-        this.requestService.deleteRequest(id).subscribe(() => this.requests = this.requests.filter(req => req.id !== id));
+        this.requestService.deleteRequest(id).subscribe(() =>{ 
+            this.requests = this.requests.filter(req => req.id !== id),
+            this.getCurrentAmount(this.requests)
+        });
       }
 }
