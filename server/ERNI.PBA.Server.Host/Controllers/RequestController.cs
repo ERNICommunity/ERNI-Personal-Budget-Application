@@ -50,7 +50,7 @@ namespace server.Controllers
                 Date = _.Date,
                 State = _.State,
                 Category = _.Category
-            });
+            }).OrderByDescending(_ => _.Date);
 
             return Ok(result);
         }
@@ -262,7 +262,7 @@ namespace server.Controllers
                 var superiorsMails = pendingRequests.Select(_ => new
                 {
                     _.User.Superior.Username,
-                });
+                }).Distinct();
 
                 foreach (var mail in superiorsMails)
                 {

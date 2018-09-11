@@ -6,7 +6,7 @@ import {Request} from '../../model/request';
 import {RequestService} from '../../services/request.service';
 import {UserService} from '../../services/user.service';
 import {RequestFilter} from '../../requests/requestFilter';
-
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
     selector: 'app-my-Budget',
@@ -21,11 +21,14 @@ export class MyBudgetComponent implements OnInit {
     year : number;
     currentAmount : number;
     currentYear: number;
+    selectedYear: number;
     years : number[];
+    rlao: object;
 
     constructor(private budgetService: BudgetService,
                 private requestService: RequestService,
-                private userService: UserService)
+                private userService: UserService,
+                private route: ActivatedRoute)
     {
         this.years = []; 
         this.currentYear = (new Date()).getFullYear();
@@ -36,8 +39,23 @@ export class MyBudgetComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.getUser();
-        this.getBudget((new Date()).getFullYear());
+
+        this.route.params.subscribe((params: Params) => {
+
+            // the following line forces routerLinkActive to update even if the route did nto change
+            // see see https://github.com/angular/angular/issues/13865 for futher info
+            this.rlao = {dummy: true};
+
+            //var yearParam = this.route.snapshot.paramMap.get('year');
+            var yearParam = params['year']; 
+            console.log(yearParam);
+
+            this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
+            console.log(this.selectedYear);
+            this.getBudget(this.selectedYear);
+          });
     }
 
     getUser(): void {
