@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Location } from '@angular/common';
 import { Request } from '../../model/request';
 import { Category } from '../../model/category';
@@ -24,12 +24,15 @@ export class RequestDetailComponent implements OnInit {
               private ngbDateParserFormatter: NgbDateParserFormatter){ }
 
   ngOnInit() {
-    this.getRequest();
+    
+    this.route.params.subscribe((params: Params) => {
+      var idParam = params['id']; 
+      
+      this.getRequest(idParam);
+    });
   }
 
-  getRequest(): void {
-
-    const id = this.route.snapshot.paramMap.get('id');
+  getRequest(id: number): void {
 
     this.requestService.getRequest(id)
       .subscribe(request => 
@@ -39,7 +42,7 @@ export class RequestDetailComponent implements OnInit {
         });
 
     this.categoryService.getCategories()
-      .subscribe(categories => this.categories = categories);
+     .subscribe(categories => this.categories = categories);
   }
 
   getServerDate(dateStruct) : void {

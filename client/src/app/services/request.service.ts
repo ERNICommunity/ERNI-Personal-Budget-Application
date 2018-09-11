@@ -29,7 +29,7 @@ export class RequestService {
   }
 
   public getRequest(id): Observable<Request> {
-    return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + "/" + id, this.serviceHelper.getHttpOptions())
+    return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions())
   }
 
   public approveRequest(id: number): Observable<Request> {

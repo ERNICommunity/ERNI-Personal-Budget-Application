@@ -50,10 +50,10 @@ export class MyBudgetComponent implements OnInit {
 
             //var yearParam = this.route.snapshot.paramMap.get('year');
             var yearParam = params['year']; 
-            console.log(yearParam);
+            console.log('yearParam=' + yearParam);
 
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
-            console.log(this.selectedYear);
+            //console.log(this.selectedYear);
             this.getBudget(this.selectedYear);
           });
     }

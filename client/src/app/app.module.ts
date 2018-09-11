@@ -35,6 +35,7 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { AuthInterceptor } from './interceptors/authInterceptor'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BudgetsComponent } from './budgets/budgets.component';
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
         CategoriesComponent,
         UserListComponent,
         UserDetailComponent,
+        BudgetsComponent,
         MyBudgetComponent,
         CategoriesComponent,
         CategoryListComponent,

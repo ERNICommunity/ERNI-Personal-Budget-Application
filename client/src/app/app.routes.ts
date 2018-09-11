@@ -7,6 +7,7 @@ import {AuthenticationGuard} from "./services/authenticated.guard";
 import {UsersComponent} from './users/users.component';
 import {UserDetailComponent} from './users/userDetail/userDetail.component';
 import {UserListComponent} from './users/userList/userList.component';
+import {BudgetsComponent} from './budgets/budgets.component';
 import {MyBudgetComponent} from './budgets/myBudget/myBudget.component';
 import {CategoriesComponent} from './categories/categories.component';
 import {CategoryListComponent} from './categories/categoryList/categoryList.component';
@@ -35,13 +36,15 @@ export const rootRouterConfig: Routes = [
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
     {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
     {
-        path: 'my-budget', component: MyBudgetComponent, canActivate: [AuthenticationGuard],
+        path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard],
         children: [
             {path: '', redirectTo: currentYear.toString(), pathMatch: 'full' },
             {path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard]},
-            {path: 'request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]}
+            //{path: 'request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]}
         ]
     },
+    {path: 'request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard]},
+    {path: 'create-request', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
     {
         path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
         children: [
