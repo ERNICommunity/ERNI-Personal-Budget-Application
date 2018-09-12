@@ -24,8 +24,9 @@ export class OtherBudgetsDetailComponent implements OnInit {
 
     getCurrentUserBudget(): void {
         const id = this.route.snapshot.paramMap.get('id');
+        const year = this.route.snapshot.paramMap.get('year');
 
-        this.budgetService.getCurrentUserBudgetByYear(id,(new Date()).getFullYear())
+        this.budgetService.getCurrentUserBudgetByYear(id,parseInt(year))
             .subscribe(budget => this.budget = budget);
     }
 

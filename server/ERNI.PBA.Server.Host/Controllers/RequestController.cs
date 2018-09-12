@@ -74,6 +74,16 @@ namespace server.Controllers
         public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (currentUser.Id != request.User.Id)
+            {
+                return BadRequest("You are trying to read request which is not yours!");
+            }
 
             return Ok(request);
         }
@@ -168,22 +178,6 @@ namespace server.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRequest(int id, [FromBody]PatchRequestModel payload, CancellationToken cancellationToken)
-        {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-
-            request.Title = payload.Title;
-            request.Amount = payload.Amount;
-            request.Date = payload.Date;
-            request.State = RequestState.Pending;
-            request.CategoryId = payload.CategoryId;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
-        }
-
         [HttpGet("{year}/pending")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
@@ -221,6 +215,13 @@ namespace server.Controllers
             if (request == null)
             {
                 return BadRequest("Not a valid id");
+            }
+
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+
+            if (currentUser.Id != request.User.Id)
+            {
+                return BadRequest("You are trying to edit request which is not yours!");
             }
 
             request.Title = payload.Title;

@@ -7,7 +7,6 @@ import { Request } from '../model/request';
   styleUrls: ['./budgets.component.css']
 })
 export class BudgetsComponent implements OnInit {
-  requests: Request[];
 
   constructor() { }
 

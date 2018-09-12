@@ -74,7 +74,6 @@ namespace server.Controllers
 
         [HttpGet("year/{year}")]
         public async Task<IActionResult> GetBudgetsOfYear(int year, CancellationToken cancellationToken)
-
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
 
@@ -157,10 +156,10 @@ namespace server.Controllers
             return Ok(result);
         }
 
-        [HttpPost("{amount}")]
-        public async Task<IActionResult> SetBudgetsForCurrentUsers(int amount, CancellationToken cancellationToken)
+        [HttpPost]
+        public async Task<IActionResult> SetBudgetsForCurrentUsers([FromBody] Budget payload, CancellationToken cancellationToken)
         {
-            var year = DateTime.Now.Year;
+            var year = payload.Year;
             var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
             
@@ -174,7 +173,7 @@ namespace server.Controllers
                     {
                         UserId = user.Id,
                         Year = year,
-                        Amount = amount
+                        Amount = payload.Amount
                     };
 
                     _budgetRepository.AddBudget(budget);

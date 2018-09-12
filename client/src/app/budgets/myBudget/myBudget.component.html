@@ -11,7 +11,7 @@
             <li class="nav-item" *ngFor="let year of years">
                 <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao" [routerLink]="['/my-budget', year]">{{year}}</a>
             </li>
-        </ul>
+    </ul>
 
     <a class="btn btn-link float-right" href="#" routerLink="/create-request">Create new request</a>
 
@@ -51,8 +51,8 @@
                             <label>Are you sure you want to delete {{request.title}} request?</label>
                         </div>
                         <div class="modal-footer">
-                            <button  class="btn btn-light mr-1" (click)="c(deleteRequest(request.id))">Yes</button>
-                            <button  class="btn btn-light" (click)="c()">No</button>
+                            <button  class="btn btn-danger mr-1" (click)="c(deleteRequest(request.id))">Yes</button>
+                            <button  class="btn btn-primary" (click)="c()">No</button>
                         </div>
                 </ng-template>
 

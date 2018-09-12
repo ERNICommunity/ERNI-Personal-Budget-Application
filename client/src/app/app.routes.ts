@@ -28,9 +28,14 @@ export const rootRouterConfig: Routes = [
     {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard]},
     {path: 'login', component: LoginComponent},
     {path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler]},
-    {path: 'my-budget/request/create', component: RequestAddComponent, canActivate: [AuthenticationGuard]},
-    {path: 'other-budgets', component: OtherBudgetsComponent, canActivate: [AuthenticationGuard]},
-    {path: 'other-budgets/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AuthenticationGuard]},
+    {
+        path: 'other-budgets', component: BudgetsComponent, canActivate: [AuthenticationGuard],
+        children: [
+            {path: '', redirectTo: currentYear.toString(), pathMatch: 'full' },
+            {path: ':year', component: OtherBudgetsComponent, canActivate: [AuthenticationGuard]},
+            {path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AuthenticationGuard]}
+        ]
+    },
     {path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard]},
     {path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard]},
     {
