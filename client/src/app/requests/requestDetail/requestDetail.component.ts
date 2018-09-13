@@ -42,7 +42,7 @@ export class RequestDetailComponent implements OnInit {
         });
 
     this.categoryService.getCategories()
-     .subscribe(categories => this.categories = categories);
+     .subscribe(categories => this.categories = categories.filter(cat => cat.isActive == true));
   }
 
   getServerDate(dateStruct) : void {

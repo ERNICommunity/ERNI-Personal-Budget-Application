@@ -41,7 +41,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var requestCategory = new RequestCategory
             {
-                Title = payload.Title
+                Title = payload.Title,
+                IsActive = true
             }; 
 
             _requestCategoryRepository.AddRequestCategory(requestCategory);
@@ -62,6 +63,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             requestCategory.Title = payload.Title;
+            requestCategory.IsActive = payload.IsActive;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

@@ -29,7 +29,7 @@ namespace ERNI.PBA.Server.DataAccess
             request.HasOne(b => b.Budget)
                 .WithMany()
                 .HasForeignKey(r => new { r.UserId, r.Year })
-                .HasPrincipalKey(b => new { b.UserId, b.Year });
+                .HasPrincipalKey(b => new { b.UserId, b.Year }).OnDelete(DeleteBehavior.Restrict);
 
             request.HasOne(_ => _.Category)
                 .WithMany();

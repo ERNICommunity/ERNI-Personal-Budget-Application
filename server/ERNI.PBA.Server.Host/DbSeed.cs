@@ -15,10 +15,10 @@ namespace ERNI.PBA.Server.Host
             };
 
             var categories = new[] {
-                new RequestCategory { Title = "Sport" },
-                new RequestCategory { Title = "Education" },
-                new RequestCategory { Title = "Health" },
-                new RequestCategory { Title = "Other" }
+                new RequestCategory { Title = "Sport" , IsActive = true},
+                new RequestCategory { Title = "Education" , IsActive = true},
+                new RequestCategory { Title = "Health" , IsActive = true},
+                new RequestCategory { Title = "Other" , IsActive = true}
             };
 
             context.RequestCategories.AddRange(categories);
