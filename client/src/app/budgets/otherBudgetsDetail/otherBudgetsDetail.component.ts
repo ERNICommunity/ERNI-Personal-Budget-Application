@@ -19,14 +19,14 @@ export class OtherBudgetsDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getCurrentUserBudget();
+        this.getUserBudget();
     }
 
-    getCurrentUserBudget(): void {
+    getUserBudget(): void {
         const id = this.route.snapshot.paramMap.get('id');
         const year = this.route.snapshot.paramMap.get('year');
 
-        this.budgetService.getCurrentUserBudgetByYear(id,parseInt(year))
+        this.budgetService.getUserBudgetByYear(id,parseInt(year))
             .subscribe(budget => this.budget = budget);
     }
 

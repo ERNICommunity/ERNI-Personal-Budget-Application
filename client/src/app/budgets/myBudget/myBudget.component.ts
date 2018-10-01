@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {BudgetService} from '../../services/budget.service';
 import {Budget} from '../../model/budget';
 import {User} from '../../model/user';
+import {UserState} from '../../model/userState';
 import {Request} from '../../model/request';
 import {RequestService} from '../../services/request.service';
 import {UserService} from '../../services/user.service';
@@ -19,8 +20,8 @@ export class MyBudgetComponent implements OnInit {
     budget: Budget;
     requests: Request[];
     requestStateType = RequestFilter;
+    userState = UserState;
     user: User;
-    year : number;
     currentAmount : number;
     currentYear: number;
     selectedYear: number;
@@ -68,13 +69,15 @@ export class MyBudgetComponent implements OnInit {
 
     getBudget(year : number) : void {
         this.budgetService.getCurrentUserBudget(year).subscribe(budget => {
-            this.budget = budget,
-            this.getRequests(year)
+            this.budget = budget
+            if(budget)
+            {
+                this.getRequests(year)
+            }
         });
     }
 
     getRequests(year: number): void {
-        this.year = year;
         this.requestService.getRequests(year)
             .subscribe(requests => {this.requests = requests, this.getCurrentAmount(requests)});
     }
@@ -83,13 +86,13 @@ export class MyBudgetComponent implements OnInit {
         var requestsSum = 0;
 
         requests.forEach((req) =>{
-            requestsSum = requestsSum + req.amount});
+            requestsSum += req.amount});
         
         this.currentAmount = this.budget.amount - requestsSum;
     }
 
     openDeleteConfirmationModal(content) {
-        this.modalService.open(content, { centered : true  });
+        this.modalService.open(content, { centered : true, backdrop  : 'static' });
       }
 
     deleteRequest(id: number): void {

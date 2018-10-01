@@ -15,14 +15,17 @@
         </label>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="c(setBudgetsForYear())">Save</button>
+        <button type="button" class="btn btn-primary" (click)="c(setBudgetsForYear())">Set</button>
     </div>
 </ng-template>
+<br>
 
 <button class="btn btn-primary float-right" (click)="openAmountModal(content)" 
     [disabled] = "disableSetOrEditBudgets">Set budgets
 </button>
-<br><br>
+
+<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm"/>
+<br>
 
 <table class="table">
   <thead>
@@ -35,12 +38,12 @@
   </thead>
   <tbody>
 
-  <tr *ngFor="let budget of budgets">
+  <tr *ngFor="let budget of filteredBudgets">
       <td>{{budget.user.lastName}}</td>
       <td>{{budget.user.firstName}}</td>
       <td *ngIf="budget.amount; else empty">{{budget.amount}}</td>
       <ng-template #empty>
-          <td></td>
+          <td>Not defined.</td>
       </ng-template>
 
       <td *ngIf="!disableSetOrEditBudgets; else cannotEdit">

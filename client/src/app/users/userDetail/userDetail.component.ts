@@ -27,6 +27,10 @@ export class UserDetailComponent implements OnInit {
       return user1 && user2 ? user1.id === user2.id : user1 === user2;
     }
 
+    goBack(): void {
+      this.location.back();
+    }
+
     save() : void {
         this.userService.updateUser(this.user).subscribe();
         this.location.back();

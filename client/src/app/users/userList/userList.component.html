@@ -1,4 +1,7 @@
 <h2>Employees</h2>
+<br>
+<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm"/>
+<br>
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/active">Active</a>
@@ -22,7 +25,7 @@
     </thead>
     <tbody>
 
-    <tr *ngFor="let user of users">
+    <tr *ngFor="let user of filteredUsers">
         <th>{{user.id}}</th>
         <td>{{user.lastName}}</td>
         <td>{{user.firstName}}</td>

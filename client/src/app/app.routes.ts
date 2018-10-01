@@ -53,6 +53,7 @@ export const rootRouterConfig: Routes = [
             {path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
             {path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard]},
             {path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard]},
+            {path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [AuthenticationGuard]},
             {path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard]}
         ]
     },

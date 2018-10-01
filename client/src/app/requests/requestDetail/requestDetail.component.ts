@@ -5,7 +5,7 @@ import { Request } from '../../model/request';
 import { Category } from '../../model/category';
 import { RequestService } from '../../services/request.service';
 import { CategoryService } from '../../services/category.service';
-import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-request-detail',
@@ -15,13 +15,16 @@ import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 export class RequestDetailComponent implements OnInit {
   request: Request;
   categories : Category[];
-  ngbModel;
-
+  selectedDate : Date;
+  requestForm: FormGroup;
+  
   constructor(private requestService: RequestService,
               private categoryService : CategoryService,
               private route: ActivatedRoute,
               private location: Location,
-              private ngbDateParserFormatter: NgbDateParserFormatter){ }
+              private fb: FormBuilder){
+                this.createForm();
+               }
 
   ngOnInit() {
     
@@ -32,29 +35,33 @@ export class RequestDetailComponent implements OnInit {
     });
   }
 
-  getRequest(id: number): void {
+  createForm() {
+    this.requestForm = this.fb.group({
+       title: ['', Validators.required ],
+       amount: ['', Validators.required ],
+       occasion: ['', Validators.required ],
+       dateOfOccasion: ['', Validators.required ]
+    });
+  }
 
+  getRequest(id: number): void {
     this.requestService.getRequest(id)
       .subscribe(request => 
         { 
           this.request = request;
-          this.getServerDate(request.date); 
+          this.selectedDate = new Date(request.date);
         });
 
     this.categoryService.getCategories()
      .subscribe(categories => this.categories = categories.filter(cat => cat.isActive == true));
   }
-
-  getServerDate(dateStruct) : void {
-    this.ngbModel = this.ngbDateParserFormatter.parse(dateStruct);
-  }
-
+ 
   goBack(): void {
     this.location.back();
   }
 
-  save(date: Date) : void {
-    this.request.date = date; 
+  save() : void {
+    this.request.date = this.selectedDate; 
    
     this.requestService.updateRequest(this.request)
        .subscribe(() => this.goBack())

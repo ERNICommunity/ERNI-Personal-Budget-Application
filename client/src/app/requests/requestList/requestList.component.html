@@ -1,6 +1,7 @@
 <div [ngSwitch]="requestFilter">
     <h2 *ngSwitchCase="requestFilterType.Pending">Pending requests</h2>
     <h2 *ngSwitchCase="requestFilterType.Approved">Approved requests</h2>
+    <h2 *ngSwitchCase="requestFilterType.ApprovedBySuperior">Approved By Superior requests</h2>
     <h2 *ngSwitchCase="requestFilterType.Rejected">Rejected requests</h2>
 </div>
 
@@ -8,10 +9,13 @@
     <li class="nav-item" *ngFor="let year of years" [ngSwitch]="requestFilter">
         <a *ngSwitchCase="requestFilterType.Pending" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[pendingRoute, year]">{{year}}</a>
         <a *ngSwitchCase="requestFilterType.Approved" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, year]">{{year}}</a>
+        <a *ngSwitchCase="requestFilterType.ApprovedBySuperior" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedBySuperiorRoute, year]">{{year}}</a>
         <a *ngSwitchCase="requestFilterType.Rejected" class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, year]">{{year}}</a>
     </li>
 </ul>
 
+<br>
+<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm"/>
 <br>
 
 <ul class="nav nav-tabs">
@@ -20,6 +24,9 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedRoute, selectedYear]" [routerLinkActiveOptions]="rlao">Approved</a>
+    </li>
+    <li class="nav-item">
+         <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[approvedBySuperiorRoute, selectedYear]" [routerLinkActiveOptions]="rlao">Approved By Superior</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" [routerLinkActive]="['active']" [routerLink]="[rejectedRoute, selectedYear]" [routerLinkActiveOptions]="rlao">Rejected</a>
@@ -39,17 +46,17 @@
     </thead>
     <tbody>
 
-    <tr *ngFor="let request of requests">
-        <th>{{request.user.firtName}} {{request.user.lastName}}</th>
+    <tr *ngFor="let request of filteredRequests">
+        <th>{{request.user.firstName}} {{request.user.lastName}}</th>
         <td>{{request.title}}</td>
         <td>{{request.amount}}</td>
         <td>{{request.category.title}}</td>
         <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
         
-        <td *ngIf="requestFilter != requestFilterType.Approved">
+        <td *ngIf="showApprove()">
             <button class="btn btn-success float-right" title="approve request" (click)="approveRequest(request.id)">Approve</button>
         </td>
-        
+                
         <td *ngIf="requestFilter != requestFilterType.Rejected">
             <div *ngIf="canRejectRequest(request.id); else cannotReject">
                 <button class="btn btn-danger float-right" title="reject request" (click)="rejectRequest(request.id)">Reject</button>

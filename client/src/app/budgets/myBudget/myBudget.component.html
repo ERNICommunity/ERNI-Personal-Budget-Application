@@ -1,10 +1,18 @@
 <div *ngIf="user">
-    <h2>Budget Overview - {{year}} - {{user.firstName}} {{user.lastName}}</h2>
+    <h2>Budget Overview - {{selectedYear}} - {{user.firstName}} {{user.lastName}}</h2>
     <br>
-    <div *ngIf="budget">Allowed amount : {{budget.amount}}</div>
-    <div>Current amount : {{currentAmount}}</div>
+    <div *ngIf="budget, else notDefinedAllowed">Allowed amount : {{budget.amount | number:'1.2-2'}}</div>
+    <div *ngIf="budget, else notDefinedCurrent">Current amount : {{currentAmount | number:'1.2-2'}}</div>
     <div *ngIf = "user.superior">Superior : {{user.superior.firstName}} {{user.superior.lastName}}</div>
+    <ng-template #notDefinedAllowed>
+        <div>Allowed amount : <font color="red"> Not defined budget for year {{selectedYear}}.</font></div>
+    </ng-template>
+    <ng-template #notDefinedCurrent>
+        <div>Current amount : <font color="red"> Not defined budget for year {{selectedYear}}.</font></div>
+    </ng-template>
     <br>
+    <div *ngIf = "user.state != userState.Active"><font color="red" size="5">Your user account is not activated in PBA, please contact HR department!</font></div>
+    
     <h2>Requests</h2>
 
     <ul class="nav nav-pills">
@@ -13,9 +21,9 @@
             </li>
     </ul>
 
-    <a class="btn btn-link float-right" href="#" routerLink="/create-request">Create new request</a>
+    <a *ngIf="selectedYear == currentYear" class="btn btn-link float-right" href="#" routerLink="/create-request">Create new request</a>
 
-    <div *ngIf="requests">
+    <div *ngIf="budget">
         <table class="table">
             <thead>
             <tr>
@@ -31,7 +39,7 @@
 
             <tr *ngFor="let request of requests">
                 <td>{{request.title}}</td>
-                <td>{{request.amount}}</td>
+                <td>{{request.amount | number:'1.2-2'}}</td>
                 <td>{{request.category.title}}</td>
                 <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
                 <td>{{requestStateType[request.state]}}</td>

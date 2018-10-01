@@ -1,5 +1,6 @@
 <div *ngIf="user">
     <h2>{{user.firstName}} {{user.lastName}}</h2>
+    <br>
     <div class="form-check">
         <label class="form-check-label">
             <input type="checkbox" [(ngModel)]="user.isAdmin" class="form-check-input" placeholder="name"/>
@@ -17,5 +18,6 @@
         </select>
     </div>
 
+    <button  class="btn btn-primary mr-1 " (click)="goBack()">back</button>
     <button (click)="save()" class="btn btn-primary">Save</button>
 </div>

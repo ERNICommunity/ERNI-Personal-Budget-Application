@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace server.Controllers
 {
     [Route("api/[controller]")]
-    // [Authorize]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;

@@ -20,6 +20,10 @@ export class RequestService {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approved', this.serviceHelper.getHttpOptions())
   }
 
+  public getApprovedBySuperiorRequests(year: number): Observable<Request[]> {
+    return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approvedBySuperior', this.serviceHelper.getHttpOptions())
+  }
+
   public getRejectedRequests(year: number): Observable<Request[]> {
     return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/rejected', this.serviceHelper.getHttpOptions())
   }

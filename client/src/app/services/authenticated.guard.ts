@@ -15,8 +15,9 @@ export class AuthenticationGuard implements CanActivate {
             queryParams: { 'redirectUrl': route.url }
         };
 
-        if (!this.adalService.userInfo) {
+        if (!this.adalService.isAuthenticated) {
             this.router.navigate(['login'], navigationExtras);
+            return false;
         }
 
         return true;

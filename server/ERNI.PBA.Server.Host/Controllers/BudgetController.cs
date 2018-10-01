@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace server.Controllers
 {
     [Route("api/[controller]")]
-    // [Authorize]
+    [Authorize]
     public class BudgetController : Controller
     {
         private readonly IBudgetRepository _budgetRepository;
@@ -35,14 +35,7 @@ namespace server.Controllers
 
             if (budget != null)
             {
-               var result = new
-                {
-                    Year = budget.Year,
-                    Amount = budget.Amount,
-                    User = budget.User
-                };
-
-                return Ok(result);
+                return Ok(budget);
             }
             else
             {
@@ -50,7 +43,6 @@ namespace server.Controllers
                 var result = new
                 {
                     Year = year,
-                    Amount = 0,
                     User = user
                 };
 
@@ -58,45 +50,30 @@ namespace server.Controllers
             }
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUsersBudgets(int userId, CancellationToken cancellationToken)
+        [HttpGet("user/current/year/{year}")]
+        public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
+            var budget = await _budgetRepository.GetBudget(HttpContext.User.GetId(), year, cancellationToken);
 
-            var result = budgets.Select(_ => new
+            if (budget == null)
             {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
+                return Ok(null);
+            }
 
-            return Ok(result);
-        }
-
-        [HttpGet("year/{year}")]
-        public async Task<IActionResult> GetBudgetsOfYear(int year, CancellationToken cancellationToken)
-        {
-            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-
-            var result = budgets.Select(_ => new
+            var result = new
             {
-                Year = _.Year,
-                User = new
-                {
-                    Id = _.UserId,
-                    FirstName = _.User.FirstName,
-                    LastName = _.User.LastName
-                },
-                Amount = _.Amount,
-            });
+                Year = budget.Year,
+                Amount = budget.Amount,
+            };
 
             return Ok(result);
         }
 
         [HttpGet("users/active/year/{year}")]
-        public async Task<IActionResult> GetBudgetsOfActiveUsersByYear(int year, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-            var activeUsers = await _userRepository.GetAllUsers(_ =>_.State == UserState.Active, cancellationToken);
+            var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
             var result = from au in activeUsers
                          join b in budgets on au.Id equals b.UserId into joined
@@ -115,35 +92,32 @@ namespace server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("user/current/year/{year}")]
-        public async Task<IActionResult> GetCurrentUserBudget(int year, CancellationToken cancellationToken)
+        [HttpGet("year/{year}")]
+        public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(HttpContext.User.GetId(), year, cancellationToken);
+            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
 
-            if (budget != null)
-            {
-                var result = new
-                {
-                    Year = budget.Year,
-                    Amount = budget.Amount,
-                };
-
-                return Ok(result);
-            }
-            else
-            {
-                var result = new
-                {
-                    Year = year,
-                    Amount = 0,
-                };
-
-                return Ok(result);
-            }
+            return Ok(budgets);
         }
 
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUsersBudgets(int userId, CancellationToken cancellationToken)  //not used
+        {
+            var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
+
+            var result = budgets.Select(_ => new
+            {
+                Year = _.Year,
+                Amount = _.Amount,
+            });
+
+            return Ok(result);
+        }
+
+
         [HttpGet("user/current")]
-        public async Task<IActionResult> GetCurrentUsersBudgets(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCurrentUsersBudgets(CancellationToken cancellationToken)  //not used
         {
             var budgets = await _budgetRepository.GetBudgetsByUser(HttpContext.User.GetId(), cancellationToken);
 

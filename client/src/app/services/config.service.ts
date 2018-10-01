@@ -7,7 +7,11 @@ export class ConfigService {
     }
 
     public get apiUrlBase(): any {
-        return 'http://localhost:64246/api/';
+        return 'http://localhost:64244/api/';
+    }
+
+    public get conditionsOfUseUrl() : any {
+        return '';
     }
 
     public get getAdalConfig(): any { 

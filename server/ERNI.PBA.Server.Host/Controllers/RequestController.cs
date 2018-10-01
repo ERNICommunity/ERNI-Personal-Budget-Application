@@ -26,14 +26,16 @@ namespace server.Controllers
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
 
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
+            _budgetRepository = budgetRepository;
             _mailService = new MailService(configuration);
         }
 
@@ -160,10 +162,28 @@ namespace server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRequest([FromBody]PostRequestModel payload, CancellationToken cancellationToken)
         {
+            var userId = User.GetId();
+            var currentYear = DateTime.Now.Year;
+            var budget = await _budgetRepository.GetBudget(userId, currentYear, cancellationToken);
+            var requests = await _requestRepository.GetRequests(currentYear, userId, cancellationToken);
+            decimal requestsSum = 0;
+
+            foreach (var item in requests)
+            {
+                requestsSum += item.Amount;
+            }
+
+            var currentAmount = budget.Amount - requestsSum;
+
+            if (currentAmount < payload.Amount)
+            {
+                return BadRequest("Amount of your request is bigger than your current amount (" + currentAmount + ")!");
+            }
+
             var request = new Request
             {
-                UserId = User.GetId(),
-                Year = DateTime.Now.Year,
+                UserId = userId,
+                Year = currentYear,
                 Title = payload.Title,
                 Amount = payload.Amount,
                 Date = payload.Date,
@@ -189,15 +209,14 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
-            List<RequestState> requestStates = new List<RequestState>() { RequestState.Approved };
+            return await GetRequests(year, new[] { RequestState.Approved }, cancellationToken);
+        }
 
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (!currentUser.IsAdmin)
-            {
-                requestStates.Add(RequestState.ApprovedBySuperior);
-            }
-
-            return await GetRequests(year, requestStates, cancellationToken);
+        [HttpGet("{year}/approvedBySuperior")]
+        [SwaggerResponseExample(200, typeof(RequestExample))]
+        public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
+        {
+            return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
@@ -274,6 +293,26 @@ namespace server.Controllers
             return Ok();
         }
 
+        [HttpGet("ApprovedBySuperior/notifications")]
+        public async Task<IActionResult> SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
+        {
+            var approvedBySuperiorRequests = await _requestRepository.GetRequests(
+                _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
+
+            if (approvedBySuperiorRequests.Any())
+            {
+                var admins = await _userRepository.GetAdminUsers(cancellationToken);
+                var adminsMails = admins.Select(u => u.Username).ToArray();
+
+                foreach (var mail in adminsMails)
+                {
+                    _mailService.SendMail("You have new requests to handle", mail);
+                }
+            }
+
+            return Ok();
+        }
+
         private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
         {
             Expression<Func<Request, bool>> predicate;
@@ -310,7 +349,7 @@ namespace server.Controllers
                     User = new ERNI.PBA.Server.Host.Model.PendingRequests.UserModel
                     {
                         Id = request.UserId,
-                        FirtName = request.Budget.User.FirstName,
+                        FirstName = request.Budget.User.FirstName,
                         LastName = request.Budget.User.LastName
                     },
                     Category = new CategoryModel

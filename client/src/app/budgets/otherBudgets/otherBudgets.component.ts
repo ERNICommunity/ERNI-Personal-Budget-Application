@@ -12,6 +12,7 @@ import { ConfigService } from '../../services/config.service';
 })
 export class OtherBudgetsComponent implements OnInit {
   budgets : Budget[];
+  filteredBudgets : Budget[];
   amount : number;
   year : number;
   currentYear: number;
@@ -19,7 +20,22 @@ export class OtherBudgetsComponent implements OnInit {
   years : number[];
   rlao: object;
   disableSetOrEditBudgets : boolean;
+  
+  private _searchTerm : string;
 
+  get searchTerm() : string{
+    return this._searchTerm;
+  }
+
+  set searchTerm(value : string){
+    this._searchTerm = value;
+    this.filteredBudgets = this.filterBudgets(value);
+  }
+
+  filterBudgets(searchString : string){
+    return this.budgets.filter(budget => budget.user.firstName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1 ||
+     budget.user.lastName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1);
+  }
   
   constructor(private budgetService: BudgetService,
               private modalService: NgbModal,
@@ -62,12 +78,12 @@ export class OtherBudgetsComponent implements OnInit {
 
   getActiveUsersBudgets(year : number): void {
     this.year = year;
-    this.budgetService.getCurrentUsersBudgets(year).subscribe(budgets => this.budgets = budgets);
+    this.budgetService.getCurrentUsersBudgets(year).subscribe(budgets => {this.budgets = budgets, this.filteredBudgets = budgets});
   }
 
   getBudgetsbyYear(year : number): void {
     this.year = year;
-    this.budgetService.getBudgetsByYear(year).subscribe(budgets => this.budgets = budgets);
+    this.budgetService.getBudgetsByYear(year).subscribe(budgets => {this.budgets = budgets,this.filteredBudgets = budgets});
   }
 
   setBudgetsForYear() :void {
@@ -80,7 +96,7 @@ export class OtherBudgetsComponent implements OnInit {
   }
 
   openAmountModal(content) {
-    this.modalService.open(content, { centered : true  });
+    this.modalService.open(content, { centered : true, backdrop  : 'static'  });
   }
 
 }
