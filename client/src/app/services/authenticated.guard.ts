@@ -1,12 +1,20 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, NavigationExtras } from '@angular/router';
+import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, NavigationExtras, CanDeactivate } from '@angular/router';
 import { AdalService } from './adal.service';
+import { UserService } from './user.service';
+import { User } from '../model/user';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-    constructor(private router: Router, private adalService: AdalService) {
+    user : User;
+    isSuperior: boolean;
 
+    constructor(private router: Router, private adalService: AdalService, private userService: UserService) {
+        this.userService.getCurrentUser().subscribe(u => {
+            this.user = u;
+            this.userService.getSubordinateUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
+        });
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
@@ -15,9 +23,26 @@ export class AuthenticationGuard implements CanActivate {
             queryParams: { 'redirectUrl': route.url }
         };
 
-        if (!this.adalService.isAuthenticated) {
+        if (!this.adalService.isAuthenticated)
+        {
             this.router.navigate(['login'], navigationExtras);
             return false;
+        }
+
+        if(route.url[0].path == 'other-budgets' || route.url[0].path == 'users' || route.url[0].path == 'categories' )
+        {
+            if(!this.user.isAdmin)
+            {
+                return false;
+            }
+        }
+
+        if(route.url[0].path == 'requests')
+        {
+            if(!this.user.isAdmin && !this.isSuperior)
+            {
+                return false;
+            }
         }
 
         return true;
