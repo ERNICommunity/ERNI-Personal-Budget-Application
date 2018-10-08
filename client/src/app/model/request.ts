@@ -7,7 +7,9 @@ export class Request {
     amount: number;
     user: User;
     category: Category;
+    categoryId : number;
     title: string;
     date: Date;
     state: RequestState;
+    url : string;
 }

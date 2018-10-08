@@ -15,8 +15,10 @@ import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
 export class RequestDetailComponent implements OnInit {
   request: Request;
   categories : Category[];
+  selectedCategory: Category;
   selectedDate : Date;
   requestForm: FormGroup;
+  httpResponseError : string;
   
   constructor(private requestService: RequestService,
               private categoryService : CategoryService,
@@ -27,6 +29,8 @@ export class RequestDetailComponent implements OnInit {
                }
 
   ngOnInit() {
+
+    this.onChanges();
     
     this.route.params.subscribe((params: Params) => {
       var idParam = params['id']; 
@@ -39,8 +43,22 @@ export class RequestDetailComponent implements OnInit {
     this.requestForm = this.fb.group({
        title: ['', Validators.required ],
        amount: ['', Validators.required ],
-       occasion: ['', Validators.required ],
-       dateOfOccasion: ['', Validators.required ]
+       category: ['', Validators.required ],
+       url: ['', Validators.required ]
+       
+    });
+  }
+
+  onChanges() {
+    this.requestForm.get('category').valueChanges
+    .subscribe(selectedCategory => {
+        if (selectedCategory.isUrlNeeded) {
+            this.requestForm.get('url').enable();
+        }
+        else {
+            this.requestForm.get('url').disable();
+            this.requestForm.get('url').reset();
+        }
     });
   }
 
@@ -50,20 +68,28 @@ export class RequestDetailComponent implements OnInit {
         { 
           this.request = request;
           this.selectedDate = new Date(request.date);
-        });
 
-    this.categoryService.getCategories()
-     .subscribe(categories => this.categories = categories.filter(cat => cat.isActive == true));
-  }
+          this.categoryService.getCategories()
+          .subscribe(categories =>{ this.categories = categories.filter(cat => cat.isActive == true);
+            this.selectedCategory = categories.find(cat => cat.id == this.request.categoryId);
+            });
+        },err => {
+          this.httpResponseError = err.error
+        });
+    }
  
   goBack(): void {
     this.location.back();
   }
 
   save() : void {
-    this.request.date = this.selectedDate; 
+    this.request.date = this.selectedDate;
+    this.request.categoryId = this.selectedCategory.id;
    
     this.requestService.updateRequest(this.request)
-       .subscribe(() => this.goBack())
+       .subscribe(() => this.goBack(),
+       err => {
+        this.httpResponseError = err.error
+      })
   }
 }
