@@ -9,7 +9,9 @@
     <thead>
     <tr>
         <th scope="col">Title</th>
-        <th scope="col">Is Active</th>
+        <th scope="col">Active</th>
+        <th scope="col">Url</th>
+        <th scope="col">Spend Limit</th>
         <th scope="col"></th>
     </tr>
     </thead>
@@ -18,7 +20,15 @@
     <tr *ngFor="let category of categories">
         <th>{{category.title}}</th>
         <th>
-            <input readonly="true" type="checkbox" onclick="return false;" [(ngModel)]="category.isActive"/></th>
+            <input readonly="true" type="checkbox" onclick="return false;" [(ngModel)]="category.isActive"/>
+        </th>
+        <th>
+            <input readonly="true" type="checkbox" onclick="return false;" [(ngModel)]="category.isUrlNeeded"/>
+        </th>
+        <td *ngIf="category.spendLimit; else empty">{{category.spendLimit}}</td>
+            <ng-template #empty>
+                <td>Not defined.</td>
+            </ng-template>
         <td>
             <a class="btn btn-primary float-right mr-1"  role="button"
                 routerLink="/category/{{category.id}}">Edit</a>
@@ -26,3 +36,4 @@
     </tr>
     </tbody>
 </table>
+
