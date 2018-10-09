@@ -33,6 +33,8 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Id = _.Id,
                 Title = _.Title,
                 IsActive = _.IsActive,
+                IsUrlNeeded = _.IsUrlNeeded,
+                SpendLimit = _.SpendLimit
             });
 
             return Ok(result);
@@ -45,8 +47,11 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var result = new
             {
+                Id = requestCategory.Id,
                 Title = requestCategory.Title,
-                IsActive = requestCategory.IsActive
+                IsActive = requestCategory.IsActive,
+                IsUrlNeeded = requestCategory.IsUrlNeeded,
+                SpendLimit = requestCategory.SpendLimit
             };
 
             return Ok(result);

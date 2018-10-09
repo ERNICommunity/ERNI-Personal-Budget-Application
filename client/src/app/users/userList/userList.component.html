@@ -1,48 +1,82 @@
 <h2>Employees</h2>
 <br>
-<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm"/>
+<input
+    class="form-control col-md-6"
+    placeholder="Search employee"
+    id="searchBox"
+    type="text"
+    [(ngModel)]="searchTerm">
 <br>
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/active">Active</a>
+        <a
+            class="nav-link"
+            [routerLinkActive]="['active']"
+            routerLink="/users/active">
+            Active
+        </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/new">New</a>
+        <a
+            class="nav-link"
+            [routerLinkActive]="['active']"
+            routerLink="/users/new">
+            New
+        </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/inactive">Inactive</a>
+        <a
+            class="nav-link"
+            [routerLinkActive]="['active']"
+            routerLink="/users/inactive">
+            Inactive
+        </a>
     </li>
 </ul>
 
 <table class="table">
     <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Last</th>
-        <th scope="col">First</th>
-        <th scope="col"></th>
-    </tr>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Last</th>
+            <th scope="col">First</th>
+            <th scope="col"></th>
+        </tr>
     </thead>
     <tbody>
 
-    <tr *ngFor="let user of filteredUsers">
-        <th>{{user.id}}</th>
-        <td>{{user.lastName}}</td>
-        <td>{{user.firstName}}</td>
+        <tr *ngFor="let user of filteredUsers">
+            <th>{{user.id}}</th>
+            <td>{{user.lastName}}</td>
+            <td>{{user.firstName}}</td>
 
-        <td *ngIf="userState != userStateType.Active">
-            <button class="btn btn-success float-right" title="activate employee"
-            (click)="activateEmployee(user)">Activate</button>
-        </td>
+            <td *ngIf="userState != userStateType.Active">
+                <button
+                    class="btn btn-success float-right"
+                    title="activate employee"
+                    (click)="activateEmployee(user)">
+                    Activate
+                </button>
+            </td>
 
-        <td *ngIf="userState != userStateType.Inactive">
-            <button class="btn btn-danger float-right" title="deactivate employee"
-            (click)="deactivateEmployee(user)">Deactivate</button>
-        </td>
+            <td *ngIf="userState != userStateType.Inactive">
+                <button
+                    class="btn btn-danger float-right"
+                    title="deactivate employee"
+                    (click)="deactivateEmployee(user)">
+                    Deactivate
+                </button>
+            </td>
 
-        <td>
-            <a class="btn btn-primary float-right" href="#" role="button" routerLink="/users/{{user.id}}">Detail</a>
-        </td>
-    </tr>
+            <td>
+                <a
+                    class="btn btn-primary float-right"
+                    href="#"
+                    role="button"
+                    routerLink="/users/{{user.id}}">
+                    Detail
+                </a>
+            </td>
+        </tr>
     </tbody>
 </table>

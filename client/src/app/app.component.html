@@ -1,44 +1,98 @@
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark">
-    <a class="navbar-brand" href="#">PBA</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false" aria-label="Toggle navigation">
+    <a
+        class="navbar-brand"
+        href="#">
+        PBA
+    </a>
+    <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div
+        class="collapse navbar-collapse"
+        id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
 
-            <!--<li class="nav-item">-->
-                <!--<a class="nav-link" [routerLink]="['/']" *ngIf="!adalService.userInfo"-->
-                   <!--ngClass="btn btn-primary">Login</a>-->
-            <!--</li>-->
+            <!-- <li class="nav-item"> -->
+            <!-- <a class="nav-link" [routerLink]="['/']" *ngIf="!adalService.userInfo" -->
+            <!-- ngClass="btn btn-primary">Login</a> -->
+            <!-- </li> -->
 
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo">
-                <a class="nav-link" [routerLink]="['/home']">Home
+            <li
+                class="nav-item"
+                [routerLinkActive]="['active']"
+                *ngIf="adalService.userInfo">
+                <a
+                    class="nav-link"
+                    [routerLink]="['/home']">
+                    Home
                     <span class="sr-only">(current)</span>
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo">
-                <a class="nav-link" routerLink="/my-budget">My budget</a>
+            <li
+                class="nav-item"
+                [routerLinkActive]="['active']"
+                *ngIf="adalService.userInfo">
+                <a
+                    class="nav-link"
+                    routerLink="/my-budget">
+                    My budget
+                </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && isAdmin">
-                <a class="nav-link" routerLink="/other-budgets">Other Budgets</a>
+            <li
+                class="nav-item"
+                [routerLinkActive]="['active']"
+                *ngIf="adalService.userInfo && isAdmin">
+                <a
+                    class="nav-link"
+                    routerLink="/other-budgets">
+                    Other Budgets
+                </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && (isAdmin || isSuperior)">
-                <a class="nav-link" routerLink="/requests">Requests</a>
+            <li
+                class="nav-item"
+                [routerLinkActive]="['active']"
+                *ngIf="adalService.userInfo && (isAdmin || isSuperior)">
+                <a
+                    class="nav-link"
+                    routerLink="/requests">
+                    Requests
+                </a>
             </li>
-            <li class="nav-item" *ngIf="adalService.userInfo && isAdmin">
-                <a class="nav-link" routerLink="/users">Employees</a>
+            <li
+                class="nav-item"
+                *ngIf="adalService.userInfo && isAdmin">
+                <a
+                    class="nav-link"
+                    routerLink="/users">
+                    Employees
+                </a>
             </li>
-            <li class="nav-item" *ngIf="adalService.userInfo && isAdmin">
-                <a class="nav-link" routerLink="/categories">Categories</a>
+            <li
+                class="nav-item"
+                *ngIf="adalService.userInfo && isAdmin">
+                <a
+                    class="nav-link"
+                    routerLink="/categories">
+                    Categories
+                </a>
             </li>
         </ul>
 
         <ul class="navbar-nav float-right">
-            <li class="nav-item float-right" *ngIf="adalService.userInfo">
-                <a class="nav-link" [routerLink]="['/login']">
+            <li
+                class="nav-item float-right"
+                *ngIf="adalService.userInfo">
+                <a
+                    class="nav-link"
+                    [routerLink]="['/login']">
                     Logout page
                 </a>
             </li>
@@ -47,7 +101,6 @@
 
     </div>
 </nav>
-
 
 <!-- <h1 *ngIf="!adalService.userInfo">
   Welcome to {{ title }}, uknown wanderer!

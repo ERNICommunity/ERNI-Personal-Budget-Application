@@ -1,59 +1,103 @@
 <h2>Other Budgets - {{year}}</h2>
 
 <ul class="nav nav-pills">
-    <li class="nav-item" *ngFor="let year of years">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao" [routerLink]="['/other-budgets', year]">{{year}}</a>
+    <li
+        class="nav-item"
+        *ngFor="let year of years">
+        <a
+            class="nav-link"
+            [routerLinkActive]="['active']"
+            [routerLinkActiveOptions]="rlao"
+            [routerLink]="['/other-budgets', year]">
+            {{year}}
+        </a>
     </li>
 </ul>
 
-<ng-template #content let-c="close" let-d="dismiss">
+<ng-template
+    #content
+    let-c="close"
+    let-d="dismiss">
     <div class="modal-body">
-        <button class="btn-xs btn-light float-right" (click)="c()">X</button>
-        <p>You are going to set budgets in year {{year}} for users without budget.</p>
-        <label>Amount:
-            <input type="number" [(ngModel)]="amount"/>
+        <button
+            class="btn-xs btn-light float-right"
+            (click)="c()">
+            X
+        </button>
+        <p>
+            You are going to set budgets in year {{year}} for users without budget.
+        </p>
+        <label>
+            Amount:
+            <input
+                type="number"
+                [(ngModel)]="amount">
         </label>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="c(setBudgetsForYear())">Set</button>
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="c(setBudgetsForYear())">
+            Set
+        </button>
     </div>
 </ng-template>
 <br>
 
-<button class="btn btn-primary float-right" (click)="openAmountModal(content)" 
-    [disabled] = "disableSetOrEditBudgets">Set budgets
+<button
+    class="btn btn-primary float-right"
+    (click)="openAmountModal(content)"
+    [disabled]="disableSetOrEditBudgets">
+    Set budgets
 </button>
 
-<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm"/>
+<input
+    class="form-control col-md-6"
+    placeholder="Search employee"
+    id="searchBox"
+    type="text"
+    [(ngModel)]="searchTerm">
 <br>
 
 <table class="table">
-  <thead>
-  <tr>
-      <th scope="col">Last</th>
-      <th scope="col">First</th>
-      <th scope="col">Amount</th>
-      <th scope="col"></th>
-  </tr>
-  </thead>
-  <tbody>
+    <thead>
+        <tr>
+            <th scope="col">Last</th>
+            <th scope="col">First</th>
+            <th scope="col">Amount</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
 
-  <tr *ngFor="let budget of filteredBudgets">
-      <td>{{budget.user.lastName}}</td>
-      <td>{{budget.user.firstName}}</td>
-      <td *ngIf="budget.amount; else empty">{{budget.amount}}</td>
-      <ng-template #empty>
-          <td>Not defined.</td>
-      </ng-template>
+        <tr *ngFor="let budget of filteredBudgets">
+            <td>{{budget.user.lastName}}</td>
+            <td>{{budget.user.firstName}}</td>
+            <td *ngIf="budget.amount; else empty">{{budget.amount}}</td>
+            <ng-template #empty>
+                <td>Not defined.</td>
+            </ng-template>
 
-      <td *ngIf="!disableSetOrEditBudgets; else cannotEdit">
-          <a class="btn btn-primary float-right" href="#" role="button" routerLink="edit/{{budget.user.id}}">Edit</a>
-      </td>
-      <ng-template #cannotEdit>
-        <td>
-            <button class="btn btn-primary float-right" disabled="true" title="Cannot edit request from years ago.">Edit</button>
-        </td>
-      </ng-template>
-  </tr>
-  </tbody>
+            <td *ngIf="!disableSetOrEditBudgets; else cannotEdit">
+                <a
+                    class="btn btn-primary float-right"
+                    href="#"
+                    role="button"
+                    routerLink="edit/{{budget.user.id}}">
+                    Edit
+                </a>
+            </td>
+            <ng-template #cannotEdit>
+                <td>
+                    <button
+                        class="btn btn-primary float-right"
+                        disabled="true"
+                        title="Cannot edit request from years ago.">
+                        Edit
+                    </button>
+                </td>
+            </ng-template>
+        </tr>
+    </tbody>
 </table>

@@ -79,7 +79,8 @@ namespace server.Controllers
                 Title = request.Title,
                 Amount = request.Amount,
                 Date = request.Date,
-                CategoryId = request.CategoryId
+                CategoryId = request.CategoryId,
+                Url = request.Url
             };
 
             return Ok(result);

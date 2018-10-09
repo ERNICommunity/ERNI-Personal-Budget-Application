@@ -1,14 +1,26 @@
 <ul class="nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Active</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">New</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Inactive</a>
-        </li>
-      </ul>
+    <li class="nav-item">
+        <a
+            class="nav-link active"
+            href="#">
+            Active
+        </a>
+    </li>
+    <li class="nav-item">
+        <a
+            class="nav-link"
+            href="#">
+            New
+        </a>
+    </li>
+    <li class="nav-item">
+        <a
+            class="nav-link disabled"
+            href="#">
+            Inactive
+        </a>
+    </li>
+</ul>
 
 <table class="table">
     <thead>
@@ -25,7 +37,15 @@
             <th>{{user.id}}</th>
             <td>{{user.firstName}}</td>
             <td>{{user.lastName}}</td>
-            <td><a class="btn btn-primary" href="#" role="button" routerLink="/users/{{user.id}}">Detail</a></td>
+            <td>
+                <a
+                    class="btn btn-primary"
+                    href="#"
+                    role="button"
+                    routerLink="/users/{{user.id}}">
+                    Detail
+                </a>
+            </td>
         </tr>
     </tbody>
 </table>
