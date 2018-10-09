@@ -35,7 +35,18 @@ namespace server.Controllers
 
             if (budget != null)
             {
-                return Ok(budget);
+                var result = new
+                {
+                    Year = budget.Year,
+                    Amount = budget.Amount,
+                    User = new User
+                    {
+                        FirstName = budget.User.FirstName,
+                        LastName = budget.User.LastName
+                    }
+                };
+
+                return Ok(result);
             }
             else
             {
@@ -97,7 +108,17 @@ namespace server.Controllers
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
 
-            return Ok(budgets);
+            var result = budgets.Select(_ => new
+            {
+                Year = _.Year,
+                Amount = _.Amount,
+                User = new User
+                {
+                    FirstName = _.User.FirstName,
+                    LastName = _.User.LastName
+                }
+            });
+            return Ok(result);
         }
 
 

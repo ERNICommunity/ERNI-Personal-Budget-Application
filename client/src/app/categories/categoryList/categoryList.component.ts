@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {CategoryService} from '../../services/category.service';
-import {Category} from "../../model/category";
+import { Component, OnInit } from '@angular/core';
+import { CategoryService } from '../../services/category.service';
+import { Category } from "../../model/category";
 
 @Component({
     selector: 'app-category-list',
@@ -26,10 +26,10 @@ export class CategoryListComponent implements OnInit {
         title = title.trim();
         if (!title) { return; }
         this.categoryService.addCategory({ title } as Category)
-            .subscribe(category => this.categories.push(category));
-      }
+            .subscribe(() => this.getCategories());
+    }
 
-      delete(id: number): void {
+    delete(id: number): void {
         this.categoryService.deleteCategory(id).subscribe(() => this.categories = this.categories.filter(cat => cat.id !== id));
-      }
+    }
 }

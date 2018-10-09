@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
@@ -25,7 +26,14 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
         {
-            var result = await _requestCategoryRepository.GetRequestCategories(cancellationToken);
+            var categories = await _requestCategoryRepository.GetRequestCategories(cancellationToken);
+
+            var result = categories.Select(_ => new
+            {
+                Id = _.Id,
+                Title = _.Title,
+                IsActive = _.IsActive,
+            });
 
             return Ok(result);
         }
@@ -35,11 +43,17 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var requestCategory = await _requestCategoryRepository.GetRequestCategory(id, cancellationToken);
 
-            return Ok(requestCategory);
+            var result = new
+            {
+                Title = requestCategory.Title,
+                IsActive = requestCategory.IsActive
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<RequestCategory> AddCategory([FromBody] PostCategoryModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddCategory([FromBody] PostCategoryModel payload, CancellationToken cancellationToken)
         {
             var requestCategory = new RequestCategory
             {
@@ -51,7 +65,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            return requestCategory;
+            return Ok();
         }
 
         [HttpPut]

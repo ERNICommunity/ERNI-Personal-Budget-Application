@@ -51,23 +51,8 @@ namespace server.Controllers
                 Amount = _.Amount,
                 Date = _.Date,
                 State = _.State,
-                Category = _.Category
+                CategoryTitle = _.Category.Title
             }).OrderByDescending(_ => _.Date);
-
-            return Ok(result);
-        }
-
-        [HttpGet("user/{userId}/year/{year}")]
-        public async Task<IActionResult> GetUsersBudget(int userId, int year, CancellationToken cancellationToken)
-        {
-            var requests = await _requestRepository.GetRequests(year, userId, cancellationToken);
-
-            var result = requests.Select(_ => new
-            {
-                Title = _.Title,
-                Amount = _.Amount,
-                Date = _.Date
-            });
 
             return Ok(result);
         }
@@ -84,10 +69,19 @@ namespace server.Controllers
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (currentUser.Id != request.User.Id)
             {
-                return BadRequest("You are trying to read request which is not yours!");
+                return BadRequest("No access for request!");
             }
 
-            return Ok(request);
+            var result = new Request
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Amount = request.Amount,
+                Date = request.Date,
+                CategoryId = request.CategoryId
+            };
+
+            return Ok(result);
         }
 
         [HttpPost("{id}/approve")]
