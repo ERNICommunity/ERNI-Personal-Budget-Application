@@ -166,9 +166,8 @@ namespace server.Controllers
         {
             var userId = User.GetId();
             var currentYear = DateTime.Now.Year;
-
-            decimal currentAmount = await CalculateCurrentAmount(userId, currentYear, cancellationToken);
-            var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, cancellationToken);
+            
+            var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
             
             if (status != "OK")
             {
@@ -239,7 +238,7 @@ namespace server.Controllers
                 return BadRequest("No Access for request!");
             }
 
-            var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount - request.Amount, payload.CategoryId, cancellationToken);
+            var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount, payload.CategoryId, request.Id, cancellationToken);
 
             if (status != "OK")
             {
@@ -363,9 +362,9 @@ namespace server.Controllers
             };
         }
 
-        private async Task<string> CheckAmountForRequest(int userId, int year, decimal amount, int categoryId, CancellationToken cancellationToken)
+        private async Task<string> CheckAmountForRequest(int userId, int year, decimal amount, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
-            decimal currentAmount = await CalculateCurrentAmount(userId, year, cancellationToken);
+            decimal currentAmount = await CalculateCurrentAmount(userId, year, requestId, cancellationToken);
 
             if (currentAmount < amount)
             {
@@ -376,7 +375,7 @@ namespace server.Controllers
 
             if (category.SpendLimit != null)
             {
-                decimal requestsSumForCategory = await CalculateRequestsSumForCategory(userId, year, category.Id, cancellationToken);
+                decimal requestsSumForCategory = await CalculateAmountSumForCategory(userId, year, category.Id, requestId, cancellationToken);
 
                 var currentAmountForCategory = category.SpendLimit - requestsSumForCategory;
 
@@ -390,10 +389,11 @@ namespace server.Controllers
             return "OK";
         }
 
-        private async Task<decimal> CalculateCurrentAmount(int userId, int year, CancellationToken cancellationToken)
+        private async Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
-            var requests = await _requestRepository.GetRequests(year, userId, cancellationToken);
+            var requests = (await _requestRepository.GetRequests(year, userId, cancellationToken)).Where(req => req.Id != requestId);
+            
             decimal requestsSum = 0;
 
             foreach (var item in requests)
@@ -406,9 +406,9 @@ namespace server.Controllers
             return currentAmount;
         }
 
-        private async Task<decimal> CalculateRequestsSumForCategory(int userId, int year, int categoryId, CancellationToken cancellationToken)
+        private async Task<decimal> CalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
-            var requestsOfCategory = (await _requestRepository.GetRequests(year, userId, cancellationToken)).Where(req => req.CategoryId == categoryId);
+            var requestsOfCategory = (await _requestRepository.GetRequests(year, userId, cancellationToken)).Where(req => req.CategoryId == categoryId && req.Id != requestId);
 
             decimal requestsSumForCategory = 0;
 

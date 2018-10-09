@@ -108,7 +108,7 @@
             </th>
             <td>{{request.title}}</td>
             <td>{{request.amount}}</td>
-            <td>{{request.categoryTitle}}</td>
+            <td>{{request.category.title}}</td>
             <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
 
             <td *ngIf="showApprove()">

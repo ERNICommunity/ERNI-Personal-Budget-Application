@@ -41,6 +41,7 @@ namespace server.Controllers
                     Amount = budget.Amount,
                     User = new User
                     {
+                        Id = budget.User.Id,
                         FirstName = budget.User.FirstName,
                         LastName = budget.User.LastName
                     }
@@ -182,7 +183,7 @@ namespace server.Controllers
 
         [HttpPut]
         public async Task<IActionResult> AddOrUpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
-         {
+        {
             var budget = await _budgetRepository.GetBudget(payload.User.Id, payload.Year, cancellationToken);
 
             if (budget == null)
