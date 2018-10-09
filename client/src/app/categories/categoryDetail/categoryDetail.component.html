@@ -1,12 +1,55 @@
 <div *ngIf="category">
-        <h2>Details</h2>
-        <br>
-        <div>
-          <label>category title:
-            <input [(ngModel)]="category.title" placeholder="title"/>
-          </label>
-        </div>
-        <br>
-        <button  class="btn btn-primary mr-1 " (click)="goBack()">go back</button>
-        <button  class="btn btn-primary " (click)="save()">save</button>
-      </div>
+    <h2>Details</h2>
+    <br>
+    <div class="form-input">
+        <label class="form-input-label">
+            Category title:
+            <input
+                [(ngModel)]="category.title"
+                class="form-input"
+                placeholder="title">
+        </label>
+    </div>
+    <br>
+    <div class="form-check">
+        <label class="form-check-label">
+            <input
+                type="checkbox"
+                [(ngModel)]="category.isActive"
+                class="form-check-input">
+            Active
+        </label>
+    </div>
+    <br>
+    <div class="form-check">
+        <label class="form-check-label">
+            <input
+                type="checkbox"
+                [(ngModel)]="category.isUrlNeeded"
+                class="form-check-input">
+            Url
+        </label>
+    </div>
+    <br>
+    <div class="form-input">
+        <label class="form-input-label">
+            Spend limit:
+            <input
+                type="number"
+                [(ngModel)]="category.spendLimit"
+                class="form-input"
+                placeholder="0.00">
+        </label>
+    </div>
+    <br>
+    <button
+        class="btn btn-primary mr-1"
+        (click)="goBack()">
+        back
+    </button>
+    <button
+        class="btn btn-success"
+        (click)="save()">
+        save
+    </button>
+</div>

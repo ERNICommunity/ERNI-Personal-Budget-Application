@@ -17,7 +17,7 @@ namespace ERNI.PBA.Server.Host.Examples
                     User = new Model.PendingRequests.UserModel
                     {
                         Id = 1,
-                        FirtName = "Johnny",
+                        FirstName = "Johnny",
                         LastName = "Cash"
                     },
                     Category = new Model.PendingRequests.CategoryModel
@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Host.Examples
                     User = new Model.PendingRequests.UserModel
                     {
                         Id = 1,
-                        FirtName = "Hans",
+                        FirstName = "Hans",
                         LastName = "Gruber"
                     },
                     Category = new Model.PendingRequests.CategoryModel

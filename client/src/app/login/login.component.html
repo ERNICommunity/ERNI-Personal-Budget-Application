@@ -1,7 +1,15 @@
 <div *ngIf="!isLoggedIn">
-    <button (click)="login()" class="btn btn-primary">Login with my AAD account</button>
+    <button
+        (click)="login()"
+        class="btn btn-primary">
+        Login with my AAD account
+    </button>
 </div>
 
 <div *ngIf="isLoggedIn">
-    <button (click)="logout()" class="btn btn-primary">Logout</button>
+    <button
+        (click)="logout()"
+        class="btn btn-primary">
+        Logout
+    </button>
 </div>

@@ -49,5 +49,12 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Where(u => u.SuperiorId == superiorId)
                 .ToArrayAsync(cancellationToken);
         }
+
+        public Task<User[]> GetAdminUsers(CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Where(u => u.IsAdmin)
+                .ToArrayAsync(cancellationToken);
+        }
     }
 }

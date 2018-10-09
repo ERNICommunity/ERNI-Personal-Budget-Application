@@ -18,5 +18,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         /// Gets the subordinate users for the superior. 
         /// </summary>
         Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken);
+
+        Task<User[]> GetAdminUsers(CancellationToken cancellationToken);
     }
 }

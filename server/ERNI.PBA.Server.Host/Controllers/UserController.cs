@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
@@ -10,11 +5,14 @@ using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace server.Controllers
 {
     [Route("api/[controller]")]
-    // [Authorize]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;

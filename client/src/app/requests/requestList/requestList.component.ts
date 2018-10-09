@@ -6,6 +6,7 @@ import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { RequestState } from '../../model/requestState';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
     selector: 'app-request-list',
@@ -15,10 +16,12 @@ import { RequestState } from '../../model/requestState';
 export class RequestListComponent implements OnInit {
     pendingRoute: string = "/requests/pending";
     approvedRoute: string= "/requests/approved";
+    approvedBySuperiorRoute: string= "/requests/approved-by-superior";
     rejectedRoute: string= "/requests/rejected";
 
     isAdmin: boolean;
     requests: Request[];
+    filteredRequests : Request[];
     requestFilter : RequestFilter;
     requestFilterType = RequestFilter;
     selectedYear: number;
@@ -26,13 +29,34 @@ export class RequestListComponent implements OnInit {
     years : number[];
     rlao: object;
 
-    constructor(private requestService: RequestService, private userService: UserService, private route: ActivatedRoute) {
-        this.years = []; 
-        this.currentYear = (new Date()).getFullYear();
-                
-        for (var year = 2017; year <= this.currentYear + 1; year++) {
-             this.years.push(year);
-        }
+    private _searchTerm : string;
+
+    get searchTerm() : string{
+        return this._searchTerm;
+    }
+
+    set searchTerm(value : string){
+        this._searchTerm = value;
+        this.filteredRequests = this.filterRequests(value);
+    }
+
+    filterRequests(searchString : string){
+        return this.requests.filter(request => request.user.firstName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1 ||
+        request.user.lastName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1);
+    }
+
+    constructor(private requestService: RequestService,
+        private userService: UserService,
+        private route: ActivatedRoute,
+        private config: ConfigService,
+        ) {
+
+            this.years = []; 
+            this.currentYear = (new Date()).getFullYear();
+                    
+            for (var year = this.currentYear; year >= config.getOldestYear; year--) {
+                this.years.push(year);
+            }
     }
 
     ngOnInit() {
@@ -64,6 +88,9 @@ export class RequestListComponent implements OnInit {
             case RequestFilter.Approved:
                 requests = this.requestService.getApprovedRequests(year);
                 break;
+            case RequestFilter.ApprovedBySuperior:
+                requests = this.requestService.getApprovedBySuperiorRequests(year);
+                break;
             case RequestFilter.Pending:
                 requests = this.requestService.getPendingRequests(year);
                 break;
@@ -74,17 +101,15 @@ export class RequestListComponent implements OnInit {
                 break;
         }
 
-        requests.subscribe(requests => this.requests = requests);
+        requests.subscribe(requests => {this.requests = requests, this.filteredRequests = this.requests});
     }
 
     approveRequest(id: number): void {
-        this.requests = this.requests.filter(req => req.id !== id);
-        this.requestService.approveRequest(id).subscribe();
+        this.requestService.approveRequest(id).subscribe(() => {this.requests = this.requests.filter(req => req.id !== id),this.filteredRequests = this.requests});
       }
 
     rejectRequest(id: number): void {
-        this.requests = this.requests.filter(req => req.id !== id);
-        this.requestService.rejectRequest(id).subscribe();
+        this.requestService.rejectRequest(id).subscribe(() => {this.requests =this.requests.filter(req => req.id !== id),this.filteredRequests = this.requests});
     }
 
     canRejectRequest(id: number): boolean {
@@ -94,5 +119,13 @@ export class RequestListComponent implements OnInit {
 
         var request = this.requests.find(req => req.id == id);
         return this.requestFilter != this.requestFilterType.Rejected && request.state != RequestState.Approved;
+    }
+
+    showApprove(): boolean {
+        if (this.isAdmin) {
+            return this.requestFilter != this.requestFilterType.Approved && this.requestFilter != this.requestFilterType.Rejected;
+        }
+     
+        return this.requestFilter == this.requestFilterType.Pending;
     }
 }

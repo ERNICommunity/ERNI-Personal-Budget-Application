@@ -1,14 +1,17 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class RequestCategoryController : Controller
     {
         private readonly IRequestCategoryRepository _requestCategoryRepository;
@@ -23,7 +26,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
         {
-            var result = await _requestCategoryRepository.GetRequestCategories(cancellationToken);
+            var categories = await _requestCategoryRepository.GetRequestCategories(cancellationToken);
+
+            var result = categories.Select(_ => new
+            {
+                Id = _.Id,
+                Title = _.Title,
+                IsActive = _.IsActive,
+                IsUrlNeeded = _.IsUrlNeeded,
+                SpendLimit = _.SpendLimit
+            });
 
             return Ok(result);
         }
@@ -33,22 +45,33 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var requestCategory = await _requestCategoryRepository.GetRequestCategory(id, cancellationToken);
 
-            return Ok(requestCategory);
+            var result = new
+            {
+                Id = requestCategory.Id,
+                Title = requestCategory.Title,
+                IsActive = requestCategory.IsActive,
+                IsUrlNeeded = requestCategory.IsUrlNeeded,
+                SpendLimit = requestCategory.SpendLimit
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<RequestCategory> AddCategory([FromBody] PostCategoryModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddCategory([FromBody] PostCategoryModel payload, CancellationToken cancellationToken)
         {
             var requestCategory = new RequestCategory
             {
-                Title = payload.Title
+                Title = payload.Title,
+                IsActive = true,
+                IsUrlNeeded = false
             }; 
 
             _requestCategoryRepository.AddRequestCategory(requestCategory);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            return requestCategory;
+            return Ok();
         }
 
         [HttpPut]
@@ -62,6 +85,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             requestCategory.Title = payload.Title;
+            requestCategory.IsActive = payload.IsActive;
+            requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
+            requestCategory.SpendLimit = payload.SpendLimit;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

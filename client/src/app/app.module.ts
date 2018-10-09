@@ -35,6 +35,9 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { AuthInterceptor } from './interceptors/authInterceptor'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BudgetsComponent } from './budgets/budgets.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -48,6 +51,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
         CategoriesComponent,
         UserListComponent,
         UserDetailComponent,
+        BudgetsComponent,
         MyBudgetComponent,
         CategoriesComponent,
         CategoryListComponent,
@@ -63,7 +67,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
         HttpClientModule,
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig, {useHash: true}),
-        OAuthHandshakeModule
+        OAuthHandshakeModule,
+        BsDatepickerModule.forRoot(),
+        ReactiveFormsModule
     ],
     providers: [
         AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService, 

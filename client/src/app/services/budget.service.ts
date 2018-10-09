@@ -20,15 +20,19 @@ export class BudgetService {
     return this.http.get<Budget>(this.configService.apiUrlBase + this.url +  'user/current/year/'+ year , this.serviceHelper.getHttpOptions())
   }
 
-  public getCurrentUserBudgetByYear(userId, year : number): Observable<Budget> {
+  public getUserBudgetByYear(userId, year : number): Observable<Budget> {
     return this.http.get<Budget>(this.configService.apiUrlBase + this.url +  'user/'+ userId +'/year/'+ year , this.serviceHelper.getHttpOptions())
+  }
+
+  public getBudgetsByYear(year : number): Observable<Budget[]> {
+    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'year/'+ year , this.serviceHelper.getHttpOptions())
   }
 
   public updateBudget(budget: Budget): Observable<any> {
     return this.http.put(this.configService.apiUrlBase + this.url, budget, this.serviceHelper.getHttpOptions());
   }
 
-  public setBudgetsForCurrentYear(amount : number): Observable<any> {
-    return this.http.post(this.configService.apiUrlBase + this.url + amount, this.serviceHelper.getHttpOptions());
+  public setBudgetsForYear(budget: Budget): Observable<any> {
+    return this.http.post(this.configService.apiUrlBase + this.url, budget, this.serviceHelper.getHttpOptions());
   }
 }
