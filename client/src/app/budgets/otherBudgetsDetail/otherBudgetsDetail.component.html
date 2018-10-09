@@ -1,12 +1,26 @@
 <div *ngIf="budget">
-    <h2>Budget Edit - {{budget.year}} - {{budget.user.firstName}} {{budget.user.lastName}}</h2>
+    <h2>
+        Budget Edit - {{budget.year}} - {{budget.user.firstName}} {{budget.user.lastName}}
+    </h2>
     <br>
     <div>
-      <label>Amount:
-        <input type="number" [(ngModel)]="budget.amount" placeholder="0.00"/>
-      </label>
+        <label>
+            Amount:
+            <input
+                type="number"
+                [(ngModel)]="budget.amount"
+                placeholder="0.00">
+        </label>
     </div>
     <br>
-    <button  class="btn btn-primary mr-1 " (click)="goBack()">back</button>
-    <button  class="btn btn-primary " (click)="save()">save</button>
-  </div>
+    <button
+        class="btn btn-primary mr-1"
+        (click)="goBack()">
+        back
+    </button>
+    <button
+        class="btn btn-success"
+        (click)="save()">
+        save
+    </button>
+</div>
