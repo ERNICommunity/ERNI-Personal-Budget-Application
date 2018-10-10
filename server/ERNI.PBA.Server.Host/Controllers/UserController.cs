@@ -35,6 +35,7 @@ namespace server.Controllers
             }
 
             user.IsAdmin = payload.IsAdmin;
+            user.IsSuperior = payload.IsSuperior;
             user.SuperiorId = payload.Superior?.Id;
             user.State = payload.State;
 
@@ -53,6 +54,7 @@ namespace server.Controllers
             {
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
+                IsSuperior = user.IsSuperior,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
@@ -74,6 +76,7 @@ namespace server.Controllers
             {
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
+                IsSuperior = user.IsSuperior,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
@@ -106,6 +109,7 @@ namespace server.Controllers
             {
                 Id = _.Id,
                 IsAdmin = _.IsAdmin,
+                IsSuperior = _.IsSuperior,
                 FirstName = _.FirstName,
                 LastName = _.LastName,
                 State = _.State,

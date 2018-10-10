@@ -116,11 +116,11 @@ namespace server.Controllers
 
             if(request.Url != null)
             {
-                _mailService.SendMail("Your request " + request.Title + "with Url: "+ request.Url +" has been " + request.State + ".", request.User.Username);
+                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url +" has been " + request.State + ".", request.User.Username);
                 return Ok();
             }
 
-            _mailService.SendMail("Your request " + request.Title + " has been " + request.State + ".", request.User.Username);
+            _mailService.SendMail("Your request: " + request.Title + " of amount: "+ request.Amount + " has been " + request.State + ".", request.User.Username);
 
             return Ok();
         }
@@ -156,7 +156,7 @@ namespace server.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            _mailService.SendMail("Your request " + request.Title + " has been " + request.State + ".", request.User.Username);
+            _mailService.SendMail("Your request: " + request.Title + " has been " + request.State + ".", request.User.Username);
 
             return Ok();
         }

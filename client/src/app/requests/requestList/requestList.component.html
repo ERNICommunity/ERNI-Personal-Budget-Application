@@ -125,8 +125,14 @@
                     <button
                         class="btn btn-danger float-right"
                         title="reject request"
-                        (click)="rejectRequest(request.id)">
+                        (click)="openDeleteConfirmationModal(rejectConfirmation)">
                         Reject
+                    </button>
+                    <button
+                        class="btn btn-danger float-right mr-1"
+                        title="delete request"
+                        (click)="openDeleteConfirmationModal(deleteConfirmation)">
+                        Delete
                     </button>
                 </div>
                 <ng-template #cannotReject>
@@ -135,6 +141,62 @@
                         title="Cannot reject the request. It was approved by administrator.">
                         Reject
                     </button>
+                </ng-template>
+                <ng-template
+                    #deleteConfirmation
+                    let-c="close"
+                    let-d="dismiss">
+
+                    <div class="modal-body float-centre">
+                        <button
+                            class="btn-xs btn-light float-right"
+                            (click)="c()">
+                            X
+                        </button>
+                        <label>
+                            Are you sure you want to delete {{request.title}} request?
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            class="btn btn-danger mr-1"
+                            (click)="c(deleteRequest(request.id))">
+                            Yes
+                        </button>
+                        <button
+                            class="btn btn-primary"
+                            (click)="c()">
+                            No
+                        </button>
+                    </div>
+                </ng-template>
+                <ng-template
+                    #rejectConfirmation
+                    let-c="close"
+                    let-d="dismiss">
+
+                    <div class="modal-body float-centre">
+                        <button
+                            class="btn-xs btn-light float-right"
+                            (click)="c()">
+                            X
+                        </button>
+                        <label>
+                            Are you sure you want to reject {{request.title}} request?
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            class="btn btn-danger mr-1"
+                            (click)="c(rejectRequest(request.id))">
+                            Yes
+                        </button>
+                        <button
+                            class="btn btn-primary"
+                            (click)="c()">
+                            No
+                        </button>
+                    </div>
                 </ng-template>
             </td>
         </tr>
