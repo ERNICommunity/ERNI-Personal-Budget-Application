@@ -10,6 +10,7 @@ using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace server.Controllers
 {
@@ -20,194 +21,261 @@ namespace server.Controllers
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
-        public BudgetController(IBudgetRepository budgetRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public BudgetController(IBudgetRepository budgetRepository, IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<BudgetController> logger)
         {
             _budgetRepository = budgetRepository;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         [HttpGet("user/{userId}/year/{year}")]
         public async Task<IActionResult> GetUserBudgetByYear(int userId, int year, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
-
-            if (budget != null)
+            try
             {
-                var result = new
+                var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
+
+                if (budget != null)
                 {
-                    Year = budget.Year,
-                    Amount = budget.Amount,
-                    User = new User
+                    var result = new
                     {
-                        Id = budget.User.Id,
-                        FirstName = budget.User.FirstName,
-                        LastName = budget.User.LastName
-                    }
-                };
+                        Year = budget.Year,
+                        Amount = budget.Amount,
+                        User = new User
+                        {
+                            Id = budget.User.Id,
+                            FirstName = budget.User.FirstName,
+                            LastName = budget.User.LastName
+                        }
+                    };
 
-                return Ok(result);
-            }
-            else
-            {
-                var user = await _userRepository.GetUser(userId, cancellationToken);
-                var result = new
+                    return Ok(result);
+                }
+                else
                 {
-                    Year = year,
-                    User = user
-                };
+                    var user = await _userRepository.GetUser(userId, cancellationToken);
+                    var result = new
+                    {
+                        Year = year,
+                        User = user
+                    };
 
-                return Ok(result);
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
             }
         }
 
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(HttpContext.User.GetId(), year, cancellationToken);
-
-            if (budget == null)
+            try
             {
-                return Ok(null);
+                var budget = await _budgetRepository.GetBudget(HttpContext.User.GetId(), year, cancellationToken);
+
+                if (budget == null)
+                {
+                    return Ok(null);
+                }
+
+                var result = new
+                {
+                    Year = budget.Year,
+                    Amount = budget.Amount,
+                };
+
+                return Ok(result);
             }
-
-            var result = new
+            catch (Exception ex)
             {
-                Year = budget.Year,
-                Amount = budget.Amount,
-            };
-
-            return Ok(result);
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("users/active/year/{year}")]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-            var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
+            try
+            {
+                var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
+                var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-            var result = from au in activeUsers
-                         join b in budgets on au.Id equals b.UserId into joined
-                         from j in joined.DefaultIfEmpty(new Budget())
-                         select new
-                         {
-                             User = new
+                var result = from au in activeUsers
+                             join b in budgets on au.Id equals b.UserId into joined
+                             from j in joined.DefaultIfEmpty(new Budget())
+                             select new
                              {
-                                 Id = au.Id,
-                                 FirstName = au.FirstName,
-                                 LastName = au.LastName
-                             },
-                             Amount = j.Amount
-                         };
+                                 User = new
+                                 {
+                                     Id = au.Id,
+                                     FirstName = au.FirstName,
+                                     LastName = au.LastName
+                                 },
+                                 Amount = j.Amount
+                             };
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("year/{year}")]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-
-            var result = budgets.Select(_ => new
+            try
             {
-                Year = _.Year,
-                Amount = _.Amount,
-                User = new User
+                var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
+
+                var result = budgets.Select(_ => new
                 {
-                    FirstName = _.User.FirstName,
-                    LastName = _.User.LastName
-                }
-            });
-            return Ok(result);
+                    Year = _.Year,
+                    Amount = _.Amount,
+                    User = new User
+                    {
+                        FirstName = _.User.FirstName,
+                        LastName = _.User.LastName
+                    }
+                });
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
 
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUsersBudgets(int userId, CancellationToken cancellationToken)  //not used
         {
-            var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
-
-            var result = budgets.Select(_ => new
+            try
             {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
+                var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
 
-            return Ok(result);
+                var result = budgets.Select(_ => new
+                {
+                    Year = _.Year,
+                    Amount = _.Amount,
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
+            
         }
 
 
         [HttpGet("user/current")]
         public async Task<IActionResult> GetCurrentUsersBudgets(CancellationToken cancellationToken)  //not used
         {
-            var budgets = await _budgetRepository.GetBudgetsByUser(HttpContext.User.GetId(), cancellationToken);
-
-            var result = budgets.Select(_ => new
+            try
             {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
+                var budgets = await _budgetRepository.GetBudgetsByUser(HttpContext.User.GetId(), cancellationToken);
 
-            return Ok(result);
+                var result = budgets.Select(_ => new
+                {
+                    Year = _.Year,
+                    Amount = _.Amount,
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> SetBudgetsForCurrentUsers([FromBody] Budget payload, CancellationToken cancellationToken)
         {
-            var year = payload.Year;
-            var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
-            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-            
-            foreach (var user in activeUsers)
+            try
             {
-                var exists = budgets.Any(x => x.UserId == user.Id);
+                var year = payload.Year;
+                var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
+                var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
 
-                if (!exists)
+                foreach (var user in activeUsers)
                 {
-                    var budget = new Budget()
+                    var exists = budgets.Any(x => x.UserId == user.Id);
+
+                    if (!exists)
                     {
-                        UserId = user.Id,
-                        Year = year,
-                        Amount = payload.Amount
-                    };
+                        var budget = new Budget()
+                        {
+                            UserId = user.Id,
+                            Year = year,
+                            Amount = payload.Amount
+                        };
 
-                    _budgetRepository.AddBudget(budget);
+                        _budgetRepository.AddBudget(budget);
+                    }
                 }
-            }
 
-            await _unitOfWork.SaveChanges(cancellationToken);
-            
-            return Ok();
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> AddOrUpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(payload.User.Id, payload.Year, cancellationToken);
-
-            if (budget == null)
+            try
             {
-                budget = new Budget()
+                var budget = await _budgetRepository.GetBudget(payload.User.Id, payload.Year, cancellationToken);
+
+                if (budget == null)
                 {
-                    UserId = payload.User.Id,
-                    Year = payload.Year,
-                    Amount = payload.Amount
-                };
+                    budget = new Budget()
+                    {
+                        UserId = payload.User.Id,
+                        Year = payload.Year,
+                        Amount = payload.Amount
+                    };
 
-                _budgetRepository.AddBudget(budget);
+                    _budgetRepository.AddBudget(budget);
 
-                await _unitOfWork.SaveChanges(cancellationToken);
+                    await _unitOfWork.SaveChanges(cancellationToken);
 
-                return Ok();
+                    return Ok();
+                }
+                else
+                {
+                    budget.Amount = payload.Amount;
+
+                    await _unitOfWork.SaveChanges(cancellationToken);
+
+                    return Ok();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                budget.Amount = payload.Amount;
-
-                await _unitOfWork.SaveChanges(cancellationToken);
-
-                return Ok();
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
             }
         }
     }

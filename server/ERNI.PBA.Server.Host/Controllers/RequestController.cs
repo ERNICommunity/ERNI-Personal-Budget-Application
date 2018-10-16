@@ -9,6 +9,7 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,9 @@ namespace server.Controllers
         private readonly IRequestCategoryRepository _requestCategoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
+        private readonly ILogger _logger;
 
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration)
+        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -38,304 +40,426 @@ namespace server.Controllers
             _budgetRepository = budgetRepository;
             _requestCategoryRepository = requestCategoryRepository;
             _mailService = new MailService(configuration);
+            _logger = logger;
         }
 
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUsersRequests(int year, CancellationToken cancellationToken)
         {
-            var requests = await _requestRepository.GetRequests(year, HttpContext.User.GetId(), cancellationToken);
-
-            var result = requests.Select(_ => new
+            try
             {
-                Id = _.Id,
-                Title = _.Title,
-                Amount = _.Amount,
-                Date = _.Date,
-                State = _.State,
-                CategoryTitle = _.Category.Title
-            }).OrderByDescending(_ => _.Date);
+                var requests = await _requestRepository.GetRequests(year, HttpContext.User.GetId(), cancellationToken);
 
-            return Ok(result);
+                var result = requests.Select(_ => new
+                {
+                    Id = _.Id,
+                    Title = _.Title,
+                    Amount = _.Amount,
+                    Date = _.Date,
+                    State = _.State,
+                    CategoryTitle = _.Category.Title
+                }).OrderByDescending(_ => _.Date);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-            if (request == null)
+            try
             {
-                return BadRequest("Not a valid id");
+                var request = await _requestRepository.GetRequest(id, cancellationToken);
+                if (request == null)
+                {
+                    _logger.LogWarning("Not a valid id");
+                    return BadRequest("Not a valid id");
+                }
+
+                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+                if (currentUser.Id != request.User.Id)
+                {
+                    _logger.LogWarning("No access for request!");
+                    return BadRequest("No access for request!");
+                }
+
+                var result = new Request
+                {
+                    Id = request.Id,
+                    Title = request.Title,
+                    Amount = request.Amount,
+                    Date = request.Date,
+                    CategoryId = request.CategoryId,
+                    Url = request.Url
+                };
+
+                return Ok(result);
             }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.Id != request.User.Id)
+            catch (Exception ex)
             {
-                return BadRequest("No access for request!");
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
             }
-
-            var result = new Request
-            {
-                Id = request.Id,
-                Title = request.Title,
-                Amount = request.Amount,
-                Date = request.Date,
-                CategoryId = request.CategoryId,
-                Url = request.Url
-            };
-
-            return Ok(result);
         }
 
         [HttpPost("{id}/approve")]
         public async Task<IActionResult> ApproveRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-            if (request == null)
+            try
             {
-                return BadRequest("Not a valid id");
-            }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.IsAdmin)
-            {
-                request.State = RequestState.Approved;
-            }
-            else
-            {
-                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                if (!subordinatesIds.Contains(request.UserId))
+                var request = await _requestRepository.GetRequest(id, cancellationToken);
+                if (request == null)
                 {
-                    return BadRequest($"User cannot manipulate the request id={request.Id}");
+                    _logger.LogWarning("Not a valid id");
+                    return BadRequest("Not a valid id");
                 }
 
-                request.State = RequestState.ApprovedBySuperior;
-            }
+                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+                if (currentUser.IsAdmin)
+                {
+                    request.State = RequestState.Approved;
+                }
+                else
+                {
+                    var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
+                    var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                    if (!subordinatesIds.Contains(request.UserId))
+                    {
+                        _logger.LogWarning($"User cannot manipulate the request id={request.Id}");
+                        return BadRequest($"User cannot manipulate the request id={request.Id}");
+                    }
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+                    request.State = RequestState.ApprovedBySuperior;
+                }
 
-            if(request.Url != null)
-            {
-                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url +" has been " + request.State + ".", request.User.Username);
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                if (request.Url != null)
+                {
+                    _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".", request.User.Username);
+                    return Ok();
+                }
+
+                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".", request.User.Username);
+
                 return Ok();
+
             }
-
-            _mailService.SendMail("Your request: " + request.Title + " of amount: "+ request.Amount + " has been " + request.State + ".", request.User.Username);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                if (ex.Message == "MailServiceException")
+                {
+                    _logger.LogWarning(ex, "Unhandled exception");
+                    return Ok();
+                }
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpPost("{id}/reject")]
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-            if (request == null)
+            try
             {
-                return BadRequest("Not a valid id");
+                var request = await _requestRepository.GetRequest(id, cancellationToken);
+                if (request == null)
+                {
+                    return BadRequest("Not a valid id");
+                }
+
+                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+                if (!currentUser.IsAdmin)
+                {
+                    // current user must be superior of request's user
+                    var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
+                    var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                    if (!subordinatesIds.Contains(request.UserId))
+                    {
+                        return BadRequest($"User cannot manipulate the request id={request.Id}");
+                    }
+
+                    // if request was approved by admin, it cannot be rejected by superior
+                    if (request.State == RequestState.Approved)
+                    {
+                        return BadRequest($"Superior cannot reject the request approved by admin. Request id={request.Id}");
+                    }
+                }
+
+                request.State = RequestState.Rejected;
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                _mailService.SendMail("Your request: " + request.Title + " has been " + request.State + ".", request.User.Username);
+
+                return Ok();
+
             }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (!currentUser.IsAdmin)
+            catch (Exception ex)
             {
-                // current user must be superior of request's user
-                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                if (!subordinatesIds.Contains(request.UserId))
+                if (ex.Message == "MailServiceException")
                 {
-                    return BadRequest($"User cannot manipulate the request id={request.Id}");
+                    _logger.LogWarning(ex, "Unhandled exception");
+                    return Ok();
                 }
-
-                // if request was approved by admin, it cannot be rejected by superior
-                if (request.State == RequestState.Approved)
-                {
-                    return BadRequest($"Superior cannot reject the request approved by admin. Request id={request.Id}");
-                }
-            }      
-            
-            request.State = RequestState.Rejected;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            _mailService.SendMail("Your request: " + request.Title + " has been " + request.State + ".", request.User.Username);
-
-            return Ok();
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> AddRequest([FromBody]PostRequestModel payload, CancellationToken cancellationToken)
         {
-            var userId = User.GetId();
-            var currentYear = DateTime.Now.Year;
-            
-            var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
-            
-            if (status != "OK")
+            try
             {
-                return BadRequest(status);
+                var userId = User.GetId();
+                var currentYear = DateTime.Now.Year;
+
+                var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
+
+                if (status != "OK")
+                {
+                    return BadRequest(status);
+                }
+
+                var request = new Request
+                {
+                    UserId = userId,
+                    Year = currentYear,
+                    Title = payload.Title,
+                    Amount = payload.Amount,
+                    Date = payload.Date,
+                    State = RequestState.Pending,
+                    CategoryId = payload.Category.Id,
+                    Url = payload.Url
+                };
+
+                _requestRepository.AddRequest(request);
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                return Ok();
             }
-            
-            var request = new Request
+            catch (Exception ex)
             {
-                UserId = userId,
-                Year = currentYear,
-                Title = payload.Title,
-                Amount = payload.Amount,
-                Date = payload.Date,
-                State = RequestState.Pending,
-                CategoryId = payload.Category.Id,
-                Url = payload.Url
-            };
-
-            _requestRepository.AddRequest(request);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("{year}/pending")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
+            try
+            {
+                return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return null;
+            }
         }
 
         [HttpGet("{year}/approved")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Approved }, cancellationToken);
+            try
+            {
+                return await GetRequests(year, new[] { RequestState.Approved }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return null;
+            }
         }
 
         [HttpGet("{year}/approvedBySuperior")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
+            try
+            {
+                return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return null;
+            }
         }
 
         [HttpGet("{year}/rejected")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
+            try
+            {
+                return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return null;
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
-
-            if (request == null)
+            try
             {
-                return BadRequest("Not a valid id");
+                var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
+
+                if (request == null)
+                {
+                    return BadRequest("Not a valid id");
+                }
+
+                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+
+                if (currentUser.Id != request.User.Id)
+                {
+                    return BadRequest("No Access for request!");
+                }
+
+                var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount, payload.CategoryId, request.Id, cancellationToken);
+
+                if (status != "OK")
+                {
+                    return BadRequest(status);
+                }
+
+                request.Title = payload.Title;
+                request.Amount = payload.Amount;
+                request.CategoryId = payload.CategoryId;
+                request.Date = payload.Date;
+                request.Url = payload.Url;
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                return Ok();
+
             }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-
-            if (currentUser.Id != request.User.Id)
+            catch (Exception ex)
             {
-                return BadRequest("No Access for request!");
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
             }
-
-            var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount, payload.CategoryId, request.Id, cancellationToken);
-
-            if (status != "OK")
-            {
-                return BadRequest(status);
-            }
-
-            request.Title = payload.Title;
-            request.Amount = payload.Amount;
-            request.CategoryId = payload.CategoryId;
-            request.Date = payload.Date;
-            request.Url = payload.Url;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-
-            if (request == null)
+            try
             {
-                return BadRequest("Not a valid id");
+                var request = await _requestRepository.GetRequest(id, cancellationToken);
+
+                if (request == null)
+                {
+                    return BadRequest("Not a valid id");
+                }
+
+                _requestRepository.DeleteRequest(request);
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                return Ok();
             }
-
-            _requestRepository.DeleteRequest(request);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("pending/notifications")]
         public async Task<IActionResult> SendNotificationsForPendingRequests(CancellationToken cancellationToken)
         {
-            var pendingRequests = await _requestRepository.GetRequests(
+            try
+            {
+                var pendingRequests = await _requestRepository.GetRequests(
                 _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
 
-            if (pendingRequests.Any())
-            {
-                var superiorsMails = pendingRequests.Select(_ => new
+                if (pendingRequests.Any())
                 {
-                    _.User.Superior.Username,
-                }).Distinct();
+                    var superiorsMails = pendingRequests.Select(_ => new
+                    {
+                        _.User.Superior.Username,
+                    }).Distinct();
 
-                foreach (var mail in superiorsMails)
-                {
-                    _mailService.SendMail("You have new requests to handle", mail.Username);
+                    foreach (var mail in superiorsMails)
+                    {
+                        _mailService.SendMail("You have new requests to handle", mail.Username);
+                    }
                 }
-            }
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("ApprovedBySuperior/notifications")]
         public async Task<IActionResult> SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
         {
-            var approvedBySuperiorRequests = await _requestRepository.GetRequests(
+            try
+            {
+                var approvedBySuperiorRequests = await _requestRepository.GetRequests(
                 _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
 
-            if (approvedBySuperiorRequests.Any())
-            {
-                var admins = await _userRepository.GetAdminUsers(cancellationToken);
-                var adminsMails = admins.Select(u => u.Username).ToArray();
-
-                foreach (var mail in adminsMails)
+                if (approvedBySuperiorRequests.Any())
                 {
-                    _mailService.SendMail("You have new requests to handle", mail);
-                }
-            }
+                    var admins = await _userRepository.GetAdminUsers(cancellationToken);
+                    var adminsMails = admins.Select(u => u.Username).ToArray();
 
-            return Ok();
+                    foreach (var mail in adminsMails)
+                    {
+                        _mailService.SendMail("You have new requests to handle", mail);
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
         {
-            Expression<Func<Request, bool>> predicate;
+                Expression<Func<Request, bool>> predicate;
 
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.IsAdmin)
-            {
-                predicate = request => request.Year == year && requestStates.Contains(request.State);
-            }
-            else
-            {
-                var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
-            }
-            
-            var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
+                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+                if (currentUser.IsAdmin)
+                {
+                    predicate = request => request.Year == year && requestStates.Contains(request.State);
+                }
+                else
+                {
+                    var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
+                    var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                    predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
+                }
 
-            var result = requests.Select(GetModel).ToArray();
+                var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
 
-            return result;
+                var result = requests.Select(GetModel).ToArray();
+
+                return result;
         }
 
         private static RequestModel GetModel(Request request)

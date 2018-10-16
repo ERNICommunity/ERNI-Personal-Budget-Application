@@ -1,14 +1,11 @@
-﻿﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess;
+﻿using ERNI.PBA.Server.DataAccess;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Web;
+using System;
+using System.Linq;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -16,27 +13,52 @@ namespace ERNI.PBA.Server.Host
     {
         public static void Main(string[] args)
         {
-            var host = BuildWebHost(args);
+            // NLog: setup the logger first to catch all errors
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
-            using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
+            try
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                logger.Debug("init main");
+                var host = BuildWebHost(args);
 
-                // context.Database.Migrate();
-                context.Database.EnsureCreated();
 
-                if (!context.Users.Any())
+                using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
                 {
-                    DbSeed.Seed(context);
-                }
-            }
+                    var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-            host.Run();
+                    // context.Database.Migrate();
+                    context.Database.EnsureCreated();
+
+                    if (!context.Users.Any())
+                    {
+                        DbSeed.Seed(context);
+                    }
+                }
+
+                host.Run();
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Stopped program because of exception");
+            }
+            
+            finally
+            {
+                    // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                    NLog.LogManager.Shutdown();
+            }
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                })
+                .UseNLog()  // NLog: setup NLog for Dependency injection
                 .Build();
     }
 }

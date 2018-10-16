@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -16,99 +18,141 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly IRequestCategoryRepository _requestCategoryRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
-        public RequestCategoryController(IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork)
+        public RequestCategoryController(IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork, ILogger<RequestCategoryController> logger)
         {
             _requestCategoryRepository = requestCategoryRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
         {
-            var categories = await _requestCategoryRepository.GetRequestCategories(cancellationToken);
-
-            var result = categories.Select(_ => new
+            try
             {
-                Id = _.Id,
-                Title = _.Title,
-                IsActive = _.IsActive,
-                IsUrlNeeded = _.IsUrlNeeded,
-                SpendLimit = _.SpendLimit
-            });
+                var categories = await _requestCategoryRepository.GetRequestCategories(cancellationToken);
 
-            return Ok(result);
+                var result = categories.Select(_ => new
+                {
+                    Id = _.Id,
+                    Title = _.Title,
+                    IsActive = _.IsActive,
+                    IsUrlNeeded = _.IsUrlNeeded,
+                    SpendLimit = _.SpendLimit
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(int id, CancellationToken cancellationToken)
         {
-            var requestCategory = await _requestCategoryRepository.GetRequestCategory(id, cancellationToken);
-
-            var result = new
+            try
             {
-                Id = requestCategory.Id,
-                Title = requestCategory.Title,
-                IsActive = requestCategory.IsActive,
-                IsUrlNeeded = requestCategory.IsUrlNeeded,
-                SpendLimit = requestCategory.SpendLimit
-            };
+                var requestCategory = await _requestCategoryRepository.GetRequestCategory(id, cancellationToken);
 
-            return Ok(result);
+                var result = new
+                {
+                    Id = requestCategory.Id,
+                    Title = requestCategory.Title,
+                    IsActive = requestCategory.IsActive,
+                    IsUrlNeeded = requestCategory.IsUrlNeeded,
+                    SpendLimit = requestCategory.SpendLimit
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] PostCategoryModel payload, CancellationToken cancellationToken)
         {
-            var requestCategory = new RequestCategory
+            try
             {
-                Title = payload.Title,
-                IsActive = true,
-                IsUrlNeeded = false
-            }; 
+                var requestCategory = new RequestCategory
+                {
+                    Title = payload.Title,
+                    IsActive = true,
+                    IsUrlNeeded = false
+                };
 
-            _requestCategoryRepository.AddRequestCategory(requestCategory);
+                _requestCategoryRepository.AddRequestCategory(requestCategory);
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+                await _unitOfWork.SaveChanges(cancellationToken);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryModel payload,CancellationToken cancellationToken)
         {
-            var requestCategory = await _requestCategoryRepository.GetRequestCategory(payload.Id, cancellationToken);
-
-            if (requestCategory == null)
+            try
             {
-                return BadRequest("Not a valid id");
+                var requestCategory = await _requestCategoryRepository.GetRequestCategory(payload.Id, cancellationToken);
+
+                if (requestCategory == null)
+                {
+                    return BadRequest("Not a valid id");
+                }
+
+                requestCategory.Title = payload.Title;
+                requestCategory.IsActive = payload.IsActive;
+                requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
+                requestCategory.SpendLimit = payload.SpendLimit;
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                return Ok();
             }
-
-            requestCategory.Title = payload.Title;
-            requestCategory.IsActive = payload.IsActive;
-            requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
-            requestCategory.SpendLimit = payload.SpendLimit;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken)
         {
-            var requestCategory = await _requestCategoryRepository.GetRequestCategory(id, cancellationToken);
-
-            if (requestCategory == null)
+            try
             {
-                return BadRequest("Not a valid id");
+                var requestCategory = await _requestCategoryRepository.GetRequestCategory(id, cancellationToken);
+
+                if (requestCategory == null)
+                {
+                    return BadRequest("Not a valid id");
+                }
+
+                _requestCategoryRepository.DeleteRequestCategory(requestCategory);
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+
+                return Ok();
             }
-
-            _requestCategoryRepository.DeleteRequestCategory(requestCategory);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception");
+                return BadRequest();
+            }
         }
     }
 }
