@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using server.Controllers;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -116,6 +117,8 @@ namespace ERNI.PBA.Server
 
             services.AddAuthorization();
 
+            services.AddQuartz(typeof(RequestController), Configuration["Crons:EmailCron"]);
+
             services.AddMvc();
 
             services.AddSwaggerGen(c =>
@@ -137,6 +140,8 @@ namespace ERNI.PBA.Server
             app.UseAuthentication();
 
             app.UseSwagger();
+
+            app.UseQuartz();
 
             app.UseSwaggerUI(c =>
             {
