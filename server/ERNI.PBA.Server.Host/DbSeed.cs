@@ -31,6 +31,7 @@ namespace ERNI.PBA.Server.Host
                 UniqueIdentifier = Guid.NewGuid().ToString(),
 
                 IsAdmin = _ == 0,
+                IsSuperior = _ == 0,
                 FirstName = names[_ * 2],
                 LastName = names[_ * 2 + 1],
                 Username = $"{names[_ * 2]}.{names[_ * 2 + 1]}",

@@ -13,26 +13,26 @@ import { Location } from '@angular/common';
 export class UserDetailComponent implements OnInit {
   user: User;
   users: User[];
-  
+
   constructor(private userService: UserService, private location: Location, private route: ActivatedRoute) { }
 
-    ngOnInit() {
-      const id = this.route.snapshot.paramMap.get('id');
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
 
-      this.userService.getUser(Number(id)).subscribe(user => this.user = user);
-      this.userService.getSubordinateUsers().subscribe(users => this.users = users.sort((first, second) => first.lastName.localeCompare(second.lastName)));
-    }
+    this.userService.getUser(Number(id)).subscribe(user => this.user = user);
+    this.userService.getSubordinateUsers().subscribe(users => this.users = users.filter(u => u.isSuperior).sort((first, second) => first.lastName.localeCompare(second.lastName)));
+  }
 
-    compareUsers(user1: User, user2: User) {
-      return user1 && user2 ? user1.id === user2.id : user1 === user2;
-    }
+  compareUsers(user1: User, user2: User) {
+    return user1 && user2 ? user1.id === user2.id : user1 === user2;
+  }
 
-    goBack(): void {
-      this.location.back();
-    }
+  goBack(): void {
+    this.location.back();
+  }
 
-    save() : void {
-        this.userService.updateUser(this.user).subscribe();
-        this.location.back();
-    }
+  save(): void {
+    this.userService.updateUser(this.user).subscribe();
+    this.location.back();
+  }
 }
