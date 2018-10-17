@@ -36,7 +36,6 @@ namespace ERNI.PBA.Server.Host
                 }
 
                 host.Run();
-
             }
             catch (Exception ex)
             {
@@ -53,10 +52,12 @@ namespace ERNI.PBA.Server.Host
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseDefaultServiceProvider(options =>
+                    options.ValidateScopes = false)
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
-                    logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                    logging.SetMinimumLevel(LogLevel.Trace);
                 })
                 .UseNLog()  // NLog: setup NLog for Dependency injection
                 .Build();

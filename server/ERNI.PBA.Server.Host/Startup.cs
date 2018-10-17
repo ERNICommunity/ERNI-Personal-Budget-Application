@@ -1,6 +1,7 @@
 ﻿using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using server.Controllers;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -114,6 +116,8 @@ namespace ERNI.PBA.Server
 
             services.AddAuthorization();
 
+            services.AddQuartz(typeof(RequestController), Configuration["Crons:EmailCron"]);
+
             services.AddMvc();
 
             services.AddSwaggerGen(c =>
@@ -135,6 +139,8 @@ namespace ERNI.PBA.Server
             app.UseAuthentication();
 
             app.UseSwagger();
+
+            app.UseQuartz();
 
             app.UseSwaggerUI(c =>
             {

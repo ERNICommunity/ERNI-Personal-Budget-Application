@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Quartz.Impl;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -22,7 +24,7 @@ namespace server.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class RequestController : Controller
+    public class RequestController : Controller, IJob
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
@@ -31,6 +33,7 @@ namespace server.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
@@ -41,6 +44,7 @@ namespace server.Controllers
             _requestCategoryRepository = requestCategoryRepository;
             _mailService = new MailService(configuration);
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet("user/current/year/{year}")]
@@ -381,8 +385,7 @@ namespace server.Controllers
             }
         }
 
-        [HttpGet("pending/notifications")]
-        public async Task<IActionResult> SendNotificationsForPendingRequests(CancellationToken cancellationToken)
+        private async Task SendNotificationsForPendingRequests(CancellationToken cancellationToken)
         {
             try
             {
@@ -401,18 +404,14 @@ namespace server.Controllers
                         _mailService.SendMail("You have new requests to handle", mail.Username);
                     }
                 }
-
-                return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception");
-                return BadRequest();
             }
         }
 
-        [HttpGet("ApprovedBySuperior/notifications")]
-        public async Task<IActionResult> SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
+        private async Task SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
         {
             try
             {
@@ -429,13 +428,10 @@ namespace server.Controllers
                         _mailService.SendMail("You have new requests to handle", mail);
                     }
                 }
-
-                return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception");
-                return BadRequest();
             }
         }
 
@@ -542,6 +538,13 @@ namespace server.Controllers
             }
 
             return requestsSumForCategory;
+        }
+
+        public async Task Execute(IJobExecutionContext context)
+        {
+            await SendNotificationsForPendingRequests(context.CancellationToken);
+            await SendNotificationsForApprovedBySuperiorRequests(context.CancellationToken);
+            _logger.LogInformation("Scheduled Job for notifications executed");
         }
     }
 }
