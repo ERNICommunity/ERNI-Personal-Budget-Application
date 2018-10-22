@@ -31,159 +31,117 @@ namespace server.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
         {
-            try
+            var user = await _userRepository.GetUser(payload.Id, cancellationToken);
+
+            if (user == null)
             {
-                var user = await _userRepository.GetUser(payload.Id, cancellationToken);
-
-                if (user == null)
-                {
-                    _logger.LogWarning("Not a valid id");
-                    return NotFound("Not a valid id");
-                }
-
-                user.IsAdmin = payload.IsAdmin;
-                user.IsSuperior = payload.IsSuperior;
-                user.SuperiorId = payload.Superior?.Id;
-                user.State = payload.State;
-
-                await _unitOfWork.SaveChanges(cancellationToken);
-
-                return Ok();
-
+                _logger.LogWarning("Not a valid id");
+                return NotFound("Not a valid id");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception");
-                return BadRequest();
-            }
+
+            user.IsAdmin = payload.IsAdmin;
+            user.IsSuperior = payload.IsSuperior;
+            user.SuperiorId = payload.Superior?.Id;
+            user.State = payload.State;
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
         }
 
         // GET api/values
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
-            try
-            {
-                var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
 
-                return Ok(new UserModel
-                {
-                    Id = user.Id,
-                    IsAdmin = user.IsAdmin,
-                    IsSuperior = user.IsSuperior,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    State = user.State,
-                    Superior = user.Superior != null ? new SuperiorModel
-                    {
-                        Id = user.Superior.Id,
-                        FirstName = user.Superior.FirstName,
-                        LastName = user.Superior.LastName,
-                    } : null
-                });
-            }
-            catch (Exception ex)
+            return Ok(new UserModel
             {
-                _logger.LogError(ex, "Unhandled exception");
-                return BadRequest();
-            }
+                Id = user.Id,
+                IsAdmin = user.IsAdmin,
+                IsSuperior = user.IsSuperior,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                State = user.State,
+                Superior = user.Superior != null ? new SuperiorModel
+                {
+                    Id = user.Superior.Id,
+                    FirstName = user.Superior.FirstName,
+                    LastName = user.Superior.LastName,
+                } : null
+            });
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                var user = await _userRepository.GetUser(id, CancellationToken.None);
+            var user = await _userRepository.GetUser(id, CancellationToken.None);
 
-                return Ok(new UserModel
-                {
-                    Id = user.Id,
-                    IsAdmin = user.IsAdmin,
-                    IsSuperior = user.IsSuperior,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    State = user.State,
-                    Superior = user.Superior != null ? new SuperiorModel
-                    {
-                        Id = user.Superior.Id,
-                        FirstName = user.Superior.FirstName,
-                        LastName = user.Superior.LastName,
-                    } : null
-                });
-            }
-            catch (Exception ex)
+            return Ok(new UserModel
             {
-                _logger.LogError(ex,"Unhandled exception");
-                return BadRequest();
-            }
+                Id = user.Id,
+                IsAdmin = user.IsAdmin,
+                IsSuperior = user.IsSuperior,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                State = user.State,
+                Superior = user.Superior != null ? new SuperiorModel
+                {
+                    Id = user.Superior.Id,
+                    FirstName = user.Superior.FirstName,
+                    LastName = user.Superior.LastName,
+                } : null
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSubordinateUsers(CancellationToken cancellationToken)
         {
-            try
+            User[] users;
+
+            var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+
+            if (user.IsAdmin)
             {
-                User[] users;
-
-                var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-
-                if (user.IsAdmin)
-                {
-                    users = await _userRepository.GetAllUsers(cancellationToken);
-                }
-                else
-                {
-                    users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
-                }
-
-                var result = users.Select(_ => new UserModel
-                {
-                    Id = _.Id,
-                    IsAdmin = _.IsAdmin,
-                    IsSuperior = _.IsSuperior,
-                    FirstName = _.FirstName,
-                    LastName = _.LastName,
-                    State = _.State,
-                    Superior = _.Superior != null ? new SuperiorModel
-                    {
-                        Id = _.Superior.Id,
-                        FirstName = _.Superior.FirstName,
-                        LastName = _.Superior.LastName,
-                    } : null
-                });
-
-                return Ok(result);
-
+                users = await _userRepository.GetAllUsers(cancellationToken);
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Unhandled exception");
-                return BadRequest();
+                users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
             }
+
+            var result = users.Select(_ => new UserModel
+            {
+                Id = _.Id,
+                IsAdmin = _.IsAdmin,
+                IsSuperior = _.IsSuperior,
+                FirstName = _.FirstName,
+                LastName = _.LastName,
+                State = _.State,
+                Superior = _.Superior != null ? new SuperiorModel
+                {
+                    Id = _.Superior.Id,
+                    FirstName = _.Superior.FirstName,
+                    LastName = _.Superior.LastName,
+                } : null
+            });
+
+            return Ok(result);
         }
 
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveUsers(int year, CancellationToken cancellationToken)
         {
-            try
-            {
-                var users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
+            var users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-                var result = users.Select(_ => new UserModel
-                {
-                    Id = _.Id,
-                    FirstName = _.FirstName,
-                    LastName = _.LastName,
-                });
-
-                return Ok(result);
-            }
-            catch (Exception ex)
+            var result = users.Select(_ => new UserModel
             {
-                _logger.LogError(ex, "Unhandled exception");
-                return BadRequest();
-            }
+                Id = _.Id,
+                FirstName = _.FirstName,
+                LastName = _.LastName,
+            });
+
+            return Ok(result);
         }
     }
 }
