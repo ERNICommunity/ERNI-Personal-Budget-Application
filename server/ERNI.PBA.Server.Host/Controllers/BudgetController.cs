@@ -10,6 +10,7 @@ using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace server.Controllers
 {
@@ -88,18 +89,18 @@ namespace server.Controllers
             var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
             var result = from au in activeUsers
-                         join b in budgets on au.Id equals b.UserId into joined
-                         from j in joined.DefaultIfEmpty(new Budget())
-                         select new
-                         {
-                             User = new
-                             {
-                                 Id = au.Id,
-                                 FirstName = au.FirstName,
-                                 LastName = au.LastName
-                             },
-                             Amount = j.Amount
-                         };
+                            join b in budgets on au.Id equals b.UserId into joined
+                            from j in joined.DefaultIfEmpty(new Budget())
+                            select new
+                            {
+                                User = new
+                                {
+                                    Id = au.Id,
+                                    FirstName = au.FirstName,
+                                    LastName = au.LastName
+                                },
+                                Amount = j.Amount
+                            };
 
             return Ok(result);
         }
@@ -158,7 +159,7 @@ namespace server.Controllers
             var year = payload.Year;
             var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-            
+
             foreach (var user in activeUsers)
             {
                 var exists = budgets.Any(x => x.UserId == user.Id);
@@ -177,7 +178,7 @@ namespace server.Controllers
             }
 
             await _unitOfWork.SaveChanges(cancellationToken);
-            
+
             return Ok();
         }
 

@@ -42,8 +42,10 @@ export class RequestListComponent implements OnInit {
     }
 
     filterRequests(searchString: string) {
-        return this.requests.filter(request => request.user.firstName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1 ||
-            request.user.lastName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1);
+        searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+
+        return this.requests.filter(request => request.user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
+            request.user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString.toLowerCase()) !== -1);
     }
 
     constructor(private requestService: RequestService,

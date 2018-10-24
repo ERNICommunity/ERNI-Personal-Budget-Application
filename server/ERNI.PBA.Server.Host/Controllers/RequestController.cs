@@ -9,6 +9,7 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,9 @@ namespace server.Controllers
         private readonly IRequestCategoryRepository _requestCategoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
+        private readonly ILogger _logger;
 
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration)
+        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -38,6 +40,7 @@ namespace server.Controllers
             _budgetRepository = budgetRepository;
             _requestCategoryRepository = requestCategoryRepository;
             _mailService = new MailService(configuration);
+            _logger = logger;
         }
 
         [HttpGet("user/current/year/{year}")]
@@ -64,12 +67,14 @@ namespace server.Controllers
             var request = await _requestRepository.GetRequest(id, cancellationToken);
             if (request == null)
             {
+                _logger.LogWarning("Not a valid id");
                 return BadRequest("Not a valid id");
             }
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (currentUser.Id != request.User.Id)
             {
+                _logger.LogWarning("No access for request!");
                 return BadRequest("No access for request!");
             }
 
@@ -92,6 +97,7 @@ namespace server.Controllers
             var request = await _requestRepository.GetRequest(id, cancellationToken);
             if (request == null)
             {
+                _logger.LogWarning("Not a valid id");
                 return BadRequest("Not a valid id");
             }
 
@@ -106,6 +112,7 @@ namespace server.Controllers
                 var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
                 if (!subordinatesIds.Contains(request.UserId))
                 {
+                    _logger.LogWarning($"User cannot manipulate the request id={request.Id}");
                     return BadRequest($"User cannot manipulate the request id={request.Id}");
                 }
 
@@ -114,13 +121,13 @@ namespace server.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            if(request.Url != null)
+            if (request.Url != null)
             {
-                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url +" has been " + request.State + ".", request.User.Username);
+                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".", request.User.Username);
                 return Ok();
             }
 
-            _mailService.SendMail("Your request: " + request.Title + " of amount: "+ request.Amount + " has been " + request.State + ".", request.User.Username);
+            _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".", request.User.Username);
 
             return Ok();
         }
@@ -150,8 +157,8 @@ namespace server.Controllers
                 {
                     return BadRequest($"Superior cannot reject the request approved by admin. Request id={request.Id}");
                 }
-            }      
-            
+            }
+
             request.State = RequestState.Rejected;
 
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -166,14 +173,14 @@ namespace server.Controllers
         {
             var userId = User.GetId();
             var currentYear = DateTime.Now.Year;
-            
+
             var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
-            
+
             if (status != "OK")
             {
                 return BadRequest(status);
             }
-            
+
             var request = new Request
             {
                 UserId = userId,
@@ -197,7 +204,7 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
+             return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
         }
 
         [HttpGet("{year}/approved")]
@@ -211,14 +218,14 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
+             return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
+             return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
         }
 
         [HttpPut]
@@ -277,7 +284,7 @@ namespace server.Controllers
         public async Task<IActionResult> SendNotificationsForPendingRequests(CancellationToken cancellationToken)
         {
             var pendingRequests = await _requestRepository.GetRequests(
-                _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
+            _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
 
             if (pendingRequests.Any())
             {
@@ -299,7 +306,7 @@ namespace server.Controllers
         public async Task<IActionResult> SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
         {
             var approvedBySuperiorRequests = await _requestRepository.GetRequests(
-                _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
+            _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
 
             if (approvedBySuperiorRequests.Any())
             {
@@ -317,25 +324,25 @@ namespace server.Controllers
 
         private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
         {
-            Expression<Func<Request, bool>> predicate;
+                Expression<Func<Request, bool>> predicate;
 
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.IsAdmin)
-            {
-                predicate = request => request.Year == year && requestStates.Contains(request.State);
-            }
-            else
-            {
-                var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
-            }
-            
-            var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
+                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+                if (currentUser.IsAdmin)
+                {
+                    predicate = request => request.Year == year && requestStates.Contains(request.State);
+                }
+                else
+                {
+                    var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
+                    var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                    predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
+                }
 
-            var result = requests.Select(GetModel).ToArray();
+                var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
 
-            return result;
+                var result = requests.Select(GetModel).ToArray();
+
+                return result;
         }
 
         private static RequestModel GetModel(Request request)

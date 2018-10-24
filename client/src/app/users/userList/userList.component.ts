@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user';
 import { ActivatedRoute } from '@angular/router';
@@ -11,24 +11,26 @@ import { UserState } from '../../model/userState';
 })
 export class UserListComponent implements OnInit {
     users: User[];
-    filteredUsers : User[];
-    userState : UserState;
+    filteredUsers: User[];
+    userState: UserState;
     userStateType = UserState;
 
-    private _searchTerm : string;
+    private _searchTerm: string;
 
-    get searchTerm() : string{
+    get searchTerm(): string {
         return this._searchTerm;
     }
 
-    set searchTerm(value : string){
+    set searchTerm(value: string) {
         this._searchTerm = value;
         this.filteredUsers = this.filterUsers(value);
     }
 
-    filterUsers(searchString : string){
-        return this.users.filter(user => user.firstName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1 ||
-        user.lastName.toLowerCase().indexOf(searchString.toLowerCase()) !== -1);
+    filterUsers(searchString: string) {
+        searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+
+        return this.users.filter(user => user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
+            user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
     }
 
     constructor(private userService: UserService, private route: ActivatedRoute) {
@@ -40,16 +42,16 @@ export class UserListComponent implements OnInit {
     }
 
     getUsers(filter: UserState): void {
-        this.userService.getSubordinateUsers().subscribe(users => {this.users = users.filter(u => u.state == filter),this.filteredUsers = this.users});
+        this.userService.getSubordinateUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
     }
 
     activateEmployee(user: User): void {
         user.state = UserState.Active;
-        this.userService.updateUser(user).subscribe(()=> {this.users = this.users.filter(u => u.id !== user.id),this.filteredUsers = this.users}); 
+        this.userService.updateUser(user).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
     }
 
     deactivateEmployee(user: User): void {
         user.state = UserState.Inactive;
-        this.userService.updateUser(user).subscribe(()=> {this.users = this.users.filter(u => u.id !== user.id),this.filteredUsers = this.users});
+        this.userService.updateUser(user).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
     }
 }

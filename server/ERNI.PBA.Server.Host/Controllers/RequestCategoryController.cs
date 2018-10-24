@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -65,7 +67,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Title = payload.Title,
                 IsActive = true,
                 IsUrlNeeded = false
-            }; 
+            };
 
             _requestCategoryRepository.AddRequestCategory(requestCategory);
 

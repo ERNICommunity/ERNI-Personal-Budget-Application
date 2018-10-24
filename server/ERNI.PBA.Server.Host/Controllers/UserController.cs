@@ -5,6 +5,8 @@ using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,11 +19,13 @@ namespace server.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
-        public UserController(IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public UserController(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<UserController> logger)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         [HttpPut]
@@ -31,7 +35,8 @@ namespace server.Controllers
 
             if (user == null)
             {
-                return BadRequest("Not a valid id");
+                _logger.LogWarning("Not a valid id");
+                return NotFound("Not a valid id");
             }
 
             user.IsAdmin = payload.IsAdmin;
@@ -104,7 +109,7 @@ namespace server.Controllers
             {
                 users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
             }
-            
+
             var result = users.Select(_ => new UserModel
             {
                 Id = _.Id,
@@ -127,7 +132,7 @@ namespace server.Controllers
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveUsers(int year, CancellationToken cancellationToken)
         {
-            var users = await _userRepository.GetAllUsers(_=>_.State == UserState.Active, cancellationToken);
+            var users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
             var result = users.Select(_ => new UserModel
             {
