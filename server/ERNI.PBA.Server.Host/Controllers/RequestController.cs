@@ -31,8 +31,7 @@ namespace server.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-
+     
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
@@ -42,7 +41,6 @@ namespace server.Controllers
             _requestCategoryRepository = requestCategoryRepository;
             _mailService = new MailService(configuration);
             _logger = logger;
-            _configuration = configuration;
         }
 
         [HttpGet("user/current/year/{year}")]
