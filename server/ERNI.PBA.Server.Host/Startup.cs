@@ -117,7 +117,7 @@ namespace ERNI.PBA.Server
 
             services.AddAuthorization();
 
-            services.AddQuartz(typeof(RequestController), Configuration["Crons:EmailCron"]);
+            services.AddQuartz(typeof(DailyMailNotifications), Configuration["Crons:EmailCron"]);
 
             services.AddMvc();
 

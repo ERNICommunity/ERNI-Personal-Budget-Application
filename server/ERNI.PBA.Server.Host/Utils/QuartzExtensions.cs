@@ -17,7 +17,7 @@ namespace ERNI.PBA.Server.Host.Utils
             services.AddSingleton<IJobFactory, ScheduledJobFactory>();
             services.AddSingleton(provider =>
             {
-                return JobBuilder.Create<RequestController>()
+                return JobBuilder.Create<DailyMailNotifications>()
                   .Build();
             });
 

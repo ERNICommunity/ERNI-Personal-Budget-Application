@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Quartz;
-using Quartz.Impl;
 using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
@@ -24,7 +22,7 @@ namespace server.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class RequestController : Controller, IJob
+    public class RequestController : Controller
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
@@ -284,46 +282,6 @@ namespace server.Controllers
             return Ok();
         }
 
-        private async Task SendNotificationsForPendingRequests(CancellationToken cancellationToken)
-        {
-            var pendingRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
-
-            if (pendingRequests.Any())
-            {
-                var superiorsMails = pendingRequests.Select(_ => new
-                {
-                    _.User.Superior.Username,
-                }).Distinct();
-
-                foreach (var mail in superiorsMails)
-                {
-                    _mailService.SendMail("You have new requests to handle", mail.Username);
-                }
-            }
-
-            return Ok();
-        }
-
-        private async Task SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
-        {
-            var approvedBySuperiorRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
-
-            if (approvedBySuperiorRequests.Any())
-            {
-                var admins = await _userRepository.GetAdminUsers(cancellationToken);
-                var adminsMails = admins.Select(u => u.Username).ToArray();
-
-                foreach (var mail in adminsMails)
-                {
-                    _mailService.SendMail("You have new requests to handle", mail);
-                }
-            }
-
-            return Ok();
-        }
-
         private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
         {
                 Expression<Func<Request, bool>> predicate;
@@ -427,13 +385,6 @@ namespace server.Controllers
             }
 
             return requestsSumForCategory;
-        }
-
-        public async Task Execute(IJobExecutionContext context)
-        {
-            await SendNotificationsForPendingRequests(context.CancellationToken);
-            await SendNotificationsForApprovedBySuperiorRequests(context.CancellationToken);
-            _logger.LogInformation("Scheduled Job for notifications executed");
         }
     }
 }
