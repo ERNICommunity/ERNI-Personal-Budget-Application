@@ -31,7 +31,7 @@ namespace server.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
-
+     
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
@@ -276,48 +276,6 @@ namespace server.Controllers
             _requestRepository.DeleteRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok();
-        }
-
-        [HttpGet("pending/notifications")]
-        public async Task<IActionResult> SendNotificationsForPendingRequests(CancellationToken cancellationToken)
-        {
-            var pendingRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
-
-            if (pendingRequests.Any())
-            {
-                var superiorsMails = pendingRequests.Select(_ => new
-                {
-                    _.User.Superior.Username,
-                }).Distinct();
-
-                foreach (var mail in superiorsMails)
-                {
-                    _mailService.SendMail("You have new requests to handle", mail.Username);
-                }
-            }
-
-            return Ok();
-        }
-
-        [HttpGet("ApprovedBySuperior/notifications")]
-        public async Task<IActionResult> SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
-        {
-            var approvedBySuperiorRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
-
-            if (approvedBySuperiorRequests.Any())
-            {
-                var admins = await _userRepository.GetAdminUsers(cancellationToken);
-                var adminsMails = admins.Select(u => u.Username).ToArray();
-
-                foreach (var mail in adminsMails)
-                {
-                    _mailService.SendMail("You have new requests to handle", mail);
-                }
-            }
 
             return Ok();
         }
