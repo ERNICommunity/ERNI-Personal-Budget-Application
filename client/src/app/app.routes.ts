@@ -20,7 +20,7 @@ import { RequestFilter } from './requests/requestFilter';
 import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 
-const currentYear = (new Date()).getFullYear();
+const currentYear = "2018"; // = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -30,7 +30,7 @@ export const rootRouterConfig: Routes = [
     {
         path: 'other-budgets', component: BudgetsComponent, canActivate: [AuthenticationGuard],
         children: [
-            { path: '', redirectTo: currentYear.toString(), pathMatch: 'full' },
+            { path: '', redirectTo: currentYear, pathMatch: 'full' },
             { path: ':year', component: OtherBudgetsComponent, canActivate: [AuthenticationGuard] },
             { path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AuthenticationGuard] }
         ]
@@ -40,7 +40,7 @@ export const rootRouterConfig: Routes = [
     {
         path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard],
         children: [
-            { path: '', redirectTo: currentYear.toString(), pathMatch: 'full' },
+            { path: '', redirectTo: currentYear, pathMatch: 'full' },
             { path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard] }
         ]
     },
