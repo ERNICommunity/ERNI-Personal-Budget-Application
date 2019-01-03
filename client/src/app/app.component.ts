@@ -12,7 +12,7 @@ export class AppComponent {
   isSuperior: boolean;
   initialized: boolean;
 
-  constructor(private adalService: AdalService, private userService: UserService) {
+  constructor(public adalService: AdalService, private userService: UserService) {
     this.initialized = false;
   }
 

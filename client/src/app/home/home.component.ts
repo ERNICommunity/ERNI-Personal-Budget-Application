@@ -9,7 +9,7 @@ import {Component} from '@angular/core';
 })
 export class HomeComponent {
    
-  constructor(private adalService: AdalService,private config: ConfigService){
+  constructor(public adalService: AdalService,public config: ConfigService){
     console.log('User info from JWT');
     console.log(this.adalService.userInfo);
     console.log('JWT Token');

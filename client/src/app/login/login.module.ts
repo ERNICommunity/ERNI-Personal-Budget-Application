@@ -4,6 +4,6 @@ import { NgModule } from '@angular/core';
 
 @NgModule({
     imports: [],
-    declarations: [LoginComponent]
+    declarations: [/*LoginComponent*/]
 })
 export class LoginModule { }
