@@ -7,7 +7,7 @@ export class ConfigService {
     }
 
     public get apiUrlBase(): any {
-        return 'http://localhost:64244/api/';
+        return 'https://ernipbaserver.azurewebsites.net/api/';
     }
 
     public get conditionsOfUseUrl() : any {
@@ -19,7 +19,7 @@ export class ConfigService {
         return { 
             tenant: 'infomandli.onmicrosoft.com',
             clientId: 'a005097e-a58e-49c7-8c74-147aa4ace46c',
-            redirectUri: "window.location.origin + '/'",
+            redirectUri: window.location.origin + '/',
             postLogoutRedirectUri: window.location.origin + '/'
         }; 
     }
