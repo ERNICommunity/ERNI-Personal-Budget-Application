@@ -17,8 +17,8 @@ export class ConfigService {
     public get getAdalConfig(): any { 
 
         return { 
-            tenant: 'TENANT_ID',
-            clientId: 'CLIENT_ID',
+            tenant: 'infomandli.onmicrosoft.com',
+            clientId: 'a005097e-a58e-49c7-8c74-147aa4ace46c',
             redirectUri: "window.location.origin + '/'",
             postLogoutRedirectUri: window.location.origin + '/'
         }; 
