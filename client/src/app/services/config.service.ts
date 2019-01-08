@@ -17,8 +17,8 @@ export class ConfigService {
     public get getAdalConfig(): any { 
 
         return { 
-            tenant: 'infomandli.onmicrosoft.com',
-            clientId: 'a005097e-a58e-49c7-8c74-147aa4ace46c',
+            tenant: 'erni.ch',
+            clientId: '6e1fa5b9-f4fb-42da-a09a-51c5bacb7622',
             redirectUri: window.location.origin + '/',
             postLogoutRedirectUri: window.location.origin + '/'
         }; 
