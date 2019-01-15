@@ -20,7 +20,7 @@ import { RequestFilter } from './requests/requestFilter';
 import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 
-const currentYear = "2018"; // = (new Date()).getFullYear();
+const currentYear = "2019"; // = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
