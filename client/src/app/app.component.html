@@ -44,6 +44,12 @@
 
         <ul class="navbar-nav float-right">
             <li class="nav-item float-right" *ngIf="adalService.userInfo">
+                <a class="nav-link">{{adalService.userInfo.userName}}</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav float-right">
+            <li class="nav-item float-right" *ngIf="adalService.userInfo">
                 <a href="" class="nav-link" (click)="logout()">
                     Logout
                 </a>
