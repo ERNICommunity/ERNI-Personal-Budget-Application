@@ -17,21 +17,22 @@ export class AppComponent {
   }
 
   ngDoCheck() {
-    if (!this.initialized && this.adalService.userInfo)
-    {
+    if (!this.initialized && this.adalService.userInfo) {
       this.getIsAdminOrSuperior();
       this.initialized = true;
-    }  
+    }
   }
 
-  getIsAdminOrSuperior() : void {
-     this.userService.getCurrentUser().subscribe(u => 
-      {
-        this.isAdmin = u.isAdmin;
-        if (!this.isAdmin)
-        {
-          this.userService.getSubordinateUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
-        }
-      });
-   }
+  getIsAdminOrSuperior(): void {
+    this.userService.getCurrentUser().subscribe(u => {
+      this.isAdmin = u.isAdmin;
+      if (!this.isAdmin) {
+        this.userService.getSubordinateUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
+      }
+    });
+  }
+
+  logout() {
+    this.adalService.logout();
+  }
 }

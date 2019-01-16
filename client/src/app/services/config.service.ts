@@ -7,7 +7,7 @@ export class ConfigService {
     }
 
     public get apiUrlBase(): any {
-        return 'http://localhost:64244/api/';
+        return 'https://ernipbaserver.azurewebsites.net/api/';
     }
 
     public get conditionsOfUseUrl() : any {
@@ -17,9 +17,9 @@ export class ConfigService {
     public get getAdalConfig(): any { 
 
         return { 
-            tenant: 'TENANT_ID',
-            clientId: 'CLIENT_ID',
-            redirectUri: "window.location.origin + '/'",
+            tenant: 'erni.ch',
+            clientId: '6e1fa5b9-f4fb-42da-a09a-51c5bacb7622',
+            redirectUri: window.location.origin + '/',
             postLogoutRedirectUri: window.location.origin + '/'
         }; 
     }
