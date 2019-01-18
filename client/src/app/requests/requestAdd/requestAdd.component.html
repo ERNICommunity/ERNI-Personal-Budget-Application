@@ -12,7 +12,7 @@
                     class="form-control"
                     formControlName="title"
                     type="textarea"></textarea>
-            </label>
+            </label> *
         </h5>
     </div>
     <div
@@ -34,7 +34,7 @@
                         [ngModelOptions]="{standalone: true}"
                         bsDatepicker
                         [bsConfig]="{dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-dark-blue'}"
-                        readonly>
+                        >
                 </label>
             </h5>
         </div>
@@ -48,9 +48,10 @@
                     #requestAmount
                     class="form-control"
                     formControlName="amount"
-                    type="number"
+                    type="text"
+                    onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46 '
                     placeholder="0.00">
-            </label>
+            </label> *
         </h5>
     </div>
     <div
@@ -88,7 +89,7 @@
                     formControlName="url"
                     class="form-control"
                     type="url">
-            </label>
+            </label> *
         </h5>
     </div>
 
