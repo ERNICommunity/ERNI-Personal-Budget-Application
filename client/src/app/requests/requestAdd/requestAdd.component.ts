@@ -78,7 +78,7 @@ export class RequestAddComponent implements OnInit {
     this.requestService.addRequest({ title, amount, date, category, url} as Request)
        .subscribe(() =>{this.goBack()},
        err => {
-        this.httpResponseError = err.error
+        this.httpResponseError = JSON.stringify(err.error);
       })
   }
 }
