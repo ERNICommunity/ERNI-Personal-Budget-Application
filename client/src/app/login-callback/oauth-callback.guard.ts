@@ -17,7 +17,7 @@ export class OAuthCallbackHandler implements CanActivate {
 
             var returnUrl = route.queryParams['returnUrl'];
             if (!returnUrl) {
-                this.router.navigate(['home']);
+                this.router.navigate(['my-budget']);
             } else {
                 this.router.navigate([returnUrl], { queryParams: route.queryParams });
             }

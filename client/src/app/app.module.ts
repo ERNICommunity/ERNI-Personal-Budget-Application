@@ -2,7 +2,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
-import {HomeComponent} from './home/home.component';
 import {RouterModule} from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {rootRouterConfig} from './app.routes';
@@ -39,11 +38,9 @@ import { BudgetsComponent } from './budgets/budgets.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
     declarations: [
         AppComponent,
-        HomeComponent,
         LoginComponent,
         RequestsComponent,
         RequestListComponent,
@@ -72,7 +69,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         ReactiveFormsModule
     ],
     providers: [
-        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService, 
+        AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService,
         {
              provide: HTTP_INTERCEPTORS,
              useClass: AuthInterceptor,

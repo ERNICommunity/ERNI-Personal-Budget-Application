@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { OAuthCallbackHandler } from './login-callback/oauth-callback.guard';
 import { OAuthCallbackComponent } from './login-callback/oauth-callback.component';
@@ -23,8 +22,7 @@ import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherB
 const currentYear = "2019"; // = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard] },
+    { path: '', redirectTo: 'my-budget', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler] },
     {
