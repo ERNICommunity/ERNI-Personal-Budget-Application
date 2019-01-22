@@ -48,8 +48,7 @@
                     #requestAmount
                     class="form-control"
                     formControlName="amount"
-                    type="text"
-                    onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46 '
+                    type="number"
                     placeholder="0.00">
             </label> *
         </h5>
@@ -63,7 +62,7 @@
     <div class="form-group">
         <h5>
             <label class="col-md-6">
-                Occasion
+                Category
                 <select
                     class="form-control form-control-sm"
                     [(ngModel)]="selectedCategory"
