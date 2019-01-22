@@ -37,6 +37,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BudgetsComponent } from './budgets/budgets.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BusyIndicatorService } from './services/busy-indicator.service';
 
 @NgModule({
     declarations: [
@@ -70,6 +71,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     ],
     providers: [
         AdalService, ConfigService, AuthenticationGuard, ServiceHelper, RequestService, UserService, BudgetService, CategoryService,
+        BusyIndicatorService,
         {
              provide: HTTP_INTERCEPTORS,
              useClass: AuthInterceptor,

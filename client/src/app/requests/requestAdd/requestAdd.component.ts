@@ -6,6 +6,7 @@ import { Request } from '../../model/request';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
 
 
 @Component({
@@ -25,7 +26,8 @@ export class RequestAddComponent implements OnInit {
               private requestService: RequestService,
               private location: Location,
               private route: ActivatedRoute,
-              private fb: FormBuilder){
+              private fb: FormBuilder,
+              private busyIndicatorService: BusyIndicatorService){
               this.createForm();
               }
 
@@ -59,10 +61,12 @@ export class RequestAddComponent implements OnInit {
 
   getCategories(): void {
 
+    this.busyIndicatorService.start();
     this.categoryService.getCategories()
     .subscribe(categories => {
        this.categories = categories.filter(cat => cat.isActive == true),
        this.selectedCategory =categories.filter(cat => cat.isActive == true)[0];
+       this.busyIndicatorService.end();
       });
   }
 
@@ -74,11 +78,15 @@ export class RequestAddComponent implements OnInit {
     var category = this.selectedCategory;
     var date = this.selectedDate;
     var url = this.requestUrl;
+    this.busyIndicatorService.start();
 
     this.requestService.addRequest({ title, amount, date, category, url} as Request)
-       .subscribe(() =>{this.goBack()},
+       .subscribe(() =>{
+        this.busyIndicatorService.end();
+        this.goBack();},
        err => {
         this.httpResponseError = JSON.stringify(err.error);
+        this.busyIndicatorService.end();
       })
   }
 }
