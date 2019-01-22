@@ -20,7 +20,7 @@ export class AuthenticationGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
         let navigationExtras: NavigationExtras = {
-            queryParams: { 'redirectUrl': route.url }
+            //queryParams: { 'redirectUrl': route.url }
         };
 
         if (!this.adalService.isAuthenticated) {
