@@ -10,6 +10,7 @@ import { RequestFilter } from '../../requests/requestFilter';
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from '../../services/config.service';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
 
 @Component({
     selector: 'app-my-Budget',
@@ -33,7 +34,8 @@ export class MyBudgetComponent implements OnInit {
         private userService: UserService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
-        private config: ConfigService) {
+        private config: ConfigService,
+        public busyIndicatorService: BusyIndicatorService) {
         this.years = [];
         this.currentYear = (new Date()).getFullYear();
 
@@ -67,17 +69,23 @@ export class MyBudgetComponent implements OnInit {
     }
 
     getBudget(year: number): void {
+        this.busyIndicatorService.start();
         this.budgetService.getCurrentUserBudget(year).subscribe(budget => {
             this.budget = budget
             if (budget) {
                 this.getRequests(year)
             }
+            this.busyIndicatorService.end();
         });
     }
 
     getRequests(year: number): void {
+        this.busyIndicatorService.start();
         this.requestService.getRequests(year)
-            .subscribe(requests => { this.requests = requests, this.getCurrentAmount(requests) });
+            .subscribe(requests => { 
+                this.requests = requests, this.getCurrentAmount(requests) 
+                this.busyIndicatorService.end();
+            });
     }
 
     getCurrentAmount(requests: Request[]): void {

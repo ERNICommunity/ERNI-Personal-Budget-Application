@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { AdalService } from './services/adal.service';
 import { UserService } from './services/user.service';
+import { Router, NavigationStart, NavigationCancel, NavigationError, NavigationEnd } from '@angular/router';
+import { BusyIndicatorService } from './services/busy-indicator.service';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +14,26 @@ export class AppComponent {
   isSuperior: boolean;
   initialized: boolean;
 
-  constructor(public adalService: AdalService, private userService: UserService) {
+  constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
     this.initialized = false;
+
+    this.router.events.subscribe(event => {
+      switch (true) {
+        case event instanceof NavigationStart: {
+          this.busyIndicatorService.start();
+          break;
+        }
+        case event instanceof NavigationEnd:
+        case event instanceof NavigationCancel:
+        case event instanceof NavigationError: {
+          this.busyIndicatorService.end();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    });
   }
 
   ngDoCheck() {
