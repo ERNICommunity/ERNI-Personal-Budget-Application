@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using NLog.Web;
 using System;
 using System.Linq;
 
@@ -14,11 +12,11 @@ namespace ERNI.PBA.Server.Host
         public static void Main(string[] args)
         {
             // NLog: setup the logger first to catch all errors
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            // var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
             try
             {
-                logger.Debug("init main");
+                // logger.Debug("init main");
                 var host = BuildWebHost(args);
 
 
@@ -39,13 +37,13 @@ namespace ERNI.PBA.Server.Host
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Stopped program because of exception");
+                // logger.Error(ex, "Stopped program because of exception");
             }
             
             finally
             {
                     // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-                    NLog.LogManager.Shutdown();
+                    // NLog.LogManager.Shutdown();
             }
         }
 
@@ -54,12 +52,12 @@ namespace ERNI.PBA.Server.Host
                 .UseStartup<Startup>()
                 .UseDefaultServiceProvider(options =>
                     options.ValidateScopes = false)
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog()  // NLog: setup NLog for Dependency injection
+                //.ConfigureLogging(logging =>
+                //{
+                //    logging.ClearProviders();
+                //    logging.SetMinimumLevel(LogLevel.Trace);
+                //})
+                //.UseNLog()  // NLog: setup NLog for Dependency injection
                 .Build();
     }
 }
