@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Host.Utils
 {
+    [DisallowConcurrentExecution]
     public class DailyMailNotifications : IJob
     {
         private readonly IRequestRepository _requestRepository;
@@ -38,7 +39,7 @@ namespace ERNI.PBA.Server.Host.Utils
 
             if (pendingRequests.Any())
             {
-                var superiorsMails = pendingRequests.Select(_ => new
+                var superiorsMails = pendingRequests.Where(_ => _.User.Superior != null).Select(_ => new
                 {
                     _.User.Superior.Username,
                 }).Distinct();

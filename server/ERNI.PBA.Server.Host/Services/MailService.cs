@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +32,7 @@ namespace ERNI.PBA.Server.Host.Services
                 client.Credentials = new NetworkCredential(_userName, _password);
 
                 MailMessage mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress("pba@erni.sk");
+                mailMessage.From = new MailAddress(_userName);
                 mailMessage.To.Add(To);
                 mailMessage.Body = body;
                 mailMessage.Subject = "PBA Notification";
