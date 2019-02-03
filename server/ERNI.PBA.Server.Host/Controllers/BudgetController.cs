@@ -88,7 +88,7 @@ namespace server.Controllers
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
             var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-            var result = from au in activeUsers
+            var result = (from au in activeUsers
                             join b in budgets on au.Id equals b.UserId into joined
                             from j in joined.DefaultIfEmpty(new Budget())
                             select new
@@ -100,7 +100,8 @@ namespace server.Controllers
                                     LastName = au.LastName
                                 },
                                 Amount = j.Amount
-                            };
+                            })
+                .OrderBy(_ => _.User.LastName).ThenBy(_ => _.User.FirstName);
 
             return Ok(result);
         }
@@ -119,7 +120,7 @@ namespace server.Controllers
                     FirstName = _.User.FirstName,
                     LastName = _.User.LastName
                 }
-            });
+            }).OrderBy(_ => _.User.LastName).ThenBy(_ => _.User.FirstName);
             return Ok(result);
         }
 

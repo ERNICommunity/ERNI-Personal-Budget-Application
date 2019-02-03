@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
@@ -6,12 +9,8 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace server.Controllers
+namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
@@ -124,7 +123,7 @@ namespace server.Controllers
                     FirstName = _.Superior.FirstName,
                     LastName = _.Superior.LastName,
                 } : null
-            });
+            }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
 
             return Ok(result);
         }
@@ -139,7 +138,7 @@ namespace server.Controllers
                 Id = _.Id,
                 FirstName = _.FirstName,
                 LastName = _.LastName,
-            });
+            }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
 
             return Ok(result);
         }
