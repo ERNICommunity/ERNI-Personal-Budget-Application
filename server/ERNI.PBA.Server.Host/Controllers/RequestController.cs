@@ -72,7 +72,11 @@ namespace server.Controllers
             }
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.Id != request.User.Id)
+
+            var isAdmin = currentUser.IsAdmin;
+            var isSuperior = currentUser.Id == request.User.SuperiorId;
+
+            if (currentUser.Id != request.User.Id && !isAdmin && !isSuperior)
             {
                 _logger.LogWarning("No access for request!");
                 return BadRequest("No access for request!");
