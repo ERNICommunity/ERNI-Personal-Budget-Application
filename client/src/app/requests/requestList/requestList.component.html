@@ -120,7 +120,15 @@
                 </button>
             </td>
 
+            <td><a
+                class="btn btn-primary float-right mr-1"
+                href="#"
+                role="button"
+                routerLink="/request/detail/{{request.id}}">
+                Detail
+            </a></td>
             <td *ngIf="requestFilter != requestFilterType.Rejected">
+
                 <div *ngIf="canRejectRequest(request.id); else cannotReject">
                     <button
                         class="btn btn-danger float-right"

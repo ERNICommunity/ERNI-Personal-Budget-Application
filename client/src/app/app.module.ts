@@ -29,6 +29,7 @@ import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetai
 import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
+import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
 import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
 import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
@@ -56,6 +57,7 @@ import { BusyIndicatorService } from './services/busy-indicator.service';
         CategoryDetailComponent,
         RequestAddComponent,
         RequestDetailComponent,
+        RequestEditComponent,
         OtherBudgetsComponent,
         OtherBudgetsDetailComponent
     ],
