@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Quartz;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,22 +39,14 @@ namespace ERNI.PBA.Server.Host.Utils
 
             if (pendingRequests.Any())
             {
-                var requestBySuperior = pendingRequests
-                    .Where(_ => _.User.Superior != null)
-                    .GroupBy(_ => _.User.Superior);
-
-                foreach (var group in requestBySuperior)
+                var superiorsMails = pendingRequests.Where(_ => _.User.Superior != null).Select(_ => new
                 {
-                    var msg = new StringBuilder("You have new requests to handle");
-                    msg.AppendLine();
-                    msg.AppendLine();
+                    _.User.Superior.Username,
+                }).Distinct();
 
-                    foreach (var request in group)
-                    {
-                        msg.AppendLine($"   {request}");
-                    }
-
-                    _mailService.SendMail(msg.ToString(), group.Key.Username);
+                foreach (var mail in superiorsMails)
+                {
+                    _mailService.SendMail("You have new requests to handle", mail.Username);
                 }
             }
         }
@@ -72,16 +63,7 @@ namespace ERNI.PBA.Server.Host.Utils
 
                 foreach (var mail in adminsMails)
                 {
-                    var msg = new StringBuilder("You have new requests to handle");
-                    msg.AppendLine();
-                    msg.AppendLine();
-
-                    foreach (var request in approvedBySuperiorRequests)
-                    {
-                        msg.AppendLine($"   {request}");
-                    }
-
-                    _mailService.SendMail(msg.ToString(), mail);
+                    _mailService.SendMail("You have new requests to handle", mail);
                 }
             }
         }
