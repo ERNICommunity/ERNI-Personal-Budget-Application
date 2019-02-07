@@ -27,5 +27,10 @@ namespace ERNI.PBA.Server.DataAccess.Model
         public DateTime Date { get; set; }
 
         public RequestState State { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Title} ({Amount}) by {Budget?.User?.FirstName} {Budget?.User?.LastName}";
+        }
     }
 }
