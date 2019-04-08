@@ -31,8 +31,8 @@ namespace server.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
-     
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository,IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
+
+        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -208,7 +208,7 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-             return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
+            return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
         }
 
         [HttpGet("{year}/approved")]
@@ -222,14 +222,14 @@ namespace server.Controllers
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
         {
-             return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
+            return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
-             return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
+            return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
         }
 
         [HttpPut]
@@ -286,25 +286,25 @@ namespace server.Controllers
 
         private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
         {
-                Expression<Func<Request, bool>> predicate;
+            Expression<Func<Request, bool>> predicate;
 
-                var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-                if (currentUser.IsAdmin)
-                {
-                    predicate = request => request.Year == year && requestStates.Contains(request.State);
-                }
-                else
-                {
-                    var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
-                    var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                    predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
-                }
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (currentUser.IsAdmin)
+            {
+                predicate = request => request.Year == year && requestStates.Contains(request.State);
+            }
+            else
+            {
+                var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
+                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
+                predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
+            }
 
-                var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
+            var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
 
-                var result = requests.Select(GetModel).ToArray();
+            var result = requests.Select(GetModel).ToArray();
 
-                return result;
+            return result;
         }
 
         private static RequestModel GetModel(Request request)
@@ -362,7 +362,7 @@ namespace server.Controllers
         {
             var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
             var requests = (await _requestRepository.GetRequests(year, userId, cancellationToken)).Where(req => req.Id != requestId);
-            
+
             decimal requestsSum = 0;
 
             foreach (var item in requests)
@@ -377,7 +377,9 @@ namespace server.Controllers
 
         private async Task<decimal> CalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
-            var requestsOfCategory = (await _requestRepository.GetRequests(year, userId, cancellationToken)).Where(req => req.CategoryId == categoryId && req.Id != requestId);
+            var requestsOfCategory = (await _requestRepository.GetRequests(year, userId, cancellationToken))
+                .Where(req => req.CategoryId == categoryId && req.Id != requestId)
+                .Where(req => req.State != RequestState.Rejected);
 
             decimal requestsSumForCategory = 0;
 

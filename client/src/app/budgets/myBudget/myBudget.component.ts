@@ -11,6 +11,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { RequestState } from '../../model/requestState';
 
 @Component({
     selector: 'app-my-Budget',
@@ -92,7 +93,9 @@ export class MyBudgetComponent implements OnInit {
         var requestsSum = 0;
 
         requests.forEach((req) => {
-            requestsSum += req.amount
+            if (req.state != RequestState.Rejected) {
+                requestsSum += req.amount
+            }
         });
 
         this.currentAmount = this.budget.amount - requestsSum;
