@@ -361,7 +361,9 @@ namespace server.Controllers
         private async Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
-            var requests = (await _requestRepository.GetRequests(year, userId, cancellationToken)).Where(req => req.Id != requestId);
+            var requests = (await _requestRepository.GetRequests(year, userId, cancellationToken))
+                .Where(req => req.Id != requestId)
+                .Where(req => req.State != RequestState.Rejected);
 
             decimal requestsSum = 0;
 
