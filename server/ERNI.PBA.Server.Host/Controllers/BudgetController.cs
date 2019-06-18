@@ -88,6 +88,9 @@ namespace server.Controllers
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
             var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
+            var amounts = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
+                .ToDictionary(_ => _.UserId, _ => _.Amount);
+
             var result = (from au in activeUsers
                             join b in budgets on au.Id equals b.UserId into joined
                             from j in joined.DefaultIfEmpty(new Budget())
@@ -97,9 +100,12 @@ namespace server.Controllers
                                 {
                                     Id = au.Id,
                                     FirstName = au.FirstName,
-                                    LastName = au.LastName
+                                    LastName = au.LastName,
                                 },
-                                Amount = j.Amount
+                                Amount = j.Amount,
+                                TotalAmount = amounts.TryGetValue(au.Id, out var total) ? total : 0,
+                                AmountLeft = j.Amount - (amounts.TryGetValue(au.Id, out var t) ? t : 0)
+
                             })
                 .OrderBy(_ => _.User.LastName).ThenBy(_ => _.User.FirstName);
 

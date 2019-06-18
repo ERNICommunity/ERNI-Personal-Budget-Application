@@ -66,6 +66,7 @@
             <th scope="col">Last</th>
             <th scope="col">First</th>
             <th scope="col">Amount</th>
+            <th scope="col">Amount left</th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -75,6 +76,7 @@
             <td>{{budget.user.lastName}}</td>
             <td>{{budget.user.firstName}}</td>
             <td *ngIf="budget.amount; else empty">{{budget.amount}}</td>
+            <td *ngIf="budget.amountLeft !== undefined; else empty">{{budget.amountLeft}}</td>
             <ng-template #empty>
                 <td>Not defined.</td>
             </ng-template>
