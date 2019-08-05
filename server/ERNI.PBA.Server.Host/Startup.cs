@@ -22,6 +22,7 @@ namespace ERNI.PBA.Server
 {
     public class Startup
     {
+        private object _createUserLock = new object();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -94,9 +95,16 @@ namespace ERNI.PBA.Server
                                     LastName = context.Principal.Claims.Single(c => c.Type == "family_name").Value,
                                     Username = context.Principal.Claims.Single(c => c.Type == "upn").Value
                                 };
-                                db.Users.Add(user);
-                                db.SaveChanges();
+                                lock (_createUserLock)
+                                {
+                                    if(!db.UserExists(user))
+                                    {
+                                        db.Users.Add(user);
+                                        db.SaveChanges();
+                                    }
+                                }
                             }
+
 
                             var claims = new List<System.Security.Claims.Claim>();
                             claims.Add(new System.Security.Claims.Claim(Claims.Id, user.Id.ToString()));
@@ -141,7 +149,7 @@ namespace ERNI.PBA.Server
 
             app.UseSwagger();
 
-            app.UseQuartz();
+            //app.UseQuartz();
 
             app.UseSwaggerUI(c =>
             {
