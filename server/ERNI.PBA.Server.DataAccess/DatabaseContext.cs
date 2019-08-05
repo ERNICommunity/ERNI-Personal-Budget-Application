@@ -1,6 +1,7 @@
 ﻿using ERNI.PBA.Server.DataAccess.EntitiesConfiguration;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ERNI.PBA.Server.DataAccess
 {
@@ -17,6 +18,12 @@ namespace ERNI.PBA.Server.DataAccess
         public DbSet<Request> Requests { get; set; }
 
         public DbSet<User> Users { get; set; }
+
+        public bool UserExists(User user)
+        {
+            if (user == null) return false;
+            return (Users.Count(_ => _.UniqueIdentifier == user.UniqueIdentifier) > 0);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
