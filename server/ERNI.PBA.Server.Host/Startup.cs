@@ -82,39 +82,28 @@ namespace ERNI.PBA.Server
 
                             var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
 
-                            var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
-
-                            if (user == null)
+                            var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub) ?? new User
                             {
-                                user = new User
-                                {
-                                    UniqueIdentifier = sub,
-                                    FirstName = context.Principal.Claims.Single(c => c.Type == "given_name").Value,
-                                    LastName = context.Principal.Claims.Single(c => c.Type == "family_name").Value,
-                                    Username = context.Principal.Claims.Single(c => c.Type == "upn").Value
-                                };
-                                lock (_createUserLock)
-                                {
-                                    if(!db.UserExists(user))
-                                    {
-                                        db.Users.Add(user);
-                                        db.SaveChanges();
-                                    }
-                                }
-                            }
+                                UniqueIdentifier = sub,
+                                FirstName = context.Principal.Claims.Single(c => c.Type == "given_name").Value,
+                                LastName = context.Principal.Claims.Single(c => c.Type == "family_name").Value,
+                                Username = context.Principal.Claims.Single(c => c.Type == "upn").Value
+                            };
 
-
-                            var claims = new List<System.Security.Claims.Claim>();
-                            claims.Add(new System.Security.Claims.Claim(Claims.Id, user.Id.ToString()));
-                            claims.Add(new System.Security.Claims.Claim(Claims.FirstName, user.FirstName));
-                            claims.Add(new System.Security.Claims.Claim(Claims.LastName, user.LastName));
+                            var claims = new List<System.Security.Claims.Claim>
+                            {
+                                new System.Security.Claims.Claim(Claims.Id, user.Id.ToString()),
+                                new System.Security.Claims.Claim(Claims.FirstName, user.FirstName),
+                                new System.Security.Claims.Claim(Claims.LastName, user.LastName)
+                            };
 
                             if (user.IsAdmin)
                             {
                                 claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
                             }
 
-                            context.Principal.AddIdentity(new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
+                            context.Principal.AddIdentity(
+                                new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
                         }
                     };
 

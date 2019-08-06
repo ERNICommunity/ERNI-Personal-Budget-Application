@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Request } from '../model/request';
-import { Observable ,  of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
@@ -52,7 +52,7 @@ export class RequestService {
     return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
-  public deleteRequest(id : number): Observable<Request> {
+  public deleteRequest(id: number): Observable<Request> {
     return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + '/' + id, this.serviceHelper.getHttpOptions());
   }
 }

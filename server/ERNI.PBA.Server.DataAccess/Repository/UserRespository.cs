@@ -32,7 +32,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
         
-         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
+        public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
         {
             return _context.Users
                 .Where(filter)
@@ -55,6 +55,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             return _context.Users
                 .Where(u => u.IsAdmin)
                 .ToArrayAsync(cancellationToken);
+        }
+
+        public async Task<bool> AddUser(User user, CancellationToken cancellationToken)
+        {
+            if (_context.Users.Count(u => u.UniqueIdentifier == user.UniqueIdentifier) > 0) return false;
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
         }
     }
 }
