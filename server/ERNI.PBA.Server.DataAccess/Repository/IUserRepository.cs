@@ -20,5 +20,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken);
 
         Task<User[]> GetAdminUsers(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Adds user to the repository. Returns true if user was newly added, or false if user already exists.
+        /// </summary>
+        Task<bool> AddUser(User user, CancellationToken cancellationToken);
     }
 }

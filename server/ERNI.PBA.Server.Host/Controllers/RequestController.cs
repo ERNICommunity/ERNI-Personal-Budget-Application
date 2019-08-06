@@ -54,6 +54,7 @@ namespace server.Controllers
                 Title = _.Title,
                 Amount = _.Amount,
                 Date = _.Date,
+                Url = _.Url,
                 State = _.State,
                 CategoryTitle = _.Category.Title
             }).OrderByDescending(_ => _.Date);

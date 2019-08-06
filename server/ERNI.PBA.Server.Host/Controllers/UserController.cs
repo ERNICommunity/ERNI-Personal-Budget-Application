@@ -9,6 +9,7 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -25,6 +26,21 @@ namespace ERNI.PBA.Server.Host.Controllers
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+        }
+
+        [HttpPut("register")]
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserModel payload, CancellationToken cancellationToken)
+        {
+            var user = new User
+            {
+                UniqueIdentifier = payload.Sub,
+                FirstName = payload.FirstName,
+                LastName = payload.LastName,
+                Username = payload.UserName
+            };
+            var result = await _userRepository.AddUser(user, cancellationToken);
+
+            return Ok(result);
         }
 
         [HttpPut]
@@ -53,6 +69,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (user == null) return StatusCode(404);
 
             return Ok(new UserModel
             {
