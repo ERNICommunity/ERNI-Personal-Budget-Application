@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { AdalService } from '../services/adal.service';
 import { UserService } from '../services/user.service';
 import { RegisterUser } from '../model/registerUser';
