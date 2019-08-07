@@ -21,7 +21,6 @@ export class RequestAddComponent implements OnInit {
   selectedDate : Date;
   requestForm: FormGroup;
   requestUrl: string;
-  dirty: boolean;
 
   constructor (private categoryService: CategoryService,
               private requestService: RequestService,
@@ -69,10 +68,6 @@ export class RequestAddComponent implements OnInit {
        this.selectedCategory =categories.filter(cat => cat.isActive == true)[0];
        this.busyIndicatorService.end();
       });
-  }
-
-  isDirty(): boolean{
-    return this.dirty;
   }
 
   goBack(): void {
