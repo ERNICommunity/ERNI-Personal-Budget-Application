@@ -19,6 +19,7 @@ export class RequestEditComponent implements OnInit {
   selectedDate : Date;
   requestForm: FormGroup;
   httpResponseError : string;
+  dirty: boolean;
   
   constructor(private requestService: RequestService,
               private categoryService : CategoryService,
@@ -78,6 +79,14 @@ export class RequestEditComponent implements OnInit {
         });
     }
  
+    setDirty(): void{
+      this.dirty = true;
+    }
+  
+    isDirty(): boolean{
+      return this.dirty;
+    }
+
   goBack(): void {
     this.location.back();
   }
