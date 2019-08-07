@@ -30,10 +30,12 @@
                             type="text"
                             class="form-control"
                             placeholder="dd/mm/yyyy"
+                            id="datePicker"
                             [(ngModel)]="selectedDate"
                             [ngModelOptions]="{standalone: true}"
                             bsDatepicker
                             [bsConfig]="{dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-dark-blue'}"
+                            (click)="setDirty()"
                             readonly>
                     </label>
                 </h5>
@@ -107,7 +109,7 @@
         </button>
         <button
             class="btn btn-success"
-            [disabled]="requestForm.pristine || requestForm.invalid"
+            [disabled]="!isDirty() && (requestForm.pristine || requestForm.invalid)"
             (click)="save()">
             save
         </button>
