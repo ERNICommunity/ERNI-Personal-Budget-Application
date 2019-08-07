@@ -30,10 +30,12 @@
                             type="text"
                             class="form-control"
                             placeholder="dd/mm/yyyy"
+                            id="datePicker"
                             [(ngModel)]="selectedDate"
                             [ngModelOptions]="{standalone: true}"
                             bsDatepicker
                             [bsConfig]="{dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-dark-blue'}"
+                            (click)="setDirty()"
                             readonly>
                             <!--Date picker is not setting dirty status on the form. View https://github.com/angular-ui/bootstrap/issues/855 for more information-->
                     </label>
@@ -108,7 +110,7 @@
         </button>
         <button
             class="btn btn-success"
-            [disabled]="requestForm.pristine || requestForm.invalid"
+            [disabled]="!isDirty() && (requestForm.pristine || requestForm.invalid)"
             (click)="save()">
             save
         </button>
