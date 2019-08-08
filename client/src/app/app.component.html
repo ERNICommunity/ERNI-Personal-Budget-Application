@@ -25,6 +25,11 @@
                     Requests
                 </a>
             </li>
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && user.isAdmin">
+                <a class="nav-link" routerLink="/request-mass">
+                    Mass Request
+                </a>
+            </li>
             <li class="nav-item" *ngIf="adalService.userInfo && user.isAdmin">
                 <a class="nav-link" routerLink="/users">
                     Employees

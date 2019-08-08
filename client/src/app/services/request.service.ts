@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
+import { RequestMass } from '../model/requestMass';
 
 @Injectable()
 export class RequestService {
@@ -46,6 +47,10 @@ export class RequestService {
 
   public addRequest(request: Request): Observable<Request> {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  }
+
+  public addRequestMass(request: RequestMass): Observable<any> {
+    return this.http.post<RequestMass>(this.configService.apiUrlBase + this.requestUrl + 'mass', request, this.serviceHelper.getHttpOptions());
   }
 
   public updateRequest(request: Request): Observable<any> {

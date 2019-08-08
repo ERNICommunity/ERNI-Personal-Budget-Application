@@ -20,6 +20,7 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
 import { CreateUserComponent } from './users/create-user/create-user.component';
+import { RequestMassComponent } from './requests/requestMass/requestMass.component';
 
 const currentYear = "2019"; // = (new Date()).getFullYear();
 
@@ -67,6 +68,7 @@ export const rootRouterConfig: Routes = [
             { path: 'detail/:id', component: UserDetailComponent, canActivate: [AuthenticationGuard] },
             { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
         ]
-    }
+    },
+    { path: 'request-mass', component: RequestMassComponent, canActivate: [AuthenticationGuard] }
 ];
 

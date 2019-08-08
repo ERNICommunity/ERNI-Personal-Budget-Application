@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -46,6 +48,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public void AddRequest(Request request)
         {
             _context.Requests.Add(request);
+        }
+
+        public void AddRequests(IEnumerable<Request> requests)
+        {
+            _context.Requests.AddRange(requests);
         }
 
         public void DeleteRequest(Request request)

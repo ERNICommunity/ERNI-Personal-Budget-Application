@@ -29,6 +29,7 @@ import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
 import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
+import { RequestMassComponent } from './requests/requestMass/requestMass.component';
 import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { AuthInterceptor } from './interceptors/authInterceptor'
@@ -60,6 +61,7 @@ import { AlertComponent } from './directives/alert/alert.component';
         RequestAddComponent,
         RequestDetailComponent,
         RequestEditComponent,
+        RequestMassComponent,
         OtherBudgetsComponent,
         OtherBudgetsDetailComponent,
         AlertComponent

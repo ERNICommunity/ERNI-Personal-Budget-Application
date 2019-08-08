@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +17,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         Task<Request> GetRequest(int id, CancellationToken cancellationToken);
 
         void AddRequest(Request request);
+
+        void AddRequests(IEnumerable<Request> requests);
 
         void DeleteRequest(Request request);
     }

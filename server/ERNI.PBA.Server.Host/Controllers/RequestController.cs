@@ -219,6 +219,43 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        [HttpPost("mass")]
+        public async Task<IActionResult> AddRequestMass([FromBody] PostRequestMassModel payload, CancellationToken cancellationToken)
+        {
+            var currentYear = DateTime.Now.Year;
+            var requests = new List<Request>();
+            foreach (var user in payload.Users)
+            {
+                var userId = user.Id;
+                var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
+
+                if (status != "OK")
+                {
+                    continue;;
+                }
+
+                var request = new Request
+                {
+                    UserId = userId,
+                    Year = currentYear,
+                    Title = payload.Title,
+                    Amount = payload.Amount,
+                    Date = payload.Date.ToLocalTime().Date,
+                    State = RequestState.Approved,
+                    CategoryId = payload.Category.Id,
+                    Url = payload.Url
+                };
+
+                requests.Add(request);
+            }
+
+            _requestRepository.AddRequests(requests);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+            
+            return Ok();
+        }
+
         [HttpGet("{year}/pending")]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
