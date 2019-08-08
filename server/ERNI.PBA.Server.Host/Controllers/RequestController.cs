@@ -219,6 +219,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
+        /// </summary>
         [HttpPost("mass")]
         public async Task<IActionResult> AddRequestMass([FromBody] PostRequestMassModel payload, CancellationToken cancellationToken)
         {
@@ -231,7 +234,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
                 if (status != "OK")
                 {
-                    continue;;
+                    continue;
                 }
 
                 var request = new Request
