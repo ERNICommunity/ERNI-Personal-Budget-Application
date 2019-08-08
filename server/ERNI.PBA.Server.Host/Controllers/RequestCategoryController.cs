@@ -36,7 +36,8 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Title = _.Title,
                 IsActive = _.IsActive,
                 IsUrlNeeded = _.IsUrlNeeded,
-                SpendLimit = _.SpendLimit
+                SpendLimit = _.SpendLimit,
+                Email = _.Email
             });
 
             return Ok(result);
@@ -53,7 +54,8 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Title = requestCategory.Title,
                 IsActive = requestCategory.IsActive,
                 IsUrlNeeded = requestCategory.IsUrlNeeded,
-                SpendLimit = requestCategory.SpendLimit
+                SpendLimit = requestCategory.SpendLimit,
+                Email = requestCategory.Email
             };
 
             return Ok(result);
@@ -90,6 +92,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             requestCategory.IsActive = payload.IsActive;
             requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
             requestCategory.SpendLimit = payload.SpendLimit;
+            requestCategory.Email = payload.Email;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

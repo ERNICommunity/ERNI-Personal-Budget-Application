@@ -42,6 +42,35 @@
         </label>
     </div>
     <br>
+
+    <div><b>Emails</b></div>
+    <div>
+    <select [ngModel]="mails" (ngModelChange)="onSelected($event)" multiple ng-model="categories" >
+        <option *ngFor="let u of category.email.split(',')">
+        {{ u }}
+        </option>
+    </select>
+    <button
+        class="btn btn-failure"
+        (click)="deletemail()">
+        Remove
+    </button>
+    </div>
+    <br>
+    <div class="form-input">
+        <label class="form-input-label">
+            Add email:
+            <input #newmail
+            class="form-input"
+            placeholder="">
+        </label>
+        <button
+            class="btn btn-success"
+            (click)="addmail(newmail.value)">
+            Add
+        </button>
+    </div>
+    <br>
     <button
         class="btn btn-primary mr-1"
         (click)="goBack()">

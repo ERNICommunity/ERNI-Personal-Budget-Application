@@ -4,4 +4,5 @@ export class Category {
     spendLimit : number;
     isActive : boolean;
     isUrlNeeded : boolean;
+    email: string;
 }

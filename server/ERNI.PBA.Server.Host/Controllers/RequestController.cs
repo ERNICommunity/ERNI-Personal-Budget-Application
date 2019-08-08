@@ -125,13 +125,26 @@ namespace server.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
+            string message;
             if (request.Url != null)
             {
-                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".", request.User.Username);
-                return Ok();
+                message = "Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".";
+            }
+            else
+            {
+                message = "Your request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
             }
 
-            _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".", request.User.Username);
+            _mailService.SendMail(message, request.User.Username);
+
+            //Notify all defined mails in category
+            foreach (var email in request.Category.Email.Split(","))
+            {
+                if (email != request.User.Username)
+                {
+                    _mailService.SendMail(message, email);
+                }
+            }
 
             return Ok();
         }
