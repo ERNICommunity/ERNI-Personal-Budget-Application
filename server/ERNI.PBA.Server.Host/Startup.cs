@@ -148,8 +148,6 @@ namespace ERNI.PBA.Server
 
             app.UseAuthentication();
 
-            app.UseSwagger();
-
             app.UseQuartz();
 
             app.UseSwagger();
