@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ERNI.PBA.Server.DataAccess.Model
+﻿namespace ERNI.PBA.Server.DataAccess.Model
 {
     public class User
     {
@@ -20,10 +16,10 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public string Username { get; set; }
 
-        public User Superior { get; set; }
-
         public int? SuperiorId { get; set; }
 
         public UserState State { get; set; }
+
+        public virtual User Superior { get; set; }
     }
 }
