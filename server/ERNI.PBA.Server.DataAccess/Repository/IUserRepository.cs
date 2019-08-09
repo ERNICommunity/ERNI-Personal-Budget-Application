@@ -24,6 +24,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         /// <summary>
         /// Adds user to the repository. Returns true if user was newly added, or false if user already exists.
         /// </summary>
-        Task<bool> AddUser(User user, CancellationToken cancellationToken);
+        Task<bool> AddUser(User user);
     }
 }

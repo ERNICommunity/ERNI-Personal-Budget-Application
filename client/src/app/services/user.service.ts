@@ -4,7 +4,6 @@ import {HttpClient} from '@angular/common/http';
 import {User} from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
-import { RegisterUser} from '../model/registerUser';
 
 @Injectable()
 export class UserService {
@@ -14,8 +13,8 @@ export class UserService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
     }
 
-    public registerUser(user: RegisterUser): Observable<any> {
-        return this.http.put<RegisterUser>(this.configService.apiUrlBase + this.url + '/register', user, this.serviceHelper.getHttpOptions());
+    public registerUser(user: any): Observable<any> {
+        return this.http.post<any>(this.configService.apiUrlBase + this.url + '/register', user, this.serviceHelper.getHttpOptions());
     }
 
     public getActiveUsers(): Observable<User[]> {

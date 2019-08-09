@@ -57,11 +57,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task<bool> AddUser(User user, CancellationToken cancellationToken)
+        public async Task<bool> AddUser(User user)
         {
-            if (_context.Users.Count(u => u.UniqueIdentifier == user.UniqueIdentifier) > 0) return false;
+            var existingUser = await _context.Users.SingleAsync(u => u.UniqueIdentifier == user.UniqueIdentifier);
+            if (existingUser != null)
+                return false;
+
             _context.Users.Add(user);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
             return true;
         }
     }

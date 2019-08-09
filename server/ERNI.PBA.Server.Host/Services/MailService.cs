@@ -19,7 +19,7 @@ namespace ERNI.PBA.Server.Host.Services
             _configuration = Configuration;
             _smtpServer = _configuration["MailSettings:SmtpServer"];
             _port = _configuration["MailSettings:Port"];
-            _userName = _configuration["MailSettings:Token"];
+            _userName = _configuration["MailSettings:User"];
             _password = _configuration["MailSettings:Password"];
             _enableSsl = _configuration["MailSettings:EnableSsl"];
         }
