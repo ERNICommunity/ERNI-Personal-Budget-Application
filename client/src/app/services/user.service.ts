@@ -14,7 +14,7 @@ export class UserService {
     }
 
     public registerUser(user: any): Observable<any> {
-        return this.http.post<any>(this.configService.apiUrlBase + this.url + '/register', user, this.serviceHelper.getHttpOptions());
+        return this.http.post<any>(this.configService.apiUrlBase + this.url + '/register', this.serviceHelper.getHttpOptions());
     }
 
     public getActiveUsers(): Observable<User[]> {

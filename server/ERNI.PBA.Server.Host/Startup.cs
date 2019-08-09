@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 
 namespace ERNI.PBA.Server
 {
@@ -81,27 +82,24 @@ namespace ERNI.PBA.Server
                         OnTokenValidated = async context =>
                         {
                             var db = context.HttpContext.RequestServices.GetRequiredService<DatabaseContext>();
-
                             var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
-
                             var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
 
-                            if (user == null)
+                            var claims = new List<Claim>
                             {
-                                context.Fail("Unauthorized");
-                                return;
-                            }
-
-                            var claims = new List<System.Security.Claims.Claim>
-                            {
-                                new System.Security.Claims.Claim(Claims.Id, user.Id.ToString()),
-                                new System.Security.Claims.Claim(Claims.FirstName, user.FirstName),
-                                new System.Security.Claims.Claim(Claims.LastName, user.LastName)
+                                new Claim(Claims.FirstName, context.Principal.Claims.Single(c => c.Type == "given_name").Value),
+                                new Claim(Claims.LastName, context.Principal.Claims.Single(c => c.Type == "family_name").Value),
+                                new Claim(Claims.UserName, context.Principal.Claims.Single(c => c.Type == "upn").Value),
+                                new Claim(Claims.UniqueIndetifier, sub)
                             };
 
-                            if (user.IsAdmin)
+                            if (user != null)
                             {
-                                claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
+                                claims.Add(new Claim(Claims.Id, user.Id.ToString()));
+                                if (user.IsAdmin)
+                                {
+                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
+                                }
                             }
 
                             context.Principal.AddIdentity(
@@ -138,7 +136,7 @@ namespace ERNI.PBA.Server
 
             app.UseSwagger();
 
-            app.UseQuartz();
+            //app.UseQuartz();
 
             app.UseSwaggerUI(c =>
             {
