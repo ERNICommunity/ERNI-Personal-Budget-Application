@@ -88,7 +88,7 @@
                             <ng-template #noURL>None</ng-template>
                     </td>
                     <td>{{requestStateType[request.state]}}</td>
-                    <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete" style="min-width: 180px">
+                    <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"  class="button-table-cell">
                         <button
                             class="btn btn-danger float-right"
                             title="delete request"

@@ -84,13 +84,11 @@ namespace ERNI.PBA.Server
 
                             var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
 
-                            var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub) ?? new User
-                            {
-                                UniqueIdentifier = sub,
-                                FirstName = context.Principal.Claims.Single(c => c.Type == "given_name").Value,
-                                LastName = context.Principal.Claims.Single(c => c.Type == "family_name").Value,
-                                Username = context.Principal.Claims.Single(c => c.Type == "upn").Value
-                            };
+                            var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
+
+                            if (user == null)
+                                context.Fail("Unauthorized");
+
 
                             var claims = new List<System.Security.Claims.Claim>
                             {
@@ -138,7 +136,7 @@ namespace ERNI.PBA.Server
 
             app.UseSwagger();
 
-            //app.UseQuartz();
+            app.UseQuartz();
 
             app.UseSwaggerUI(c =>
             {

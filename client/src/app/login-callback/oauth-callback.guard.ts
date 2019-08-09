@@ -3,7 +3,6 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 
 import { AdalService } from '../services/adal.service';
 import { UserService } from '../services/user.service';
-import { RegisterUser } from '../model/registerUser';
 
 @Injectable()
 export class OAuthCallbackHandler implements CanActivate {

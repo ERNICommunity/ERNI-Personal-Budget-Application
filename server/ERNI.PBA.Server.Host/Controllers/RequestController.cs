@@ -192,7 +192,7 @@ namespace server.Controllers
                 Year = currentYear,
                 Title = payload.Title,
                 Amount = payload.Amount,
-                Date = payload.Date.ToLocalTime().Date,
+                Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
                 CategoryId = payload.Category.Id,
                 Url = payload.Url
@@ -260,7 +260,7 @@ namespace server.Controllers
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.CategoryId = payload.CategoryId;
-            request.Date = payload.Date.ToLocalTime().Date;
+            request.Date = payload.Date.ToLocalTime();
             request.Url = payload.Url;
 
             await _unitOfWork.SaveChanges(cancellationToken);

@@ -18,12 +18,6 @@ namespace ERNI.PBA.Server.DataAccess
 
         public DbSet<RequestCategory> RequestCategories { get; set; }
 
-        public bool UserExists(User user)
-        {
-            if (user == null) return false;
-            return (Users.Count(_ => _.UniqueIdentifier == user.UniqueIdentifier) > 0);
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var user = modelBuilder.Entity<User>();

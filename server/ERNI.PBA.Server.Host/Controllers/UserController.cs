@@ -28,7 +28,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             _logger = logger;
         }
 
-        [HttpPut("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserModel payload, CancellationToken cancellationToken)
         {
             var user = new User
@@ -38,7 +38,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 LastName = payload.LastName,
                 Username = payload.UserName
             };
-            var result = await _userRepository.AddUser(user, cancellationToken);
+            var result = await _userRepository.AddUser(user);
 
             return Ok(result);
         }
@@ -69,7 +69,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (user == null) return StatusCode(404);
+            if (user == null)
+                return StatusCode(403);
 
             return Ok(new UserModel
             {
