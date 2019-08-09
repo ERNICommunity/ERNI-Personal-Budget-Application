@@ -57,53 +57,89 @@
         <h5>
             <label class="col-md-6">
                 Url
-                <input [(ngModel)]="requestUrl" formControlName="url" class="form-control" type="url" disabled="!selectedCategory.isUrlNeeded">
+                <input [(ngModel)]="requestUrl" formControlName="url" class="form-control" type="url"
+                    disabled="!selectedCategory.isUrlNeeded">
             </label>
         </h5>
     </div>
-    <input
-    class="form-control col-md-6"
-    style="border-top: 0px; border-right: 0px; border-left: 0px; outline: none; box-shadow: none"
-    placeholder="Search employee"
-    id="searchBox"
-    type="text"
-    [(ngModel)]="searchTerm"
-    [ngModelOptions]="{standalone: true}">
     <br>
+    <div class="row">
+        <h5>Assign Employees</h5>
+    </div>
+    <div class="row">
+        <input class="form-control col-md-6" style="outline: none; box-shadow: none" placeholder="Search employee"
+            id="searchBox" type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}">
+        <h5 class="col-md-6">Assigned Employees</h5>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">First</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
 
-    <div class="col-md-6" style="max-width: 550px">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">First</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
+                    <tr *ngFor="let user of filteredUsers">
+                        <th>{{user.id}}</th>
+                        <td>{{user.lastName}}</td>
+                        <td>{{user.firstName}}</td>
 
-                <tr *ngFor="let user of filteredUsers">
-                    <th>{{user.id}}</th>
-                    <td>{{user.lastName}}</td>
-                    <td>{{user.firstName}}</td>
+                        <td *ngIf="!isAdded(user)" style="min-width: 180px;">
+                            <button class="btn btn-success float-right" title="activate employee"
+                                (click)="addUser(user)">
+                                Add
+                            </button>
+                        </td>
 
-                    <td *ngIf="!isAdded(user)" style="min-width: 180px;">
-                        <button class="btn btn-success float-right" title="activate employee"
-                            (click)="addUser(user)">
-                            Add
-                        </button>
-                    </td>
+                        <td *ngIf="isAdded(user)" style="min-width: 180px;">
+                            <button class="btn btn-danger float-right" title="deactivate employee"
+                                (click)="removeUser(user)">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
 
-                    <td *ngIf="isAdded(user)" style="min-width: 180px;">
-                        <button class="btn btn-danger float-right" title="deactivate employee"
-                            (click)="removeUser(user)">
-                            Remove
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">First</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of addedUsers">
+                        <th>{{user.id}}</th>
+                        <td>{{user.lastName}}</td>
+                        <td>{{user.firstName}}</td>
+
+                        <td *ngIf="!isAdded(user)" style="min-width: 180px;">
+                            <button class="btn btn-success float-right" title="activate employee"
+                                (click)="addUser(user)">
+                                Add
+                            </button>
+                        </td>
+
+                        <td *ngIf="isAdded(user)" style="min-width: 180px;">
+                            <button class="btn btn-danger float-right" title="deactivate employee"
+                                (click)="removeUser(user)">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div *ngIf="requestForm.controls['url'].invalid && (requestForm.controls['url'].dirty || requestForm.controls['url'].touched)"
