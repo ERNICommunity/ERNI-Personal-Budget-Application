@@ -41,7 +41,7 @@ export class CategoryDetailComponent implements OnInit {
     if (this.category.email === undefined || this.category.email === null) {
       this.category.email = [];
     }
-    if ((value.trim() === '') || (value.search('@') === -1) || (this.category.email.includes(value))) {
+    if ((value.trim() === '') || (!this.validateEmail(value)) || (this.category.email.includes(value))) {
       return;
     }
     this.category.email.push(value);
@@ -56,4 +56,9 @@ export class CategoryDetailComponent implements OnInit {
     this.category.email = this.category.email.filter(element => !this.emailsToDelete.includes(element));
     this.emailsToDelete = [];
   }
+
+  validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 }
