@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CategoryDetailComponent implements OnInit {
   category: Category;
-  array: string[] = [];
+  emailsToDelete: string[] = [];
   
   constructor(private categoryService: CategoryService, private route: ActivatedRoute, private location: Location) { }
 
@@ -37,32 +37,23 @@ export class CategoryDetailComponent implements OnInit {
        .subscribe(() => this.goBack());
   }
   
-  addmail(value: string): void {
-    if ((value.trim() === '') || (value.search('@') === -1) || (this.category.email.search(value) !== -1)) {
+  addMail(value: string): void {
+    if (this.category.email === undefined || this.category.email === null) {
+      this.category.email = [];
+    }
+    if ((value.trim() === '') || (value.search('@') === -1) || (this.category.email.includes(value))) {
       return;
     }
-    if ((this.category.email.length === 0)) {
-      this.category.email += value;
-      return;
-    }
-    this.category.email += ',' + value;
+    this.category.email.push(value);
   }
 
   
   onSelected(objs) {
-    this.array = objs;
+    this.emailsToDelete = objs;
   }
 
-  deletemail(): void {
-    let list: string[] = [];
-    this.array.forEach(e1 => {
-      this.category.email.split(',').forEach(e2 => {
-        if (e1 !== e2) {
-          list.push(e2);
-        }
-      });
-    });
-    this.category.email = list.join(',');
-    console.log(this.category.email);
+  deleteMail(): void {
+    this.category.email = this.category.email.filter(element => !this.emailsToDelete.includes(element));
+    this.emailsToDelete = [];
   }
 }

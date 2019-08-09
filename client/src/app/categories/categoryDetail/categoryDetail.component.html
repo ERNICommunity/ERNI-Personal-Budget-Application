@@ -44,18 +44,23 @@
     <br>
 
     <div><b>Emails</b></div>
-    <div>
-    <select [ngModel]="mails" (ngModelChange)="onSelected($event)" multiple ng-model="categories" >
-        <option *ngFor="let u of category.email.split(',')">
+    <div id="emails"> 
+    <select id="emailsList" [ngModel]="mails" (ngModelChange)="onSelected($event)" multiple ng-model="categories" 
+    *ngIf="category.email && category.email.length; else empty">
+        <option *ngFor="let u of category.email">
         {{ u }}
         </option>
     </select>
-    <button
-        class="btn btn-failure"
-        (click)="deletemail()">
-        Remove
-    </button>
+    <ng-template #empty>
+        <td>Predefined emails not assigned.</td>
+    </ng-template>
     </div>
+    <button id="deleteMail"
+        *ngIf="emailsToDelete.length; else disabled"
+        class="btn btn-failure"
+        (click)="deleteMail()">
+        Delete
+    </button>
     <br>
     <div class="form-input">
         <label class="form-input-label">
@@ -65,8 +70,9 @@
             placeholder="">
         </label>
         <button
+            id="addEmail"
             class="btn btn-success"
-            (click)="addmail(newmail.value)">
+            (click)="addMail(newmail.value)">
             Add
         </button>
     </div>

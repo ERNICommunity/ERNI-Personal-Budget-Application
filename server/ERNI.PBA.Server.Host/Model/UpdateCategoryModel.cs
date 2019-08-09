@@ -7,6 +7,6 @@
         public bool IsActive { get; set; }
         public bool IsUrlNeeded { get; set; }
         public int? SpendLimit { get; set; }
-        public string Email { get; set; }
+        public string[] Email { get; set; }
     }
 }

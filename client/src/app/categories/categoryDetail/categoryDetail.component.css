@@ -1,0 +1,13 @@
+#emailsList {
+    width: 320px;
+}
+
+#addEmail {
+    margin-left: 10px;
+}
+
+#deleteMail {
+    margin-top: 5px;
+    width: 320px;
+    margin-bottom: 15px;
+}

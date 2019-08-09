@@ -8,6 +8,7 @@ using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -37,7 +38,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 IsActive = _.IsActive,
                 IsUrlNeeded = _.IsUrlNeeded,
                 SpendLimit = _.SpendLimit,
-                Email = _.Email
+                Email = _.Email?.Split(',')
             });
 
             return Ok(result);
@@ -55,7 +56,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 IsActive = requestCategory.IsActive,
                 IsUrlNeeded = requestCategory.IsUrlNeeded,
                 SpendLimit = requestCategory.SpendLimit,
-                Email = requestCategory.Email
+                Email = requestCategory.Email?.Split(',')
             };
 
             return Ok(result);
@@ -92,7 +93,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             requestCategory.IsActive = payload.IsActive;
             requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
             requestCategory.SpendLimit = payload.SpendLimit;
-            requestCategory.Email = payload.Email;
+            requestCategory.Email = (payload.Email != null) && (payload.Email.Length > 0) ? payload.Email.Join(",") : null;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
