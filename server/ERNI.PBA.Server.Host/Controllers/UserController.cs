@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -30,14 +31,14 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> RegisterUser()
         {
             var user = new User
             {
-                UniqueIdentifier = payload.Sub,
-                FirstName = payload.FirstName,
-                LastName = payload.LastName,
-                Username = payload.UserName
+                UniqueIdentifier = User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
+                FirstName = User.Claims.Single(c => c.Type == Claims.FirstName).Value,
+                LastName = User.Claims.Single(c => c.Type == Claims.LastName).Value,
+                Username = User.Claims.Single(c => c.Type == Claims.UserName).Value
             };
             var result = await _userRepository.AddUser(user);
 
