@@ -85,8 +85,10 @@ namespace ERNI.PBA.Server
                             var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
 
                             if (user == null)
+                            {
                                 context.Fail("Unauthorized");
-
+                                return;
+                            }
 
                             var claims = new List<System.Security.Claims.Claim>
                             {

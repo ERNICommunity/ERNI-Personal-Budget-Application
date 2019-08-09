@@ -29,6 +29,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserModel payload, CancellationToken cancellationToken)
         {
             var user = new User

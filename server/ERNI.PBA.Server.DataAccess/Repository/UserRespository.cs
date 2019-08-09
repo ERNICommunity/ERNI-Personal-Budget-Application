@@ -59,7 +59,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public async Task<bool> AddUser(User user)
         {
-            var existingUser = await _context.Users.SingleAsync(u => u.UniqueIdentifier == user.UniqueIdentifier);
+            var existingUser = await _context.Users.SingleOrDefaultAsync(u => u.UniqueIdentifier == user.UniqueIdentifier);
             if (existingUser != null)
                 return false;
 
