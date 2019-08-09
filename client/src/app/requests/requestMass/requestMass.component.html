@@ -57,8 +57,7 @@
         <h5>
             <label class="col-md-6">
                 Url
-                <input [(ngModel)]="requestUrl" formControlName="url" class="form-control" type="url"
-                    disabled="!selectedCategory.isUrlNeeded">
+                <input [(ngModel)]="requestUrl" formControlName="url" class="form-control" type="url">
             </label>
         </h5>
     </div>
@@ -67,14 +66,14 @@
         <h5>Assign Employees</h5>
     </div>
     <div class="row">
-        <input class="form-control col-md-6" style="outline: none; box-shadow: none" placeholder="Search employee"
+        <input class="form-control col-md-6" placeholder="Search employee"
             id="searchBox" type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}">
         <h5 class="col-md-6">Assigned Employees</h5>
     </div>
     <div class="row">
         <div class="col-md-6">
             <table class="table">
-                <thead>
+                <thead class="thead-borderless">
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Last</th>
@@ -83,20 +82,19 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     <tr *ngFor="let user of filteredUsers">
                         <th>{{user.id}}</th>
                         <td>{{user.lastName}}</td>
                         <td>{{user.firstName}}</td>
 
-                        <td *ngIf="!isAdded(user)" style="min-width: 180px;">
+                        <td *ngIf="!isAdded(user)" class="button-table-cell">
                             <button class="btn btn-success float-right" title="activate employee"
                                 (click)="addUser(user)">
                                 Add
                             </button>
                         </td>
 
-                        <td *ngIf="isAdded(user)" style="min-width: 180px;">
+                        <td *ngIf="isAdded(user)" class="button-table-cell">
                             <button class="btn btn-danger float-right" title="deactivate employee"
                                 (click)="removeUser(user)">
                                 Remove
@@ -123,14 +121,14 @@
                         <td>{{user.lastName}}</td>
                         <td>{{user.firstName}}</td>
 
-                        <td *ngIf="!isAdded(user)" style="min-width: 180px;">
+                        <td *ngIf="!isAdded(user)" class="button-table-cell">
                             <button class="btn btn-success float-right" title="activate employee"
                                 (click)="addUser(user)">
                                 Add
                             </button>
                         </td>
 
-                        <td *ngIf="isAdded(user)" style="min-width: 180px;">
+                        <td *ngIf="isAdded(user)" class="button-table-cell">
                             <button class="btn btn-danger float-right" title="deactivate employee"
                                 (click)="removeUser(user)">
                                 Remove

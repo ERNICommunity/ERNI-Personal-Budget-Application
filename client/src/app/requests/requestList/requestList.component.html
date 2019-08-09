@@ -130,29 +130,21 @@
                 routerLink="/request/detail/{{request.id}}">
                 Detail
             </a></td>
-            <td style="min-width: 180px">
-                <div *ngIf="isAdmin">
-                    <div *ngIf="canRejectRequest(request.id); else cannotReject">
-                        <button
-                            class="btn btn-danger float-right"
-                            title="reject request"
-                            (click)="openDeleteConfirmationModal(rejectConfirmation)">
-                            Reject
-                        </button>
-                        <button
-                            class="btn btn-danger float-right mr-1"
-                            title="delete request"
-                            (click)="openDeleteConfirmationModal(deleteConfirmation)">
-                            Delete
-                        </button>
-                    </div>
-                    <ng-template #cannotReject>
-                        <button
-                            class="btn btn-danger float-right disabled"
-                            title="Cannot reject the request. It was approved by administrator.">
-                            Reject
-                        </button>
-                    </ng-template>
+            <td *ngIf="requestFilter != requestFilterType.Rejected" class="button-table-cell">
+
+                <div *ngIf="canRejectRequest(request.id); else cannotReject">
+                    <button
+                        class="btn btn-danger float-right"
+                        title="reject request"
+                        (click)="openDeleteConfirmationModal(rejectConfirmation)">
+                        Reject
+                    </button>
+                    <button
+                        class="btn btn-danger float-right mr-1"
+                        title="delete request"
+                        (click)="openDeleteConfirmationModal(deleteConfirmation)">
+                        Delete
+                    </button>
                 </div>
                 <ng-template
                     #deleteConfirmation

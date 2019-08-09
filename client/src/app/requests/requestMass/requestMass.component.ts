@@ -49,6 +49,7 @@ export class RequestMassComponent implements OnInit {
         this.selectedDate = new Date();
         this.userState = <UserState>this.route.snapshot.data['filter'];
         this.addedUsers = [];
+        this.requestForm.get('url').disable();
         this.getUsers(UserState.Active);
     }
 
