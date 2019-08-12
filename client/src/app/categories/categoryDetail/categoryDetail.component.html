@@ -1,90 +1,86 @@
-<div *ngIf="category">
+<form *ngIf="category">
     <h2>Details</h2>
     <br>
-    <div class="form-input">
-        <label class="form-input-label">
+    <div class="form-group">
+        <label>
             Category title:
-            <input
-                [(ngModel)]="category.title"
-                class="form-input"
-                placeholder="title">
+            <input [(ngModel)]="category.title" name="title" #title="ngModel" placeholder="Title" required>
+            <div class="alert alert-danger" *ngIf="title.touched && !title.valid">Title is not valid.</div>
         </label>
     </div>
-    <br>
     <div class="form-check">
         <label class="form-check-label">
             <input
                 type="checkbox"
                 [(ngModel)]="category.isActive"
+                name="isActive"
                 class="form-check-input">
             Active
         </label>
-    </div>
-    <br>
-    <div class="form-check">
+        <br>
         <label class="form-check-label">
             <input
                 type="checkbox"
                 [(ngModel)]="category.isUrlNeeded"
+                name="isUrlNeeded"
                 class="form-check-input">
             Url
         </label>
     </div>
-    <br>
     <div class="form-input">
         <label class="form-input-label">
             Spend limit:
             <input
                 type="number"
                 [(ngModel)]="category.spendLimit"
+                name="spendLimit"
                 class="form-input"
                 placeholder="0.00">
         </label>
+        <br>
+        <div class="form-group" *ngIf="category.email && category.email.length">
+            <label class="form-input-label">Emails</label>
+            <br>
+            <select ngModel class="w-25 p-2 form-control" name="emailsToDelete" #emailsToDelete="ngModel" multiple (change)="log(emailsToDelete)">
+                <option *ngFor="let u of category.email">
+                    {{ u }}
+                </option>
+            </select>
+            <button
+                class="btn btn-failure mt-1 mb-2 h-25 d-inline-block w-25"
+                *ngIf="emailsToDelete.value && emailsToDelete.value.length"
+                (click)="deleteMail(emailsToDelete)">
+                Delete
+            </button>
+        </div>
     </div>
-    <br>
-
-    <div><b>Emails</b></div>
-    <div id="emails"> 
-    <select id="emailsList" [ngModel]="mails" (ngModelChange)="onSelected($event)" multiple ng-model="categories" 
-    *ngIf="category.email && category.email.length; else empty">
-        <option *ngFor="let u of category.email">
-        {{ u }}
-        </option>
-    </select>
-    <ng-template #empty>
-        <td>Predefined emails not assigned.</td>
-    </ng-template>
-    </div>
-    <button id="deleteMail"
-        *ngIf="emailsToDelete.length; else disabled"
-        class="btn btn-failure"
-        (click)="deleteMail()">
-        Delete
-    </button>
-    <br>
     <div class="form-input">
-        <label class="form-input-label">
+        <label class="form-input-label mr-2">
             Add email:
-            <input #newmail
-            class="form-input"
-            placeholder="">
+            <input
+                class="form-input"
+                ngModel name="newMail"
+                placeholder="mail@example.com"
+                #newMail="ngModel"
+                pattern="[a-zA-Z0-9!#$%&amp;'*+\/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*">
         </label>
         <button
-            id="addEmail"
             class="btn btn-success"
-            (click)="addMail(newmail.value); newmail.value = ''">
+            (click)="addMail(newMail)">
             Add
         </button>
     </div>
     <br>
-    <button
-        class="btn btn-primary mr-1"
-        (click)="goBack()">
-        back
-    </button>
-    <button
-        class="btn btn-success"
-        (click)="save()">
-        save
-    </button>
-</div>
+    <div class="form-group">
+        <button
+            class="btn btn-primary mr-1"
+            (click)="goBack()">
+            Back
+        </button>
+        <button
+            class="btn btn-success"
+            (click)="save()">
+            Save
+        </button>
+    </div>
+</form>
