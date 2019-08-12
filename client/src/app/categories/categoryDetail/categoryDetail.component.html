@@ -64,6 +64,7 @@
                 #newMail="ngModel"
                 pattern="[a-zA-Z0-9!#$%&amp;'*+\/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*">
         </label>
+        <div class="alert alert-danger" *ngIf="newMail.touched && !newMail.valid">Email does not match pattern.</div>
         <button
             class="btn btn-success"
             (click)="addMail(newMail)">
