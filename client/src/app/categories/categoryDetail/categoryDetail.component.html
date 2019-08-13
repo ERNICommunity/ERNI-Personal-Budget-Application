@@ -1,10 +1,10 @@
-<form *ngIf="category">
+<form *ngIf="category" #form="ngForm">
     <h2>Details</h2>
     <br>
     <div class="form-group">
         <label>
             Category title:
-            <input [(ngModel)]="category.title" name="title" #title="ngModel" placeholder="Title" required>
+            <input class="form-control" [(ngModel)]="category.title" name="title" #title="ngModel" placeholder="Title" required>
             <div class="alert alert-danger" *ngIf="title.touched && !title.valid">Title is not valid.</div>
         </label>
     </div>
@@ -27,6 +27,7 @@
             Url
         </label>
     </div>
+    <br>
     <div class="form-input">
         <label class="form-input-label">
             Spend limit:
@@ -34,7 +35,7 @@
                 type="number"
                 [(ngModel)]="category.spendLimit"
                 name="spendLimit"
-                class="form-input"
+                class="form-input form-control"
                 placeholder="0.00">
         </label>
         <br>
@@ -58,7 +59,7 @@
         <label class="form-input-label mr-2">
             Add email:
             <input
-                class="form-input"
+                class="form-input form-control"
                 ngModel name="newMail"
                 placeholder="email@example.com"
                 #newMail="ngModel"
