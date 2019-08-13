@@ -41,7 +41,7 @@
         <div class="form-group" *ngIf="category.email && category.email.length">
             <label class="form-input-label">Emails</label>
             <br>
-            <select ngModel class="w-25 p-2 form-control" name="emailsToDelete" #emailsToDelete="ngModel" multiple (change)="log(emailsToDelete)">
+            <select ngModel class="w-25 p-2 form-control" name="emailsToDelete" #emailsToDelete="ngModel" multiple>
                 <option *ngFor="let u of category.email">
                     {{ u }}
                 </option>
@@ -60,7 +60,7 @@
             <input
                 class="form-input"
                 ngModel name="newMail"
-                placeholder="mail@example.com"
+                placeholder="email@example.com"
                 #newMail="ngModel"
                 pattern="[a-zA-Z0-9!#$%&amp;'*+\/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*">
         </label>

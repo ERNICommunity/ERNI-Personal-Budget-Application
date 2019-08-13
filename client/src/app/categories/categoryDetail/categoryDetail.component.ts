@@ -34,8 +34,7 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   save(): void {
-    this.categoryService.updateCategory(this.category)
-       .subscribe(() => this.goBack());
+    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack());
   }
 
   addMail(newMail: NgControl): void {
@@ -53,9 +52,5 @@ export class CategoryDetailComponent implements OnInit {
   deleteMail(emailsToDelete: NgControl): void {
     this.category.email = this.category.email.filter(element => !emailsToDelete.value.includes(element));
     emailsToDelete.reset();
-  }
-
-  log(component: any): void {
-    console.log(component);
   }
 }
