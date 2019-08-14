@@ -128,11 +128,11 @@ namespace server.Controllers
             string message;
             if (request.Url != null)
             {
-                message = "Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".";
+                message = "Request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".";
             }
             else
             {
-                message = "Your request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
+                message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
             }
 
             _mailService.SendMail(message, request.User.Username);
