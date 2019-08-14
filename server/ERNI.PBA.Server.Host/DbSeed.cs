@@ -9,16 +9,26 @@ namespace ERNI.PBA.Server.Host
     {
         internal static void Seed(DatabaseContext context)
         {
-            var names = new[] {
+            SeedUsers(context);
+        }
+
+        private static void SeedUsers(DatabaseContext context)
+        {
+            if (context.Users.Any())
+                return;
+
+            var names = new[]
+            {
                 "Emmanuel", "Walter", "Freddy", "Ho", "Bradleigh", "Cain", "Saskia", "Needham", "Betty", "Bautista",
                 "Kain", "Caldwell", "Molly", "Parry", "Emelia", "Cresswell", "Bree", "Brook", "Kayla", "Woodley"
             };
 
-            var categories = new[] {
-                new RequestCategory { Title = "Sport" , IsActive = true, IsUrlNeeded = false, SpendLimit = null},
-                new RequestCategory { Title = "Education" , IsActive = true, IsUrlNeeded = false, SpendLimit = null},
-                new RequestCategory { Title = "Health" , IsActive = true, IsUrlNeeded = true, SpendLimit = 200},
-                new RequestCategory { Title = "Other" , IsActive = true, IsUrlNeeded = false, SpendLimit = null}
+            var categories = new[]
+            {
+                new RequestCategory {Title = "Sport", IsActive = true, IsUrlNeeded = false, SpendLimit = null},
+                new RequestCategory {Title = "Education", IsActive = true, IsUrlNeeded = false, SpendLimit = null},
+                new RequestCategory {Title = "Health", IsActive = true, IsUrlNeeded = true, SpendLimit = 200},
+                new RequestCategory {Title = "Other", IsActive = true, IsUrlNeeded = false, SpendLimit = null}
             };
 
             context.RequestCategories.AddRange(categories);
@@ -26,7 +36,7 @@ namespace ERNI.PBA.Server.Host
             context.SaveChanges();
 
             var users = Enumerable.Range(0, 10).Select(_ =>
-            new DataAccess.Model.User
+            new User
             {
                 UniqueIdentifier = Guid.NewGuid().ToString(),
 

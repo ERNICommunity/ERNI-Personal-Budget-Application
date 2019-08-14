@@ -3,7 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -24,13 +24,8 @@ namespace ERNI.PBA.Server.Host
                 {
                     var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-                    // context.Database.Migrate();
-                    context.Database.EnsureCreated();
-
-                    if (!context.Users.Any())
-                    {
-                        DbSeed.Seed(context);
-                    }
+                    context.Database.Migrate();
+                    DbSeed.Seed(context);
                 }
 
                 host.Run();
@@ -39,11 +34,11 @@ namespace ERNI.PBA.Server.Host
             {
                 // logger.Error(ex, "Stopped program because of exception");
             }
-            
+
             finally
             {
-                    // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-                    // NLog.LogManager.Shutdown();
+                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                // NLog.LogManager.Shutdown();
             }
         }
 
