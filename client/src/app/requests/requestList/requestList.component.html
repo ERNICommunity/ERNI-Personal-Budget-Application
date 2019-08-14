@@ -127,7 +127,7 @@
                 routerLink="/request/detail/{{request.id}}">
                 Detail
             </a></td>
-            <td *ngIf="requestFilter != requestFilterType.Rejected">
+            <td *ngIf="requestFilter != requestFilterType.Rejected" style="min-width: 180px">
 
                 <div *ngIf="canRejectRequest(request.id); else cannotReject">
                     <button
