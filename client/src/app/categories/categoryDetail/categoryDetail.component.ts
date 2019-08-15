@@ -14,6 +14,7 @@ import { FormControl, NgControl } from '@angular/forms';
 
 export class CategoryDetailComponent implements OnInit {
   category: Category;
+  isSubmitted: boolean;
 
   constructor(private categoryService: CategoryService, private route: ActivatedRoute, private location: Location) { }
 
@@ -34,14 +35,16 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   save(): void {
-    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack());
+    this.isSubmitted = true;
+    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => this.isSubmitted = false);
   }
 
   addMail(newMail: NgControl): void {
     if (this.category.email === undefined || this.category.email === null) {
       this.category.email = [];
     }
-    if ((newMail.value.trim() === '') || newMail.invalid || (this.category.email.includes(newMail.value))) {
+
+    if (newMail.invalid || (this.category.email.includes(newMail.value))) {
       return;
     }
     this.category.email.push(newMail.value);
