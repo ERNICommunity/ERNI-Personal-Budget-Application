@@ -9,6 +9,8 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -25,6 +27,25 @@ namespace ERNI.PBA.Server.Host.Controllers
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
+        {
+            var existingUser = await _userRepository.GetUser(HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value, cancellationToken);
+            if (existingUser == null)
+            {
+                var user = new User
+                {
+                    UniqueIdentifier = HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
+                    FirstName = HttpContext.User.Claims.Single(c => c.Type == Claims.FirstName).Value,
+                    LastName = HttpContext.User.Claims.Single(c => c.Type == Claims.LastName).Value,
+                    Username = HttpContext.User.Claims.Single(c => c.Type == Claims.UserName).Value
+                };
+                _userRepository.AddUser(user);
+                await _unitOfWork.SaveChanges(cancellationToken);
+            }
+            return Ok();
         }
 
         [HttpPut]
@@ -53,6 +74,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (user == null)
+                return StatusCode(403);
 
             return Ok(new UserModel
             {

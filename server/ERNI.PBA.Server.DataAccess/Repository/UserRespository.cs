@@ -25,6 +25,12 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
+        public Task<User> GetUser(string sub, CancellationToken cancellationToken)
+        {
+            return _context.Users.Where(_ => _.UniqueIdentifier == sub)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {
             return _context.Users
@@ -32,7 +38,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
         
-         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
+        public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
         {
             return _context.Users
                 .Where(filter)
@@ -55,6 +61,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             return _context.Users
                 .Where(u => u.IsAdmin)
                 .ToArrayAsync(cancellationToken);
+        }
+
+        public void AddUser(User user)
+        {
+            _context.Users.Add(user);
         }
     }
 }

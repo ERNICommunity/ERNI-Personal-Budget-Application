@@ -54,6 +54,7 @@ namespace server.Controllers
                 Title = _.Title,
                 Amount = _.Amount,
                 Date = _.Date,
+                Url = _.Url,
                 State = _.State,
                 CategoryTitle = _.Category.Title
             }).OrderByDescending(_ => _.Date);
@@ -191,7 +192,7 @@ namespace server.Controllers
                 Year = currentYear,
                 Title = payload.Title,
                 Amount = payload.Amount,
-                Date = payload.Date,
+                Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
                 CategoryId = payload.Category.Id,
                 Url = payload.Url
@@ -259,7 +260,7 @@ namespace server.Controllers
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.CategoryId = payload.CategoryId;
-            request.Date = payload.Date;
+            request.Date = payload.Date.ToLocalTime();
             request.Url = payload.Url;
 
             await _unitOfWork.SaveChanges(cancellationToken);

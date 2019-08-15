@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 
 namespace ERNI.PBA.Server
 {
@@ -78,35 +79,21 @@ namespace ERNI.PBA.Server
                         OnTokenValidated = async context =>
                         {
                             var db = context.HttpContext.RequestServices.GetRequiredService<DatabaseContext>();
-
                             var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
-
                             var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
 
-                            if (user == null)
+                            if (user != null)
                             {
-                                user = new User
+                                var claims = new List<Claim> { new Claim(Claims.Id, user.Id.ToString()) };
+
+                                if (user.IsAdmin)
                                 {
-                                    UniqueIdentifier = sub,
-                                    FirstName = context.Principal.Claims.Single(c => c.Type == "given_name").Value,
-                                    LastName = context.Principal.Claims.Single(c => c.Type == "family_name").Value,
-                                    Username = context.Principal.Claims.Single(c => c.Type == "upn").Value
-                                };
-                                db.Users.Add(user);
-                                db.SaveChanges();
+                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
+                                }
+
+                                context.Principal.AddIdentity(
+                                    new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
                             }
-
-                            var claims = new List<System.Security.Claims.Claim>();
-                            claims.Add(new System.Security.Claims.Claim(Claims.Id, user.Id.ToString()));
-                            claims.Add(new System.Security.Claims.Claim(Claims.FirstName, user.FirstName));
-                            claims.Add(new System.Security.Claims.Claim(Claims.LastName, user.LastName));
-
-                            if (user.IsAdmin)
-                            {
-                                claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
-                            }
-
-                            context.Principal.AddIdentity(new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
                         }
                     };
 

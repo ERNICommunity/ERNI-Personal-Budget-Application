@@ -2,30 +2,21 @@ import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { AdalService } from '../services/adal.service';
+import { UserService } from '../services/user.service';
 
 @Injectable()
 export class OAuthCallbackHandler implements CanActivate {
-    constructor(private router: Router, private adalService: AdalService) {
+    constructor(private router: Router, private adalService: AdalService, private userService: UserService) {
 
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
         this.adalService.handleCallback();
-
-        if (this.adalService.userInfo) {
-
-            var returnUrl = route.queryParams['returnUrl'];
-            if (!returnUrl) {
-                this.router.navigate(['my-budget']);
-            } else {
-                this.router.navigate([returnUrl], { queryParams: route.queryParams });
-            }
+        if (this.adalService.userInfo)
+        {
+            return true;
         }
-        else {
-            this.router.navigate(['login']);
-        }
-
         return false;
     }
 }

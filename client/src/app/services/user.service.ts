@@ -13,6 +13,10 @@ export class UserService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
     }
 
+    public registerUser(): Observable<any> {
+        return this.http.post<any>(this.configService.apiUrlBase + this.url + '/register', this.serviceHelper.getHttpOptions());
+    }
+
     public getActiveUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url + '/active', this.serviceHelper.getHttpOptions())
     }
