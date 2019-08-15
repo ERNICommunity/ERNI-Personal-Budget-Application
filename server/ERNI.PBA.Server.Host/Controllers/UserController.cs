@@ -32,8 +32,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
         {
-            var existingUser = _userRepository.GetUser(HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value, cancellationToken);
-            if (existingUser.Result == null)
+            var existingUser = await _userRepository.GetUser(HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value, cancellationToken);
+            if (existingUser == null)
             {
                 var user = new User
                 {
