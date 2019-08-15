@@ -25,28 +25,20 @@ namespace ERNI.PBA.Server.Host.Services
             _enableSsl = _configuration["MailSettings:EnableSsl"];
         }
 
-        public void SendMail(string body, string to)
+        public void SendMail(string body, string emails)
         {
-            using (SmtpClient client = new SmtpClient(_smtpServer, Int32.Parse(_port)))
+            using (SmtpClient client = new SmtpClient(_smtpServer, int.Parse(_port)))
             {
                 client.EnableSsl = bool.Parse(_enableSsl);
                 client.Credentials = new NetworkCredential(_userName, _password);
 
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(_userName);
-                mailMessage.To.Add(to);
+                mailMessage.To.Add(emails);
                 mailMessage.Body = body;
                 mailMessage.Subject = "PBA Notification";
 
                 client.Send(mailMessage);
-            }
-        }
-
-        public void SendMailToGroup(string body, IEnumerable<string> emails)
-        {
-            foreach (var email in emails)
-            {
-                SendMail(body, email);
             }
         }
     }

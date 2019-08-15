@@ -140,9 +140,7 @@ namespace server.Controllers
             {
                 emails.Add(request.User.Username);
             }
-
-            //_mailService.SendMail(message, request.User.Username);
-            _mailService.SendMailToGroup(message, emails);
+            _mailService.SendMail(message, string.Join(',', emails));
 
             return Ok();
         }
