@@ -30,19 +30,22 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> RegisterUser()
+        public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
         {
-            var user = new User
+            var existingUser = _userRepository.GetUser(HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value, cancellationToken);
+            if (existingUser.Result == null)
             {
-                UniqueIdentifier = HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
-                FirstName = HttpContext.User.Claims.Single(c => c.Type == Claims.FirstName).Value,
-                LastName = HttpContext.User.Claims.Single(c => c.Type == Claims.LastName).Value,
-                Username = HttpContext.User.Claims.Single(c => c.Type == Claims.UserName).Value
-            };
-            var result = await _userRepository.AddUser(user);
-
-            return Ok(result);
+                var user = new User
+                {
+                    UniqueIdentifier = HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
+                    FirstName = HttpContext.User.Claims.Single(c => c.Type == Claims.FirstName).Value,
+                    LastName = HttpContext.User.Claims.Single(c => c.Type == Claims.LastName).Value,
+                    Username = HttpContext.User.Claims.Single(c => c.Type == Claims.UserName).Value
+                };
+                _userRepository.AddUser(user);
+                await _unitOfWork.SaveChanges(cancellationToken);
+            }
+            return Ok();
         }
 
         [HttpPut]

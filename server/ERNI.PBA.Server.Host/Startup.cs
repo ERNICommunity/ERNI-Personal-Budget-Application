@@ -21,7 +21,6 @@ namespace ERNI.PBA.Server
 {
     public class Startup
     {
-        private object _createUserLock = new object();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

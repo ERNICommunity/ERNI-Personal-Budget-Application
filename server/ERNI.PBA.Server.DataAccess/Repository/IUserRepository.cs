@@ -10,6 +10,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         Task<User> GetUser(int id, CancellationToken cancellationToken);
 
+        Task<User> GetUser(string sub, CancellationToken cancellationToken);
+
         Task<User[]> GetAllUsers(CancellationToken cancellationToken);
         
         Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken);
@@ -21,9 +23,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<User[]> GetAdminUsers(CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Adds user to the repository. Returns true if user was newly added, or false if user already exists.
-        /// </summary>
-        Task<bool> AddUser(User user);
+        void AddUser(User user);
     }
 }
