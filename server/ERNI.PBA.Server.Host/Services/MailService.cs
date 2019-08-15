@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
@@ -14,9 +15,9 @@ namespace ERNI.PBA.Server.Host.Services
         private readonly string _password;
         private readonly string _enableSsl;
 
-        public MailService(IConfiguration Configuration)
+        public MailService(IConfiguration configuration)
         {
-            _configuration = Configuration;
+            _configuration = configuration;
             _smtpServer = _configuration["MailSettings:SmtpServer"];
             _port = _configuration["MailSettings:Port"];
             _userName = _configuration["MailSettings:UserName"];
@@ -24,7 +25,7 @@ namespace ERNI.PBA.Server.Host.Services
             _enableSsl = _configuration["MailSettings:EnableSsl"];
         }
 
-        public void SendMail(string body, string To)
+        public void SendMail(string body, string to)
         {
             using (SmtpClient client = new SmtpClient(_smtpServer, Int32.Parse(_port)))
             {
@@ -33,7 +34,7 @@ namespace ERNI.PBA.Server.Host.Services
 
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(_userName);
-                mailMessage.To.Add(To);
+                mailMessage.To.Add(to);
                 mailMessage.Body = body;
                 mailMessage.Subject = "PBA Notification";
 
@@ -41,14 +42,11 @@ namespace ERNI.PBA.Server.Host.Services
             }
         }
 
-        public void SendMailToGroup(string body, string recipients, string requestOwner)
+        public void SendMailToGroup(string body, IEnumerable<string> emails)
         {
-            foreach (var email in recipients.Split(","))
+            foreach (var email in emails)
             {
-                if (email != requestOwner)
-                {
-                    SendMail(body, email);
-                }
+                SendMail(body, email);
             }
         }
     }

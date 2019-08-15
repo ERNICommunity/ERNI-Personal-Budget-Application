@@ -135,8 +135,14 @@ namespace server.Controllers
                 message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
             }
 
-            _mailService.SendMail(message, request.User.Username);
-            _mailService.SendMailToGroup(message,request.Category.Email,request.User.Username);
+            var emails = request.Category.Email.Split(',').ToList();
+            if (emails.Contains(request.User.Username))
+            {
+                emails.Add(request.User.Username);
+            }
+
+            //_mailService.SendMail(message, request.User.Username);
+            _mailService.SendMailToGroup(message, emails);
 
             return Ok();
         }
