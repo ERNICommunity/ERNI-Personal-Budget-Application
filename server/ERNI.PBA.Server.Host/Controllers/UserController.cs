@@ -35,10 +35,10 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var user = new User
             {
-                UniqueIdentifier = User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
-                FirstName = User.Claims.Single(c => c.Type == Claims.FirstName).Value,
-                LastName = User.Claims.Single(c => c.Type == Claims.LastName).Value,
-                Username = User.Claims.Single(c => c.Type == Claims.UserName).Value
+                UniqueIdentifier = HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
+                FirstName = HttpContext.User.Claims.Single(c => c.Type == Claims.FirstName).Value,
+                LastName = HttpContext.User.Claims.Single(c => c.Type == Claims.LastName).Value,
+                Username = HttpContext.User.Claims.Single(c => c.Type == Claims.UserName).Value
             };
             var result = await _userRepository.AddUser(user);
 

@@ -13,7 +13,7 @@ export class UserService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
     }
 
-    public registerUser(user: any): Observable<any> {
+    public registerUser(): Observable<any> {
         return this.http.post<any>(this.configService.apiUrlBase + this.url + '/register', this.serviceHelper.getHttpOptions());
     }
 

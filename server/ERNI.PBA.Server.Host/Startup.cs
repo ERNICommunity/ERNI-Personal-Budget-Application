@@ -83,25 +83,18 @@ namespace ERNI.PBA.Server
                             var sub = context.Principal.Claims.Single(c => c.Type == "sub").Value;
                             var user = await db.Users.SingleOrDefaultAsync(_ => _.UniqueIdentifier == sub);
 
-                            var claims = new List<Claim>
-                            {
-                                new Claim(Claims.FirstName, context.Principal.Claims.Single(c => c.Type == "given_name").Value),
-                                new Claim(Claims.LastName, context.Principal.Claims.Single(c => c.Type == "family_name").Value),
-                                new Claim(Claims.UserName, context.Principal.Claims.Single(c => c.Type == "upn").Value),
-                                new Claim(Claims.UniqueIndetifier, sub)
-                            };
-
                             if (user != null)
                             {
-                                claims.Add(new Claim(Claims.Id, user.Id.ToString()));
+                                var claims = new List<Claim> { new Claim(Claims.Id, user.Id.ToString()) };
+
                                 if (user.IsAdmin)
                                 {
                                     claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
                                 }
-                            }
 
-                            context.Principal.AddIdentity(
-                                new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
+                                context.Principal.AddIdentity(
+                                    new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
+                            }
                         }
                     };
 
