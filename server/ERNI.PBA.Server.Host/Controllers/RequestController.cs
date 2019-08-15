@@ -136,15 +136,7 @@ namespace server.Controllers
             }
 
             _mailService.SendMail(message, request.User.Username);
-
-            //Notify all defined mails in category
-            foreach (var email in request.Category.Email.Split(","))
-            {
-                if (email != request.User.Username)
-                {
-                    _mailService.SendMail(message, email);
-                }
-            }
+            _mailService.SendMailToGroup(message,request.Category.Email,request.User.Username);
 
             return Ok();
         }

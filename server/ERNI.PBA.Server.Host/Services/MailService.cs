@@ -40,5 +40,16 @@ namespace ERNI.PBA.Server.Host.Services
                 client.Send(mailMessage);
             }
         }
+
+        public void SendMailToGroup(string body, string recipients, string requestOwner)
+        {
+            foreach (var email in recipients.Split(","))
+            {
+                if (email != requestOwner)
+                {
+                    SendMail(body, email);
+                }
+            }
+        }
     }
 }
