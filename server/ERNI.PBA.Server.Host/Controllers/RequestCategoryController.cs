@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 IsActive = _.IsActive,
                 IsUrlNeeded = _.IsUrlNeeded,
                 SpendLimit = _.SpendLimit,
-                Email = _.Email?.Split(',')
+                Email = string.IsNullOrWhiteSpace(_.Email) ? new string[0] : _.Email.Split(',')
             });
 
             return Ok(result);
@@ -56,7 +57,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 IsActive = requestCategory.IsActive,
                 IsUrlNeeded = requestCategory.IsUrlNeeded,
                 SpendLimit = requestCategory.SpendLimit,
-                Email = requestCategory.Email?.Split(',')
+                Email = string.IsNullOrWhiteSpace(requestCategory.Email) ? new string[0] : requestCategory.Email.Split(',')
             };
 
             return Ok(result);
@@ -93,7 +94,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             requestCategory.IsActive = payload.IsActive;
             requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
             requestCategory.SpendLimit = payload.SpendLimit;
-            requestCategory.Email = (payload.Email != null) && (payload.Email.Length > 0) ? payload.Email.Join(",") : null;
+            requestCategory.Email = payload.Email.Any() ? payload.Email.Join(",") : string.Empty;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

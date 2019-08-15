@@ -46,7 +46,7 @@
             <ng-template #empty>
                 <td>Not defined.</td>
             </ng-template>
-            <td *ngIf="category.email; else empty">{{category.email}}</td>
+            <td *ngIf="category.email.length; else empty">{{category.email}}</td>
             <ng-template #empty>
                 <td>Not defined.</td>
             </ng-template>

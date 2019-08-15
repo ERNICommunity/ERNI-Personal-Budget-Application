@@ -40,10 +40,6 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   addMail(newMail: NgControl): void {
-    if (this.category.email === undefined || this.category.email === null) {
-      this.category.email = [];
-    }
-
     if (newMail.invalid || (this.category.email.includes(newMail.value))) {
       return;
     }
