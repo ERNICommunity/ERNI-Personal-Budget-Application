@@ -40,16 +40,16 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   addMail(newMail: NgControl): void {
-    if (newMail.invalid || (this.category.email.includes(newMail.value))) {
+    if (newMail.invalid || (this.category.emails.includes(newMail.value))) {
       return;
     }
-    this.category.email.push(newMail.value);
+    this.category.emails.push(newMail.value);
     newMail.reset();
 
   }
 
   deleteMail(emailsToDelete: NgControl): void {
-    this.category.email = this.category.email.filter(element => !emailsToDelete.value.includes(element));
+    this.category.emails = this.category.emails.filter(element => !emailsToDelete.value.includes(element));
     emailsToDelete.reset();
   }
 }

@@ -39,11 +39,11 @@
                 placeholder="0.00">
         </label>
         <br>
-        <div class="form-group" *ngIf="category.email && category.email.length">
+        <div class="form-group" *ngIf="category.emails && category.emails.length">
             <label class="form-input-label">Emails</label>
             <br>
             <select ngModel class="w-25 p-2 form-control" name="emailsToDelete" #emailsToDelete="ngModel" multiple>
-                <option *ngFor="let u of category.email">
+                <option *ngFor="let u of category.emails">
                     {{ u }}
                 </option>
             </select>
