@@ -60,6 +60,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             user.IsAdmin = payload.IsAdmin;
+            user.IsViewer = payload.IsViewer;
             user.IsSuperior = payload.IsSuperior;
             user.SuperiorId = payload.Superior?.Id;
             user.State = payload.State;
@@ -82,6 +83,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
                 IsSuperior = user.IsSuperior,
+                IsViewer = user.IsViewer,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
@@ -104,6 +106,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
                 IsSuperior = user.IsSuperior,
+                IsViewer = user.IsViewer,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
@@ -113,7 +116,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                     FirstName = user.Superior.FirstName,
                     LastName = user.Superior.LastName,
                 } : null
-            });
+            }); ;
         }
 
         [HttpGet]
@@ -137,6 +140,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Id = _.Id,
                 IsAdmin = _.IsAdmin,
                 IsSuperior = _.IsSuperior,
+                IsViewer = _.IsViewer,
                 FirstName = _.FirstName,
                 LastName = _.LastName,
                 State = _.State,

@@ -12,6 +12,7 @@ import { BusyIndicatorService } from './services/busy-indicator.service';
 export class AppComponent {
   isAdmin: boolean;
   isSuperior: boolean;
+  isViewer: boolean;
   initialized: boolean;
 
   constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
@@ -46,6 +47,7 @@ export class AppComponent {
   getIsAdminOrSuperior(): void {
     this.userService.getCurrentUser().subscribe(u => {
       this.isAdmin = u.isAdmin;
+      this.isViewer = u.isViewer;
       if (!this.isAdmin) {
         this.userService.getSubordinateUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
       }

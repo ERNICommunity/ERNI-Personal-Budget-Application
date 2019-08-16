@@ -10,6 +10,8 @@ namespace ERNI.PBA.Server.Host.Model
 
         public bool IsSuperior { get; set; }
 
+        public bool IsViewer { get; set; }
+
         public User Superior { get; set; }
 
         public UserState State { get; set; } 

@@ -19,7 +19,7 @@
                     Other Budgets
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && (isAdmin || isSuperior)">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && (isAdmin || isSuperior || isViewer)">
                 <a class="nav-link" routerLink="/requests">
                     Requests
                 </a>
