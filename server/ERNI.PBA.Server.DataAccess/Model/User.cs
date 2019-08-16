@@ -10,6 +10,8 @@
 
         public bool IsSuperior { get; set; }
 
+        public bool IsViewer { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
