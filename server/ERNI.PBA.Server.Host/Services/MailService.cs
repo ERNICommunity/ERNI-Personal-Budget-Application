@@ -27,16 +27,18 @@ namespace ERNI.PBA.Server.Host.Services
 
         public void SendMail(string body, string emails)
         {
-            using (SmtpClient client = new SmtpClient(_smtpServer, int.Parse(_port)))
+            using (var client = new SmtpClient(_smtpServer, int.Parse(_port)))
             {
                 client.EnableSsl = bool.Parse(_enableSsl);
                 client.Credentials = new NetworkCredential(_userName, _password);
 
-                MailMessage mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(_userName);
-                mailMessage.To.Add(emails);
-                mailMessage.Body = body;
-                mailMessage.Subject = "PBA Notification";
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(_userName),
+                    Body = body,
+                    Subject = "PBA Notification",
+                    To = { emails }
+                };
 
                 client.Send(mailMessage);
             }

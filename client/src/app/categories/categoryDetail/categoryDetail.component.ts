@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { Category } from '../../model/category';
 import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, NgControl } from '@angular/forms';
+import { NgControl } from '@angular/forms';
 
 
 @Component({
@@ -36,7 +36,7 @@ export class CategoryDetailComponent implements OnInit {
 
   save(): void {
     this.isSubmitted = true;
-    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => this.isSubmitted = false);
+    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => { this.isSubmitted = false; });
   }
 
   addMail(newMail: NgControl): void {
