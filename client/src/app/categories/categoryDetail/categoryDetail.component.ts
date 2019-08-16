@@ -39,17 +39,14 @@ export class CategoryDetailComponent implements OnInit {
     this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => this.isSubmitted = false);
   }
 
-  addMail(newMail: NgControl): void {
-    if (newMail.invalid || (this.category.email.includes(newMail.value))) {
+  addMail(email: string): void {
+    if (this.category.email.includes(email)) {
       return;
     }
-    this.category.email.push(newMail.value);
-    newMail.reset();
-
+    this.category.email.push(email);
   }
 
-  deleteMail(emailsToDelete: NgControl): void {
-    this.category.email = this.category.email.filter(element => !emailsToDelete.value.includes(element));
-    emailsToDelete.reset();
+  deleteMail(email: string): void {
+    this.category.email = this.category.email.filter(e => e != email);
   }
 }
