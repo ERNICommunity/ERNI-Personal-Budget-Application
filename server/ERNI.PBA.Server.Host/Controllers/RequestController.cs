@@ -76,8 +76,9 @@ namespace server.Controllers
 
             var isAdmin = currentUser.IsAdmin;
             var isSuperior = currentUser.Id == request.User.SuperiorId;
+            var isViewer = currentUser.IsViewer;
 
-            if (currentUser.Id != request.User.Id && !isAdmin && !isSuperior)
+            if (currentUser.Id != request.User.Id && !isAdmin && !isSuperior && !isViewer)
             {
                 _logger.LogWarning("No access for request!");
                 return BadRequest("No access for request!");
@@ -290,7 +291,7 @@ namespace server.Controllers
             Expression<Func<Request, bool>> predicate;
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.IsAdmin)
+            if (currentUser.IsAdmin || currentUser.IsViewer)
             {
                 predicate = request => request.Year == year && requestStates.Contains(request.State);
             }

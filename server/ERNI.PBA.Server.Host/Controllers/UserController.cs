@@ -116,7 +116,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                     FirstName = user.Superior.FirstName,
                     LastName = user.Superior.LastName,
                 } : null
-            }); ;
+            });
         }
 
         [HttpGet]
