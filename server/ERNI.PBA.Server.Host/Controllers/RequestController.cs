@@ -386,6 +386,13 @@ namespace ERNI.PBA.Server.Host.Controllers
             };
         }
 
+        [HttpGet("budget-left/{id}/{ammount}/{categoryId}/{year}")]
+        public async Task<bool> BudgetLeft(int id, decimal amount, int categoryId, int year, CancellationToken cancellationToken)
+        {
+            return string.Equals(await CheckAmountForRequest(id, year, amount, categoryId, null, cancellationToken), "OK");
+        }
+
+
         private async Task<string> CheckAmountForRequest(int userId, int year, decimal amount, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
             decimal currentAmount = await CalculateCurrentAmount(userId, year, requestId, cancellationToken);

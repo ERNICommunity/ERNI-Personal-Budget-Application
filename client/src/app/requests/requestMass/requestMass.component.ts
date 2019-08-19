@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../model/user';
 import { UserState } from '../../model/userState';
 import { RequestMass } from '../../model/requestMass';
+import { BudgetLeft } from '../../model/budgetLeft';
 
 
 @Component({
@@ -106,8 +107,21 @@ export class RequestMassComponent implements OnInit {
         this.userService.getSubordinateUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
     }
 
-    addUser(user: User): void {
-        this.addedUsers.push(user);
+    addUser(user: User, ammount: number): void {
+        let request = new BudgetLeft();
+        request.amount = ammount;
+        request.categoryId = this.selectedCategory.id;
+        request.id = user.id;
+        request.requestId = null;
+        request.year = this.selectedDate.getFullYear();
+        let hasBudgetLeft: boolean;
+        this.requestService.hasBudgetLeft(request).subscribe(r => {
+            if (r) {
+                this.addedUsers.push(user);
+            }
+        });
+        alert(hasBudgetLeft);
+
     }
 
     removeUser(user: User): void {

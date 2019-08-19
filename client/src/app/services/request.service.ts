@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { RequestMass } from '../model/requestMass';
+import { BudgetLeft } from '../model/budgetLeft';
 
 @Injectable()
 export class RequestService {
@@ -59,5 +60,9 @@ export class RequestService {
 
   public deleteRequest(id: number): Observable<Request> {
     return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions());
+  }
+
+  public hasBudgetLeft(request: BudgetLeft): Observable<boolean> {
+    return this.http.get<boolean>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.id +'/' + request.amount +'/' + request.categoryId +'/' + request.year, this.serviceHelper.getHttpOptions());
   }
 }

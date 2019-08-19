@@ -82,25 +82,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let user of filteredUsers">
-                        <th>{{user.id}}</th>
-                        <td>{{user.lastName}}</td>
-                        <td>{{user.firstName}}</td>
+                        <tr *ngFor="let user of filteredUsers">
+                            <th>{{user.id}}</th>
+                            <td>{{user.lastName}}</td>
+                            <td>{{user.firstName}}</td>
 
-                        <td *ngIf="!isAdded(user)" class="button-table-cell">
-                            <button class="btn btn-success float-right" title="activate employee"
-                                (click)="addUser(user)">
-                                Add
-                            </button>
-                        </td>
+                            <td *ngIf="!isAdded(user)" class="button-table-cell">
+                                <button class="btn btn-success float-right" title="activate employee" [disabled]="requestForm.controls['amount'].invalid"
+                                    (click)="addUser(user, requestAmount.value)">
+                                    Add
+                                </button>
+                            </td>
 
-                        <td *ngIf="isAdded(user)" class="button-table-cell">
-                            <button class="btn btn-danger float-right" title="deactivate employee"
-                                (click)="removeUser(user)">
-                                Remove
-                            </button>
-                        </td>
-                    </tr>
+                            <td *ngIf="isAdded(user)" class="button-table-cell">
+                                <button class="btn btn-danger float-right" title="deactivate employee"
+                                    (click)="removeUser(user)">
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
                 </tbody>
             </table>
         </div>
@@ -123,7 +123,7 @@
 
                         <td *ngIf="!isAdded(user)" class="button-table-cell">
                             <button class="btn btn-success float-right" title="activate employee"
-                                (click)="addUser(user)">
+                                (click)="addUser(user, requestAmount.value)">
                                 Add
                             </button>
                         </td>
