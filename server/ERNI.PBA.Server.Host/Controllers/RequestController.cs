@@ -136,7 +136,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var emails = request.Category.Email.Split(',').ToList();
-            if (emails.Contains(request.User.Username))
+            if (!emails.Contains(request.User.Username))
             {
                 emails.Add(request.User.Username);
             }
