@@ -81,7 +81,7 @@ namespace server.Controllers
             if (currentUser.Id != request.User.Id && !isAdmin && !isSuperior && !isViewer)
             {
                 _logger.LogWarning("No access for request!");
-                return BadRequest("No access for request!");
+                return StatusCode(401);
             }
 
             var result = new Request
