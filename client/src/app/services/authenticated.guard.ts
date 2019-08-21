@@ -29,7 +29,7 @@ export class AuthenticationGuard implements CanActivate {
         }
 
         if (this.user) {
-            if (route.url[0].path == 'other-budgets' || route.url[0].path == 'users' || route.url[0].path == 'categories') {
+            if (route.url[0].path == 'other-budgets' || route.url[0].path == 'users' || route.url[0].path == 'categories' || route.url[0].path == 'request-mass') {
                 if (!this.user.isAdmin) {
                     return false;
                 }

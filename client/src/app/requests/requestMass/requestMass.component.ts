@@ -120,8 +120,6 @@ export class RequestMassComponent implements OnInit {
                 this.addedUsers.push(user);
             }
         });
-        alert(hasBudgetLeft);
-
     }
 
     removeUser(user: User): void {
