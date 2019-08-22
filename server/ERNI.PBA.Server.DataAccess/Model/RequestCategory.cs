@@ -11,5 +11,7 @@ namespace ERNI.PBA.Server.DataAccess.Model
         public bool IsActive { get; set; }
 
         public bool IsUrlNeeded { get; set; }
+
+        public string Email { get; set; }
     }
 }
