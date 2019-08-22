@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
@@ -11,14 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Examples;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace server.Controllers
+namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
@@ -126,13 +126,22 @@ namespace server.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
+            string message;
             if (request.Url != null)
             {
-                _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".", request.User.Username);
-                return Ok();
+                message = "Request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".";
+            }
+            else
+            {
+                message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
             }
 
-            _mailService.SendMail("Your request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".", request.User.Username);
+            var emails = request.Category.Email.Split(',').ToList();
+            if (!emails.Contains(request.User.Username))
+            {
+                emails.Add(request.User.Username);
+            }
+            _mailService.SendMail(message, string.Join(',', emails));
 
             return Ok();
         }

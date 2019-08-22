@@ -1,8 +1,9 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Category } from '../../model/category';
-import {CategoryService} from '../../services/category.service';
+import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute } from '@angular/router';
+import { NgControl } from '@angular/forms';
 
 
 @Component({
@@ -10,9 +11,11 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './categoryDetail.component.html',
   styleUrls: ['./categoryDetail.component.css']
 })
+
 export class CategoryDetailComponent implements OnInit {
   category: Category;
-  
+  isSubmitted: boolean;
+
   constructor(private categoryService: CategoryService, private route: ActivatedRoute, private location: Location) { }
 
   ngOnInit() {
@@ -31,8 +34,22 @@ export class CategoryDetailComponent implements OnInit {
     this.location.back();
   }
 
-  save() : void {
-    this.categoryService.updateCategory(this.category)
-       .subscribe(() => this.goBack())
+  save(): void {
+    this.isSubmitted = true;
+    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => { this.isSubmitted = false; });
+  }
+
+  addMail(newMail: NgControl): void {
+    if (newMail.invalid || (this.category.emails.includes(newMail.value))) {
+      return;
+    }
+    this.category.emails.push(newMail.value);
+    newMail.reset();
+
+  }
+
+  deleteMail(emailsToDelete: NgControl): void {
+    this.category.emails = this.category.emails.filter(element => !emailsToDelete.value.includes(element));
+    emailsToDelete.reset();
   }
 }
