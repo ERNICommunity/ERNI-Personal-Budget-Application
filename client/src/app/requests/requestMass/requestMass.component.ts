@@ -70,7 +70,7 @@ export class RequestMassComponent implements OnInit {
                 this.categories = categories.filter(cat => cat.isActive == true),
                     this.selectedCategory = categories.filter(cat => cat.isActive == true)[0];
                 this.busyIndicatorService.end();
-            });
+            }).add(() => this.busyIndicatorService.end());
     }
     
     validate(controlName: string): boolean
@@ -141,6 +141,6 @@ export class RequestMassComponent implements OnInit {
                 err => {
                     this.httpResponseError = JSON.stringify(err.error);
                     this.busyIndicatorService.end();
-                })
+                }).add(() => this.busyIndicatorService.end());
     }
 }
