@@ -16,10 +16,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<Request> GetRequest(int id, CancellationToken cancellationToken);
 
-        void AddRequest(Request request);
+        Task AddRequest(Request request);
 
-        void AddRequests(IEnumerable<Request> requests);
+        Task AddRequests(IEnumerable<Request> requests);
 
-        void DeleteRequest(Request request);
+        Task DeleteRequest(Request request);
     }
 }

@@ -9,7 +9,7 @@
             </label> *
         </h5>
     </div>
-    <div *ngIf="requestForm.controls['title'].invalid && (requestForm.controls['title'].dirty || requestForm.controls['title'].touched)"
+    <div *ngIf="validate('title')"
         class="alert alert-danger col-md-6">
         <div *ngIf="requestForm.controls['title'].errors.required">Title is required.</div>
     </div>
@@ -35,7 +35,7 @@
             </label> *
         </h5>
     </div>
-    <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
+    <div *ngIf="validate('amount')"
         class="alert alert-danger col-md-6">
         <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
     </div>
@@ -140,7 +140,7 @@
         </div>
     </div>
 
-    <div *ngIf="requestForm.controls['url'].invalid && (requestForm.controls['url'].dirty || requestForm.controls['url'].touched)"
+    <div *ngIf="validate('url')"
         class="alert alert-danger col-md-6">
         <div *ngIf="requestForm.controls['url'].errors.required">Url is required.</div>
     </div>

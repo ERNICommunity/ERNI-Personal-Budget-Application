@@ -45,17 +45,17 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
         }
 
-        public void AddRequest(Request request)
+        public async Task AddRequest(Request request)
         {
-            _context.Requests.Add(request);
+            await _context.Requests.AddAsync(request);
         }
 
-        public void AddRequests(IEnumerable<Request> requests)
+        public async Task AddRequests(IEnumerable<Request> requests)
         {
-            _context.Requests.AddRange(requests);
+            await _context.Requests.AddRangeAsync(requests);
         }
 
-        public void DeleteRequest(Request request)
+        public async Task DeleteRequest(Request request)
         {
             _context.Requests.Remove(request);
         }

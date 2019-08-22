@@ -31,6 +31,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
+        private const string validResponse = "OK";
 
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
@@ -195,7 +196,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
 
-            if (status != "OK")
+            if (status != validResponse)
             {
                 return BadRequest(status);
             }
@@ -232,7 +233,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 var userId = user.Id;
                 var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
 
-                if (status != "OK")
+                if (status != validResponse)
                 {
                     continue;
                 }
@@ -306,7 +307,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount, payload.CategoryId, request.Id, cancellationToken);
 
-            if (status != "OK")
+            if (status != validResponse)
             {
                 return BadRequest(status);
             }
@@ -389,7 +390,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("budget-left/{id}/{ammount}/{categoryId}/{year}")]
         public async Task<bool> BudgetLeft(int id, decimal amount, int categoryId, int year, CancellationToken cancellationToken)
         {
-            return string.Equals(await CheckAmountForRequest(id, year, amount, categoryId, null, cancellationToken), "OK");
+            return string.Equals(await CheckAmountForRequest(id, year, amount, categoryId, null, cancellationToken), validResponse);
         }
 
 
@@ -417,7 +418,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                     ". Your current amount for this category is (" + currentAmountForCategory + ")!";
                 }
             }
-            return "OK";
+            return validResponse;
         }
 
         private async Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId, CancellationToken cancellationToken)

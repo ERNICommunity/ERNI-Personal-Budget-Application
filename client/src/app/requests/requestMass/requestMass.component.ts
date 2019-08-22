@@ -45,7 +45,6 @@ export class RequestMassComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.onChanges();
         this.getCategories();
         this.selectedDate = new Date();
         this.userState = <UserState>this.route.snapshot.data['filter'];
@@ -63,19 +62,6 @@ export class RequestMassComponent implements OnInit {
         });
     }
 
-    onChanges() {
-        this.requestForm.get('category').valueChanges
-            .subscribe(selectedCategory => {
-                if (selectedCategory.isUrlNeeded) {
-                    this.requestForm.get('url').enable();
-                }
-                else {
-                    this.requestForm.get('url').disable();
-                    this.requestForm.get('url').reset();
-                }
-            });
-    }
-
     getCategories(): void {
 
         this.busyIndicatorService.start();
@@ -85,6 +71,12 @@ export class RequestMassComponent implements OnInit {
                     this.selectedCategory = categories.filter(cat => cat.isActive == true)[0];
                 this.busyIndicatorService.end();
             });
+    }
+    
+    validate(controlName: string): boolean
+    {
+        return this.requestForm.controls[controlName].invalid && 
+        (this.requestForm.controls[controlName].dirty || this.requestForm.controls[controlName].touched);
     }
 
     get searchTerm(): string {
