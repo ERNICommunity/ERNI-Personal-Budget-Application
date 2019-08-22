@@ -2,6 +2,7 @@ import { ConfigService } from './config.service';
 import { Injectable } from '@angular/core'; 
 
 import * as AuthenticationContext from 'adal-angular'; 
+import { UserService } from './user.service';
 
 @Injectable() 
 export class AdalService { 
@@ -11,10 +12,12 @@ constructor(private configService: ConfigService) {
 } 
 
 login() { 
+    localStorage.clear();
     this.context.login(); 
 } 
 
-logout() { 
+logout() {
+    localStorage.clear(); 
     this.context.logOut(); 
 } 
 
