@@ -51,7 +51,7 @@
                 <th scope="col"><input class="form-input form-control" ngModel name="newMail" placeholder="email@example.com"
                         #newMail="ngModel" required [email]="true">
                 </th>
-                <th> <button class="btn btn-success float-right" (click)="addMail(newMail.value)">
+                <th> <button [disabled]="!newMail.valid" class="btn btn-success float-right" (click)="addMail(newMail.value)">
                         Add
                     </button>
                 </th>
