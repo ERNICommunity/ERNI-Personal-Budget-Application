@@ -30,7 +30,7 @@ namespace ERNI.PBA.Server.Host
 
                 host.Run();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // logger.Error(ex, "Stopped program because of exception");
             }

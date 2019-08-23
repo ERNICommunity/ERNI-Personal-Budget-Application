@@ -28,6 +28,7 @@ export class RequestMassComponent implements OnInit {
     requestUrl: string;
     users: User[];
     filteredUsers: User[];
+    sufficientBudgetLeftUsers: User[];
     userState: UserState;
     userStateType = UserState;
     private _searchTerm: string;
@@ -49,6 +50,7 @@ export class RequestMassComponent implements OnInit {
         this.selectedDate = new Date();
         this.userState = <UserState>this.route.snapshot.data['filter'];
         this.addedUsers = [];
+        this.sufficientBudgetLeftUsers = [];
         this.requestForm.get('url').disable();
         this.getUsers(UserState.Active);
     }
@@ -70,6 +72,7 @@ export class RequestMassComponent implements OnInit {
                 this.categories = categories.filter(cat => cat.isActive == true),
                     this.selectedCategory = categories.filter(cat => cat.isActive == true)[0];
                 this.busyIndicatorService.end();
+                this.usersWithBudgetLeft();
             }).add(() => this.busyIndicatorService.end());
     }
     
@@ -95,31 +98,64 @@ export class RequestMassComponent implements OnInit {
             user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
     }
 
+    usersWithBudgetLeft(): void{
+        let amount = 0;
+        if(this.requestForm.controls['amount'].value)
+        {
+            amount = this.requestForm.controls['amount'].value;
+        }
+        if(this.requestForm.controls['category'].value)
+        {
+            this.selectedCategory = this.requestForm.controls['category'].value;
+        }
+        let request = new BudgetLeft();
+        request.amount = amount;
+        request.categoryId = this.selectedCategory.id;
+        request.year = this.selectedDate.getFullYear();
+        this.requestService.getUsersWithBudgetLeft(request).subscribe(u => this.sufficientBudgetLeftUsers = u);
+    }
+
+    getInvalidUsers(): User[] {
+        let invalidUsers = this.addedUsers.slice();
+        this.sufficientBudgetLeftUsers.forEach(user => {
+            invalidUsers = invalidUsers.filter(f => f.id != user.id);          
+        });
+        return invalidUsers;
+    }
+
+    invalidUsersExist(): boolean {
+        return this.getInvalidUsers().length > 0;
+    }
+
+    removeInvalidUsers(): void {
+        let invalidUsers = this.getInvalidUsers();
+        invalidUsers.forEach(user => {
+            this.removeUser(user);
+        });
+    }
+
     getUsers(filter: UserState): void {
         this.userService.getSubordinateUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
     }
 
     addUser(user: User, ammount: number): void {
-        let request = new BudgetLeft();
-        request.amount = ammount;
-        request.categoryId = this.selectedCategory.id;
-        request.id = user.id;
-        request.requestId = null;
-        request.year = this.selectedDate.getFullYear();
-        let hasBudgetLeft: boolean;
-        this.requestService.hasBudgetLeft(request).subscribe(r => {
-            if (r) {
-                this.addedUsers.push(user);
-            }
-        });
+        this.addedUsers.push(user);
+    }
+
+    hasBudgetLeft(user: User): boolean{
+        return this.sufficientBudgetLeftUsers.some(u => u.id == user.id);;
     }
 
     removeUser(user: User): void {
         this.addedUsers = this.addedUsers.filter(u => u !== user)
     }
 
+    isUserListValid(): boolean {
+        return !this.invalidUsersExist() && this.addedUsers.length > 0;
+    }
+
     isAdded(user: User): boolean {
-        return this.addedUsers.some(u => u == user);
+        return this.addedUsers.some(u => u.id == user.id);
     }
 
     goBack(): void {

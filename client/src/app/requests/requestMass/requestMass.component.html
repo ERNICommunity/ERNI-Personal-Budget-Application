@@ -9,8 +9,7 @@
             </label> *
         </h5>
     </div>
-    <div *ngIf="validate('title')"
-        class="alert alert-danger col-md-6">
+    <div *ngIf="validate('title')" class="alert alert-danger col-md-6">
         <div *ngIf="requestForm.controls['title'].errors.required">Title is required.</div>
     </div>
 
@@ -31,12 +30,12 @@
         <h5>
             <label class="col-md-6">
                 Amount
-                <input #requestAmount class="form-control" formControlName="amount" type="number" placeholder="0.00">
+                <input #requestAmount class="form-control" formControlName="amount" type="number" placeholder="0.00"
+                    (input)="usersWithBudgetLeft()">
             </label> *
         </h5>
     </div>
-    <div *ngIf="validate('amount')"
-        class="alert alert-danger col-md-6">
+    <div *ngIf="validate('amount')" class="alert alert-danger col-md-6">
         <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
     </div>
 
@@ -44,7 +43,8 @@
         <h5>
             <label class="col-md-6">
                 Category
-                <select class="form-control form-control-sm" [(ngModel)]="selectedCategory" formControlName="category">
+                <select class="form-control form-control-sm" [(ngModel)]="selectedCategory" formControlName="category"
+                    (input)="usersWithBudgetLeft()">
                     <option *ngFor="let categoryItem of categories" [ngValue]="categoryItem">
                         {{categoryItem.title}}
                     </option>
@@ -62,36 +62,132 @@
         </h5>
     </div>
     <br>
-    <div class="row">
-        <h5>Assign Employees</h5>
-    </div>
-    <div class="row">
-        <input class="form-control col-md-6" placeholder="Search employee"
-            id="searchBox" type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}">
-        <h5 class="col-md-6">Assigned Employees</h5>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <table class="table">
-                <thead class="thead-borderless">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">First</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="form-group">
+        <div *ngIf="invalidUsersExist()" class="alert alert-danger col-md-6">
+            <div>
+                <div>
+                    Some of the added users have not sufficient budget left. Please remove them.
+                </div>
+                <div class="text-center">
+                    <button class=" btn btn-danger float-center" title="remove invalid users" (click)="removeInvalidUsers()">
+                        Remove users without sufficient budget
+                    </button>
+                </div>
+            </div>
+        
+        </div>
+        <div class="row">
+            <h5>Assign Employees</h5>
+        </div>
+        <div class="row">
+            <input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text"
+                [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}">
+            <h5 class="col-md-6">Assigned Employees</h5>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <thead class="thead-borderless">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">First</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         <tr *ngFor="let user of filteredUsers">
-                            <th>{{user.id}}</th>
-                            <td>{{user.lastName}}</td>
-                            <td>{{user.firstName}}</td>
+                            <td>
+                                <div *ngIf="hasBudgetLeft(user); else noBudgetId">
+                                    {{user.id}}
+                                </div>
+                                <ng-template #noBudgetId>
+                                    <div class="noBudgetUser">
+                                        {{user.id}}
+                                    </div>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <div *ngIf="hasBudgetLeft(user); else noBudgetLastName">
+                                    {{user.lastName}}
+                                </div>
+                                <ng-template #noBudgetLastName>
+                                    <div class="noBudgetUser">
+                                        {{user.lastName}}
+                                    </div>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <div *ngIf="hasBudgetLeft(user); else noBudgetFirstName">
+                                    {{user.firstName}}
+                                </div>
+                                <ng-template #noBudgetFirstName>
+                                    <div class="noBudgetUser">
+                                        {{user.firstName}}
+                                    </div>
+                                </ng-template>
+                            </td>
 
-                            <td *ngIf="!isAdded(user)" class="button-table-cell">
-                                <button class="btn btn-success float-right" title="activate employee" [disabled]="requestForm.controls['amount'].invalid"
-                                    (click)="addUser(user, requestAmount.value)">
-                                    Add
-                                </button>
+                            <td class="button-table-cell">
+                                <div *ngIf="!isAdded(user) && hasBudgetLeft(user)">
+                                    <button class="btn btn-success float-right" title="activate employee"
+                                        (click)="addUser(user, requestAmount.value)">
+                                        Add
+                                    </button>
+                                </div>
+                                <div *ngIf="isAdded(user)">
+                                    <button class=" btn btn-danger float-right" title="deactivate employee"
+                                        (click)="removeUser(user)">
+                                        Remove
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">First</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of addedUsers">
+                            <td>
+                                <div *ngIf="hasBudgetLeft(user); else noBudgetId">
+                                    {{user.id}}
+                                </div>
+                                <ng-template #noBudgetId>
+                                    <div class="noBudgetUser">
+                                        {{user.id}}
+                                    </div>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <div *ngIf="hasBudgetLeft(user); else noBudgetLastName">
+                                    {{user.lastName}}
+                                </div>
+                                <ng-template #noBudgetLastName>
+                                    <div class="noBudgetUser">
+                                        {{user.lastName}}
+                                    </div>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <div *ngIf="hasBudgetLeft(user); else noBudgetFirstName">
+                                    {{user.firstName}}
+                                </div>
+                                <ng-template #noBudgetFirstName>
+                                    <div class="noBudgetUser">
+                                        {{user.firstName}}
+                                    </div>
+                                </ng-template>
                             </td>
 
                             <td *ngIf="isAdded(user)" class="button-table-cell">
@@ -101,54 +197,20 @@
                                 </button>
                             </td>
                         </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-6">
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">First</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let user of addedUsers">
-                        <th>{{user.id}}</th>
-                        <td>{{user.lastName}}</td>
-                        <td>{{user.firstName}}</td>
-
-                        <td *ngIf="!isAdded(user)" class="button-table-cell">
-                            <button class="btn btn-success float-right" title="activate employee"
-                                (click)="addUser(user, requestAmount.value)">
-                                Add
-                            </button>
-                        </td>
-
-                        <td *ngIf="isAdded(user)" class="button-table-cell">
-                            <button class="btn btn-danger float-right" title="deactivate employee"
-                                (click)="removeUser(user)">
-                                Remove
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div *ngIf="validate('url')"
-        class="alert alert-danger col-md-6">
+    <div *ngIf="validate('url')" class="alert alert-danger">
         <div *ngIf="requestForm.controls['url'].errors.required">Url is required.</div>
     </div>
 
     <button class="btn btn-primary mr-1" (click)="goBack()">
         back
     </button>
-    <button class="btn btn-success" type="submit" [disabled]="requestForm.pristine || requestForm.invalid"
+    <button class="btn btn-success" type="submit" [disabled]="requestForm.pristine || requestForm.invalid || !isUserListValid()"
         (click)="save(requestTitle.value, requestAmount.value)">
         save
     </button>
