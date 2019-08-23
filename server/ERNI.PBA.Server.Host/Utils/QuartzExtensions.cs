@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
-using server.Controllers;
 using System;
 
 namespace ERNI.PBA.Server.Host.Utils

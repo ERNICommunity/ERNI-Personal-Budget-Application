@@ -39,7 +39,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 IsActive = _.IsActive,
                 IsUrlNeeded = _.IsUrlNeeded,
                 SpendLimit = _.SpendLimit,
-                Email = string.IsNullOrWhiteSpace(_.Email) ? new string[0] : _.Email.Split(',')
+                Emails = string.IsNullOrWhiteSpace(_.Email) ? new string[0] : _.Email.Split(',')
             });
 
             return Ok(result);
@@ -57,7 +57,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 IsActive = requestCategory.IsActive,
                 IsUrlNeeded = requestCategory.IsUrlNeeded,
                 SpendLimit = requestCategory.SpendLimit,
-                Email = string.IsNullOrWhiteSpace(requestCategory.Email) ? new string[0] : requestCategory.Email.Split(',')
+                Emails = string.IsNullOrWhiteSpace(requestCategory.Email) ? new string[0] : requestCategory.Email.Split(',')
             };
 
             return Ok(result);
@@ -94,7 +94,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             requestCategory.IsActive = payload.IsActive;
             requestCategory.IsUrlNeeded = payload.IsUrlNeeded;
             requestCategory.SpendLimit = payload.SpendLimit;
-            requestCategory.Email = payload.Email.Any() ? payload.Email.Join(",") : string.Empty;
+            requestCategory.Email = payload.Emails.Any() ? payload.Emails.Join(",") : string.Empty;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
