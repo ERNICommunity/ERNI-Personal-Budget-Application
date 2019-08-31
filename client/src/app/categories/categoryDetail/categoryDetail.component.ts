@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { Category } from '../../model/category';
 import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute } from '@angular/router';
-import { NgControl } from '@angular/forms';
+import { FormControl, NgControl } from '@angular/forms';
 
 
 @Component({
@@ -36,20 +36,17 @@ export class CategoryDetailComponent implements OnInit {
 
   save(): void {
     this.isSubmitted = true;
-    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => { this.isSubmitted = false; });
+    this.categoryService.updateCategory(this.category).subscribe(() => this.goBack()).add(() => this.isSubmitted = false);
   }
 
-  addMail(newMail: NgControl): void {
-    if (newMail.invalid || (this.category.emails.includes(newMail.value))) {
+  addMail(email: string): void {
+    if (this.category.email.includes(email)) {
       return;
     }
-    this.category.emails.push(newMail.value);
-    newMail.reset();
-
+    this.category.email.push(email);
   }
 
-  deleteMail(emailsToDelete: NgControl): void {
-    this.category.emails = this.category.emails.filter(element => !emailsToDelete.value.includes(element));
-    emailsToDelete.reset();
+  deleteMail(email: string): void {
+    this.category.email = this.category.email.filter(e => e != email);
   }
 }

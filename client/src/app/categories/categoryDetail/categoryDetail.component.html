@@ -1,15 +1,15 @@
 <form *ngIf="category" #form="ngForm">
     <h2>Details</h2>
     <br>
-    <div class="form-group">
+    <div class="form-group col-md-6">
         <label>
             Category title:
             <input class="form-control" [(ngModel)]="category.title" name="title" #title="ngModel" placeholder="Title" required>
             <div class="alert alert-danger" *ngIf="title.touched && !title.valid">Title is not valid.</div>
         </label>
     </div>
-    <div class="form-check">
-        <label class="form-check-label">
+    <div class="form-check col-md-6">
+        <label class="form-check-label col-md-6">
             <input
                 type="checkbox"
                 [(ngModel)]="category.isActive"
@@ -18,7 +18,7 @@
             Active
         </label>
         <br>
-        <label class="form-check-label">
+        <label class="form-check-label col-md-6">
             <input
                 type="checkbox"
                 [(ngModel)]="category.isUrlNeeded"
@@ -28,7 +28,7 @@
         </label>
     </div>
     <br>
-    <div class="form-input">
+    <div class="form-input col-md-6">
         <label class="form-input-label">
             Spend limit:
             <input
@@ -39,37 +39,33 @@
                 placeholder="0.00">
         </label>
         <br>
-        <div class="form-group" *ngIf="category.emails && category.emails.length">
-            <label class="form-input-label">Emails</label>
-            <br>
-            <select ngModel class="w-25 p-2 form-control" name="emailsToDelete" #emailsToDelete="ngModel" multiple>
-                <option *ngFor="let u of category.emails">
-                    {{ u }}
-                </option>
-            </select>
-            <button
-                class="btn btn-failure mt-1 mb-2 h-25 d-inline-block w-25"
-                *ngIf="emailsToDelete.value && emailsToDelete.value.length"
-                (click)="deleteMail(emailsToDelete)">
-                Delete
-            </button>
-        </div>
     </div>
-    <div class="form-input">
-        <label class="form-input-label mr-2">
-            Add email:
-            <input
-                class="form-input form-control"
-                ngModel name="newMail"
-                placeholder="email@example.com"
-                #newMail="ngModel"
-                required [email]="true">
-        </label>
-        <button
-            class="btn btn-success"
-            (click)="addMail(newMail)">
-            Add
-        </button>
+    <div class="form-input col-md-6">
+        <h4>Emails</h4>
+        <div class="form-inline">
+            
+
+    </div>
+        <table class="table">
+            <thead>
+                <th scope="col"><input class="form-input form-control" ngModel name="newMail" placeholder="email@example.com"
+                        #newMail="ngModel" required [email]="true">
+                </th>
+                <th> <button [disabled]="!newMail.valid" class="btn btn-success float-right" (click)="addMail(newMail.value)">
+                        Add
+                    </button>
+                </th>
+            </thead>
+            <tr *ngFor="let email of category.email">
+                <th>
+                    {{email}}
+                </th>
+                <th>
+                    <button class="btn btn-danger float-right" title="remove email" (click)="deleteMail(email)">
+                        Remove
+                    </button>
+                </th>
+        </table>    
         <div class="alert alert-danger" *ngIf="newMail.touched && !newMail.valid">Email is invalid</div>
     </div>
     <br>
