@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
-import {User} from '../model/user';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { User } from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
+import { setTime } from 'ngx-bootstrap/chronos/utils/date-setters';
 
 @Injectable()
 export class UserService {
@@ -30,7 +31,22 @@ export class UserService {
     }
 
     public getCurrentUser(): Observable<User> {
-        return this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", this.serviceHelper.getHttpOptions())
+        let json = localStorage.getItem('currentUser');
+        if (json) {
+            let user = JSON.parse(json);
+            return new Observable<User>(
+                observer => {
+                    setTimeout(() => {
+                        observer.next(user);
+                    }, 1000);
+                });
+        }
+        else
+        {
+            let observable = this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", this.serviceHelper.getHttpOptions())
+            observable.subscribe(u => localStorage.setItem('currentUser', JSON.stringify(u)));
+            return observable;
+        }
     }
 
     public updateUser(user: User): Observable<any> {
