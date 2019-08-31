@@ -91,6 +91,11 @@ namespace ERNI.PBA.Server
                                     claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
                                 }
 
+                                if (user.IsViewer)
+                                {
+                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "viewer"));
+                                }
+
                                 context.Principal.AddIdentity(
                                     new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
                             }

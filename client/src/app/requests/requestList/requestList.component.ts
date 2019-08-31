@@ -21,6 +21,7 @@ export class RequestListComponent implements OnInit {
     rejectedRoute: string = "/requests/rejected";
 
     isAdmin: boolean;
+    isViewer: boolean;
     requests: Request[];
     filteredRequests: Request[];
     requestFilter: RequestFilter;
@@ -82,7 +83,7 @@ export class RequestListComponent implements OnInit {
             this.getRequests(this.requestFilter, this.selectedYear);
         });
 
-        this.userService.getCurrentUser().subscribe(u => this.isAdmin = u.isAdmin);
+        this.userService.getCurrentUser().subscribe(u => {this.isAdmin = u.isAdmin; this.isViewer = u.isViewer});
     }
 
     getRequests(filter: RequestFilter, year: number): void {

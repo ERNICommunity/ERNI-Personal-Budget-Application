@@ -101,7 +101,6 @@
         </tr>
     </thead>
     <tbody>
-
         <tr *ngFor="let request of filteredRequests">
             <th>
                 {{request.user.firstName}} {{request.user.lastName}}
@@ -111,13 +110,17 @@
             <td>{{request.category.title}}</td>
             <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
 
-            <td *ngIf="showApprove()">
-                <button
-                    class="btn btn-success float-right"
-                    title="approve request"
-                    (click)="approveRequest(request.id)">
-                    Approve
-                </button>
+            <td>
+                <div *ngIf="isAdmin">
+                    <div *ngIf="showApprove()">                
+                        <button
+                            class="btn btn-success float-right"
+                            title="approve request"
+                            (click)="approveRequest(request.id)">
+                            Approve
+                        </button>
+                    </div>
+                </div>
             </td>
 
             <td><a
@@ -127,29 +130,30 @@
                 routerLink="/request/detail/{{request.id}}">
                 Detail
             </a></td>
-            <td *ngIf="requestFilter != requestFilterType.Rejected" style="min-width: 180px">
-
-                <div *ngIf="canRejectRequest(request.id); else cannotReject">
-                    <button
-                        class="btn btn-danger float-right"
-                        title="reject request"
-                        (click)="openDeleteConfirmationModal(rejectConfirmation)">
-                        Reject
-                    </button>
-                    <button
-                        class="btn btn-danger float-right mr-1"
-                        title="delete request"
-                        (click)="openDeleteConfirmationModal(deleteConfirmation)">
-                        Delete
-                    </button>
+            <td style="min-width: 180px">
+                <div *ngIf="isAdmin">
+                    <div *ngIf="canRejectRequest(request.id); else cannotReject">
+                        <button
+                            class="btn btn-danger float-right"
+                            title="reject request"
+                            (click)="openDeleteConfirmationModal(rejectConfirmation)">
+                            Reject
+                        </button>
+                        <button
+                            class="btn btn-danger float-right mr-1"
+                            title="delete request"
+                            (click)="openDeleteConfirmationModal(deleteConfirmation)">
+                            Delete
+                        </button>
+                    </div>
+                    <ng-template #cannotReject>
+                        <button
+                            class="btn btn-danger float-right disabled"
+                            title="Cannot reject the request. It was approved by administrator.">
+                            Reject
+                        </button>
+                    </ng-template>
                 </div>
-                <ng-template #cannotReject>
-                    <button
-                        class="btn btn-danger float-right disabled"
-                        title="Cannot reject the request. It was approved by administrator.">
-                        Reject
-                    </button>
-                </ng-template>
                 <ng-template
                     #deleteConfirmation
                     let-c="close"

@@ -3,6 +3,7 @@ import { AdalService } from './services/adal.service';
 import { UserService } from './services/user.service';
 import { Router, NavigationStart, NavigationCancel, NavigationError, NavigationEnd } from '@angular/router';
 import { BusyIndicatorService } from './services/busy-indicator.service';
+import { User } from './model/user';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +11,7 @@ import { BusyIndicatorService } from './services/busy-indicator.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  isAdmin: boolean;
-  isSuperior: boolean;
+  user: User;
   initialized: boolean;
 
   constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
@@ -44,10 +44,9 @@ export class AppComponent {
   }
 
   getIsAdminOrSuperior(): void {
-    this.userService.getCurrentUser().subscribe(u => {
-      this.isAdmin = u.isAdmin;
-      if (!this.isAdmin) {
-        this.userService.getSubordinateUsers().subscribe(users => this.isSuperior = users != null && users.length > 0);
+    this.userService.getCurrentUser().subscribe(u => { this.user = u;
+      if (!this.user.isAdmin) {
+        this.userService.getSubordinateUsers().subscribe(users => this.user.isSuperior = users != null && users.length > 0);
       }
     });
   }

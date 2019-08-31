@@ -36,7 +36,7 @@ export class AuthenticationGuard implements CanActivate {
             }
 
             if (route.url[0].path == 'requests') {
-                if (!this.user.isAdmin && !this.isSuperior) {
+                if (!this.user.isAdmin && !this.isSuperior && !this.user.isViewer) {
                     return false;
                 }
             }
