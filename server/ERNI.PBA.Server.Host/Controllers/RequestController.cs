@@ -224,7 +224,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
         /// </summary>
         [HttpPost("mass")]
-        public async Task<IActionResult> AddRequestMass([FromBody] PostRequestMassModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddRequestMass([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
         {
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (!currentUser.IsAdmin)

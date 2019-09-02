@@ -7,7 +7,6 @@ export class RequestMass {
     amount: number;
     users: User[];
     category: Category;
-    categoryId : number;
     title: string;
     date: Date;
     state: RequestState;

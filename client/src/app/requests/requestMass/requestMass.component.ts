@@ -169,7 +169,7 @@ export class RequestMassComponent implements OnInit {
         var users = this.addedUsers;
         this.busyIndicatorService.start();
 
-        this.requestService.addRequestMass({ title, amount, date, category, url, users } as RequestMass)
+        this.requestService.addMassRequest({ title, amount, date, category, url, users } as RequestMass)
             .subscribe(() => {
                 this.busyIndicatorService.end();
                 this.goBack();

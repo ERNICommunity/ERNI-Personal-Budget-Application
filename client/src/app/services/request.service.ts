@@ -51,7 +51,7 @@ export class RequestService {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
-  public addRequestMass(request: RequestMass): Observable<any> {
+  public addMassRequest(request: RequestMass): Observable<any> {
     return this.http.post<RequestMass>(this.configService.apiUrlBase + this.requestUrl + 'mass', request, this.serviceHelper.getHttpOptions());
   }
 

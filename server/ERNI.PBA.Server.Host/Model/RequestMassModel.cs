@@ -6,7 +6,7 @@ using ERNI.PBA.Server.DataAccess.Model;
 
 namespace ERNI.PBA.Server.Host.Model
 {
-    public class PostRequestMassModel
+    public class RequestMassModel
     {
         public System.DateTime Date { get; set; }
 
