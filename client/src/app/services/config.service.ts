@@ -7,7 +7,7 @@ export class ConfigService {
     }
 
     public get apiUrlBase(): any {
-        return 'http://localhost:64246/api/';
+        return 'https://ernipbaserver.azurewebsites.net/api/';
     }
 
     public get conditionsOfUseUrl() : any {

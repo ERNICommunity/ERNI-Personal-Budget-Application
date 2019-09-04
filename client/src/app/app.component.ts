@@ -1,4 +1,4 @@
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AdalService } from './services/adal.service';
 import { UserService } from './services/user.service';
 import { Router, NavigationStart, NavigationCancel, NavigationError, NavigationEnd } from '@angular/router';
@@ -10,14 +10,13 @@ import { User } from './model/user';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit  {
+export class AppComponent {
   user: User;
   initialized: boolean;
 
   constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
     this.initialized = false;
-    this.user = new User();
-    
+
     this.router.events.subscribe(event => {
       switch (true) {
         case event instanceof NavigationStart: {
@@ -37,7 +36,7 @@ export class AppComponent implements OnInit  {
     });
   }
 
-  ngOnInit() {
+  ngDoCheck() {
     if (!this.initialized && this.adalService.userInfo) {
       this.getIsAdminOrSuperior();
       this.initialized = true;
