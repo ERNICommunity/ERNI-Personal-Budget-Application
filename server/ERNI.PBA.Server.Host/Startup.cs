@@ -107,7 +107,7 @@ namespace ERNI.PBA.Server
 
             services.AddAuthorization();
 
-            services.AddQuartz(typeof(DailyMailNotifications), Configuration["Crons:EmailCron"]);
+            //services.AddQuartz(typeof(DailyMailNotifications), Configuration["Crons:EmailCron"]);
 
             services.AddSwaggerGen(c =>
             {
@@ -140,7 +140,7 @@ namespace ERNI.PBA.Server
 
             app.UseAuthentication();
 
-            app.UseQuartz();
+            //app.UseQuartz();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
