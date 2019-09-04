@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Utils;
@@ -36,8 +36,7 @@ namespace ERNI.PBA.Server
                                 options.AddPolicy("CorsPolicy",
                                     b => b.AllowAnyOrigin()
                                         .AllowAnyMethod()
-                                        .AllowAnyHeader()
-                                        .AllowCredentials()));
+                                        .AllowAnyHeader()));
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
