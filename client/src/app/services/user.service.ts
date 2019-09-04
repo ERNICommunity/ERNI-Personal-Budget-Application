@@ -5,6 +5,7 @@ import { User } from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { setTime } from 'ngx-bootstrap/chronos/utils/date-setters';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class UserService {
@@ -43,9 +44,11 @@ export class UserService {
         }
         else
         {
-            let observable = this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", this.serviceHelper.getHttpOptions())
-            observable.subscribe(u => localStorage.setItem('currentUser', JSON.stringify(u)));
-            return observable;
+            return this.registerUser().pipe(switchMap(_ => {
+                let observable = this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", this.serviceHelper.getHttpOptions());
+                observable.subscribe(u => localStorage.setItem('currentUser', JSON.stringify(u)));
+                return observable;
+            }));
         }
     }
 

@@ -40,13 +40,13 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   addMail(email: string): void {
-    if (this.category.email.includes(email)) {
+    if (this.category.emails.includes(email)) {
       return;
     }
-    this.category.email.push(email);
+    this.category.emails.push(email);
   }
 
   deleteMail(email: string): void {
-    this.category.email = this.category.email.filter(e => e != email);
+    this.category.emails = this.category.emails.filter(e => e != email);
   }
 }
