@@ -10,7 +10,7 @@ import { User } from './model/user';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit  {
+export class AppComponent implements DoCheck  {
   user: User;
   initialized: boolean;
 
@@ -37,7 +37,7 @@ export class AppComponent implements OnInit  {
     });
   }
 
-  ngOnInit() {
+  ngDoCheck() {
     if (!this.initialized && this.adalService.userInfo) {
       this.getIsAdminOrSuperior();
       this.initialized = true;
@@ -46,10 +46,12 @@ export class AppComponent implements OnInit  {
 
   getIsAdminOrSuperior(): void {
     var _this = this;
-    this.userService.getCurrentUser().subscribe(u => { _this.user = u;
-      if (!_this.user.isAdmin) {
-        this.userService.getSubordinateUsers().subscribe(users => _this.user.isSuperior = users != null && users.length > 0);
-      }
+    this.userService.getCurrentUser().subscribe(u => 
+      { 
+        _this.user = u;
+        if (!_this.user.isAdmin) {
+          this.userService.getSubordinateUsers().subscribe(users => _this.user.isSuperior = users != null && users.length > 0);
+        }
     });
   }
 
