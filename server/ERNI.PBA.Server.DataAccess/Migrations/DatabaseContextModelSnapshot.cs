@@ -19,15 +19,23 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Budget", b =>
+            modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.Budget", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<int>("BudgetType");
+
                     b.Property<int>("UserId");
 
                     b.Property<int>("Year");
 
-                    b.Property<decimal>("Amount");
+                    b.HasKey("Id");
 
-                    b.HasKey("UserId", "Year");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Budgets");
                 });
@@ -39,6 +47,8 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal>("Amount");
+
+                    b.Property<int>("BudgetId");
 
                     b.Property<int>("CategoryId");
 
@@ -56,9 +66,11 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BudgetId");
+
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("UserId", "Year");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Requests");
                 });
@@ -124,7 +136,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Budget", b =>
+            modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.Budget", b =>
                 {
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.User", "User")
                         .WithMany()
@@ -134,6 +146,11 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
             modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.Request", b =>
                 {
+                    b.HasOne("ERNI.PBA.Server.DataAccess.Model.Budget", "Budget")
+                        .WithMany()
+                        .HasForeignKey("BudgetId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.RequestCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
@@ -143,11 +160,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Budget", "Budget")
-                        .WithMany()
-                        .HasForeignKey("UserId", "Year")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.User", b =>
