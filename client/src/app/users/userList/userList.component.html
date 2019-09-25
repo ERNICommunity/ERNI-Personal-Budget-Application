@@ -1,34 +1,26 @@
 <h2>Employees</h2>
 <br>
-<input
-    class="form-control col-md-6"
-    placeholder="Search employee"
-    id="searchBox"
-    type="text"
-    [(ngModel)]="searchTerm">
+<div class="input-group">
+    <input class="form-control col-md-6 mr-2" placeholder="Search employee" id="searchBox" type="text"
+        [(ngModel)]="searchTerm">
+    <span class="input-group-btn">
+        <button (click)="create()" class="btn btn-success">Add new</button>
+    </span>
+</div>
 <br>
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            routerLink="/users/active">
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/active">
             Active
         </a>
     </li>
     <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            routerLink="/users/new">
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/new">
             New
         </a>
     </li>
     <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            routerLink="/users/inactive">
+        <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/inactive">
             Inactive
         </a>
     </li>
@@ -51,29 +43,20 @@
             <td>{{user.firstName}}</td>
 
             <td *ngIf="userState != userStateType.Active">
-                <button
-                    class="btn btn-success float-right"
-                    title="activate employee"
-                    (click)="activateEmployee(user)">
+                <button class="btn btn-success float-right" title="activate employee" (click)="activateEmployee(user)">
                     Activate
                 </button>
             </td>
 
             <td *ngIf="userState != userStateType.Inactive">
-                <button
-                    class="btn btn-danger float-right"
-                    title="deactivate employee"
+                <button class="btn btn-danger float-right" title="deactivate employee"
                     (click)="deactivateEmployee(user)">
                     Deactivate
                 </button>
             </td>
 
             <td>
-                <a
-                    class="btn btn-primary float-right"
-                    href="#"
-                    role="button"
-                    routerLink="/users/{{user.id}}">
+                <a class="btn btn-primary float-right" href="#" role="button" routerLink="/users/detail/{{user.id}}">
                     Detail
                 </a>
             </td>
