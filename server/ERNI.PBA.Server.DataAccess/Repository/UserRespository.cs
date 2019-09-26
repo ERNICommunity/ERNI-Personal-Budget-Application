@@ -30,6 +30,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
+        public Task<User> GetAsync(string username)
+        {
+            return _context.Users.SingleOrDefaultAsync(x => x.Username == username);
+        }
+
         public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {
             return _context.Users
@@ -62,11 +67,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public void AddUser(User user)
-        {
-            _context.Users.Add(user);
-        }
-
         public async Task AddUserAsync(User user)
         {
             await _context.Users.AddAsync(user);
@@ -75,6 +75,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public async Task<bool> ExistsAsync(string username)
         {
             return await _context.Users.AnyAsync(x => x.Username == username);
+        }
+
+        public void Update(User user)
+        {
+            _context.Entry(user).State = EntityState.Modified;
         }
     }
 }

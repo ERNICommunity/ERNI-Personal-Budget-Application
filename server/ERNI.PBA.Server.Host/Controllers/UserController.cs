@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Extensions;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -37,19 +38,23 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
         {
-            var existingUser = await _userRepository.GetUser(HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value, cancellationToken);
-            if (existingUser == null)
-            {
-                var user = new User
-                {
-                    UniqueIdentifier = HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
-                    FirstName = HttpContext.User.Claims.Single(c => c.Type == Claims.FirstName).Value,
-                    LastName = HttpContext.User.Claims.Single(c => c.Type == Claims.LastName).Value,
-                    Username = HttpContext.User.Claims.Single(c => c.Type == Claims.UserName).Value
-                };
-                _userRepository.AddUser(user);
-                await _unitOfWork.SaveChanges(cancellationToken);
-            }
+            var username = HttpContext.User.GetIdentifier(Claims.UserName);
+            if (string.IsNullOrWhiteSpace(username))
+                return NotFound();
+
+            var user = await _userRepository.GetAsync(username);
+            if (user == null)
+                return NotFound();
+
+            if (cancellationToken.IsCancellationRequested)
+                return BadRequest();
+
+            user.UniqueIdentifier = HttpContext.User.GetIdentifier(Claims.UniqueIndetifier);
+            user.FirstName = HttpContext.User.GetIdentifier(Claims.FirstName);
+            user.LastName = HttpContext.User.GetIdentifier(Claims.LastName);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
             return Ok();
         }
 
