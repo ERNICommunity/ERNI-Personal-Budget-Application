@@ -24,6 +24,7 @@ export class CreateUserComponent implements OnInit {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
+            amount: ['', Validators.required],
             isAdmin: [],
             isSuperior: [],
             superior: []
@@ -51,6 +52,7 @@ export class CreateUserComponent implements OnInit {
             firstName: this.controls.firstName.value,
             lastName: this.controls.lastName.value,
             email: this.controls.email.value,
+            amount: this.controls.amount.value,
             isAdmin: this.controls.isAdmin.value,
             isSuperior: this.controls.isSuperior.value,
             superior: this.controls.superior.value
