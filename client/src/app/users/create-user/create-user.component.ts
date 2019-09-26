@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
+import { ConfigService } from '../../services/config.service';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-create-user',
@@ -10,24 +13,38 @@ import { UserService } from '../../services/user.service';
 })
 export class CreateUserComponent implements OnInit {
     superiors: User[];
+    years: number[];
+    currentYear: number;
     createForm: FormGroup;
-    loading: boolean = false;
     submitted: boolean = false;
+    errorMessage: string;
 
     constructor(
+        private router: Router,
         private formBuilder: FormBuilder,
-        private userService: UserService) {
+        private userService: UserService,
+        private configService: ConfigService,
+        private busyIndicatorService: BusyIndicatorService) {
     }
 
     ngOnInit() {
+        this.years = [];
+        this.currentYear = (new Date()).getFullYear();
+
+        for (var year = this.currentYear; year >= this.configService.getOldestYear; year--) {
+            this.years.push(year);
+        }
+
         this.createForm = this.formBuilder.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             amount: ['', Validators.required],
-            isAdmin: [],
-            isSuperior: [],
-            superior: []
+            year: [this.currentYear, [Validators.required]],
+            isAdmin: [false],
+            isSuperior: [false],
+            superior: [],
+            state: ['', [Validators.required]]
         });
 
         this.userService.getSubordinateUsers().subscribe(
@@ -46,19 +63,30 @@ export class CreateUserComponent implements OnInit {
         if (this.createForm.invalid)
             return;
 
-        this.loading = true;
+        this.busyIndicatorService.start();
 
         let userData = {
             firstName: this.controls.firstName.value,
             lastName: this.controls.lastName.value,
             email: this.controls.email.value,
             amount: this.controls.amount.value,
+            year: this.controls.year.value,
             isAdmin: this.controls.isAdmin.value,
             isSuperior: this.controls.isSuperior.value,
-            superior: this.controls.superior.value
+            isViewer: false,
+            superior: this.controls.superior.value,
+            state: this.controls.state.value
         };
 
-        console.log(userData);
-        this.loading = false;
+        this.userService.createUser(userData).subscribe(
+            () => {
+                this.router.navigate(['/users']);
+            },
+            () => {
+                this.errorMessage = "User was not created."
+            }
+        ).add(() => {
+            this.busyIndicatorService.end()
+        });
     }
 }

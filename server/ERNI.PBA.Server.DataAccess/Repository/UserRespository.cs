@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -37,7 +38,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Include(u => u.Superior)
                 .ToArrayAsync(cancellationToken);
         }
-        
+
         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
         {
             return _context.Users
@@ -66,6 +67,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public void AddUser(User user)
         {
             _context.Users.Add(user);
+        }
+
+        public async Task AddUserAsync(User user)
+        {
+            await _context.Users.AddAsync(user);
         }
     }
 }

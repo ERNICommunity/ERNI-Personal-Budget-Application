@@ -19,6 +19,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context.Budgets.Add(budget);
         }
 
+        public async Task AddBudgetAsync(Budget budget)
+        {
+            await _context.Budgets.AddAsync(budget);
+        }
+
         public Task<Budget> GetBudget(int userId, int year, CancellationToken cancellationToken)
         {
             return _context.Budgets.Include(_ => _.User).SingleOrDefaultAsync(_ => _.UserId == userId && _.Year == year, cancellationToken);
@@ -37,7 +42,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             return (await _context.Requests
                 .Where(_ => _.Year == year)
                 .GroupBy(_ => _.UserId)
-                .Select(_ => new {
+                .Select(_ => new
+                {
                     UserId = _.Key,
                     TotalAmount = _.Sum(r => r.Amount)
                 })

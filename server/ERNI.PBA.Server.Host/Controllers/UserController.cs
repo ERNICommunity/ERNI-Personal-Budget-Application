@@ -9,8 +9,6 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -19,12 +17,18 @@ namespace ERNI.PBA.Server.Host.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public UserController(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<UserController> logger)
+        public UserController(
+            IUserRepository userRepository,
+            IBudgetRepository budgetRepository,
+            IUnitOfWork unitOfWork,
+            ILogger<UserController> logger)
         {
             _userRepository = userRepository;
+            _budgetRepository = budgetRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -45,6 +49,36 @@ namespace ERNI.PBA.Server.Host.Controllers
                 _userRepository.AddUser(user);
                 await _unitOfWork.SaveChanges(cancellationToken);
             }
+            return Ok();
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload)
+        {
+            var user = new User
+            {
+                FirstName = payload.FirstName,
+                LastName = payload.LastName,
+                Username = payload.Email,
+                IsAdmin = payload.IsAdmin,
+                IsSuperior = payload.IsSuperior,
+                IsViewer = payload.IsViewer,
+                SuperiorId = payload.Superior,
+                State = payload.State
+            };
+
+            await _userRepository.AddUserAsync(user);
+            var budget = new Budget
+            {
+                UserId = user.Id,
+                User = user,
+                Amount = payload.Amount,
+                Year = payload.Year
+            };
+
+            await _budgetRepository.AddBudgetAsync(budget);
+            await _unitOfWork.SaveChanges(default(CancellationToken));
+
             return Ok();
         }
 

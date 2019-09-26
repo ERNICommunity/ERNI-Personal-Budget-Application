@@ -30,15 +30,6 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="amount">Amount</label>
-            <input type="number" formControlName="amount" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && controls.amount.errors }" placeholder="0.00" />
-            <div *ngIf="submitted && controls.amount.errors" class="invalid-feedback">
-                <div *ngIf="controls.amount.errors.required">Amount is required</div>
-            </div>
-        </div>
-
         <div class="form-group form-check">
             <label for="isAdmin">
                 <input type="checkbox" formControlName="isAdmin" class="form-check-input" />
@@ -55,8 +46,8 @@
 
         <div class="form-group">
             <label for="superior">Superior</label>
-            <select formControlName="superior" class="form-control form-control-sm">
-                <option [value]="null">--Select--</option>
+            <select formControlName="superior" class="custom-select browser-default">
+                <option [value]="">--Select--</option>
                 <option *ngFor="let superiorItem of superiors" [value]="superiorItem.id">
                     {{superiorItem.lastName}} {{superiorItem.firstName}}
                 </option>
@@ -64,9 +55,43 @@
         </div>
 
         <div class="form-group">
-            <button [disabled]="loading" class="btn btn-success mr-2">Save</button>
-            <img *ngIf="loading"
-                src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            <label for="state">State</label>
+            <select formControlName="state" class="custom-select browser-default"
+                [ngClass]="{ 'is-invalid': submitted && controls.state.errors }">
+                <option [value]="">--Select--</option>
+                <option [value]="1">Active</option>
+                <option [value]="2">Inactive</option>
+            </select>
+            <div *ngIf="submitted && controls.state.errors" class="invalid-feedback">
+                <div *ngIf="controls.state.errors.required">State is required</div>
+            </div>
+        </div>
+
+        <h5>Budget</h5>
+
+        <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="number" formControlName="amount" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && controls.amount.errors }" placeholder="0.00" />
+            <div *ngIf="submitted && controls.amount.errors" class="invalid-feedback">
+                <div *ngIf="controls.amount.errors.required">Amount is required</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="year">Year</label>
+            <select formControlName="year" class="custom-select browser-default"
+                [ngClass]="{ 'is-invalid': submitted && controls.year.errors }">
+                <option [value]="">--Select--</option>
+                <option *ngFor="let year of years" [value]="year">{{year}}</option>
+            </select>
+            <div *ngIf="submitted && controls.year.errors" class="invalid-feedback">
+                <div *ngIf="controls.year.errors.required">Year is required</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button [disabled]="busyIndicatorService.isBusy" class="btn btn-success mr-2">Save</button>
         </div>
     </form>
 </div>
