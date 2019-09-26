@@ -5,6 +5,7 @@ import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { Router } from '@angular/router';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-create-user',
@@ -24,6 +25,7 @@ export class CreateUserComponent implements OnInit {
         private formBuilder: FormBuilder,
         private userService: UserService,
         private configService: ConfigService,
+        private alertService: AlertService,
         private busyIndicatorService: BusyIndicatorService) {
     }
 
@@ -58,6 +60,7 @@ export class CreateUserComponent implements OnInit {
     }
 
     onSubmit() {
+        this.alertService.clear();
         this.submitted = true;
 
         if (this.createForm.invalid)
@@ -80,10 +83,11 @@ export class CreateUserComponent implements OnInit {
 
         this.userService.createUser(userData).subscribe(
             () => {
+                this.alertService.success("User successfully was created.", true);
                 this.router.navigate(['/users']);
             },
             () => {
-                this.errorMessage = "User was not created."
+                this.alertService.error("User was not created.");
             }
         ).add(() => {
             this.busyIndicatorService.end()

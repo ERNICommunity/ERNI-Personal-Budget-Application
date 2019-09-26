@@ -41,6 +41,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
 import { UnregisteredInterceptor } from './interceptors/unregisteredInterceptor';
 import { CreateUserComponent } from './users/create-user/create-user.component';
+import { AlertComponent } from './directives/alert/alert.component';
 
 @NgModule({
     declarations: [
@@ -62,7 +63,8 @@ import { CreateUserComponent } from './users/create-user/create-user.component';
         RequestDetailComponent,
         RequestEditComponent,
         OtherBudgetsComponent,
-        OtherBudgetsDetailComponent
+        OtherBudgetsDetailComponent,
+        AlertComponent
     ],
     imports: [
         NgbModule.forRoot(),
