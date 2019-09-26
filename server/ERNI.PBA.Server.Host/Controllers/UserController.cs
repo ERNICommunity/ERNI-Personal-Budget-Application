@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
@@ -55,6 +56,10 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload)
         {
+            var userExists = await _userRepository.ExistsAsync(payload.Email);
+            if (userExists)
+                return StatusCode(409);
+
             var user = new User
             {
                 FirstName = payload.FirstName,

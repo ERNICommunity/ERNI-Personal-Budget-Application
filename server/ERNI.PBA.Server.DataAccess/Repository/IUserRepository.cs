@@ -26,5 +26,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         void AddUser(User user);
 
         Task AddUserAsync(User user);
+
+        Task<bool> ExistsAsync(string username);
     }
 }

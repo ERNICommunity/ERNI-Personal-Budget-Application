@@ -3,10 +3,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -72,6 +70,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public async Task AddUserAsync(User user)
         {
             await _context.Users.AddAsync(user);
+        }
+
+        public async Task<bool> ExistsAsync(string username)
+        {
+            return await _context.Users.AnyAsync(x => x.Username == username);
         }
     }
 }

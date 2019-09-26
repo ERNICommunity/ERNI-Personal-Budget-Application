@@ -6,6 +6,7 @@ import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { Router } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-create-user',
@@ -86,8 +87,12 @@ export class CreateUserComponent implements OnInit {
                 this.alertService.success("User successfully was created.", true);
                 this.router.navigate(['/users']);
             },
-            () => {
-                this.alertService.error("User was not created.");
+            (err: HttpErrorResponse) => {
+                let error = "User was not created.";
+                if (err.status === 409)
+                    error = "User is already exists.";
+
+                this.alertService.error(error);
             }
         ).add(() => {
             this.busyIndicatorService.end()
