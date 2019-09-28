@@ -37,7 +37,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public Task<Request> GetRequest(int id, CancellationToken cancellationToken)
         {
-            return _context.Requests.Include(_ => _.User).SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
+            return _context.Requests
+                .Include(_ => _.User)
+                .Include(_ => _.Category)
+                .SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
         }
 
         public void AddRequest(Request request)

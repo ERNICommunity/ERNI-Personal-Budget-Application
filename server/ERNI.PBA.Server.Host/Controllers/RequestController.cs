@@ -137,12 +137,16 @@ namespace ERNI.PBA.Server.Host.Controllers
                 message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
             }
 
-            var emails = request.Category.Email.Split(',').ToList();
-            if (!emails.Contains(request.User.Username))
+            if (request.Category.Email != null)
             {
-                emails.Add(request.User.Username);
+                var emails = request.Category.Email.Split(',').ToList();
+                if (!emails.Contains(request.User.Username))
+                {
+                    emails.Add(request.User.Username);
+                }
+
+                _mailService.SendMail(message, string.Join(',', emails));
             }
-            _mailService.SendMail(message, string.Join(',', emails));
 
             return Ok();
         }
