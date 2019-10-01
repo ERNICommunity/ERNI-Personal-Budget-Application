@@ -40,11 +40,11 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var username = HttpContext.User.GetIdentifier(Claims.UserName);
             if (string.IsNullOrWhiteSpace(username))
-                return NotFound();
+                return Forbid();
 
             var user = await _userRepository.GetAsync(username);
             if (user == null)
-                return NotFound();
+                return Forbid();
 
             if (cancellationToken.IsCancellationRequested)
                 return BadRequest();
