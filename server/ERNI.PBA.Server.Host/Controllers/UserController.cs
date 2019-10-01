@@ -78,15 +78,19 @@ namespace ERNI.PBA.Server.Host.Controllers
             };
 
             await _userRepository.AddUserAsync(user);
-            var budget = new Budget
-            {
-                UserId = user.Id,
-                User = user,
-                Amount = payload.Amount,
-                Year = payload.Year
-            };
 
-            await _budgetRepository.AddBudgetAsync(budget);
+            if (payload.State == UserState.Active)
+            {
+                var budget = new Budget
+                {
+                    UserId = user.Id,
+                    User = user,
+                    Amount = payload.Amount,
+                    Year = payload.Year
+                };
+                await _budgetRepository.AddBudgetAsync(budget);
+            }
+
             await _unitOfWork.SaveChanges(default(CancellationToken));
 
             return Ok();

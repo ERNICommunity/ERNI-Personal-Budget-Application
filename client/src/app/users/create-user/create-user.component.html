@@ -47,7 +47,7 @@
         <div class="form-group">
             <label for="superior">Superior</label>
             <select formControlName="superior" class="custom-select browser-default">
-                <option [value]="">--Select--</option>
+                <option value="">--Select--</option>
                 <option *ngFor="let superiorItem of superiors" [value]="superiorItem.id">
                     {{superiorItem.lastName}} {{superiorItem.firstName}}
                 </option>
@@ -58,7 +58,7 @@
             <label for="state">State</label>
             <select formControlName="state" class="custom-select browser-default"
                 [ngClass]="{ 'is-invalid': submitted && controls.state.errors }">
-                <option [value]="">--Select--</option>
+                <option value="">--Select--</option>
                 <option [value]="1">Active</option>
                 <option [value]="2">Inactive</option>
             </select>
@@ -67,26 +67,28 @@
             </div>
         </div>
 
-        <h5>Budget</h5>
+        <div *ngIf="controls.state.value == 1">
+            <h5>Budget</h5>
 
-        <div class="form-group">
-            <label for="amount">Amount</label>
-            <input type="number" formControlName="amount" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && controls.amount.errors }" placeholder="0.00" />
-            <div *ngIf="submitted && controls.amount.errors" class="invalid-feedback">
-                <div *ngIf="controls.amount.errors.required">Amount is required</div>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" formControlName="amount" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && controls.amount.errors }" placeholder="0.00" />
+                <div *ngIf="submitted && controls.amount.errors" class="invalid-feedback">
+                    <div *ngIf="controls.amount.errors.required">Amount is required</div>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label for="year">Year</label>
-            <select formControlName="year" class="custom-select browser-default"
-                [ngClass]="{ 'is-invalid': submitted && controls.year.errors }">
-                <option [value]="">--Select--</option>
-                <option *ngFor="let year of years" [value]="year">{{year}}</option>
-            </select>
-            <div *ngIf="submitted && controls.year.errors" class="invalid-feedback">
-                <div *ngIf="controls.year.errors.required">Year is required</div>
+            <div class="form-group">
+                <label for="year">Year</label>
+                <select formControlName="year" class="custom-select browser-default"
+                    [ngClass]="{ 'is-invalid': submitted && controls.year.errors }">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let year of years" [value]="year">{{year}}</option>
+                </select>
+                <div *ngIf="submitted && controls.year.errors" class="invalid-feedback">
+                    <div *ngIf="controls.year.errors.required">Year is required</div>
+                </div>
             </div>
         </div>
 

@@ -42,12 +42,25 @@ export class CreateUserComponent implements OnInit {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            amount: ['', Validators.required],
-            year: [this.currentYear, [Validators.required]],
+            amount: [''],
+            year: [this.currentYear],
             isAdmin: [false],
             isSuperior: [false],
-            superior: [],
+            superior: [''],
             state: ['', [Validators.required]]
+        });
+
+        this.createForm.get('state').valueChanges.subscribe(state => {
+            this.controls.amount.setValidators(null);
+            this.controls.year.setValidators(null);
+
+            if (state == 1) {
+                this.controls.amount.setValidators([Validators.required]);
+                this.controls.year.setValidators([Validators.required]);
+            }
+
+            this.controls.amount.updateValueAndValidity();
+            this.controls.year.updateValueAndValidity();
         });
 
         this.userService.getSubordinateUsers().subscribe(
@@ -73,8 +86,8 @@ export class CreateUserComponent implements OnInit {
             firstName: this.controls.firstName.value,
             lastName: this.controls.lastName.value,
             email: this.controls.email.value,
-            amount: this.controls.amount.value,
-            year: this.controls.year.value,
+            amount: this.controls.amount.value ? this.controls.amount.value : 0,
+            year: this.controls.year.value ? this.controls.year.value : 0,
             isAdmin: this.controls.isAdmin.value,
             isSuperior: this.controls.isSuperior.value,
             isViewer: false,
