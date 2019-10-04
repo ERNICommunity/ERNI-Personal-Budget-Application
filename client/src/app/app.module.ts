@@ -90,6 +90,8 @@ import { AlertComponent } from './directives/alert/alert.component';
         BudgetService,
         CategoryService,
         BusyIndicatorService,
+        AdminGuard,
+        ViewerGuard,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
