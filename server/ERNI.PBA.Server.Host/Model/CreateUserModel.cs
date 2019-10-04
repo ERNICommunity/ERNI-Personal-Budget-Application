@@ -1,6 +1,8 @@
-﻿namespace ERNI.PBA.Server.Host.Model
+﻿using ERNI.PBA.Server.DataAccess.Model;
+
+namespace ERNI.PBA.Server.Host.Model
 {
-    public class CreateUserModel : UserModelBase
+    public class CreateUserModel
     {
         public string FirstName { get; set; }
 
@@ -13,5 +15,13 @@
         public int Year { get; set; }
 
         public int? Superior { get; set; }
+
+        public bool IsAdmin { get; set; }
+
+        public bool IsSuperior { get; set; }
+
+        public bool IsViewer { get; set; }
+
+        public UserState State { get; set; }
     }
 }
