@@ -6,56 +6,55 @@ import { BusyIndicatorService } from './services/busy-indicator.service';
 import { User } from './model/user';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements DoCheck  {
-  user: User;
-  initialized: boolean;
+export class AppComponent implements DoCheck {
+    user: User;
+    initialized: boolean;
 
-  constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
-    this.initialized = false;
-    this.user = new User();
-    
-    this.router.events.subscribe(event => {
-      switch (true) {
-        case event instanceof NavigationStart: {
-          this.busyIndicatorService.start();
-          break;
-        }
-        case event instanceof NavigationEnd:
-        case event instanceof NavigationCancel:
-        case event instanceof NavigationError: {
-          this.busyIndicatorService.end();
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    });
-  }
+    constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
+        this.initialized = false;
+        this.user = new User();
 
-  ngDoCheck() {
-    if (!this.initialized && this.adalService.userInfo) {
-      this.getIsAdminOrSuperior();
-      this.initialized = true;
+        this.router.events.subscribe(event => {
+            switch (true) {
+                case event instanceof NavigationStart: {
+                    this.busyIndicatorService.start();
+                    break;
+                }
+                case event instanceof NavigationEnd:
+                case event instanceof NavigationCancel:
+                case event instanceof NavigationError: {
+                    this.busyIndicatorService.end();
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        });
     }
-  }
 
-  getIsAdminOrSuperior(): void {
-    var _this = this;
-    this.userService.getCurrentUser().subscribe(u => 
-      { 
-        _this.user = u;
-        if (!_this.user.isAdmin) {
-          this.userService.getSubordinateUsers().subscribe(users => _this.user.isSuperior = users != null && users.length > 0);
+    ngDoCheck() {
+        if (!this.initialized && this.adalService.userInfo) {
+            this.getIsAdminOrSuperior();
+            this.initialized = true;
         }
-    });
-  }
+    }
 
-  logout() {
-    this.adalService.logout();
-  }
+    getIsAdminOrSuperior(): void {
+        var _this = this;
+        this.userService.getCurrentUser().subscribe(u => {
+            _this.user = u;
+            if (!_this.user.isAdmin) {
+                this.userService.getSubordinateUsers().subscribe(users => _this.user.isSuperior = users != null && users.length > 0);
+            }
+        });
+    }
+
+    logout() {
+        this.adalService.logout();
+    }
 }

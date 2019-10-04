@@ -19,6 +19,10 @@ export class UserService {
         return this.http.post<any>(this.configService.apiUrlBase + this.url + '/register', this.serviceHelper.getHttpOptions());
     }
 
+    public createUser(data) {
+        return this.http.post(this.configService.apiUrlBase + this.url + '/create', data, this.serviceHelper.getHttpOptions());
+    }
+
     public getActiveUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.configService.apiUrlBase + this.url + '/active', this.serviceHelper.getHttpOptions())
     }
@@ -42,8 +46,7 @@ export class UserService {
                     }, 1000);
                 });
         }
-        else
-        {
+        else {
             return this.registerUser().pipe(switchMap(_ => {
                 let observable = this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", this.serviceHelper.getHttpOptions());
                 observable.subscribe(u => localStorage.setItem('currentUser', JSON.stringify(u)));

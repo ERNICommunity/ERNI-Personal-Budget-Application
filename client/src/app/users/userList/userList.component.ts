@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserState } from '../../model/userState';
 
 @Component({
@@ -33,7 +33,7 @@ export class UserListComponent implements OnInit {
             user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
     }
 
-    constructor(private userService: UserService, private route: ActivatedRoute) {
+    constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) {
     }
 
     ngOnInit() {
@@ -53,5 +53,9 @@ export class UserListComponent implements OnInit {
     deactivateEmployee(user: User): void {
         user.state = UserState.Inactive;
         this.userService.updateUser(user).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
+    }
+
+    create() {
+        this.router.navigate(['/users/create']);
     }
 }

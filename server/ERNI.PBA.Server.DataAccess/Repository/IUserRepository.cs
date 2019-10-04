@@ -12,8 +12,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<User> GetUser(string sub, CancellationToken cancellationToken);
 
+        Task<User> GetAsync(string username);
+
         Task<User[]> GetAllUsers(CancellationToken cancellationToken);
-        
+
         Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken);
 
         /// <summary>
@@ -23,6 +25,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<User[]> GetAdminUsers(CancellationToken cancellationToken);
 
-        void AddUser(User user);
+        Task AddUserAsync(User user);
+
+        Task<bool> ExistsAsync(string username);
+
+        void Update(User user);
     }
 }

@@ -1,16 +1,16 @@
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Extensions;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -19,12 +19,18 @@ namespace ERNI.PBA.Server.Host.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public UserController(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<UserController> logger)
+        public UserController(
+            IUserRepository userRepository,
+            IBudgetRepository budgetRepository,
+            IUnitOfWork unitOfWork,
+            ILogger<UserController> logger)
         {
             _userRepository = userRepository;
+            _budgetRepository = budgetRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -32,19 +38,61 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
         {
-            var existingUser = await _userRepository.GetUser(HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value, cancellationToken);
-            if (existingUser == null)
+            var username = HttpContext.User.GetIdentifier(Claims.UserName);
+            if (string.IsNullOrWhiteSpace(username))
+                return Forbid();
+
+            var user = await _userRepository.GetAsync(username);
+            if (user == null)
+                return Forbid();
+
+            if (cancellationToken.IsCancellationRequested)
+                return BadRequest();
+
+            user.UniqueIdentifier = HttpContext.User.GetIdentifier(Claims.UniqueIndetifier);
+            user.FirstName = HttpContext.User.GetIdentifier(Claims.FirstName);
+            user.LastName = HttpContext.User.GetIdentifier(Claims.LastName);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload)
+        {
+            var userExists = await _userRepository.ExistsAsync(payload.Email);
+            if (userExists)
+                return StatusCode(409);
+
+            var user = new User
             {
-                var user = new User
+                FirstName = payload.FirstName,
+                LastName = payload.LastName,
+                Username = payload.Email,
+                IsAdmin = payload.IsAdmin,
+                IsSuperior = payload.IsSuperior,
+                IsViewer = payload.IsViewer,
+                SuperiorId = payload.Superior,
+                State = payload.State
+            };
+
+            await _userRepository.AddUserAsync(user);
+
+            if (payload.State == UserState.Active)
+            {
+                var budget = new Budget
                 {
-                    UniqueIdentifier = HttpContext.User.Claims.Single(c => c.Type == Claims.UniqueIndetifier).Value,
-                    FirstName = HttpContext.User.Claims.Single(c => c.Type == Claims.FirstName).Value,
-                    LastName = HttpContext.User.Claims.Single(c => c.Type == Claims.LastName).Value,
-                    Username = HttpContext.User.Claims.Single(c => c.Type == Claims.UserName).Value
+                    UserId = user.Id,
+                    User = user,
+                    Amount = payload.Amount,
+                    Year = payload.Year
                 };
-                _userRepository.AddUser(user);
-                await _unitOfWork.SaveChanges(cancellationToken);
+                await _budgetRepository.AddBudgetAsync(budget);
             }
+
+            await _unitOfWork.SaveChanges(default(CancellationToken));
+
             return Ok();
         }
 

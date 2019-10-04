@@ -7,6 +7,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         void AddBudget(Budget budget);
 
+        Task AddBudgetAsync(Budget budget);
+
         Task<Budget> GetBudget(int userId, int year, CancellationToken cancellationToken);
 
         Task<(int UserId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken);

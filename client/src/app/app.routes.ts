@@ -19,6 +19,7 @@ import { RequestFilter } from './requests/requestFilter';
 import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
+import { CreateUserComponent } from './users/create-user/create-user.component';
 
 const currentYear = "2019"; // = (new Date()).getFullYear();
 
@@ -63,7 +64,8 @@ export const rootRouterConfig: Routes = [
             { path: 'active', component: UserListComponent, data: { filter: UserState.Active }, canActivate: [AuthenticationGuard] },
             { path: 'new', component: UserListComponent, data: { filter: UserState.New }, canActivate: [AuthenticationGuard] },
             { path: 'inactive', component: UserListComponent, data: { filter: UserState.Inactive }, canActivate: [AuthenticationGuard] },
-            { path: ':id', component: UserDetailComponent, canActivate: [AuthenticationGuard] }
+            { path: 'detail/:id', component: UserDetailComponent, canActivate: [AuthenticationGuard] },
+            { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
         ]
     }
 ];

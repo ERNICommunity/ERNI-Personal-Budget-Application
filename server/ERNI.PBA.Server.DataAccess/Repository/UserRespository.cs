@@ -3,7 +3,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,13 +30,18 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
+        public Task<User> GetAsync(string username)
+        {
+            return _context.Users.SingleOrDefaultAsync(x => x.Username == username);
+        }
+
         public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {
             return _context.Users
                 .Include(u => u.Superior)
                 .ToArrayAsync(cancellationToken);
         }
-        
+
         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
         {
             return _context.Users
@@ -63,9 +67,19 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public void AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
-            _context.Users.Add(user);
+            await _context.Users.AddAsync(user);
+        }
+
+        public async Task<bool> ExistsAsync(string username)
+        {
+            return await _context.Users.AnyAsync(x => x.Username == username);
+        }
+
+        public void Update(User user)
+        {
+            _context.Entry(user).State = EntityState.Modified;
         }
     }
 }
