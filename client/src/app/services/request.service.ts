@@ -4,6 +4,9 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
+import { RequestMass } from '../model/requestMass';
+import { BudgetLeft } from '../model/budgetLeft';
+import { User } from '../model/user';
 
 @Injectable()
 export class RequestService {
@@ -48,11 +51,19 @@ export class RequestService {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
+  public addMassRequest(request: RequestMass): Observable<any> {
+    return this.http.post<RequestMass>(this.configService.apiUrlBase + this.requestUrl + 'mass', request, this.serviceHelper.getHttpOptions());
+  }
+
   public updateRequest(request: Request): Observable<any> {
     return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
   public deleteRequest(id: number): Observable<Request> {
     return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions());
+  }
+
+  public getUsersWithBudgetLeft(request: BudgetLeft): Observable<User[]> {
+    return this.http.get<User[]>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.amount +'/' + request.categoryId +'/' + request.year, this.serviceHelper.getHttpOptions());
   }
 }

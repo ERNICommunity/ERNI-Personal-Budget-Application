@@ -6,6 +6,7 @@ import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { setTime } from 'ngx-bootstrap/chronos/utils/date-setters';
 import { switchMap } from 'rxjs/operators';
+import { JsonPipe } from '@angular/common';
 
 @Injectable()
 export class UserService {
@@ -41,10 +42,8 @@ export class UserService {
             let user = JSON.parse(json);
             return new Observable<User>(
                 observer => {
-                    setTimeout(() => {
                         observer.next(user);
-                    }, 1000);
-                });
+                    })
         }
         else {
             return this.registerUser().pipe(switchMap(_ => {
@@ -53,6 +52,10 @@ export class UserService {
                 return observable;
             }));
         }
+    }
+
+    public getCurrentUserStorage(): User{
+        return JSON.parse(localStorage.getItem('currentUser'));
     }
 
     public updateUser(user: User): Observable<any> {
