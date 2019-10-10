@@ -18,7 +18,7 @@ namespace ERNI.PBA.Server.Host.Utils
         private readonly MailService _mailService;
         // private readonly ILogger _logger;
 
-        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository,IConfiguration configuration)//, ILogger<DailyMailNotifications> logger)
+        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration)//, ILogger<DailyMailNotifications> logger)
         {
             _requestRepository = requestRepository;
             _userRepository = userRepository;
@@ -28,8 +28,8 @@ namespace ERNI.PBA.Server.Host.Utils
 
         public async Task Execute(IJobExecutionContext context)
         {
-            await SendNotificationsForPendingRequests(context.CancellationToken);
-            await SendNotificationsForApprovedBySuperiorRequests(context.CancellationToken);
+            // await SendNotificationsForPendingRequests(context.CancellationToken);
+            await SendNotificationsToAdmins(context.CancellationToken);
             // _logger.LogInformation("Scheduled Job for notifications executed");
         }
 
@@ -60,29 +60,32 @@ namespace ERNI.PBA.Server.Host.Utils
             }
         }
 
-        private async Task SendNotificationsForApprovedBySuperiorRequests(CancellationToken cancellationToken)
+        private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
         {
-            var approvedBySuperiorRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.ApprovedBySuperior, cancellationToken);
+            var pendingRequests = await _requestRepository.GetRequests(
+                _ => _.Year == DateTime.Now.Year && (_.State == RequestState.ApprovedBySuperior
+                || _.State == RequestState.Pending), cancellationToken);
 
-            if (approvedBySuperiorRequests.Any())
+            if (!pendingRequests.Any())
             {
-                var admins = await _userRepository.GetAdminUsers(cancellationToken);
-                var adminsMails = admins.Select(u => u.Username).ToArray();
+                return;
+            }
 
-                foreach (var mail in adminsMails)
+            var admins = await _userRepository.GetAdminUsers(cancellationToken);
+            var adminsMails = admins.Select(u => u.Username).ToArray();
+
+            foreach (var mail in adminsMails)
+            {
+                var msg = new StringBuilder("You have new requests to handle");
+                msg.AppendLine();
+                msg.AppendLine();
+
+                foreach (var request in pendingRequests)
                 {
-                    var msg = new StringBuilder("You have new requests to handle");
-                    msg.AppendLine();
-                    msg.AppendLine();
-
-                    foreach (var request in approvedBySuperiorRequests)
-                    {
-                        msg.AppendLine($"   {request}");
-                    }
-
-                    _mailService.SendMail(msg.ToString(), mail);
+                    msg.AppendLine($"   {request}");
                 }
+
+                _mailService.SendMail(msg.ToString(), mail);
             }
         }
     }
