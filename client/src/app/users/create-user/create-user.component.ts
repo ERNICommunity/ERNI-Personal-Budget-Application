@@ -27,7 +27,7 @@ export class CreateUserComponent implements OnInit {
         private userService: UserService,
         private configService: ConfigService,
         private alertService: AlertService,
-        private busyIndicatorService: BusyIndicatorService) {
+        public busyIndicatorService: BusyIndicatorService) {
     }
 
     ngOnInit() {
