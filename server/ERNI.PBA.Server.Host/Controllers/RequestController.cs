@@ -31,6 +31,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
+        private const string validResponse = "OK";
 
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
@@ -195,7 +196,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
 
-            if (status != "OK")
+            if (status != validResponse)
             {
                 return BadRequest(status);
             }
@@ -212,10 +213,55 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Url = payload.Url
             };
 
-            _requestRepository.AddRequest(request);
+            await _requestRepository.AddRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
+            return Ok();
+        }
+
+        /// <summary>
+        /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
+        /// </summary>
+        [HttpPost("mass")]
+        public async Task<IActionResult> AddRequestMass([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
+        {
+            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
+            if (!currentUser.IsAdmin)
+            {
+                return StatusCode(403);
+            }
+            var currentYear = DateTime.Now.Year;
+            var requests = new List<Request>();
+            foreach (var user in payload.Users)
+            {
+                var userId = user.Id;
+                var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
+
+                if (status != validResponse)
+                {
+                    continue;
+                }
+
+                var request = new Request
+                {
+                    UserId = userId,
+                    Year = currentYear,
+                    Title = payload.Title,
+                    Amount = payload.Amount,
+                    Date = payload.Date.ToLocalTime().Date,
+                    State = RequestState.Approved,
+                    CategoryId = payload.Category.Id,
+                    Url = payload.Url
+                };
+
+                requests.Add(request);
+            }
+
+            await _requestRepository.AddRequests(requests);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+            
             return Ok();
         }
 
@@ -266,7 +312,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount, payload.CategoryId, request.Id, cancellationToken);
 
-            if (status != "OK")
+            if (status != validResponse)
             {
                 return BadRequest(status);
             }
@@ -292,7 +338,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("Not a valid id");
             }
 
-            _requestRepository.DeleteRequest(request);
+            await _requestRepository.DeleteRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
@@ -346,6 +392,22 @@ namespace ERNI.PBA.Server.Host.Controllers
             };
         }
 
+        [HttpGet("budget-left/{amount}/{categoryId}/{year}")]
+        public async Task<User[]> BudgetLeft(decimal amount, int categoryId, int year, CancellationToken cancellationToken)
+        {
+            var users = await _userRepository.GetAllUsers(cancellationToken);
+            var usersWithBudgetLeft = new List<User>();
+            foreach(var user in users)
+            {
+                if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
+                {
+                    usersWithBudgetLeft.Add(user);
+                }
+            }
+            return usersWithBudgetLeft.ToArray();
+        }
+
+
         private async Task<string> CheckAmountForRequest(int userId, int year, decimal amount, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
             decimal currentAmount = await CalculateCurrentAmount(userId, year, requestId, cancellationToken);
@@ -370,12 +432,16 @@ namespace ERNI.PBA.Server.Host.Controllers
                     ". Your current amount for this category is (" + currentAmountForCategory + ")!";
                 }
             }
-            return "OK";
+            return validResponse;
         }
 
         private async Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
+            if (budget == null)
+            {
+                return 0;
+            }
             var requests = (await _requestRepository.GetRequests(year, userId, cancellationToken))
                 .Where(req => req.Id != requestId)
                 .Where(req => req.State != RequestState.Rejected);

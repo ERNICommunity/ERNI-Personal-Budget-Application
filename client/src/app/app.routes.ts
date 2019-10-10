@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { OAuthCallbackHandler } from './login-callback/oauth-callback.guard';
 import { OAuthCallbackComponent } from './login-callback/oauth-callback.component';
-import { AuthenticationGuard } from "./services/authenticated.guard";
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
@@ -20,6 +19,10 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
 import { CreateUserComponent } from './users/create-user/create-user.component';
+import { RequestMassComponent } from './requests/requestMass/requestMass.component';
+import { AdminGuard } from './services/guards/admin.guard';
+import { ViewerGuard } from './services/guards/viewer.guard';
+import { AuthenticationGuard } from './services/guards/authentication.guard';
 
 const currentYear = "2019"; // = (new Date()).getFullYear();
 
@@ -28,15 +31,15 @@ export const rootRouterConfig: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler] },
     {
-        path: 'other-budgets', component: BudgetsComponent, canActivate: [AuthenticationGuard],
+        path: 'other-budgets', component: BudgetsComponent, canActivate: [AdminGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
-            { path: ':year', component: OtherBudgetsComponent, canActivate: [AuthenticationGuard] },
-            { path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AuthenticationGuard] }
+            { path: ':year', component: OtherBudgetsComponent, canActivate: [AdminGuard] },
+            { path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminGuard] }
         ]
     },
-    { path: 'categories', component: CategoryListComponent, canActivate: [AuthenticationGuard] },
-    { path: 'category/:id', component: CategoryDetailComponent, canActivate: [AuthenticationGuard] },
+    { path: 'categories', component: CategoryListComponent, canActivate: [AdminGuard] },
+    { path: 'category/:id', component: CategoryDetailComponent, canActivate: [AdminGuard] },
     {
         path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard],
         children: [
@@ -48,17 +51,17 @@ export const rootRouterConfig: Routes = [
     { path: 'request/edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
     { path: 'create-request', component: RequestAddComponent, canActivate: [AuthenticationGuard] },
     {
-        path: 'requests', component: RequestsComponent, canActivate: [AuthenticationGuard],
+        path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
         children: [
             { path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
-            { path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [AuthenticationGuard] },
-            { path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [AuthenticationGuard] },
-            { path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [AuthenticationGuard] },
-            { path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [AuthenticationGuard] }
+            { path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [ViewerGuard] },
+            { path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [ViewerGuard] },
+            { path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [ViewerGuard] },
+            { path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [ViewerGuard] }
         ]
     },
     {
-        path: 'users', component: UsersComponent, canActivate: [AuthenticationGuard],
+        path: 'users', component: UsersComponent, canActivate: [AdminGuard],
         children: [
             { path: '', redirectTo: 'active', pathMatch: 'full' },
             { path: 'active', component: UserListComponent, data: { filter: UserState.Active }, canActivate: [AuthenticationGuard] },
@@ -67,6 +70,7 @@ export const rootRouterConfig: Routes = [
             { path: 'detail/:id', component: UserDetailComponent, canActivate: [AuthenticationGuard] },
             { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
         ]
-    }
+    },
+    { path: 'request-mass', component: RequestMassComponent, canActivate: [AdminGuard] }
 ];
 

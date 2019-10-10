@@ -8,13 +8,13 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo">
+        <ul class="navbar-nav mr-auto" *ngIf="user">
+            <li class="nav-item" [routerLinkActive]="['active']">
                 <a class="nav-link" routerLink="/my-budget">
                     My budget
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && user.isAdmin">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="user.isAdmin">
                 <a class="nav-link" routerLink="/other-budgets">
                     Other Budgets
                 </a>
@@ -25,12 +25,17 @@
                     Requests
                 </a>
             </li>
-            <li class="nav-item" *ngIf="adalService.userInfo && user.isAdmin">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && user.isAdmin">
+                <a class="nav-link" routerLink="/request-mass">
+                    Mass Request
+                </a>
+            </li>
+            <li class="nav-item" *ngIf="user.isAdmin">
                 <a class="nav-link" routerLink="/users">
                     Employees
                 </a>
             </li>
-            <li class="nav-item" *ngIf="adalService.userInfo && user.isAdmin">
+            <li class="nav-item" *ngIf="user.isAdmin">
                 <a class="nav-link" routerLink="/categories">
                     Categories
                 </a>
@@ -43,11 +48,11 @@
             </li>
         </ul>
 
-        <ul class="navbar-nav float-right">
-            <li class="nav-item float-right" *ngIf="adalService.userInfo">
+        <ul class="navbar-nav float-right" *ngIf="adalService.userInfo">
+            <li class="nav-item float-right">
                 <a class="nav-link">{{adalService.userInfo.userName}}</a>
             </li>
-            <li class="nav-item float-right" *ngIf="adalService.userInfo">
+            <li class="nav-item float-right">
                 <a href="" class="nav-link" (click)="logout()">
                     Logout
                 </a>

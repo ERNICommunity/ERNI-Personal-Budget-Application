@@ -88,21 +88,17 @@
                             <ng-template #noURL>None</ng-template>
                     </td>
                     <td>{{requestStateType[request.state]}}</td>
-                    <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"  class="button-table-cell">
-                        <button
-                            class="btn btn-danger float-right"
-                            title="delete request"
-                            (click)="openDeleteConfirmationModal(deleteConfirmation)">
-                            Delete
-                        </button>
-
-                        <a
-                            class="btn btn-primary float-right mr-1"
-                            href="#"
-                            role="button"
-                            routerLink="/request/edit/{{request.id}}">
-                            Edit
-                        </a>
+                    <td class="button-table-cell">
+                        <div *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete" >
+                            <button class="btn btn-danger float-right" title="delete request"
+                                (click)="openDeleteConfirmationModal(deleteConfirmation)">
+                                Delete
+                            </button>
+                        
+                            <a class="btn btn-primary float-right mr-1" href="#" role="button" routerLink="/request/edit/{{request.id}}">
+                                Edit
+                            </a>
+                        </div>
                     </td>
 
                     <ng-template
@@ -135,7 +131,6 @@
                     </ng-template>
 
                     <ng-template #cannotEditOrDelete>
-                        <td>
                             <button
                                 class="btn btn-danger float-right"
                                 disabled="true"
@@ -150,7 +145,6 @@
                             routerLink="/request/detail/{{request.id}}">
                             Detail
                         </a>
-                        </td>
                     </ng-template>
                 </tr>
             </tbody>

@@ -5,3 +5,11 @@
 .modal   {
     background-color: #cccccccc;
  }
+
+ .button {
+     font-size: 11px;
+ }
+
+ .button-table-cell{
+    min-width: 180px;
+}
