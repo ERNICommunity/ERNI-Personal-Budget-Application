@@ -410,12 +410,12 @@ namespace ERNI.PBA.Server.Host.Controllers
                         IsViewer = user.IsViewer,
                         LastName = user.LastName,
                         State = user.State,
-                        Superior = new SuperiorModel
+                        Superior = user.Superior != null ? new SuperiorModel
                         {
                             FirstName = user.Superior.FirstName,
                             Id = user.Superior.Id,
                             LastName = user.Superior.LastName
-                        }
+                        } : null
                     });
                 }
             }
