@@ -393,15 +393,30 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("budget-left/{amount}/{categoryId}/{year}")]
-        public async Task<User[]> BudgetLeft(decimal amount, int categoryId, int year, CancellationToken cancellationToken)
+        public async Task<UserModel[]> BudgetLeft(decimal amount, int categoryId, int year, CancellationToken cancellationToken)
         {
             var users = await _userRepository.GetAllUsers(cancellationToken);
-            var usersWithBudgetLeft = new List<User>();
+            var usersWithBudgetLeft = new List<UserModel>();
             foreach(var user in users)
             {
                 if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
                 {
-                    usersWithBudgetLeft.Add(user);
+                    usersWithBudgetLeft.Add(new UserModel
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        IsAdmin = user.IsAdmin,
+                        IsSuperior = user.IsSuperior,
+                        IsViewer = user.IsViewer,
+                        LastName = user.LastName,
+                        State = user.State,
+                        Superior = new SuperiorModel
+                        {
+                            FirstName = user.Superior.FirstName,
+                            Id = user.Superior.Id,
+                            LastName = user.Superior.LastName
+                        }
+                    });
                 }
             }
             return usersWithBudgetLeft.ToArray();
