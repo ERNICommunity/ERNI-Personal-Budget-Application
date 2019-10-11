@@ -10,8 +10,11 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
         {
             builder.ToTable("Users");
 
-            //builder.HasKey(x => x.Id);
-            //builder.Property(x => x.UniqueIdentifier).IsRequired().HasMaxLength(150);
+            builder.Property(x => x.Username).IsRequired().HasMaxLength(150);
+
+            builder.HasIndex(_ => _.UniqueIdentifier).IsUnique();
+            builder.HasIndex(_ => _.Username).IsUnique();
+
             //builder.Property(x => x.IsAdmin).IsRequired();
             //builder.Property(x => x.IsSuperior).IsRequired();
             //builder.Property(x => x.FirstName).IsRequired().HasMaxLength(150);
