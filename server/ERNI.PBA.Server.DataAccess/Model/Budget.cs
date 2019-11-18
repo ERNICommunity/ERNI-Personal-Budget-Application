@@ -10,10 +10,12 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public int UserId { get; set; }
 
-        public decimal Amount { get; set; }
-
         public virtual User User { get; set; }
 
         public BudgetType BudgetType { get; set; }
+
+        public string Title { get; set; }
+
+        public decimal Amount { get; set; }
     }
 }

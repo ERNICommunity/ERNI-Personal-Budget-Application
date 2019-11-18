@@ -4,14 +4,16 @@ using ERNI.PBA.Server.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20190909135509_BudgetName")]
+    partial class BudgetName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,20 +122,11 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
                     b.Property<string>("UniqueIdentifier");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(150);
+                    b.Property<string>("Username");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SuperiorId");
-
-                    b.HasIndex("UniqueIdentifier")
-                        .IsUnique()
-                        .HasFilter("[UniqueIdentifier] IS NOT NULL");
-
-                    b.HasIndex("Username")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });
