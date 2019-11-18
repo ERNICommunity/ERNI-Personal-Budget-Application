@@ -1,153 +1,147 @@
+<ul class="nav nav-pills">
+    <li class="nav-item" *ngFor="let year of years">
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
+            [routerLink]="['/my-budget', year]">
+            {{year}}
+        </a>
+    </li>
+  </ul>
+
+  <hr>
+
 <div *ngIf="user">
-    <h2>
-        Budget Overview - {{selectedYear}} - {{user.firstName}} {{user.lastName}}
-    </h2>
-    <br>
-    <div *ngIf="budget, else notDefinedAllowed">
-        Allowed amount : {{budget.amount | number:'1.2-2'}}
+    <div *ngFor="let budget of budgets">
+        <app-budget [budget]="budget"></app-budget>
+        
     </div>
-    <div *ngIf="budget, else notDefinedCurrent">
-        Current amount : {{currentAmount | number:'1.2-2'}}
-    </div>
-    <div *ngIf="user.superior">
-        Superior : {{user.superior.firstName}} {{user.superior.lastName}}
-    </div>
-    <ng-template #notDefinedAllowed>
-        <div>
-            Allowed amount :
-            <font color="red">
-                Not defined budget for year {{selectedYear}}.
-            </font>
+</div>
+
+
+<!--
+<h2>
+            Budget Overview - {{budget.title}}
+        </h2>
+        <br>
+        <div *ngIf="budget, else notDefinedAllowed">
+            Allowed amount : {{budget.amount | number:'1.2-2'}}
         </div>
-    </ng-template>
-    <ng-template #notDefinedCurrent>
-        <div>
-            Current amount :
-            <font color="red">
-                Not defined budget for year {{selectedYear}}.
-            </font>
+        <div *ngIf="budget, else notDefinedCurrent">
+            Current amount : {{currentAmount | number:'1.2-2'}}
         </div>
-    </ng-template>
-    <br>
-    <div *ngIf="user.state != userState.Active">
-        <font
-            color="red"
-            size="5">
-            Your user account is not activated in PBA, please contact HR department!
-        </font>
-    </div>
+        <div *ngIf="user.superior">
+            Superior : {{user.superior.firstName}} {{user.superior.lastName}}
+        </div>
+        <ng-template #notDefinedAllowed>
+            <div>
+                Allowed amount :
+                <font color="red">
+                    Not defined budget for year {{selectedYear}}.
+                </font>
+            </div>
+        </ng-template>
+        <ng-template #notDefinedCurrent>
+            <div>
+                Current amount :
+                <font color="red">
+                    Not defined budget for year {{selectedYear}}.
+                </font>
+            </div>
+        </ng-template>
+        <br>
 
-    <h2>Requests</h2>
 
-    <ul class="nav nav-pills">
-        <li
-            class="nav-item"
-            *ngFor="let year of years">
-            <a
-                class="nav-link"
-                [routerLinkActive]="['active']"
-                [routerLinkActiveOptions]="rlao"
-                [routerLink]="['/my-budget', year]">
-                {{year}}
-            </a>
-        </li>
-    </ul>
+        <h2>Requests</h2>
 
-    <a
-        *ngIf="selectedYear == currentYear && budget"
-        class="btn btn-link float-right"
-        href="#"
-        routerLink="/create-request">
-        Create new request
-    </a>
+        <ul class="nav nav-pills">
+            <li class="nav-item" *ngFor="let year of years">
+                <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
+                    [routerLink]="['/my-budget', year]">
+                    {{year}}
+                </a>
+            </li>
+        </ul>
 
-    <div *ngIf="budget">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Occasion</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">URL</th>
-                    <th scope="col">Request State</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
+        <a *ngIf="selectedYear == currentYear && budget" class="btn btn-link float-right" href="#"
+            routerLink="/create-request">
+            Create new request
+        </a>
 
-                <tr *ngFor="let request of requests">
-                    <td>{{request.title}}</td>
-                    <td>{{request.amount | number:'1.2-2'}}</td>
-                    <td>{{request.categoryTitle}}</td>
-                    <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
-                    <td>
+        <div *ngIf="budget">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Occasion</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">Request State</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let request of requests">
+                        <td>{{request.title}}</td>
+                        <td>{{request.amount | number:'1.2-2'}}</td>
+                        <td>{{request.categoryTitle}}</td>
+                        <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
+                        <td>
                             <div *ngIf="request.url, else noURL">
                                 <a href="{{request.url}}" target="_blank" rel="noopener noreferrer">Link</a>
                             </div>
                             <ng-template #noURL>None</ng-template>
-                    </td>
-                    <td>{{requestStateType[request.state]}}</td>
-                    <td class="button-table-cell">
-                        <div *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete" >
+                        </td>
+                        <td>{{requestStateType[request.state]}}</td>
+                        <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"
+                            class="button-table-cell">
                             <button class="btn btn-danger float-right" title="delete request"
                                 (click)="openDeleteConfirmationModal(deleteConfirmation)">
                                 Delete
                             </button>
-                        
-                            <a class="btn btn-primary float-right mr-1" href="#" role="button" routerLink="/request/edit/{{request.id}}">
+
+                            <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                                routerLink="/request/edit/{{request.id}}">
                                 Edit
                             </a>
-                        </div>
-                    </td>
+                        </td>
 
-                    <ng-template
-                        #deleteConfirmation
-                        let-c="close"
-                        let-d="dismiss">
+                        <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
 
-                        <div class="modal-body float-centre">
-                            <button
-                                class="btn-xs btn-light float-right"
-                                (click)="c()">
-                                X
-                            </button>
-                            <label>
-                                Are you sure you want to delete {{request.title}} request?
-                            </label>
-                        </div>
-                        <div class="modal-footer">
-                            <button
-                                class="btn btn-danger mr-1"
-                                (click)="c(deleteRequest(request.id))">
-                                Yes
-                            </button>
-                            <button
-                                class="btn btn-primary"
-                                (click)="c()">
-                                No
-                            </button>
-                        </div>
-                    </ng-template>
+                            <div class="modal-body float-centre">
+                                <button class="btn-xs btn-light float-right" (click)="c()">
+                                    X
+                                </button>
+                                <label>
+                                    Are you sure you want to delete {{request.title}} request?
+                                </label>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger mr-1" (click)="c(deleteRequest(request.id))">
+                                    Yes
+                                </button>
+                                <button class="btn btn-primary" (click)="c()">
+                                    No
+                                </button>
+                            </div>
+                        </ng-template>
 
-                    <ng-template #cannotEditOrDelete>
-                            <button
-                                class="btn btn-danger float-right"
-                                disabled="true"
-                                title="Cannot delete {{requestStateType[request.state]}} request.">
-                                Delete
-                            </button>
+                        <ng-template #cannotEditOrDelete>
+                            <td>
+                                <button class="btn btn-danger float-right" disabled="true"
+                                    title="Cannot delete {{requestStateType[request.state]}} request.">
+                                    Delete
+                                </button>
 
-                            <a
-                            class="btn btn-primary float-right mr-1"
-                            href="#"
-                            role="button"
-                            routerLink="/request/detail/{{request.id}}">
-                            Detail
-                        </a>
-                    </ng-template>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+                                <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                                    routerLink="/request/detail/{{request.id}}">
+                                    Detail
+                                </a>
+                            </td>
+                        </ng-template>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+-->

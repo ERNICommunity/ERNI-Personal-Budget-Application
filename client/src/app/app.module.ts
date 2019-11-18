@@ -37,7 +37,7 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { AuthInterceptor } from './interceptors/authInterceptor'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BudgetsComponent } from './budgets/budgets.component';
+// import { BudgetsComponent } from './budgets/budgets.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
@@ -45,6 +45,7 @@ import { UnregisteredInterceptor } from './interceptors/unregisteredInterceptor'
 import { ViewerGuard } from './services/guards/viewer.guard';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { AlertComponent } from './directives/alert/alert.component';
+import { BudgetComponent } from './budgets/budget/budget.component';
 
 @NgModule({
     declarations: [
@@ -57,7 +58,7 @@ import { AlertComponent } from './directives/alert/alert.component';
         UserListComponent,
         UserDetailComponent,
         CreateUserComponent,
-        BudgetsComponent,
+        BudgetComponent,
         MyBudgetComponent,
         CategoriesComponent,
         CategoryListComponent,

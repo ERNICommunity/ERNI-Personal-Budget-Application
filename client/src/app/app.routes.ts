@@ -5,7 +5,7 @@ import { OAuthCallbackComponent } from './login-callback/oauth-callback.componen
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
-import { BudgetsComponent } from './budgets/budgets.component';
+// import { BudgetsComponent } from './budgets/budgets.component';
 import { MyBudgetComponent } from './budgets/myBudget/myBudget.component';
 import { CategoryListComponent } from './categories/categoryList/categoryList.component';
 import { CategoryDetailComponent } from './categories/categoryDetail/categoryDetail.component';
@@ -31,7 +31,7 @@ export const rootRouterConfig: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler] },
     {
-        path: 'other-budgets', component: BudgetsComponent, canActivate: [AdminGuard],
+        path: 'other-budgets', canActivate: [AdminGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
             { path: ':year', component: OtherBudgetsComponent, canActivate: [AdminGuard] },
@@ -41,7 +41,7 @@ export const rootRouterConfig: Routes = [
     { path: 'categories', component: CategoryListComponent, canActivate: [AdminGuard] },
     { path: 'category/:id', component: CategoryDetailComponent, canActivate: [AdminGuard] },
     {
-        path: 'my-budget', component: BudgetsComponent, canActivate: [AuthenticationGuard],
+        path: 'my-budget', canActivate: [AuthenticationGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
             { path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard] }

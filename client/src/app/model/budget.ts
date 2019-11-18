@@ -5,4 +5,6 @@ export class Budget {
     amount: number;
     amountLeft: number;
     user : User;
+    title: string;
+    type: number;
   } 

@@ -16,8 +16,8 @@ export class BudgetService {
     return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'users/active/year/'+ year , this.serviceHelper.getHttpOptions())
   }
 
-  public getCurrentUserBudget(year : number): Observable<Budget> {
-    return this.http.get<Budget>(this.configService.apiUrlBase + this.url +  'user/current/year/'+ year , this.serviceHelper.getHttpOptions())
+  public getCurrentUserBudget(year : number): Observable<Budget[]> {
+    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'user/current/year/'+ year , this.serviceHelper.getHttpOptions())
   }
 
   public getUserBudgetByYear(userId, year : number): Observable<Budget> {

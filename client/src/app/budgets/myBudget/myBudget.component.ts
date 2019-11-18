@@ -19,7 +19,7 @@ import { RequestState } from '../../model/requestState';
     styleUrls: ['./myBudget.component.css']
 })
 export class MyBudgetComponent implements OnInit {
-    budget: Budget;
+    budgets: Budget[];
     requests: Request[];
     requestStateType = RequestFilter;
     userState = UserState;
@@ -71,11 +71,11 @@ export class MyBudgetComponent implements OnInit {
 
     getBudget(year: number): void {
         this.busyIndicatorService.start();
-        this.budgetService.getCurrentUserBudget(year).subscribe(budget => {
-            this.budget = budget
-            if (budget) {
-                this.getRequests(year)
-            }
+        this.budgetService.getCurrentUserBudget(year).subscribe(budgets => {
+            this.budgets = budgets
+            // if (budgets) {
+            //     this.getRequests(year)
+            // }
             this.busyIndicatorService.end();
         });
     }
@@ -84,7 +84,8 @@ export class MyBudgetComponent implements OnInit {
         this.busyIndicatorService.start();
         this.requestService.getRequests(year)
             .subscribe(requests => { 
-                this.requests = requests, this.getCurrentAmount(requests) 
+                this.requests = requests;
+                this.getCurrentAmount(requests);
                 this.busyIndicatorService.end();
             });
     }
@@ -98,7 +99,7 @@ export class MyBudgetComponent implements OnInit {
             }
         });
 
-        this.currentAmount = this.budget.amount - requestsSum;
+        // this.currentAmount = this.budget.amount - requestsSum;
     }
 
     openDeleteConfirmationModal(content) {
