@@ -36,7 +36,7 @@ export class OAuthCallbackComponent implements OnInit {
                     }
 
                     sessionStorage.clear();
-                    this.alertService.error(error, true);
+                    this.alertService.error(error);
                     this.router.navigate(['/login']);
                 })
                 .add(() => this.loading = false);
