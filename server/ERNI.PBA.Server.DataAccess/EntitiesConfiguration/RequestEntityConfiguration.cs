@@ -21,7 +21,7 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
             //builder.Property(x => x.State).IsRequired();
 
             builder.HasOne(b => b.Budget)
-                .WithMany()
+                .WithMany(b => b.Requests)
                 .HasForeignKey(r => new { r.BudgetId })
                 .HasPrincipalKey(b => new { b.Id })
                 .OnDelete(DeleteBehavior.Restrict);

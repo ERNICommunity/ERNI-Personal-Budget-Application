@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using ERNI.PBA.Server.DataAccess.Model;
 
 namespace ERNI.PBA.Server.DataAccess.Model
@@ -17,5 +19,7 @@ namespace ERNI.PBA.Server.DataAccess.Model
         public string Title { get; set; }
 
         public decimal Amount { get; set; }
+
+        public ICollection<Request> Requests { get; set; }
     }
 }
