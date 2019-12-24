@@ -72,7 +72,7 @@ import { BudgetComponent } from './budgets/budget/budget.component';
         AlertComponent
     ],
     imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         FormsModule,
         HttpClientModule,
         BrowserModule,
