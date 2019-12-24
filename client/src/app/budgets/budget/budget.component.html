@@ -1,114 +1,93 @@
-<div class="card text-center">
-  <div class="card-header">
-    {{budget.title}}
-  </div>
-  <div class="card-body">
-    <!-- <h5 class="card-title">{{budget.title}}</h5>
+<div class="card text-center" style="margin-bottom:20px;">
+    <div class="card-header">
+        {{budget.title}}
+        <a *ngIf="selectedYear == currentYear && budget" class="float-right"
+            [routerLink]="'create-request/' + budget.id">
+            Create new request
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- <h5 class="card-title">{{budget.title}}</h5>
     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
     <a href="#" class="btn btn-primary">Go somewhere</a> -->
 
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Occasion</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">URL</th>
+                    <th scope="col">Request State</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
 
-    <a *ngIf="selectedYear == currentYear && budget" class="btn btn-link float-right" href="#"
-    routerLink="/create-request">
-    Create new request
-  </a>
-  
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Occasion</th>
-                <th scope="col">Date</th>
-                <th scope="col">URL</th>
-                <th scope="col">Request State</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-  
-            <tr *ngFor="let request of requests">
-                <td>{{request.title}}</td>
-                <td>{{request.amount | number:'1.2-2'}}</td>
-                <td>{{request.categoryTitle}}</td>
-                <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
-                <td>
-                    <div *ngIf="request.url, else noURL">
-                        <a href="{{request.url}}" target="_blank" rel="noopener noreferrer">Link</a>
-                    </div>
-                    <ng-template #noURL>None</ng-template>
-                </td>
-                <td>{{requestStateType[request.state]}}</td>
-                <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"
-                    class="button-table-cell">
-                    <button class="btn btn-danger float-right" title="delete request"
-                        (click)="openDeleteConfirmationModal(deleteConfirmation)">
-                        Delete
-                    </button>
-  
-                    <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                        routerLink="/request/edit/{{request.id}}">
-                        Edit
-                    </a>
-                </td>
-  
-                <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
-  
-                    <div class="modal-body float-centre">
-                        <button class="btn-xs btn-light float-right" (click)="c()">
-                            X
-                        </button>
-                        <label>
-                            Are you sure you want to delete {{request.title}} request?
-                        </label>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-danger mr-1" (click)="c(deleteRequest(request.id))">
-                            Yes
-                        </button>
-                        <button class="btn btn-primary" (click)="c()">
-                            No
-                        </button>
-                    </div>
-                </ng-template>
-  
-                <ng-template #cannotEditOrDelete>
+                <tr *ngFor="let request of budget.requests">
+                    <td>{{request.title}}</td>
+                    <td>{{request.amount | number:'1.2-2'}}</td>
+                    <td>{{request.categoryTitle}}</td>
+                    <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
                     <td>
-                        <button class="btn btn-danger float-right" disabled="true"
-                            title="Cannot delete {{requestStateType[request.state]}} request.">
+                        <div *ngIf="request.url, else noURL">
+                            <a href="{{request.url}}" target="_blank" rel="noopener noreferrer">Link</a>
+                        </div>
+                        <ng-template #noURL>None</ng-template>
+                    </td>
+                    <td>{{requestStateType[request.state]}}</td>
+                    <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"
+                        class="button-table-cell">
+                        <button class="btn btn-danger float-right" title="delete request"
+                            (click)="openDeleteConfirmationModal(deleteConfirmation)">
                             Delete
                         </button>
-  
+
                         <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                            routerLink="/request/detail/{{request.id}}">
-                            Detail
+                            routerLink="/request/edit/{{request.id}}">
+                            Edit
                         </a>
                     </td>
-                </ng-template>
-            </tr>
-        </tbody>
-    </table>
-  
 
+                    <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
 
+                        <div class="modal-body float-centre">
+                            <button class="btn-xs btn-light float-right" (click)="c()">
+                                X
+                            </button>
+                            <label>
+                                Are you sure you want to delete {{request.title}} request?
+                            </label>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger mr-1" (click)="c(deleteRequest(request.id))">
+                                Yes
+                            </button>
+                            <button class="btn btn-primary" (click)="c()">
+                                No
+                            </button>
+                        </div>
+                    </ng-template>
 
+                    <ng-template #cannotEditOrDelete>
+                        <td>
+                            <button class="btn btn-danger float-right" disabled="true"
+                                title="Cannot delete {{requestStateType[request.state]}} request.">
+                                Delete
+                            </button>
 
-
-  </div>
-  <div class="card-footer text-muted">
-    <div class="progress" style="height:30px">
-      <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{budget.currentAmount}} spent out of {{budget.amount}} €</div>
+                            <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                                routerLink="request/{{request.id}}">
+                                Detail
+                            </a>
+                        </td>
+                    </ng-template>
+                </tr>
+            </tbody>
+        </table>
     </div>
-  </div>
-</div>
-
-<h2>
-  Budget Overview - {{budget.title}}
-</h2>
-<br>
-<div>
-  Allowed amount : {{budget.amount | number:'1.2-2'}}
-</div>
-<div>
-  Current amount : {{currentAmount | number:'1.2-2'}}
+    <div class="card-footer text-muted">
+        <ngb-progressbar height="30px" type="primary" [value]="100 * budget.amountLeft / budget.amount">{{budget.amountLeft}} € left out of {{budget.amount}}</ngb-progressbar>
+    </div>
 </div>

@@ -1,10 +1,12 @@
-import {User} from "./user";
+import { User } from "./user";
 
 export class Budget {
-    year: number;
-    amount: number;
-    amountLeft: number;
-    user : User;
-    title: string;
-    type: number;
-  } 
+  id: number;
+  year: number;
+  amount: number;
+  amountLeft: number;
+  user: User;
+  title: string;
+  type: number;
+  requests: Request[];
+} 
