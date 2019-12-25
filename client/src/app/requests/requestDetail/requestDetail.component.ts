@@ -6,6 +6,7 @@ import { Category } from '../../model/category';
 import { RequestService } from '../../services/request.service';
 import { CategoryService } from '../../services/category.service';
 import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-request-detail',
@@ -23,18 +24,19 @@ export class RequestDetailComponent implements OnInit {
   constructor(private requestService: RequestService,
               private categoryService : CategoryService,
               private route: ActivatedRoute,
-              private location: Location){
+              private location: Location,
+              public modal: NgbActiveModal){
                }
 
   ngOnInit() {
-    this.route.params.subscribe((params: Params) => {
-      var idParam = params['id']; 
+    // this.route.params.subscribe((params: Params) => {
+    //   var idParam = params['requestId']; 
       
-      this.getRequest(idParam);
-    });
+    //   this.getRequest(idParam);
+    // });
   }
 
-  getRequest(id: number): void {
+  public getRequest(id: number): void {
     this.requestService.getRequest(id)
       .subscribe(request => 
         { 

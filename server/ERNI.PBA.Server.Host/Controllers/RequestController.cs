@@ -44,10 +44,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             _logger = logger;
         }
 
-        [HttpGet("user/current/year/{year}")]
-        public async Task<IActionResult> GetCurrentUsersRequests(int year, CancellationToken cancellationToken)
+        [HttpGet("budget/{budgetId}")]
+        public async Task<IActionResult> GetRequests(int budgetId, CancellationToken cancellationToken)
         {
-            var requests = await _requestRepository.GetRequests(year, HttpContext.User.GetId(), cancellationToken);
+            // TODO: check for access: HttpContext.User.GetId(), 
+
+            var requests = await _requestRepository.GetRequests(budgetId, cancellationToken);
 
             var result = requests.Select(_ => new
             {
@@ -194,22 +196,30 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userId = User.GetId();
             var currentYear = DateTime.Now.Year;
 
-            var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
+            var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
 
-            if (status != validResponse)
+            if (budget == null)
             {
-                return BadRequest(status);
+                return BadRequest($"Budget {payload.BudgetId} was not found.");
+            }
+
+            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(payload.BudgetId, cancellationToken);
+
+            if (payload.Amount > budget.Amount - requestedAmount)
+            {
+                return BadRequest($"Requested amount {payload.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
             }
 
             var request = new Request
             {
+                BudgetId = budget.Id,
                 UserId = userId,
                 Year = currentYear,
                 Title = payload.Title,
                 Amount = payload.Amount,
                 Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
-                CategoryId = payload.Category.Id,
+                CategoryId = payload.CategoryId,
                 Url = payload.Url
             };
 
@@ -450,32 +460,15 @@ namespace ERNI.PBA.Server.Host.Controllers
             return validResponse;
         }
 
-        private async Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId, CancellationToken cancellationToken)
+        private Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId,
+            CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(userId, year, cancellationToken);
-            if (budget == null)
-            {
-                return 0;
-            }
-            var requests = (await _requestRepository.GetRequests(year, userId, cancellationToken))
-                .Where(req => req.Id != requestId)
-                .Where(req => req.State != RequestState.Rejected);
-
-            decimal requestsSum = 0;
-
-            foreach (var item in requests)
-            {
-                requestsSum += item.Amount;
-            }
-
-            var currentAmount = budget.Amount - requestsSum;
-
-            return currentAmount;
+            return Task.FromResult(0.0m);
         }
 
         private async Task<decimal> CalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
-            var requestsOfCategory = (await _requestRepository.GetRequests(year, userId, cancellationToken))
+            var requestsOfCategory = (await _requestRepository.GetRequests(userId, cancellationToken))
                 .Where(req => req.CategoryId == categoryId && req.Id != requestId)
                 .Where(req => req.State != RequestState.Rejected);
 

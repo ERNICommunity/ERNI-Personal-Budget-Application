@@ -5,10 +5,8 @@ import {AppComponent} from './app.component';
 import {RouterModule} from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {rootRouterConfig} from './app.routes';
-import {OAuthCallbackComponent} from './login-callback/oauth-callback.component';
 import {AdalService} from './services/adal.service';
 import {ConfigService} from './services/config.service';
-import {OAuthCallbackHandler} from './login-callback/oauth-callback.guard';
 import {OAuthHandshakeModule} from './login-callback/oauth-callback.module';
 import {AuthenticationGuard} from './services/guards/authentication.guard';
 import {AdminGuard} from './services/guards/admin.guard'
@@ -38,7 +36,6 @@ import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherB
 import { AuthInterceptor } from './interceptors/authInterceptor'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 // import { BudgetsComponent } from './budgets/budgets.component';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
 import { UnregisteredInterceptor } from './interceptors/unregisteredInterceptor';
@@ -46,6 +43,8 @@ import { ViewerGuard } from './services/guards/viewer.guard';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { AlertComponent } from './directives/alert/alert.component';
 import { BudgetComponent } from './budgets/budget/budget.component';
+import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
+import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 
 @NgModule({
     declarations: [
@@ -69,7 +68,9 @@ import { BudgetComponent } from './budgets/budget/budget.component';
         RequestMassComponent,
         OtherBudgetsComponent,
         OtherBudgetsDetailComponent,
-        AlertComponent
+        AlertComponent,
+        NewRequestModalComponent,
+        RequestDetailModalComponent
     ],
     imports: [
         NgbModule,
@@ -78,8 +79,10 @@ import { BudgetComponent } from './budgets/budget/budget.component';
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig, { useHash: true }),
         OAuthHandshakeModule,
-        BsDatepickerModule.forRoot(),
         ReactiveFormsModule
+    ],
+    entryComponents: [
+        NewRequestModalComponent, RequestDetailModalComponent
     ],
     providers: [
         AdalService,

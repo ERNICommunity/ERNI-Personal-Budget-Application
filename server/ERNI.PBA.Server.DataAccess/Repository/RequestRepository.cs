@@ -19,10 +19,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context = context;
         }
 
-        public Task<Request[]> GetRequests(int year, int userId, CancellationToken cancellationToken)
+        public Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken)
         {
             return _context.Requests
-                .Where(_ => _.Year == year && _.UserId == userId)
+                .Where(_ => _.BudgetId == budgetId)
                 .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
         }

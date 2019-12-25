@@ -23,6 +23,8 @@ import { RequestMassComponent } from './requests/requestMass/requestMass.compone
 import { AdminGuard } from './services/guards/admin.guard';
 import { ViewerGuard } from './services/guards/viewer.guard';
 import { AuthenticationGuard } from './services/guards/authentication.guard';
+import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
+import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 
 const currentYear = "2019"; // = (new Date()).getFullYear();
 
@@ -44,7 +46,13 @@ export const rootRouterConfig: Routes = [
         path: 'my-budget', canActivate: [AuthenticationGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
-            { path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard] }
+            { 
+                path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard],
+                children: [
+                    { path: 'create-request/:budgetId', component: NewRequestModalComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [AuthenticationGuard] }
+                ]
+            }
         ]
     },
     { path: 'request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard] },

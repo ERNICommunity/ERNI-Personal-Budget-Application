@@ -10,7 +10,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 {
     public interface IRequestRepository
     {
-        Task<Request[]> GetRequests(int year, int userId, CancellationToken cancellationToken);
+        Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken);
 
         Task<Request[]> GetRequests(Expression<Func<Request, bool>> filter, CancellationToken cancellationToken);
 

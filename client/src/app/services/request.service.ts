@@ -7,6 +7,7 @@ import { ServiceHelper } from './service.helper';
 import { RequestMass } from '../model/requestMass';
 import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
+import { NewRequest } from '../model/newRequest';
 
 @Injectable()
 export class RequestService {
@@ -47,8 +48,8 @@ export class RequestService {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
   }
 
-  public addRequest(request: Request): Observable<Request> {
-    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  public addRequest(request: NewRequest): Observable<any> {
+    return this.http.post(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
   public addMassRequest(request: RequestMass): Observable<any> {
