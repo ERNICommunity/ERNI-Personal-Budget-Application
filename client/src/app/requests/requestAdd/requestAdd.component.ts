@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { RequestService } from '../../services/request.service';
 import { Category } from '../../model/category';
-import { Request } from '../../model/request';
+import { Request } from '../../model/request/request';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { Budget } from '../../model/budget';

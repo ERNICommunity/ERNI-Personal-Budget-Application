@@ -398,6 +398,12 @@ namespace ERNI.PBA.Server.Host.Controllers
                 {
                     Id = request.CategoryId,
                     Title = request.Category.Title
+                },
+                Budget = new BudgetModel
+                {
+                    Id = request.BudgetId,
+                    Title = request.Budget.Title,
+                    Type = request.Budget.BudgetType
                 }
             };
         }

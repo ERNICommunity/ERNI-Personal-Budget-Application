@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Budget } from '../../model/budget';
-import { Request } from '../../model/request'
+import { Request } from '../../model/request/request'
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { RequestService } from '../../services/request.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

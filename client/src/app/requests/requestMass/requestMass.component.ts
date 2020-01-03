@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { RequestService } from '../../services/request.service';
 import { Category } from '../../model/category';
-import { Request } from '../../model/request';
+import { Request } from '../../model/request/request';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';

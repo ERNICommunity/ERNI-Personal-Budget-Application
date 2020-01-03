@@ -4,6 +4,8 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
     {
         public int Id { get; set; }
 
+        public BudgetModel Budget { get; set; }
+
         public System.DateTime Date { get; set; }
 
         public string Title { get; set; }
