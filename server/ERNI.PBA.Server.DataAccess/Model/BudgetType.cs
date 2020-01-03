@@ -4,6 +4,6 @@
     {
         PersonalBudget = 1,
         CommunityBudget = 2,
-        TeamBugdet = 3
+        TeamBudget = 3
     }
 }

@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Budget } from '../model/budget';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
+import { BudgetType } from '../model/budgetType';
 
 @Injectable()
 export class BudgetService {
@@ -34,5 +35,9 @@ export class BudgetService {
 
   public setBudgetsForYear(budget: Budget): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.url, budget, this.serviceHelper.getHttpOptions());
+  }
+
+  public getBudgetsTypes(): Observable<BudgetType[]> {
+    return this.http.get<BudgetType[]>(this.configService.apiUrlBase + this.url + 'types', this.serviceHelper.getHttpOptions());
   }
 }

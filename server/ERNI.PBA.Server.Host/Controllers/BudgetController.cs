@@ -1,3 +1,4 @@
+using System;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -212,6 +214,17 @@ namespace ERNI.PBA.Server.Host.Controllers
             //}
 
             return Ok();
+        }
+
+        [HttpGet("types")]
+        public async Task<IActionResult> GetBudgetTypes()
+        {
+            return await Task.FromResult(Ok(new object[]
+            {
+                new { Id = BudgetType.CommunityBudget, Name = "Community budget", SinglePerUser = false },
+                new { Id = BudgetType.PersonalBudget, Name = "Personal budget", SinglePerUser = true },
+                new { Id = BudgetType.TeamBudget, Name = "Team budget", SinglePerUser = false }
+            }));
         }
     }
 }
