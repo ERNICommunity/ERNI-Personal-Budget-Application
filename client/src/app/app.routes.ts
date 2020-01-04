@@ -26,7 +26,7 @@ import { AuthenticationGuard } from './services/guards/authentication.guard';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 
-const currentYear = "2019"; // = (new Date()).getFullYear();
+const currentYear = "2020"; // = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
     { path: '', redirectTo: 'my-budget', pathMatch: 'full' },
