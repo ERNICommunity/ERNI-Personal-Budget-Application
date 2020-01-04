@@ -35,8 +35,8 @@ export const rootRouterConfig: Routes = [
     {
         path: 'other-budgets', canActivate: [AdminGuard],
         children: [
-            { path: '', redirectTo: currentYear, pathMatch: 'full' },
-            { path: ':year', component: OtherBudgetsComponent, canActivate: [AdminGuard] },
+            { path: '', redirectTo: currentYear + "/1", pathMatch: 'full' },
+            { path: ':year/:budgetType', component: OtherBudgetsComponent, canActivate: [AdminGuard] },
             { path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminGuard] }
         ]
     },
