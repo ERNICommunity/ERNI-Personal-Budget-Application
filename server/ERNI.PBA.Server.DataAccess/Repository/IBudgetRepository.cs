@@ -14,7 +14,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<Budget[]> GetBudgets(int userId, int year, CancellationToken cancellationToken);
 
-        Task<(int UserId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken);
+        Task<Budget[]> GetBudgetsByType(int userId, BudgetTypeEnum budgetType, int year,
+            CancellationToken cancellationToken);
+
+        Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken);
 
         Task<Budget[]> GetBudgetsByUser(int userId, CancellationToken cancellationToken);
 

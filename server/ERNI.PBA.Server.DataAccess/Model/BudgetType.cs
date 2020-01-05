@@ -1,6 +1,6 @@
 ﻿namespace ERNI.PBA.Server.DataAccess.Model
 {
-    public enum BudgetType
+    public enum BudgetTypeEnum
     {
         PersonalBudget = 1,
         CommunityBudget = 2,

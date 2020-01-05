@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using ERNI.PBA.Server.DataAccess.Model;
 
 namespace ERNI.PBA.Server.DataAccess.Model
 {
@@ -14,7 +12,7 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public virtual User User { get; set; }
 
-        public BudgetType BudgetType { get; set; }
+        public BudgetTypeEnum BudgetType { get; set; }
 
         public string Title { get; set; }
 

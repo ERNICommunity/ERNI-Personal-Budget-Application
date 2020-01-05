@@ -6,7 +6,7 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
     {
         public int Id { get; set; }
 
-        public BudgetType Type { get; set; }
+        public BudgetTypeEnum Type { get; set; }
 
         public string Title { get; set; }
     }

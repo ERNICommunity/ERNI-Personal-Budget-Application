@@ -5,6 +5,7 @@ import { Budget } from '../model/budget';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { BudgetType } from '../model/budgetType';
+import { User } from '../model/user';
 
 @Injectable()
 export class BudgetService {
@@ -33,11 +34,19 @@ export class BudgetService {
     return this.http.put(this.configService.apiUrlBase + this.url, budget, this.serviceHelper.getHttpOptions());
   }
 
-  public setBudgetsForYear(budget: Budget): Observable<any> {
-    return this.http.post(this.configService.apiUrlBase + this.url, budget, this.serviceHelper.getHttpOptions());
+  public createBudget(title: string, amount: number, userId: number, budgetType: number): Observable<any> {
+    return this.http.post(this.configService.apiUrlBase + this.url + "users/" + userId, { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
+  }
+
+  public createBudgetsForAllActiveUsers(title: string, amount: number, budgetType: number): Observable<any> {
+    return this.http.post(this.configService.apiUrlBase + this.url + "users/all", { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
   }
 
   public getBudgetsTypes(): Observable<BudgetType[]> {
     return this.http.get<BudgetType[]>(this.configService.apiUrlBase + this.url + 'types', this.serviceHelper.getHttpOptions());
+  }
+
+  public getUsersAvailableForBudgetType(budgetType: number): Observable<any> {
+    return this.http.get<User>(this.configService.apiUrlBase + this.url + 'usersAvailableForBudgetType/' + budgetType, this.serviceHelper.getHttpOptions());
   }
 }
