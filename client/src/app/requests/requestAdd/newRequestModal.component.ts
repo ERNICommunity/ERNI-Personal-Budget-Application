@@ -28,9 +28,11 @@ export class NewRequestModalComponent implements OnDestroy {
 
         // Go back to home page after the modal is closed
         this.currentDialog.result.then(result => {
-            router.navigateByUrl('/');
+            //router.navigateByUrl('/');
+            router.navigate(['.'], { relativeTo: route.parent });
         }, reason => {
-            router.navigateByUrl('/');
+            //router.navigateByUrl('/');
+            router.navigate(['.'], { relativeTo: route.parent });
         });
     });
   }

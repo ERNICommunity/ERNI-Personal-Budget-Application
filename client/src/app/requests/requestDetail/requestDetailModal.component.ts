@@ -27,9 +27,13 @@ export class RequestDetailModalComponent implements OnDestroy {
 
         // Go back to home page after the modal is closed
         this.currentDialog.result.then(result => {
-            router.navigateByUrl('/');
+            //router.navigateByUrl('/');
+            //router.navigate(["../../parent"], {relativeTo: route, skipLocationChange: false});
+            router.navigate(['.'], { relativeTo: route.parent });
         }, reason => {
-            router.navigateByUrl('/');
+            //router.navigateByUrl('/');
+            //router.navigate(["../../parent"], {relativeTo: route, skipLocationChange: false});
+            router.navigate(['.'], { relativeTo: route.parent });
         });
     });
   }
