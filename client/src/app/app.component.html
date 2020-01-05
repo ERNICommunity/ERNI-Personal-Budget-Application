@@ -20,7 +20,7 @@
                 </a>
             </li>
             <li class="nav-item" [routerLinkActive]="['active']"
-                *ngIf="adalService.userInfo && (user.isAdmin || user.isSuperior || user.isViewer)">
+                *ngIf="adalService.userInfo && (user.isAdmin || user.isViewer)">
                 <a class="nav-link" routerLink="/requests">
                     Requests
                 </a>

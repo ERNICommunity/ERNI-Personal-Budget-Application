@@ -10,7 +10,7 @@ export class ViewerGuard extends AuthenticationGuard {
 
         if(super.canActivate)
         {
-            return this.user.isViewer || this.user.isAdmin || this.user.isSuperior;
+            return this.user.isViewer || this.user.isAdmin;
         }
         return false;
     }
