@@ -31,7 +31,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
-        private const string validResponse = "OK";
 
         public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
         {
@@ -230,6 +229,11 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken)
+        {
+            return budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
+        }
+
         /// <summary>
         /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
         /// </summary>
@@ -241,14 +245,24 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 return StatusCode(403);
             }
+
             var currentYear = DateTime.Now.Year;
             var requests = new List<Request>();
             foreach (var user in payload.Users)
             {
                 var userId = user.Id;
-                var status = await CheckAmountForRequest(userId, currentYear, payload.Amount, payload.Category.Id, null, cancellationToken);
 
-                if (status != validResponse)
+                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear,
+                    cancellationToken);
+
+                if (budgets.Length > 1)
+                {
+                    throw new InvalidOperationException($"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
+                }
+
+                var budget = budgets.Single();
+
+                if (payload.Amount > await GetRemainingAmount(budget, cancellationToken))
                 {
                     continue;
                 }
@@ -310,7 +324,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             if (request == null)
             {
-                return BadRequest("Not a valid id");
+                return BadRequest($"Request with id {payload.Id} not found.");
             }
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
@@ -320,11 +334,13 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("No Access for request!");
             }
 
-            var status = await CheckAmountForRequest(currentUser.Id, DateTime.Now.Year, payload.Amount, payload.CategoryId, request.Id, cancellationToken);
+            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(request.BudgetId, cancellationToken);
 
-            if (status != validResponse)
+            var budget = await _budgetRepository.GetBudget(request.BudgetId, cancellationToken);
+
+            if (payload.Amount > budget.Amount - requestedAmount)
             {
-                return BadRequest(status);
+                return BadRequest($"Requested amount {payload.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
             }
 
             request.Title = payload.Title;
@@ -415,7 +431,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var usersWithBudgetLeft = new List<UserModel>();
             foreach(var user in users)
             {
-                if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
+                //if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
                 {
                     usersWithBudgetLeft.Add(new UserModel
                     {
@@ -439,40 +455,27 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
 
-        private async Task<string> CheckAmountForRequest(int userId, int year, decimal amount, int categoryId, int? requestId, CancellationToken cancellationToken)
-        {
-            decimal currentAmount = await CalculateCurrentAmount(userId, year, requestId, cancellationToken);
+        //private async Task<string> aCheckAmountForRequest(int userId, int year, decimal amount, int categoryId, int? requestId, CancellationToken cancellationToken)
+        //{
+        //    var category = await _requestCategoryRepository.GetRequestCategory(categoryId, cancellationToken);
 
-            if (currentAmount < amount)
-            {
-                return "Amount of your request is bigger than your current amount (" + currentAmount + ")!";
-            }
+        //    if (category.SpendLimit != null)
+        //    {
+        //        decimal requestsSumForCategory = await CalculateAmountSumForCategory(userId, year, category.Id, requestId, cancellationToken);
 
-            var category = await _requestCategoryRepository.GetRequestCategory(categoryId, cancellationToken);
+        //        var currentAmountForCategory = category.SpendLimit - requestsSumForCategory;
 
-            if (category.SpendLimit != null)
-            {
-                decimal requestsSumForCategory = await CalculateAmountSumForCategory(userId, year, category.Id, requestId, cancellationToken);
+        //        if (currentAmountForCategory < amount)
+        //        {
+        //            return "Amount of your request is over " + category.Title
+        //            + " category limit: " + category.SpendLimit +
+        //            ". Your current amount for this category is (" + currentAmountForCategory + ")!";
+        //        }
+        //    }
+        //    return validResponse;
+        //}
 
-                var currentAmountForCategory = category.SpendLimit - requestsSumForCategory;
-
-                if (currentAmountForCategory < amount)
-                {
-                    return "Amount of your request is over " + category.Title
-                    + " category limit: " + category.SpendLimit +
-                    ". Your current amount for this category is (" + currentAmountForCategory + ")!";
-                }
-            }
-            return validResponse;
-        }
-
-        private Task<decimal> CalculateCurrentAmount(int userId, int year, int? requestId,
-            CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0.0m);
-        }
-
-        private async Task<decimal> CalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
+        private async Task<decimal> aCalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
         {
             var requestsOfCategory = (await _requestRepository.GetRequests(userId, cancellationToken))
                 .Where(req => req.CategoryId == categoryId && req.Id != requestId)
