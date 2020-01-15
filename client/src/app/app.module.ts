@@ -15,7 +15,6 @@ import {RequestListComponent} from './requests/requestList/requestList.component
 import {RequestService} from './services/request.service';
 import {HttpClientModule} from '@angular/common/http';
 import {UsersComponent} from './users/users.component';
-import {CategoriesComponent} from './categories/categories.component';
 import {UserService} from './services/user.service';
 import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
 import {UserListComponent} from './users/userList/userList.component';
@@ -23,9 +22,6 @@ import {UserDetailComponent} from './users/userDetail/userDetail.component';
 import {MyBudgetComponent} from './budgets/myBudget/myBudget.component';
 import {BudgetService} from './services/budget.service';
 import {FormsModule} from '@angular/forms';
-import {CategoryListComponent} from "./categories/categoryList/categoryList.component";
-import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetail.component";
-import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
@@ -53,15 +49,11 @@ import { RequestDetailModalComponent } from './requests/requestDetail/requestDet
         RequestsComponent,
         RequestListComponent,
         UsersComponent,
-        CategoriesComponent,
         UserListComponent,
         UserDetailComponent,
         CreateUserComponent,
         BudgetComponent,
         MyBudgetComponent,
-        CategoriesComponent,
-        CategoryListComponent,
-        CategoryDetailComponent,
         RequestAddComponent,
         RequestDetailComponent,
         RequestEditComponent,
@@ -92,7 +84,6 @@ import { RequestDetailModalComponent } from './requests/requestDetail/requestDet
         RequestService,
         UserService,
         BudgetService,
-        CategoryService,
         BusyIndicatorService,
         AdminGuard,
         ViewerGuard,

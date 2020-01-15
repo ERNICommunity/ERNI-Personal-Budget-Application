@@ -8,7 +8,7 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public int Year { get; set; }
 
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         public int BudgetId { get; set; }
 

@@ -27,18 +27,18 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
-        private readonly IRequestCategoryRepository _requestCategoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
 
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository, IBudgetRepository budgetRepository, IRequestCategoryRepository requestCategoryRepository, IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<RequestController> logger)
+        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository,
+            IBudgetRepository budgetRepository, IUnitOfWork unitOfWork, IConfiguration configuration,
+            ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _budgetRepository = budgetRepository;
-            _requestCategoryRepository = requestCategoryRepository;
             _mailService = new MailService(configuration);
             _logger = logger;
         }
@@ -56,9 +56,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Title = _.Title,
                 Amount = _.Amount,
                 Date = _.Date,
-                Url = _.Url,
                 State = _.State,
-                CategoryTitle = _.Category.Title
             }).OrderByDescending(_ => _.Date);
 
             return Ok(result);
@@ -92,8 +90,6 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Title = request.Title,
                 Amount = request.Amount,
                 Date = request.Date,
-                CategoryId = request.CategoryId,
-                Url = request.Url
             };
 
             return Ok(result);
@@ -129,26 +125,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            string message;
-            if (request.Url != null)
-            {
-                message = "Request: " + request.Title + " of amount: " + request.Amount + " with Url: " + request.Url + " has been " + request.State + ".";
-            }
-            else
-            {
-                message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " + request.State + ".";
-            }
+            string message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " +
+                             request.State + ".";
 
-            if (request.Category.Email != null)
-            {
-                var emails = request.Category.Email.Split(',').ToList();
-                if (!emails.Contains(request.User.Username))
-                {
-                    emails.Add(request.User.Username);
-                }
-
-                _mailService.SendMail(message, string.Join(',', emails));
-            }
+            _mailService.SendMail(message, request.User.Username);
 
             return Ok();
         }
@@ -218,8 +198,6 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Amount = payload.Amount,
                 Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
-                CategoryId = payload.CategoryId,
-                Url = payload.Url
             };
 
             await _requestRepository.AddRequest(request);
@@ -275,8 +253,6 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Amount = payload.Amount,
                     Date = payload.Date.ToLocalTime().Date,
                     State = RequestState.Approved,
-                    CategoryId = payload.Category.Id,
-                    Url = payload.Url
                 };
 
                 requests.Add(request);
@@ -345,9 +321,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             request.Title = payload.Title;
             request.Amount = payload.Amount;
-            request.CategoryId = payload.CategoryId;
             request.Date = payload.Date.ToLocalTime();
-            request.Url = payload.Url;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
@@ -410,11 +384,6 @@ namespace ERNI.PBA.Server.Host.Controllers
                     FirstName = request.Budget.User.FirstName,
                     LastName = request.Budget.User.LastName
                 },
-                Category = new CategoryModel
-                {
-                    Id = request.CategoryId,
-                    Title = request.Category.Title
-                },
                 Budget = new BudgetModel
                 {
                     Id = request.BudgetId,
@@ -475,20 +444,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         //    return validResponse;
         //}
 
-        private async Task<decimal> aCalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
-        {
-            var requestsOfCategory = (await _requestRepository.GetRequests(userId, cancellationToken))
-                .Where(req => req.CategoryId == categoryId && req.Id != requestId)
-                .Where(req => req.State != RequestState.Rejected);
+        //private async Task<decimal> aCalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
+        //{
+        //    var requestsOfCategory = (await _requestRepository.GetRequests(userId, cancellationToken))
+        //        .Where(req => req.CategoryId == categoryId && req.Id != requestId)
+        //        .Where(req => req.State != RequestState.Rejected);
 
-            decimal requestsSumForCategory = 0;
+        //    decimal requestsSumForCategory = 0;
 
-            foreach (var item in requestsOfCategory)
-            {
-                requestsSumForCategory += item.Amount;
-            }
+        //    foreach (var item in requestsOfCategory)
+        //    {
+        //        requestsSumForCategory += item.Amount;
+        //    }
 
-            return requestsSumForCategory;
-        }
+        //    return requestsSumForCategory;
+        //}
     }
 }

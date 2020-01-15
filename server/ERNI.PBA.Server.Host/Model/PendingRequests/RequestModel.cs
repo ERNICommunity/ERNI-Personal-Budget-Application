@@ -16,8 +16,6 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
 
         public UserModel User { get; set; }
 
-        public CategoryModel Category { get; set; }
-
         public int Year { get; set; }
     }
 }

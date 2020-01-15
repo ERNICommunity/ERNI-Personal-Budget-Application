@@ -8,6 +8,7 @@ import { RequestMass } from '../model/requestMass';
 import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
+import { PatchRequest } from '../model/PatchRequest';
 
 @Injectable()
 export class RequestService {
@@ -56,7 +57,7 @@ export class RequestService {
     return this.http.post<RequestMass>(this.configService.apiUrlBase + this.requestUrl + 'mass', request, this.serviceHelper.getHttpOptions());
   }
 
-  public updateRequest(request: Request): Observable<any> {
+  public updateRequest(request: PatchRequest): Observable<any> {
     return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
@@ -65,6 +66,6 @@ export class RequestService {
   }
 
   public getUsersWithBudgetLeft(request: BudgetLeft): Observable<User[]> {
-    return this.http.get<User[]>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.amount +'/' + request.categoryId +'/' + request.year, this.serviceHelper.getHttpOptions());
+    return this.http.get<User[]>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.amount +'/' + request.year, this.serviceHelper.getHttpOptions());
   }
 }

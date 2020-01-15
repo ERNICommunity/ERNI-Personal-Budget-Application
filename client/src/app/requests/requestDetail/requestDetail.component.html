@@ -12,14 +12,6 @@
     <h5>Amount</h5>
     <p>{{request.amount}}</p>
 
-    <h5>Category</h5>
-    <p>{{category.title}}</p>
-
-    <div *ngIf="category.isUrlNeeded">
-        <h5>
-            Url</h5>
-        <p><a href="{{request.url}}" target="_blank" rel="noopener noreferrer">{{request.url}}</a></p>
-    </div>
 
     <div *ngIf="httpResponseError">
         <font color="red" size="4">

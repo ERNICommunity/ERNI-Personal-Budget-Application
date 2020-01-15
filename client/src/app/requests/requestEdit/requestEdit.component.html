@@ -1,127 +1,47 @@
-<div *ngIf="request && categories">
+<div>
     <h2>Details</h2>
     <br>
     <form [formGroup]="requestForm">
         <div class="form-group">
-            <h5>
-                <label class="col-md-6">
-                    Title
-                    <textarea
-                        class="form-control"
-                        formControlName="title"
-                        [(ngModel)]="request.title"
-                        placeholder="title"></textarea>
-                </label>
-            </h5>
+            <label for="title">Title</label>
+            <textarea id="title" class="form-control" formControlName="title" [(ngModel)]="request.title"
+                placeholder="title"></textarea>
         </div>
 
-        <div
-            *ngIf="requestForm.controls['title'].invalid && (requestForm.controls['title'].dirty || requestForm.controls['title'].touched)"
+        <div *ngIf="requestForm.controls['title'].invalid && (requestForm.controls['title'].dirty || requestForm.controls['title'].touched)"
             class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['title'].errors.required">Title is required.</div>
         </div>
 
         <div class="form-group">
+            <label for="date">Date of occasion</label>
             <div class="input-group">
-                <h5>
-                    <label class="input-group col-md-6">
-                        Date of occasion
-                        <input
-                            type="text"
-                            class="form-control"
-                            placeholder="dd/mm/yyyy"
-                            id="datePicker"
-                            [(ngModel)]="selectedDate"
-                            [ngModelOptions]="{standalone: true}"
-                            bsDatepicker
-                            [bsConfig]="{dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-dark-blue'}"
-                            (click)="setDirty()"
-                            readonly>
-                            <!--Date picker is not setting dirty status on the form. View https://github.com/angular-ui/bootstrap/issues/855 for more information-->
-                    </label>
-                </h5>
+                <input class="form-control" placeholder="yyyy-mm-dd" formControlName="date" name="dp" ngbDatepicker
+                    id="date" #d="ngbDatepicker">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                </div>
             </div>
         </div>
 
         <div class="form-group">
-            <h5>
-                <label class="col-md-6">
-                    Amount
-                    <input
-                        type="number"
-                        class="form-control"
-                        formControlName="amount"
-                        [(ngModel)]="request.amount"
-                        placeholder="0.00">
-                </label>
-            </h5>
+            <label for="amount">
+                Amount</label>
+            <input type="number" id="amount" class="form-control" formControlName="amount" [(ngModel)]="request.amount"
+                placeholder="0.00">
         </div>
 
-        <div
-            *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
+        <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
             class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
         </div>
 
-        <div class="form-group">
-            <h5>
-                <label class="col-md-6">
-                    Occasion
-                    <select
-                        class="form-control form-control-sm"
-                        [(ngModel)]="selectedCategory"
-                        formControlName="category">
-                        <option
-                            *ngFor="let categoryItem of categories"
-                            [ngValue]="categoryItem">
-                            {{categoryItem.title}}
-                        </option>
-                    </select>
-                </label>
-            </h5>
-        </div>
-
-        <div
-            *ngIf="selectedCategory.isUrlNeeded"
-            class="form-group">
-            <h5>
-                <label class="col-md-6">
-                    Url
-                    <input
-                        [(ngModel)]="request.url"
-                        formControlName="url"
-                        class="form-control"
-                        type="url">
-                </label>
-            </h5>
-        </div>
-
-        <div
-            *ngIf="requestForm.controls['url'].invalid && (requestForm.controls['url'].dirty || requestForm.controls['url'].touched)"
-            class="alert alert-danger col-md-6">
-            <div *ngIf="requestForm.controls['url'].errors.required">Url is required.</div>
-        </div>
-
-        <br>
-        <button
-            class="btn btn-primary mr-1"
-            (click)="goBack()">
+        <button class="btn btn-primary mr-1" (click)="goBack()">
             back
         </button>
-        <button
-            class="btn btn-success"
-            [disabled]="!isDirty() && (requestForm.pristine || requestForm.invalid)"
+        <button class="btn btn-success" [disabled]="!isDirty() && (requestForm.pristine || requestForm.invalid)"
             (click)="save()">
             save
         </button>
     </form>
-</div>
-<br>
-<br>
-<div *ngIf="httpResponseError">
-    <font
-        color="red"
-        size="4">
-        {{httpResponseError}}
-    </font>
 </div>

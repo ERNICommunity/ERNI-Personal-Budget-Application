@@ -70,9 +70,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Title = _.Title,
                     Amount = _.Amount,
                     Date = _.Date,
-                    Url = _.Url,
                     State = _.State,
-                    CategoryTitle = _.Category.Title
                 })
             });
 

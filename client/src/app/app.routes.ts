@@ -7,8 +7,6 @@ import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
 // import { BudgetsComponent } from './budgets/budgets.component';
 import { MyBudgetComponent } from './budgets/myBudget/myBudget.component';
-import { CategoryListComponent } from './categories/categoryList/categoryList.component';
-import { CategoryDetailComponent } from './categories/categoryDetail/categoryDetail.component';
 import { RequestsComponent } from './requests/requests.component';
 import { RequestListComponent } from './requests/requestList/requestList.component';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
@@ -40,8 +38,6 @@ export const rootRouterConfig: Routes = [
             { path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminGuard] }
         ]
     },
-    { path: 'categories', component: CategoryListComponent, canActivate: [AdminGuard] },
-    { path: 'category/:id', component: CategoryDetailComponent, canActivate: [AdminGuard] },
     {
         path: 'my-budget', canActivate: [AuthenticationGuard],
         children: [
