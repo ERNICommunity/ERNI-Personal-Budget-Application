@@ -378,7 +378,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Year = request.Year,
                 Date = request.Date,
                 State = request.State,
-                User = new ERNI.PBA.Server.Host.Model.PendingRequests.UserModel
+                User = new UserModel
                 {
                     Id = request.UserId,
                     FirstName = request.Budget.User.FirstName,
@@ -394,15 +394,15 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("budget-left/{amount}/{categoryId}/{year}")]
-        public async Task<UserModel[]> BudgetLeft(decimal amount, int categoryId, int year, CancellationToken cancellationToken)
+        public async Task<UserOutputModel[]> BudgetLeft(decimal amount, int categoryId, int year, CancellationToken cancellationToken)
         {
             var users = await _userRepository.GetAllUsers(cancellationToken);
-            var usersWithBudgetLeft = new List<UserModel>();
+            var usersWithBudgetLeft = new List<UserOutputModel>();
             foreach(var user in users)
             {
                 //if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
                 {
-                    usersWithBudgetLeft.Add(new UserModel
+                    usersWithBudgetLeft.Add(new UserOutputModel
                     {
                         Id = user.Id,
                         FirstName = user.FirstName,

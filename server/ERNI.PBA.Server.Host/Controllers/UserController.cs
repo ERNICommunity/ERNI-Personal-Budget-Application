@@ -126,7 +126,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (user == null)
                 return StatusCode(403);
 
-            return Ok(new UserModel
+            return Ok(new UserOutputModel
             {
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
@@ -149,7 +149,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var user = await _userRepository.GetUser(id, CancellationToken.None);
 
-            return Ok(new UserModel
+            return Ok(new UserOutputModel
             {
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
@@ -183,7 +183,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
             }
 
-            var result = users.Select(_ => new UserModel
+            var result = users.Select(_ => new UserOutputModel
             {
                 Id = _.Id,
                 IsAdmin = _.IsAdmin,
@@ -208,7 +208,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-            var result = users.Select(_ => new UserModel
+            var result = users.Select(_ => new UserOutputModel
             {
                 Id = _.Id,
                 FirstName = _.FirstName,

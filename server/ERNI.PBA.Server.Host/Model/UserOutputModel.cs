@@ -1,6 +1,6 @@
 using ERNI.PBA.Server.DataAccess.Model;
 
-public class UserModel
+public class UserOutputModel
 {
     public int Id { get; internal set; }
     public bool IsAdmin { get; internal set; }
