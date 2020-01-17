@@ -5,12 +5,10 @@ import { OAuthCallbackComponent } from './login-callback/oauth-callback.componen
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
-// import { BudgetsComponent } from './budgets/budgets.component';
 import { MyBudgetComponent } from './budgets/myBudget/myBudget.component';
 import { RequestsComponent } from './requests/requests.component';
 import { RequestListComponent } from './requests/requestList/requestList.component';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
-import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
 import { UserState } from './model/userState';
 import { RequestFilter } from './requests/requestFilter';
 import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.component';
@@ -58,10 +56,34 @@ export const rootRouterConfig: Routes = [
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
         children: [
             { path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
-            { path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [ViewerGuard] },
-            { path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [ViewerGuard] },
-            { path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [ViewerGuard] },
-            { path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [ViewerGuard] }
+            {
+                path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [ViewerGuard],
+                children: [
+                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                ]
+            },
+            {
+                path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [ViewerGuard],
+                children: [
+                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                ]
+            },
+            {
+                path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [ViewerGuard],
+                children: [
+                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                ]
+            },
+            {
+                path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [ViewerGuard],
+                children: [
+                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                ]
+            }
         ]
     },
     {

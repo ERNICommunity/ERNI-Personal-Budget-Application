@@ -127,7 +127,7 @@
                 class="btn btn-primary float-right mr-1"
                 href="#"
                 role="button"
-                routerLink="/request/detail/{{request.id}}">
+                routerLink="detail/{{request.id}}">
                 Detail
             </a></td>
             <td *ngIf="requestFilter != requestFilterType.Rejected" class="button-table-cell">
@@ -206,3 +206,5 @@
         </tr>
     </tbody>
 </table>
+
+<router-outlet></router-outlet>
