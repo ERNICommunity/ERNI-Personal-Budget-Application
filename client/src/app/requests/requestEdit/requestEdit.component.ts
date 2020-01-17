@@ -5,13 +5,16 @@ import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
 import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
 import { PatchRequest } from '../../model/PatchRequest';
+import { NgbDateStruct, NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AlertService } from '../../services/alert.service';
+import { Alert, AlertType } from '../../model/alert.model';
 
 @Component({
   selector: 'app-request-edit',
   templateUrl: 'requestEdit.component.html',
   styleUrls: ['requestEdit.component.css']
 })
-export class RequestEditComponent implements OnInit {
+export class RequestEditComponent {
   requestForm: FormGroup;
   httpResponseError : string;
   dirty: boolean;
@@ -19,19 +22,12 @@ export class RequestEditComponent implements OnInit {
   requestId: number;
   
   constructor(private requestService: RequestService,
-              private route: ActivatedRoute,
+              public modal: NgbActiveModal,
               private location: Location,
-              private fb: FormBuilder){
+              private fb: FormBuilder,
+              private alertService: AlertService){
                 this.createForm();
                }
-
-  ngOnInit() {
-    this.route.params.subscribe((params: Params) => {
-      var idParam = params['id']; 
-      
-      this.getRequest(idParam);
-    });
-  }
 
   createForm() {
     this.requestForm = this.fb.group({
@@ -41,13 +37,21 @@ export class RequestEditComponent implements OnInit {
     });
   }
 
-  getRequest(id: number): void {
+  public showRequest(id: number): void {
     this.requestService.getRequest(id)
       .subscribe(request => 
         { 
           this.requestId = id;
 
-          // SET VALUES
+          var date = new Date(request.date);
+
+          var ngbDate = new NgbDate(date.getFullYear(), date.getMonth() + 1, date.getDate());  
+
+          this.requestForm.setValue({
+            title: request.title,
+            amount: request.amount,
+            date: ngbDate
+          });
         },err => {
           this.httpResponseError = err.error
         });
@@ -70,13 +74,16 @@ export class RequestEditComponent implements OnInit {
     var amount = this.requestForm.get("amount").value;
     var ngbDate = this.requestForm.get("date").value;
     var date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
-    var requestId = this.requestId;
+    var id = this.requestId;
     // SAVE
    
-    this.requestService.updateRequest({ requestId, title, amount, date } as PatchRequest)
-       .subscribe(() => this.goBack(),
+    this.requestService.updateRequest({ id, title, amount, date } as PatchRequest)
+       .subscribe(() => {
+        this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
+        this.modal.close();
+       },
        err => {
-        this.httpResponseError = err.error
+        this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
       })
   }
 }

@@ -1,11 +1,17 @@
-<div>
-    <h2>Details</h2>
-    <br>
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Edit request</h4>
+    <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <app-alert id="addRequestError"></app-alert>
+
     <form [formGroup]="requestForm">
         <div class="form-group">
             <label for="title">Title</label>
-            <textarea id="title" class="form-control" formControlName="title" [(ngModel)]="request.title"
-                placeholder="title"></textarea>
+            <textarea id="title" #requestTitle class="form-control" formControlName="title" placeholder="title"></textarea>
         </div>
 
         <div *ngIf="requestForm.controls['title'].invalid && (requestForm.controls['title'].dirty || requestForm.controls['title'].touched)"
@@ -25,23 +31,21 @@
         </div>
 
         <div class="form-group">
-            <label for="amount">
-                Amount</label>
-            <input type="number" id="amount" class="form-control" formControlName="amount" [(ngModel)]="request.amount"
-                placeholder="0.00">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="0.00">
         </div>
 
         <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
             class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
         </div>
-
-        <button class="btn btn-primary mr-1" (click)="goBack()">
-            back
-        </button>
-        <button class="btn btn-success" [disabled]="!isDirty() && (requestForm.pristine || requestForm.invalid)"
-            (click)="save()">
-            save
-        </button>
     </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-success" [disabled]="(requestForm.pristine || requestForm.invalid)"
+        (click)="save()">
+        Save
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Close</button>
 </div>
