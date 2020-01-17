@@ -14,13 +14,6 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
 
             builder.HasIndex(_ => _.UniqueIdentifier).IsUnique();
             builder.HasIndex(_ => _.Username).IsUnique();
-
-            //builder.Property(x => x.IsAdmin).IsRequired();
-            //builder.Property(x => x.IsSuperior).IsRequired();
-            //builder.Property(x => x.FirstName).IsRequired().HasMaxLength(150);
-            //builder.Property(x => x.LastName).IsRequired().HasMaxLength(150);
-            //builder.Property(x => x.Username).IsRequired().HasMaxLength(150);
-            //builder.Property(x => x.State).IsRequired();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ERNI.PBA.Server.DataAccess.EntitiesConfiguration;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ERNI.PBA.Server.DataAccess
 {
@@ -10,6 +9,8 @@ namespace ERNI.PBA.Server.DataAccess
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }
+
+        public DbSet<TeamRequest> TeamRequests { get; set; }
 
         public DbSet<Budget> Budgets { get; set; }
 
@@ -21,6 +22,7 @@ namespace ERNI.PBA.Server.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new TeamRequestEntityConfiguration());
             modelBuilder.ApplyConfiguration(new BudgetEntityConfiguration());
             modelBuilder.ApplyConfiguration(new RequestCategoryEntityConfiguration());
             modelBuilder.ApplyConfiguration(new RequestEntityConfiguration());

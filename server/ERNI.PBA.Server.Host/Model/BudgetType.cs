@@ -9,7 +9,7 @@ namespace ERNI.PBA.Server.Host.Model
         {
             new BudgetType {Id = BudgetTypeEnum.PersonalBudget, Name = "Personal budget", SinglePerUser = true},
             new BudgetType {Id = BudgetTypeEnum.CommunityBudget, Name = "Community budget", SinglePerUser = false},
-            new BudgetType {Id = BudgetTypeEnum.TeamBudget, Name = "Team budget", SinglePerUser = false}
+            new BudgetType {Id = BudgetTypeEnum.TeamBudget, Name = "Team budget", SinglePerUser = true}
         };
 
         public BudgetTypeEnum Id { get; set; }

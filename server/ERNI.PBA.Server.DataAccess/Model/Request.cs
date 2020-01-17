@@ -24,11 +24,15 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public RequestState State { get; set; }
 
+        public int? TeamRequestId { get; set; }
+
         public virtual Budget Budget { get; set; }
 
         public virtual RequestCategory Category { get; set; }
 
         public virtual User User { get; set; }
+
+        public virtual TeamRequest TeamRequest { get; set; }
 
         public override string ToString()
         {
