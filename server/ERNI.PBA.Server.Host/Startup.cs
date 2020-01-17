@@ -42,6 +42,7 @@ namespace ERNI.PBA.Server
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ITeamRequestRepository, TeamRequestRepository>();
             services.AddTransient<IBudgetRepository, BudgetRepository>();
             services.AddTransient<IRequestRepository, RequestRepository>();
             services.AddTransient<IRequestCategoryRepository, RequestCategoryRepository>();
