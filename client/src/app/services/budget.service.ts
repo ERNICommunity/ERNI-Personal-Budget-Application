@@ -14,20 +14,24 @@ export class BudgetService {
 
   constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
-  public getCurrentUsersBudgets(year : number): Observable<Budget[]> {
-    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'users/active/year/'+ year , this.serviceHelper.getHttpOptions())
+  public getCurrentUsersBudgets(year: number): Observable<Budget[]> {
+    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url + 'users/active/year/' + year, this.serviceHelper.getHttpOptions())
   }
 
-  public getCurrentUserBudgets(year : number): Observable<Budget[]> {
-    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'user/current/year/'+ year , this.serviceHelper.getHttpOptions())
+  public getCurrentUserBudgets(year: number): Observable<Budget[]> {
+    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url + 'user/current/year/' + year, this.serviceHelper.getHttpOptions())
   }
 
-  public getUserBudgetByYear(userId, year : number): Observable<Budget> {
-    return this.http.get<Budget>(this.configService.apiUrlBase + this.url +  'user/'+ userId +'/year/'+ year , this.serviceHelper.getHttpOptions())
+  public getTeamBudgets(year: number): Observable<Budget> {
+    return this.http.get<Budget>(this.configService.apiUrlBase + this.url + 'user/team/year/' + year, this.serviceHelper.getHttpOptions());
   }
 
-  public getBudgetsByYear(year : number): Observable<Budget[]> {
-    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'year/'+ year , this.serviceHelper.getHttpOptions())
+  public getUserBudgetByYear(userId, year: number): Observable<Budget> {
+    return this.http.get<Budget>(this.configService.apiUrlBase + this.url + 'user/' + userId + '/year/' + year, this.serviceHelper.getHttpOptions())
+  }
+
+  public getBudgetsByYear(year: number): Observable<Budget[]> {
+    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url + 'year/' + year, this.serviceHelper.getHttpOptions())
   }
 
   public updateBudget(budget: Budget): Observable<any> {

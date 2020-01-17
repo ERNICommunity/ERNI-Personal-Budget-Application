@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
@@ -9,10 +8,8 @@ using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -22,12 +19,18 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ITeamRequestRepository _teamRequestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public BudgetController(IBudgetRepository budgetRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public BudgetController(
+            IBudgetRepository budgetRepository,
+            IUserRepository userRepository,
+            ITeamRequestRepository teamRequestRepository,
+            IUnitOfWork unitOfWork)
         {
             _budgetRepository = budgetRepository;
             _userRepository = userRepository;
+            _teamRequestRepository = teamRequestRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -49,6 +52,41 @@ namespace ERNI.PBA.Server.Host.Controllers
             });
 
             return Ok(result);
+        }
+
+        [HttpGet("user/team/year/{year}")]
+        public async Task<IActionResult> GetTeamBudgetByYear(int year, CancellationToken cancellationToken)
+        {
+            var userId = HttpContext.User.GetId();
+
+            var teamRequests = await _teamRequestRepository.GetAllAsync(userId);
+            var teamBudges = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
+
+            var amount = teamBudges.Sum(_ => _.Amount);
+            var amountLeft = teamRequests.SelectMany(_ => _.Requests).Sum(_ => _.Amount);
+
+            return Ok(new
+            {
+                Year = year,
+                Amount = amount,
+                AmountLeft = amountLeft,
+                Title = BudgetType.Types.Single(x => x.Id == BudgetTypeEnum.TeamBudget).Name,
+                Type = BudgetTypeEnum.TeamBudget,
+                teamRequests = teamRequests.Select(x => new
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    Date = x.Date,
+                    Requests = x.Requests.Select(_ => new
+                    {
+                        Id = _.Id,
+                        Title = _.Title,
+                        Amount = _.Amount,
+                        Date = _.Date,
+                        State = _.State
+                    })
+                })
+            });
         }
 
         [HttpGet("user/current/year/{year}")]
@@ -81,7 +119,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-            var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
             var amounts = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
                 .ToDictionary(_ => _.BudgetId, _ => _.Amount);
@@ -190,10 +227,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("users/all")]
-        public async Task<IActionResult> CreateBudgetsForAllActiveUsers(
-            // [FromBody] (string Title, decimal Amount, BudgetTypeEnum BudgetType) payload,
-            [FromBody]CreateBudgetsForAllActiveUsersRequest payload,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody]CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
 
@@ -239,9 +273,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("users/{userId}")]
-        public async Task<IActionResult> CreateBudget(int userId,
-            [FromBody] CreateBudgetRequest payload,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBudget(int userId, [FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
             var user = await _userRepository.GetUser(userId, cancellationToken);

@@ -6,5 +6,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     public interface ITeamRequestRepository
     {
         Task AddAsync(TeamRequest teamRequest);
+
+        Task<TeamRequest[]> GetAllAsync(int userId);
     }
 }

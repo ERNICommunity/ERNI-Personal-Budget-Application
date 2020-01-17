@@ -5,7 +5,7 @@ namespace ERNI.PBA.Server.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private DatabaseContext _context;
+        private readonly DatabaseContext _context;
 
         public UnitOfWork(DatabaseContext context){
             _context = context;
