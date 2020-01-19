@@ -1,7 +1,7 @@
 <div class="card text-center" style="margin-bottom:20px;">
     <div class="card-header">
         {{budget.title}}
-        <a *ngIf="selectedYear == currentYear && budget" class="float-right"
+        <a *ngIf="budget.year == currentYear" class="float-right"
             [routerLink]="'create-request/' + budget.id">
             Create new request
         </a>

@@ -18,10 +18,13 @@ export class BudgetComponent {
   requests: Request[];
   percentageLeft: number;
   requestStateType = RequestFilter;
-  
+  public currentYear: number;
+
   constructor(private requestService: RequestService,
     private modalService: NgbModal,
-    public busyIndicatorService: BusyIndicatorService) { }
+    public busyIndicatorService: BusyIndicatorService) {
+    this.currentYear = (new Date()).getFullYear();
+  }
 
   createRequest() {
     const modalRef = this.modalService.open(RequestAddComponent);
@@ -57,5 +60,4 @@ export class BudgetComponent {
       }
     });
   }
-
 }
