@@ -81,7 +81,7 @@ import { EditRequestModalComponent } from './requests/requestEdit/editRequestMod
         ReactiveFormsModule
     ],
     entryComponents: [
-        NewRequestModalComponent, RequestDetailComponent, RequestEditComponent
+        NewRequestModalComponent, NewTeamRequestModalComponent, RequestDetailComponent, RequestEditComponent
     ],
     providers: [
         AdalService,

@@ -39,11 +39,11 @@ export class TeamRequestAddComponent implements OnInit {
     }
 
     save(): void {
-        var title = this.requestForm.get("title").value;
-        var amount = this.requestForm.get("amount").value;
-        var ngbDate = this.requestForm.get("date").value;
+        let title = this.requestForm.get("title").value;
+        let amount = this.requestForm.get("amount").value;
+        let ngbDate = this.requestForm.get("date").value;
 
-        var date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
+        let date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day, 12);
 
         this.busyIndicatorService.start();
 
