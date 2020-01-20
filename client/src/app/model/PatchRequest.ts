@@ -1,5 +1,5 @@
 export class PatchRequest {
-    requestId: number;
+    id: number;
     amount: number;
     title: string;
     date: Date;

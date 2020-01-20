@@ -31,7 +31,6 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { AuthInterceptor } from './interceptors/authInterceptor'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-// import { BudgetsComponent } from './budgets/budgets.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
 import { UnregisteredInterceptor } from './interceptors/unregisteredInterceptor';
@@ -44,6 +43,7 @@ import { RequestDetailModalComponent } from './requests/requestDetail/requestDet
 import { TeamBudgetComponent } from './budgets/team-budget/team-budget.component';
 import { TeamRequestAddComponent } from './requests/team-request-add/team-request-add.component';
 import { NewTeamRequestModalComponent } from './requests/new-team-request-modal/new-team-request-modal.component';
+import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
 
 @NgModule({
     declarations: [
@@ -59,6 +59,7 @@ import { NewTeamRequestModalComponent } from './requests/new-team-request-modal/
         MyBudgetComponent,
         RequestAddComponent,
         RequestDetailComponent,
+        EditRequestModalComponent,
         RequestEditComponent,
         RequestMassComponent,
         OtherBudgetsComponent,
@@ -80,7 +81,7 @@ import { NewTeamRequestModalComponent } from './requests/new-team-request-modal/
         ReactiveFormsModule
     ],
     entryComponents: [
-        NewRequestModalComponent, RequestDetailModalComponent
+        NewRequestModalComponent, RequestDetailComponent, RequestEditComponent
     ],
     providers: [
         AdalService,
