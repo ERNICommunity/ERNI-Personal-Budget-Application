@@ -23,6 +23,8 @@ import { ViewerGuard } from './services/guards/viewer.guard';
 import { AuthenticationGuard } from './services/guards/authentication.guard';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
+import { NewTeamRequestModalComponent } from './requests/new-team-request-modal/new-team-request-modal.component';
+import { TeamRequestAddComponent } from './requests/team-request-add/team-request-add.component';
 
 const currentYear = "2020"; // = (new Date()).getFullYear();
 
@@ -42,10 +44,11 @@ export const rootRouterConfig: Routes = [
         path: 'my-budget', canActivate: [AuthenticationGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
-            { 
+            {
                 path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard],
                 children: [
                     { path: 'create-request/:budgetId', component: NewRequestModalComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'create-team-request', component: NewTeamRequestModalComponent, canActivate: [AuthenticationGuard] },
                     { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [AuthenticationGuard] }
                 ]
             }
@@ -54,6 +57,7 @@ export const rootRouterConfig: Routes = [
     { path: 'request/detail/:id', component: RequestDetailComponent, canActivate: [AuthenticationGuard] },
     { path: 'request/edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
     { path: 'create-request', component: RequestAddComponent, canActivate: [AuthenticationGuard] },
+    { path: 'create-team-request', component: TeamRequestAddComponent, canActivate: [AuthenticationGuard] },
     {
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
         children: [

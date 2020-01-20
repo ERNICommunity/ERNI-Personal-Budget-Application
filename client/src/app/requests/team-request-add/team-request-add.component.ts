@@ -1,24 +1,22 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { RequestService } from '../../services/request.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { Budget } from '../../model/budget';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService } from '../../services/alert.service';
 import { NewRequest } from '../../model/newRequest';
+import { Budget } from '../../model/budget';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { RequestService } from '../../services/request.service';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
+import { TeamBudget } from '../../model/request/team-budget';
 
 @Component({
-    selector: 'app-request-add',
-    templateUrl: './requestAdd.component.html',
-    styleUrls: ['./requestAdd.component.css']
+    selector: 'app-team-request-add',
+    templateUrl: './team-request-add.component.html',
+    styleUrls: ['./team-request-add.component.css']
 })
-export class RequestAddComponent implements OnInit {
-    @Input() budget: Budget;
+export class TeamRequestAddComponent implements OnInit {
     httpResponseError: string;
     requestForm: FormGroup;
-
-    budgetId: number;
 
     constructor(
         public modal: NgbActiveModal,
@@ -41,7 +39,6 @@ export class RequestAddComponent implements OnInit {
     }
 
     save(): void {
-        var budgetId = this.budgetId;
         var title = this.requestForm.get("title").value;
         var amount = this.requestForm.get("amount").value;
         var ngbDate = this.requestForm.get("date").value;
@@ -50,7 +47,7 @@ export class RequestAddComponent implements OnInit {
 
         this.busyIndicatorService.start();
 
-        this.requestService.addRequest({ budgetId, title, amount, date } as NewRequest)
+        this.requestService.addTeamRequest({ title, amount, date } as NewRequest)
             .subscribe(() => {
                 this.busyIndicatorService.end();
                 this.modal.close();

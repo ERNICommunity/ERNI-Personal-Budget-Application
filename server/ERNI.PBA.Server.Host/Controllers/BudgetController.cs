@@ -69,10 +69,10 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 Year = year,
                 Amount = amount,
-                AmountLeft = amountLeft,
+                AmountLeft = amount - amountLeft,
                 Title = BudgetType.Types.Single(x => x.Id == BudgetTypeEnum.TeamBudget).Name,
                 Type = BudgetTypeEnum.TeamBudget,
-                teamRequests = teamRequests.Select(x => new
+                TeamRequests = teamRequests.Select(x => new
                 {
                     Id = x.Id,
                     UserId = x.UserId,

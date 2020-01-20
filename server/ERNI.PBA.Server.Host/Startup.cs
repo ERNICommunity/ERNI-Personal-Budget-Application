@@ -1,5 +1,4 @@
 using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +15,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using ERNI.PBA.Server.Host.Services;
 
 namespace ERNI.PBA.Server
 {
@@ -46,6 +46,7 @@ namespace ERNI.PBA.Server
             services.AddTransient<IBudgetRepository, BudgetRepository>();
             services.AddTransient<IRequestRepository, RequestRepository>();
             services.AddTransient<IRequestCategoryRepository, RequestCategoryRepository>();
+            services.AddTransient<IRequestService, RequestService>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
@@ -88,16 +89,21 @@ namespace ERNI.PBA.Server
 
                                 if (user.IsAdmin)
                                 {
-                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
+                                    claims.Add(new Claim(Claims.Role, Role.Admin.ToString()));
                                 }
 
                                 if (user.IsViewer)
                                 {
-                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "viewer"));
+                                    claims.Add(new Claim(Claims.Role, Role.Viewer.ToString()));
+                                }
+
+                                if (user.IsSuperior)
+                                {
+                                    claims.Add(new Claim(Claims.Role, Role.Superior.ToString()));
                                 }
 
                                 context.Principal.AddIdentity(
-                                    new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
+                                    new ClaimsIdentity(claims, null, null, Claims.Role));
                             }
                         }
                     };

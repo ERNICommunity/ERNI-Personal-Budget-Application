@@ -1,17 +1,15 @@
-import { Component, OnDestroy } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { RequestDetailComponent } from '../../requests/requestDetail/requestDetail.component';
-import { RequestAddComponent } from './requestAdd.component';
+import { TeamRequestAddComponent } from '../team-request-add/team-request-add.component';
 
 @Component({
-    selector: 'app-modal-container',
+    selector: 'app-new-team-request-modal',
     template: ''
 })
-export class NewRequestModalComponent implements OnDestroy {
+export class NewTeamRequestModalComponent implements OnDestroy {
     destroy = new Subject<any>();
     currentDialog = null;
 
@@ -22,7 +20,7 @@ export class NewRequestModalComponent implements OnDestroy {
         route.params.pipe(takeUntil(this.destroy)).subscribe(params => {
 
             // When router navigates on this component is takes the params and opens up the photo detail modal
-            this.currentDialog = this.modalService.open(RequestAddComponent, { centered: true });
+            this.currentDialog = this.modalService.open(TeamRequestAddComponent, { centered: true });
             this.currentDialog.componentInstance.budgetId = params.budgetId;
 
             // Go back to home page after the modal is closed

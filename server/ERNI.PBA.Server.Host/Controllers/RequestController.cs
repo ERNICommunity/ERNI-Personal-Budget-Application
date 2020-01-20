@@ -11,6 +11,7 @@ using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Services;
+using ERNI.PBA.Server.Host.Utils;
 using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class RequestController : Controller
     {
+        private readonly IRequestService _requestService;
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -31,14 +33,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly MailService _mailService;
         private readonly ILogger _logger;
 
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository,
-            IBudgetRepository budgetRepository, IUnitOfWork unitOfWork, IConfiguration configuration,
+        public RequestController(
+            IRequestService requestService,
+            IRequestRepository requestRepository,
+            IUserRepository userRepository,
+            IBudgetRepository budgetRepository,
+            IUnitOfWork unitOfWork,
+            IConfiguration configuration,
             ILogger<RequestController> logger)
         {
-            _unitOfWork = unitOfWork;
+            _requestService = requestService;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _budgetRepository = budgetRepository;
+            _unitOfWork = unitOfWork;
             _mailService = new MailService(configuration);
             _logger = logger;
         }
@@ -170,7 +178,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRequest([FromBody]PostRequestModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddRequest([FromBody]SingleRequestInputModel payload, CancellationToken cancellationToken)
         {
             var userId = User.GetId();
             var currentYear = DateTime.Now.Year;
@@ -203,6 +211,16 @@ namespace ERNI.PBA.Server.Host.Controllers
             await _requestRepository.AddRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost("team")]
+        [Authorize(Roles = nameof(Role.Superior))]
+        public async Task<IActionResult> AddTeamRequest([FromBody]RequestInputModel payload, CancellationToken cancellationToken)
+        {
+            var userId = User.GetId();
+            await _requestService.CreateTeamRequests(userId);
 
             return Ok();
         }
@@ -261,7 +279,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             await _requestRepository.AddRequests(requests);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-            
+
             return Ok();
         }
 
@@ -398,7 +416,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var users = await _userRepository.GetAllUsers(cancellationToken);
             var usersWithBudgetLeft = new List<UserOutputModel>();
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 //if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
                 {

@@ -1,0 +1,54 @@
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Create request</h4>
+    <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <app-alert id="addRequestError"></app-alert>
+
+    <form [formGroup]="requestForm">
+        <div class="form-group">
+            <label for="title">Title *</label>
+            <textarea id="title" #requestTitle class="form-control" formControlName="title" type="textarea"></textarea>
+        </div>
+
+        <div *ngIf="requestForm.controls['title'].invalid && (requestForm.controls['title'].dirty || requestForm.controls['title'].touched)"
+            class="alert alert-danger col-md-6">
+            <div *ngIf="requestForm.controls['title'].errors.required">Title is required.</div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <input class="form-control" placeholder="yyyy-mm-dd" formControlName="date" name="dp" ngbDatepicker
+                    #d="ngbDatepicker">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="requestForm.controls['date'].invalid && (requestForm.controls['date'].dirty || requestForm.controls['date'].touched)"
+            class="alert alert-danger col-md-6">
+            <div *ngIf="requestForm.controls['date'].errors.required">Date is required.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount *</label>
+            <input id="amount" #requestAmount class="form-control" formControlName="amount" type="number"
+                placeholder="0.00">
+        </div>
+
+        <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
+            class="alert alert-danger col-md-6">
+            <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" class="btn btn-danger" [disabled]="requestForm.pristine || requestForm.invalid"
+        (click)="save()">Save</button>
+</div>

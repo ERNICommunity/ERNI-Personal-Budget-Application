@@ -41,6 +41,9 @@ import { AlertComponent } from './directives/alert/alert.component';
 import { BudgetComponent } from './budgets/budget/budget.component';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
+import { TeamBudgetComponent } from './budgets/team-budget/team-budget.component';
+import { TeamRequestAddComponent } from './requests/team-request-add/team-request-add.component';
+import { NewTeamRequestModalComponent } from './requests/new-team-request-modal/new-team-request-modal.component';
 
 @NgModule({
     declarations: [
@@ -62,7 +65,10 @@ import { RequestDetailModalComponent } from './requests/requestDetail/requestDet
         OtherBudgetsDetailComponent,
         AlertComponent,
         NewRequestModalComponent,
-        RequestDetailModalComponent
+        RequestDetailModalComponent,
+        TeamBudgetComponent,
+        TeamRequestAddComponent,
+        NewTeamRequestModalComponent
     ],
     imports: [
         NgbModule,

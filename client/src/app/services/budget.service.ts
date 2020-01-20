@@ -6,6 +6,7 @@ import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { BudgetType } from '../model/budgetType';
 import { User } from '../model/user';
+import { TeamBudget } from '../model/request/team-budget';
 
 @Injectable()
 export class BudgetService {
@@ -22,8 +23,8 @@ export class BudgetService {
     return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url + 'user/current/year/' + year, this.serviceHelper.getHttpOptions())
   }
 
-  public getTeamBudgets(year: number): Observable<Budget> {
-    return this.http.get<Budget>(this.configService.apiUrlBase + this.url + 'user/team/year/' + year, this.serviceHelper.getHttpOptions());
+  public getTeamBudgets(year: number): Observable<TeamBudget> {
+    return this.http.get<TeamBudget>(this.configService.apiUrlBase + this.url + 'user/team/year/' + year, this.serviceHelper.getHttpOptions());
   }
 
   public getUserBudgetByYear(userId, year: number): Observable<Budget> {
@@ -41,7 +42,7 @@ export class BudgetService {
   public createBudget(title: string, amount: number, userId: number, budgetType: number): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.url + "users/" + userId, { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
   }
-
+  
   public createBudgetsForAllActiveUsers(title: string, amount: number, budgetType: number): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.url + "users/all", { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
   }
