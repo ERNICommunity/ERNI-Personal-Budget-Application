@@ -24,9 +24,8 @@ export class OtherBudgetsDetailComponent implements OnInit {
 
     getUserBudget(): void {
         const id = this.route.snapshot.paramMap.get('id');
-        const year = this.route.snapshot.paramMap.get('year');
 
-        this.budgetService.getUserBudgetByYear(id,parseInt(year))
+        this.budgetService.getBudget(parseInt(id))
             .subscribe(budget => this.budget = budget);
     }
 
@@ -35,7 +34,7 @@ export class OtherBudgetsDetailComponent implements OnInit {
       }
     
     save() : void {
-        this.budgetService.updateBudget(this.budget)
+        this.budgetService.updateBudget(this.budget.id, this.budget.amount)
             .subscribe(() => this.goBack())
     }
 

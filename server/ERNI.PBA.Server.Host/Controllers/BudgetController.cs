@@ -38,6 +38,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var result = budgets.Select(budget => new
             {
+                Id = budget.Id,
                 Year = budget.Year,
                 Amount = budget.Amount,
                 User = new User
@@ -50,6 +51,28 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("{budgetId}")]
+        public async Task<IActionResult> GetUserBudgetByYear(int budgetId, CancellationToken cancellationToken)
+        {
+            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
+
+            var result = new
+            {
+                Id = budget.Id,
+                Year = budget.Year,
+                Amount = budget.Amount,
+                User = new User
+                {
+                    Id = budget.User.Id,
+                    FirstName = budget.User.FirstName,
+                    LastName = budget.User.LastName,
+                }
+            };
+
+            return Ok(result);
+        }
+
 
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
@@ -89,6 +112,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var result = budgets.Select(b =>
                     new
                     {
+                        Id = b.Id,
                         User = new
                         {
                             Id = b.User.Id,
@@ -127,35 +151,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok(result);
         }
 
-
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUsersBudgets(int userId, CancellationToken cancellationToken)  //not used
-        {
-            var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
-
-            var result = budgets.Select(_ => new
-            {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
-
-            return Ok(result);
-        }
-
-
-        [HttpGet("user/current")]
-        public async Task<IActionResult> GetCurrentUsersBudgets(CancellationToken cancellationToken)  //not used
-        {
-            var budgets = await _budgetRepository.GetBudgetsByUser(HttpContext.User.GetId(), cancellationToken);
-
-            var result = budgets.Select(_ => new
-            {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
-
-            return Ok(result);
-        }
 
         [HttpGet("usersAvailableForBudgetType/{budgetTypeId}")]
         public async Task<IActionResult> GetUsersAvailableForBudget(BudgetTypeEnum budgetTypeId,
@@ -278,34 +273,18 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> AddOrUpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
         {
-            //var budget = await _budgetRepository.GetBudgets(payload.User.Id, payload.Year, cancellationToken);
+            var budget = await _budgetRepository.GetBudget(payload.Id, cancellationToken);
 
-            //if (budget == null)
-            //{
-            //    budget = new Budget()
-            //    {
-            //        UserId = payload.User.Id,
-            //        Year = payload.Year,
-            //        Amount = payload.Amount
-            //    };
+            if (budget == null)
+            {
+                return BadRequest($"Budget with id {payload.Id} not found");
+            }
 
-            //    _budgetRepository.AddBudget(budget);
+            budget.Amount = payload.Amount;
 
-            //    await _unitOfWork.SaveChanges(cancellationToken);
-
-            //    return Ok();
-            //}
-            //else
-            //{
-            //    budget.Amount = payload.Amount;
-
-            //    await _unitOfWork.SaveChanges(cancellationToken);
-
-            //    return Ok();
-            //}
-
+            await _unitOfWork.SaveChanges(cancellationToken);
             return Ok();
         }
 
