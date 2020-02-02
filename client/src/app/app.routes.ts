@@ -97,6 +97,6 @@ export const rootRouterConfig: Routes = [
             { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
         ]
     },
-    { path: 'request-mass', component: RequestMassComponent, canActivate: [AdminGuard] }
+    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminGuard] }
 ];
 
