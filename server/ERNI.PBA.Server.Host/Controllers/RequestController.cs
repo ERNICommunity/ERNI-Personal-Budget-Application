@@ -253,6 +253,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Amount = payload.Amount,
                     Date = payload.Date.ToLocalTime().Date,
                     State = RequestState.Approved,
+                    BudgetId = budget.Id
                 };
 
                 requests.Add(request);
@@ -393,15 +394,25 @@ namespace ERNI.PBA.Server.Host.Controllers
             };
         }
 
-        [HttpGet("budget-left/{amount}/{categoryId}/{year}")]
-        public async Task<UserModel[]> BudgetLeft(decimal amount, int categoryId, int year, CancellationToken cancellationToken)
+        [HttpGet("budget-left/{amount}/{year}")]
+        public async Task<UserModel[]> BudgetLeft(decimal amount, int year, CancellationToken cancellationToken)
         {
-            var users = await _userRepository.GetAllUsers(cancellationToken);
+            var budgetAmount = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
+                .ToDictionary(_ => _.BudgetId, _ => _.Amount);
+
+            var budgets = await _budgetRepository.GetBudgets(year, BudgetTypeEnum.PersonalBudget, cancellationToken);
+
+            var users = (await _userRepository.GetAllUsers(cancellationToken))
+                .ToDictionary(_ => _.Id);
+
             var usersWithBudgetLeft = new List<UserModel>();
-            foreach(var user in users)
+
+            foreach(var budget in budgets)
             {
-                //if(string.Equals(await CheckAmountForRequest(user.Id, year, amount, categoryId, null, cancellationToken), validResponse))
+                if (budgetAmount[budget.Id] + amount <= budget.Amount)
                 {
+                    var user = users[budget.UserId];
+
                     usersWithBudgetLeft.Add(new UserModel
                     {
                         Id = user.Id,
