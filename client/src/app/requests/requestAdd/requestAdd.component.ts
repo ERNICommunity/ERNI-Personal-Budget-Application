@@ -7,6 +7,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../services/alert.service';
 import { NewRequest } from '../../model/newRequest';
 import { Alert, AlertType } from '../../model/alert.model';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
   selector: 'app-request-add',
@@ -25,7 +26,8 @@ export class RequestAddComponent implements OnInit {
     private requestService: RequestService,
     private fb: FormBuilder,
     private busyIndicatorService: BusyIndicatorService,
-    private alertService: AlertService) {
+    private alertService: AlertService,
+    private dataChangeNotificationService: DataChangeNotificationService) {
     this.createForm();
   }
 
@@ -54,6 +56,7 @@ export class RequestAddComponent implements OnInit {
       .subscribe(() => {
         this.busyIndicatorService.end();
         this.modal.close();
+        this.dataChangeNotificationService.notify();
         this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
       },
         err => {

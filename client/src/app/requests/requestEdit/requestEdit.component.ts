@@ -8,6 +8,7 @@ import { PatchRequest } from '../../model/PatchRequest';
 import { NgbDateStruct, NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
   selector: 'app-request-edit',
@@ -25,7 +26,8 @@ export class RequestEditComponent {
               public modal: NgbActiveModal,
               private location: Location,
               private fb: FormBuilder,
-              private alertService: AlertService){
+              private alertService: AlertService,
+              private dataChangeNotificationService: DataChangeNotificationService){
                 this.createForm();
                }
 
@@ -80,6 +82,7 @@ export class RequestEditComponent {
     this.requestService.updateRequest({ id, title, amount, date } as PatchRequest)
        .subscribe(() => {
         this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
+        this.dataChangeNotificationService.notify();
         this.modal.close();
        },
        err => {

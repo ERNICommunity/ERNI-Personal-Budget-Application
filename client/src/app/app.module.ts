@@ -41,6 +41,7 @@ import { BudgetComponent } from './budgets/budget/budget.component';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
+import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 
 @NgModule({
     declarations: [
@@ -87,6 +88,7 @@ import { EditRequestModalComponent } from './requests/requestEdit/editRequestMod
         BudgetService,
         BusyIndicatorService,
         AdminGuard,
+        DataChangeNotificationService,
         ViewerGuard,
         {
             provide: HTTP_INTERCEPTORS,
