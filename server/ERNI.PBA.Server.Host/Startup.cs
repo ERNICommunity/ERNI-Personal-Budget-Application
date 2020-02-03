@@ -85,12 +85,12 @@ namespace ERNI.PBA.Server.Host
 
                                 if (user.IsAdmin)
                                 {
-                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "admin"));
+                                    claims.Add(new Claim(Claims.Role, Roles.Admin));
                                 }
 
                                 if (user.IsViewer)
                                 {
-                                    claims.Add(new System.Security.Claims.Claim(Claims.Role, "viewer"));
+                                    claims.Add(new Claim(Claims.Role, Roles.Viewer));
                                 }
 
                                 context.Principal.AddIdentity(

@@ -58,6 +58,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload)
         {
             var userExists = await _userRepository.ExistsAsync(payload.Email);
@@ -96,6 +97,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(payload.Id, cancellationToken);
@@ -144,6 +146,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Get(int id)
         {
             var user = await _userRepository.GetUser(id, CancellationToken.None);
@@ -203,6 +206,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("active")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetActiveUsers(CancellationToken cancellationToken)
         {
             var users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);

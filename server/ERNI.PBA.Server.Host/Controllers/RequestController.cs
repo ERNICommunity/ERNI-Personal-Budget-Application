@@ -74,7 +74,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-
             var isAdmin = currentUser.IsAdmin;
             var isSuperior = currentUser.Id == request.User.SuperiorId;
             var isViewer = currentUser.IsViewer;
@@ -97,6 +96,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("{id}/approve")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> ApproveRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
@@ -107,26 +107,11 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.IsAdmin)
-            {
-                request.State = RequestState.Approved;
-            }
-            else
-            {
-                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                if (!subordinatesIds.Contains(request.UserId))
-                {
-                    _logger.LogWarning($"User cannot manipulate the request id={request.Id}");
-                    return BadRequest($"User cannot manipulate the request id={request.Id}");
-                }
-
-                request.State = RequestState.ApprovedBySuperior;
-            }
+            request.State = RequestState.Approved;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            string message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " +
+            var message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " +
                              request.State + ".";
 
             _mailService.SendMail(message, request.User.Username);
@@ -135,30 +120,13 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("{id}/reject")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(id, cancellationToken);
             if (request == null)
             {
                 return BadRequest("Not a valid id");
-            }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (!currentUser.IsAdmin)
-            {
-                // current user must be superior of request's user
-                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                if (!subordinatesIds.Contains(request.UserId))
-                {
-                    return BadRequest($"User cannot manipulate the request id={request.Id}");
-                }
-
-                // if request was approved by admin, it cannot be rejected by superior
-                if (request.State == RequestState.Approved)
-                {
-                    return BadRequest($"Superior cannot reject the request approved by admin. Request id={request.Id}");
-                }
             }
 
             request.State = RequestState.Rejected;
@@ -217,6 +185,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
         /// </summary>
         [HttpPost("mass")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> AddRequestMass([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
         {
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
@@ -268,6 +237,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/pending")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
@@ -275,6 +245,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/approved")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
@@ -282,6 +253,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/approvedBySuperior")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
         {
@@ -289,6 +261,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/rejected")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         [SwaggerResponseExample(200, typeof(RequestExample))]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
@@ -338,6 +311,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (request == null)
             {
                 return BadRequest("Not a valid id");
+            }
+
+            var user = HttpContext.User;
+            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
+            {
+                return BadRequest("Access denied");
             }
 
             await _requestRepository.DeleteRequest(request);
@@ -396,6 +375,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("budget-left/{amount}/{year}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<UserModel[]> BudgetLeft(decimal amount, int year, CancellationToken cancellationToken)
         {
             var budgetAmount = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))

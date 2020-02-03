@@ -29,6 +29,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("user/{userId}/year/{year}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetUserBudgetByYear(int userId, int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgets(userId, year, cancellationToken);
@@ -50,6 +51,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{budgetId}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetUserBudgetByYear(int budgetId, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
@@ -98,6 +100,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("users/active/year/{year}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
@@ -127,6 +130,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("year/{year}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
@@ -149,6 +153,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
 
         [HttpGet("usersAvailableForBudgetType/{budgetTypeId}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetUsersAvailableForBudget(BudgetTypeEnum budgetTypeId,
             CancellationToken cancellationToken)
         {
@@ -181,8 +186,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("users/all")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudgetsForAllActiveUsers(
-            // [FromBody] (string Title, decimal Amount, BudgetTypeEnum BudgetType) payload,
             [FromBody]CreateBudgetsForAllActiveUsersRequest payload,
             CancellationToken cancellationToken)
         {
@@ -230,6 +235,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("users/{userId}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudget(int userId,
             [FromBody] CreateBudgetRequest payload,
             CancellationToken cancellationToken)
@@ -269,6 +275,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(payload.Id, cancellationToken);
