@@ -1,7 +1,5 @@
 using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

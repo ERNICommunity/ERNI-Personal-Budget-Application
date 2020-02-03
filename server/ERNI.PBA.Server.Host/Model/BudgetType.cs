@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ERNI.PBA.Server.DataAccess.Model;
+﻿using ERNI.PBA.Server.DataAccess.Model;
+using System.Collections.Generic;
 
 namespace ERNI.PBA.Server.Host.Model
 {

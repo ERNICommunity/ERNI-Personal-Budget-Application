@@ -1,9 +1,9 @@
 ﻿using ERNI.PBA.Server.DataAccess;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.Host
 {

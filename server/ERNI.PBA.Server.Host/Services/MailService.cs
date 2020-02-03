@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
-using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Host.Services
 {
-    public  class MailService
+    public class MailService
     {
         private readonly IConfiguration _configuration;
         private readonly string _smtpServer;

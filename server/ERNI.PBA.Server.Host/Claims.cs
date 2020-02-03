@@ -1,6 +1,5 @@
-using System.IO;
-
-public static class Claims {
+public static class Claims
+{
     public const string FirstName = "given_name";
     public const string LastName = "family_name";
     public const string UserName = "upn";

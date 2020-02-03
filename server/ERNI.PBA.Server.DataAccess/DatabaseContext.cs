@@ -1,7 +1,6 @@
 ﻿using ERNI.PBA.Server.DataAccess.EntitiesConfiguration;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ERNI.PBA.Server.DataAccess
 {

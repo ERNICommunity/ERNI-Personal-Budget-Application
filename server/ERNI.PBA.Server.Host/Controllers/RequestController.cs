@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
@@ -17,6 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Examples;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -262,7 +262,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             await _requestRepository.AddRequests(requests);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-            
+
             return Ok();
         }
 
@@ -407,7 +407,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var usersWithBudgetLeft = new List<UserModel>();
 
-            foreach(var budget in budgets)
+            foreach (var budget in budgets)
             {
                 if (budgetAmount[budget.Id] + amount <= budget.Amount)
                 {

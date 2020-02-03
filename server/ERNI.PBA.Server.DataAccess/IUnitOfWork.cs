@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.DataAccess
 {
-    public interface IUnitOfWork{
+    public interface IUnitOfWork
+    {
         Task SaveChanges(CancellationToken cancellationToken);
     }
 }
