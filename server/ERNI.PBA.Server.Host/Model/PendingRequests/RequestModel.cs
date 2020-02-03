@@ -1,3 +1,5 @@
+using ERNI.PBA.Server.DataAccess.Model;
+
 namespace ERNI.PBA.Server.Host.Model.PendingRequests
 {
     public class RequestModel

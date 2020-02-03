@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 
-namespace ERNI.PBA.Server.Utils
+namespace ERNI.PBA.Server.Host.Utils
 {
     public static class PrincipalExtensions
     {

@@ -10,7 +10,7 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public int UserId { get; set; }
 
-        public virtual User User { get; set; }
+        public User User { get; set; }
 
         public BudgetTypeEnum BudgetType { get; set; }
 

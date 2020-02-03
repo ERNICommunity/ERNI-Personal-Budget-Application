@@ -2,7 +2,6 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -101,7 +101,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
-            var activeUsers = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
             var amounts = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
                 .ToDictionary(_ => _.BudgetId, _ => _.Amount);

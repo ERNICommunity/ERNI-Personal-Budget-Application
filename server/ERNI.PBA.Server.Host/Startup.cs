@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,13 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 
-namespace ERNI.PBA.Server
+namespace ERNI.PBA.Server.Host
 {
     public class Startup
     {

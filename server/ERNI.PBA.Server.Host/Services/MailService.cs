@@ -6,7 +6,6 @@ namespace ERNI.PBA.Server.Host.Services
 {
     public class MailService
     {
-        private readonly IConfiguration _configuration;
         private readonly string _smtpServer;
         private readonly string _port;
         private readonly string _userName;
@@ -15,12 +14,11 @@ namespace ERNI.PBA.Server.Host.Services
 
         public MailService(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _smtpServer = _configuration["MailSettings:SmtpServer"];
-            _port = _configuration["MailSettings:Port"];
-            _userName = _configuration["MailSettings:UserName"];
-            _password = _configuration["MailSettings:Password"];
-            _enableSsl = _configuration["MailSettings:EnableSsl"];
+            _smtpServer = configuration["MailSettings:SmtpServer"];
+            _port = configuration["MailSettings:Port"];
+            _userName = configuration["MailSettings:UserName"];
+            _password = configuration["MailSettings:Password"];
+            _enableSsl = configuration["MailSettings:EnableSsl"];
         }
 
         public void SendMail(string body, string emails)
