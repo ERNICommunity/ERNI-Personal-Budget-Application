@@ -433,42 +433,5 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
             return usersWithBudgetLeft.ToArray();
         }
-
-
-        //private async Task<string> aCheckAmountForRequest(int userId, int year, decimal amount, int categoryId, int? requestId, CancellationToken cancellationToken)
-        //{
-        //    var category = await _requestCategoryRepository.GetRequestCategory(categoryId, cancellationToken);
-
-        //    if (category.SpendLimit != null)
-        //    {
-        //        decimal requestsSumForCategory = await CalculateAmountSumForCategory(userId, year, category.Id, requestId, cancellationToken);
-
-        //        var currentAmountForCategory = category.SpendLimit - requestsSumForCategory;
-
-        //        if (currentAmountForCategory < amount)
-        //        {
-        //            return "Amount of your request is over " + category.Title
-        //            + " category limit: " + category.SpendLimit +
-        //            ". Your current amount for this category is (" + currentAmountForCategory + ")!";
-        //        }
-        //    }
-        //    return validResponse;
-        //}
-
-        //private async Task<decimal> aCalculateAmountSumForCategory(int userId, int year, int categoryId, int? requestId, CancellationToken cancellationToken)
-        //{
-        //    var requestsOfCategory = (await _requestRepository.GetRequests(userId, cancellationToken))
-        //        .Where(req => req.CategoryId == categoryId && req.Id != requestId)
-        //        .Where(req => req.State != RequestState.Rejected);
-
-        //    decimal requestsSumForCategory = 0;
-
-        //    foreach (var item in requestsOfCategory)
-        //    {
-        //        requestsSumForCategory += item.Amount;
-        //    }
-
-        //    return requestsSumForCategory;
-        //}
     }
 }
