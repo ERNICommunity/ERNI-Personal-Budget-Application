@@ -47,7 +47,12 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("budget/{budgetId}")]
         public async Task<IActionResult> GetRequests(int budgetId, CancellationToken cancellationToken)
         {
-            // TODO: check for access: HttpContext.User.GetId(), 
+            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
+
+            if (!HttpContext.User.IsInRole(Roles.Admin) && budget.UserId != HttpContext.User.GetId())
+            {
+                return Unauthorized();
+            }
 
             var requests = await _requestRepository.GetRequests(budgetId, cancellationToken);
 
@@ -75,10 +80,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             var isAdmin = currentUser.IsAdmin;
-            var isSuperior = currentUser.Id == request.User.SuperiorId;
             var isViewer = currentUser.IsViewer;
 
-            if (currentUser.Id != request.User.Id && !isAdmin && !isSuperior && !isViewer)
+            if (currentUser.Id != request.User.Id && !isAdmin && !isViewer)
             {
                 _logger.LogWarning("No access for request!");
                 return StatusCode(401);
