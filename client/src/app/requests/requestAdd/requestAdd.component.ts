@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { CategoryService } from '../../services/category.service';
+import { Component, OnInit, Input } from '@angular/core';
 import { RequestService } from '../../services/request.service';
-import { Category } from '../../model/category';
-import { Request } from '../../model/request';
-import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-
+import { Budget } from '../../model/budget';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AlertService } from '../../services/alert.service';
+import { NewRequest } from '../../model/newRequest';
+import { Alert, AlertType } from '../../model/alert.model';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
   selector: 'app-request-add',
@@ -15,83 +15,53 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
   styleUrls: ['./requestAdd.component.css']
 })
 export class RequestAddComponent implements OnInit {
-  categories: Category[];
-  selectedCategory : Category;
-  httpResponseError : string;
-  selectedDate : Date;
+  @Input() budget: Budget;
+  httpResponseError: string;
   requestForm: FormGroup;
-  requestUrl: string;
-  dirty: boolean;
 
-  constructor (private categoryService: CategoryService,
-              private requestService: RequestService,
-              private location: Location,
-              private route: ActivatedRoute,
-              private fb: FormBuilder,
-              private busyIndicatorService: BusyIndicatorService){
-              this.createForm();
-              }
+  budgetId: number;
+
+  constructor(
+    public modal: NgbActiveModal,
+    private requestService: RequestService,
+    private fb: FormBuilder,
+    private busyIndicatorService: BusyIndicatorService,
+    private alertService: AlertService,
+    private dataChangeNotificationService: DataChangeNotificationService) {
+    this.createForm();
+  }
 
   ngOnInit() {
-    this.onChanges();
-    this.getCategories();
-    this.selectedDate = new Date();
   }
 
   createForm() {
     this.requestForm = this.fb.group({
-       title: ['', Validators.required ],
-       amount: ['', Validators.required ],
-       category: ['', Validators.required ],
-       url: ['', Validators.required ]
+      title: ['', Validators.required],
+      amount: ['', Validators.required],
+      date: ['', Validators.required],
     });
   }
 
-  onChanges() {
-    this.requestForm.get('category').valueChanges
-    .subscribe(selectedCategory => {
-        if (selectedCategory.isUrlNeeded) {
-            this.requestForm.get('url').enable();
-        }
-        else {
-            this.requestForm.get('url').disable();
-            this.requestForm.get('url').reset();
-        }
-    });
-  }
+  save(): void {
+    var budgetId = this.budgetId;
+    var title = this.requestForm.get("title").value;
+    var amount = this.requestForm.get("amount").value;
+    var ngbDate = this.requestForm.get("date").value;
 
-  getCategories(): void {
+    var date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
 
     this.busyIndicatorService.start();
-    this.categoryService.getCategories()
-    .subscribe(categories => {
-       this.categories = categories.filter(cat => cat.isActive == true),
-       this.selectedCategory =categories.filter(cat => cat.isActive == true)[0];
-       this.busyIndicatorService.end();
-      });
-  }
 
-  isDirty(): boolean{
-    return this.dirty;
-  }
-
-  goBack(): void {
-    this.location.back();
-  }
-  
-  save(title: string, amount: number) : void {
-    var category = this.selectedCategory;
-    var date = this.selectedDate;
-    var url = this.requestUrl;
-    this.busyIndicatorService.start();
-
-    this.requestService.addRequest({ title, amount, date, category, url} as Request)
-       .subscribe(() =>{
+    this.requestService.addRequest({ budgetId, title, amount, date } as NewRequest)
+      .subscribe(() => {
         this.busyIndicatorService.end();
-        this.goBack();},
-       err => {
-        this.httpResponseError = JSON.stringify(err.error);
-        this.busyIndicatorService.end();
-      })
+        this.modal.close();
+        this.dataChangeNotificationService.notify();
+        this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
+      },
+        err => {
+          this.busyIndicatorService.end();
+          this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
+        });
   }
 }

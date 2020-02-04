@@ -1,12 +1,23 @@
-using ERNI.PBA.Server.DataAccess.Model;
+using System.Collections.Generic;
 
-public class Budget
+namespace ERNI.PBA.Server.DataAccess.Model
 {
-    public int Year { get; set; }
+    public class Budget
+    {
+        public int Id { get; set; }
 
-    public int UserId { get; set; }
+        public int Year { get; set; }
 
-    public decimal Amount { get; set; }
+        public int UserId { get; set; }
 
-    public virtual User User { get; set; }
+        public User User { get; set; }
+
+        public BudgetTypeEnum BudgetType { get; set; }
+
+        public string Title { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public ICollection<Request> Requests { get; set; }
+    }
 }

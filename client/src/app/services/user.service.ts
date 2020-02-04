@@ -4,9 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
-import { setTime } from 'ngx-bootstrap/chronos/utils/date-setters';
 import { switchMap } from 'rxjs/operators';
-import { JsonPipe } from '@angular/common';
 
 @Injectable()
 export class UserService {

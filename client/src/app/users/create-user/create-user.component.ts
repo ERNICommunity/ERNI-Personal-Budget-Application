@@ -97,7 +97,7 @@ export class CreateUserComponent implements OnInit {
 
         this.userService.createUser(userData).subscribe(
             () => {
-                this.alertService.success("User successfully was created.", true);
+                this.alertService.success("User successfully was created.");
                 this.router.navigate(['/users']);
             },
             (err: HttpErrorResponse) => {

@@ -1,79 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params} from '@angular/router';
 import { Location } from '@angular/common';
-import { Request } from '../../model/request';
-import { Category } from '../../model/category';
+import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { CategoryService } from '../../services/category.service';
 import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
+import { PatchRequest } from '../../model/PatchRequest';
+import { NgbDateStruct, NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AlertService } from '../../services/alert.service';
+import { Alert, AlertType } from '../../model/alert.model';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
   selector: 'app-request-edit',
   templateUrl: 'requestEdit.component.html',
   styleUrls: ['requestEdit.component.css']
 })
-export class RequestEditComponent implements OnInit {
-  request: Request;
-  categories : Category[];
-  selectedCategory: Category;
-  selectedDate : Date;
+export class RequestEditComponent {
   requestForm: FormGroup;
   httpResponseError : string;
   dirty: boolean;
+
+  requestId: number;
   
   constructor(private requestService: RequestService,
-              private categoryService : CategoryService,
-              private route: ActivatedRoute,
+              public modal: NgbActiveModal,
               private location: Location,
-              private fb: FormBuilder){
+              private fb: FormBuilder,
+              private alertService: AlertService,
+              private dataChangeNotificationService: DataChangeNotificationService){
                 this.createForm();
                }
-
-  ngOnInit() {
-
-    this.onChanges();
-    
-    this.route.params.subscribe((params: Params) => {
-      var idParam = params['id']; 
-      
-      this.getRequest(idParam);
-    });
-  }
 
   createForm() {
     this.requestForm = this.fb.group({
        title: ['', Validators.required ],
        amount: ['', Validators.required ],
-       category: ['', Validators.required ],
-       url: ['', Validators.required ]
-       
+       date: ['', Validators.required]       
     });
   }
 
-  onChanges() {
-    this.requestForm.get('category').valueChanges
-    .subscribe(selectedCategory => {
-        if (selectedCategory.isUrlNeeded) {
-            this.requestForm.get('url').enable();
-        }
-        else {
-            this.requestForm.get('url').disable();
-            this.requestForm.get('url').reset();
-        }
-    });
-  }
-
-  getRequest(id: number): void {
+  public showRequest(id: number): void {
     this.requestService.getRequest(id)
       .subscribe(request => 
         { 
-          this.request = request;
-          this.selectedDate = new Date(request.date);
+          this.requestId = id;
 
-          this.categoryService.getCategories()
-          .subscribe(categories =>{ this.categories = categories.filter(cat => cat.isActive == true);
-            this.selectedCategory = categories.find(cat => cat.id == this.request.categoryId);
-            });
+          var date = new Date(request.date);
+
+          var ngbDate = new NgbDate(date.getFullYear(), date.getMonth() + 1, date.getDate());  
+
+          this.requestForm.setValue({
+            title: request.title,
+            amount: request.amount,
+            date: ngbDate
+          });
         },err => {
           this.httpResponseError = err.error
         });
@@ -92,13 +72,21 @@ export class RequestEditComponent implements OnInit {
   }
 
   save() : void {
-    this.request.date = this.selectedDate;
-    this.request.categoryId = this.selectedCategory.id;
+    var title = this.requestForm.get("title").value;
+    var amount = this.requestForm.get("amount").value;
+    var ngbDate = this.requestForm.get("date").value;
+    var date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
+    var id = this.requestId;
+    // SAVE
    
-    this.requestService.updateRequest(this.request)
-       .subscribe(() => this.goBack(),
+    this.requestService.updateRequest({ id, title, amount, date } as PatchRequest)
+       .subscribe(() => {
+        this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
+        this.dataChangeNotificationService.notify();
+        this.modal.close();
+       },
        err => {
-        this.httpResponseError = err.error
+        this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
       })
   }
 }

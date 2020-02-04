@@ -1,29 +1,24 @@
-<div *ngIf="request && categories">
-    <h2>Details</h2>
-    <h5>Title</h5>
-    <p>{{request.title}}</p>
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-title">{{request?.title}}</h4>
+    <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
+<div class="modal-body">
     <h5>Date</h5>
     <p>{{ selectedDate | date : 'shortDate'}} </p>
 
     <h5>Amount</h5>
-    <p>{{request.amount}}</p>
+    <p>{{request?.amount}}</p>
 
-    <h5>Category</h5>
-    <p>{{category.title}}</p>
-
-    <div *ngIf="category.isUrlNeeded">
-        <h5>
-            Url</h5>
-        <p><a href="{{request.url}}" target="_blank" rel="noopener noreferrer">{{request.url}}</a></p>
-    </div>
-
-    <button class="btn btn-primary mr-1" (click)="goBack()">
-        back
-    </button>
-    
     <div *ngIf="httpResponseError">
         <font color="red" size="4">
             {{httpResponseError}}
         </font>
     </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+</div>

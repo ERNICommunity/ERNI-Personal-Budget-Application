@@ -20,11 +20,6 @@ namespace ERNI.PBA.Server.Host.Examples
                         FirstName = "Johnny",
                         LastName = "Cash"
                     },
-                    Category = new Model.PendingRequests.CategoryModel
-                    {
-                        Id = 1,
-                        Title = "Culture"
-                    }
                 },
                 new Model.PendingRequests.RequestModel
                 {
@@ -38,11 +33,6 @@ namespace ERNI.PBA.Server.Host.Examples
                         FirstName = "Hans",
                         LastName = "Gruber"
                     },
-                    Category = new Model.PendingRequests.CategoryModel
-                    {
-                        Id = 1,
-                        Title = "Sport"
-                    }
                 },
             };
         }

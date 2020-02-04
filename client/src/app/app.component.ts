@@ -48,9 +48,6 @@ export class AppComponent implements DoCheck {
         var _this = this;
         this.userService.getCurrentUser().subscribe(u => {
             _this.user = u;
-            if (!_this.user.isAdmin) {
-                this.userService.getSubordinateUsers().subscribe(users => _this.user.isSuperior = users != null && users.length > 0);
-            }
         });
     }
 

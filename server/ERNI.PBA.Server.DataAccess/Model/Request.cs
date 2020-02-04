@@ -8,7 +8,9 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public int Year { get; set; }
 
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
+
+        public int BudgetId { get; set; }
 
         public string Url { get; set; }
 
@@ -22,11 +24,11 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public RequestState State { get; set; }
 
-        public virtual Budget Budget { get; set; }
+        public Budget Budget { get; set; }
 
-        public virtual RequestCategory Category { get; set; }
+        public RequestCategory Category { get; set; }
 
-        public virtual User User { get; set; }
+        public User User { get; set; }
 
         public override string ToString()
         {

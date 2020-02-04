@@ -1,8 +1,8 @@
+using ERNI.PBA.Server.DataAccess.Model;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess.Model;
-using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -29,7 +29,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.RequestCategories.Where(rc => rc.Id == id).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         }
-       
+
         public void DeleteRequestCategory(RequestCategory requestCategory)
         {
             _context.RequestCategories.Remove(requestCategory);

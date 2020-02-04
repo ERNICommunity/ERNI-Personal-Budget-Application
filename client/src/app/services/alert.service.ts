@@ -1,41 +1,61 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { Router, NavigationStart } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Alert, AlertType } from '../model/alert.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AlertService {
-    private subject: Subject<any> = new Subject<any>();
-    private keepAfterNavigationChange: boolean = false;
+    private subject: Subject<Alert> = new Subject<Alert>();
+    private keepAfterRouteChange: boolean = false;
 
     constructor(private router: Router) {
-        router.events.subscribe(event => {
+        // clear alert messages on route change unless 'keepAfterRouteChange' flag is true
+        this.router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
-                if (this.keepAfterNavigationChange) {
-                    this.keepAfterNavigationChange = false;
+                if (this.keepAfterRouteChange) {
+                    // only keep for a single route change
+                    this.keepAfterRouteChange = false;
                 } else {
-                    this.subject.next();
+                    // clear alert messages
+                    this.clear();
                 }
             }
         });
     }
 
-    success(message: string, keepAfterNavigationChange = false) {
-        this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: 'success', text: message });
+    // enable subscribing to alerts observable
+    onAlert(alertId?: string): Observable<Alert> {
+        return this.subject.asObservable().pipe(filter(x => x && x.alertId === alertId));
     }
 
-    error(message: string, keepAfterNavigationChange = false) {
-        this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: 'error', text: message });
+    // convenience methods
+    success(message: string, alertId?: string) {
+        this.alert(new Alert({ message, type: AlertType.Success, alertId }));
     }
 
-    clear() {
-        this.subject.next();
+    error(message: string, alertId?: string) {
+        this.alert(new Alert({ message, type: AlertType.Error, alertId }));
     }
 
-    getMessage(): Observable<any> {
-        return this.subject.asObservable();
+    info(message: string, alertId?: string) {
+        this.alert(new Alert({ message, type: AlertType.Info, alertId }));
+    }
+
+    warn(message: string, alertId?: string) {
+        this.alert(new Alert({ message, type: AlertType.Warning, alertId }));
+    }
+
+    // main alert method    
+    alert(alert: Alert) {
+        this.keepAfterRouteChange = alert.keepAfterRouteChange;
+        this.subject.next(alert);
+    }
+
+    // clear alerts
+    clear(alertId?: string) {
+        this.subject.next(new Alert({ alertId }));
     }
 }

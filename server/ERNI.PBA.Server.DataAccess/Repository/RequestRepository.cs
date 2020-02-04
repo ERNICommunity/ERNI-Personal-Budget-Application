@@ -1,12 +1,11 @@
+using ERNI.PBA.Server.DataAccess.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess.Model;
-using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -19,10 +18,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context = context;
         }
 
-        public Task<Request[]> GetRequests(int year, int userId, CancellationToken cancellationToken)
+        public Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken)
         {
             return _context.Requests
-                .Where(_ => _.Year == year && _.UserId == userId)
+                .Where(_ => _.BudgetId == budgetId)
                 .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
         }

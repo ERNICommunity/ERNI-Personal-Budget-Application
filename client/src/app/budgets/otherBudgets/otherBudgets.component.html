@@ -8,8 +8,22 @@
             class="nav-link"
             [routerLinkActive]="['active']"
             [routerLinkActiveOptions]="rlao"
-            [routerLink]="['/other-budgets', year]">
+            [routerLink]="['/other-budgets', year, selectedBudgetType]">
             {{year}}
+        </a>
+    </li>
+</ul>
+
+<ul class="nav nav-pills">
+    <li
+        class="nav-item"
+        *ngFor="let budgetType of budgetTypes">
+        <a
+            class="nav-link"
+            [routerLinkActive]="['active']"
+            [routerLinkActiveOptions]="rlao"
+            [routerLink]="['/other-budgets', selectedYear, budgetType.id]">
+            {{budgetType.name}}
         </a>
     </li>
 </ul>
@@ -18,23 +32,44 @@
     #content
     let-c="close"
     let-d="dismiss">
-    <div class="modal-body">
-        <button
-            class="btn-xs btn-light float-right"
-            (click)="c()">
-            X
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-title">Create budgets</h4>
+        <button type="button" class="close" aria-describedby="modal-title" (click)="c()">
+            <span aria-hidden="true">&times;</span>
         </button>
+    </div>
+
+    <div class="modal-body">
         <p>
             You are going to set budgets in year {{year}} for users without budget.
         </p>
-        <label>
-            Amount:
+
+        <div class="form-group">
+            <label for="title">Budget title *</label>
+            <input type="text" class="form-control" id="title" placeholder="Enter budget title" [(ngModel)]="budgetTitle">
+        </div>
+
+        <div class="form-group">
+
+            <label for="title">Amount</label>
             <input
                 type="number"
+                class="form-control"
+                placeholder="0.0"
                 [(ngModel)]="amount">
-        </label>
-    </div>
-    <div class="modal-footer">
+        </div>
+
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Employee</label>
+            <select class="form-control" id="exampleFormControlSelect1" [(ngModel)]="selectedUserId">
+                <option value="0">All active users</option>
+                <option *ngFor="let user of availableUsers" [ngValue]="user.id">
+                    {{user.lastName}} {{user.firstName}}
+                </option>
+            </select>
+        </div>
+        </div>
+        <div class="modal-footer">
         <button
             type="button"
             class="btn btn-primary"
@@ -65,6 +100,7 @@
         <tr>
             <th scope="col">Last</th>
             <th scope="col">First</th>
+            <th scope="col">Budget name</th>
             <th scope="col">Amount</th>
             <th scope="col">Amount left</th>
             <th scope="col"></th>
@@ -75,18 +111,16 @@
         <tr *ngFor="let budget of filteredBudgets">
             <td>{{budget.user.lastName}}</td>
             <td>{{budget.user.firstName}}</td>
-            <td *ngIf="budget.amount; else empty">{{budget.amount}}</td>
-            <td *ngIf="budget.amountLeft !== undefined; else empty">{{budget.amountLeft}}</td>
-            <ng-template #empty>
-                <td>Not defined.</td>
-            </ng-template>
+            <td>{{budget.title}}</td>
+            <td>{{budget.amount}}</td>
+            <td>{{budget.amountLeft}}</td>
 
-            <td *ngIf="!disableSetOrEditBudgets; else cannotEdit">
-                <a
+            <td >
+                <a *ngIf="!disableSetOrEditBudgets"
                     class="btn btn-primary float-right"
                     href="#"
                     role="button"
-                    routerLink="edit/{{budget.user.id}}">
+                    routerLink="/other-budgets/edit/{{budget.id}}">
                     Edit
                 </a>
             </td>

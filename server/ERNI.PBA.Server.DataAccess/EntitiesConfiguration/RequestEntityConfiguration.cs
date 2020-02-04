@@ -10,7 +10,7 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
         {
             builder.ToTable("Requests");
 
-            //builder.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
             //builder.Property(x => x.Year).IsRequired();
             //builder.Property(x => x.CategoryId).IsRequired();
             //builder.Property(x => x.Url).IsRequired().HasMaxLength(250);
@@ -21,9 +21,9 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
             //builder.Property(x => x.State).IsRequired();
 
             builder.HasOne(b => b.Budget)
-                .WithMany()
-                .HasForeignKey(r => new { r.UserId, r.Year })
-                .HasPrincipalKey(b => new { b.UserId, b.Year })
+                .WithMany(b => b.Requests)
+                .HasForeignKey(r => new { r.BudgetId })
+                .HasPrincipalKey(b => new { b.Id })
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(_ => _.Category).WithMany();

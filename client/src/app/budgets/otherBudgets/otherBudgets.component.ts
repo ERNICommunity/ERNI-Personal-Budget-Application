@@ -4,6 +4,8 @@ import { Budget } from '../../model/budget';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
+import { BudgetType } from '../../model/budgetType';
+import { User } from '../../model/user';
 
 @Component({
   selector: 'app-other-budgets',
@@ -11,12 +13,20 @@ import { ConfigService } from '../../services/config.service';
   styleUrls: ['./otherBudgets.component.css']
 })
 export class OtherBudgetsComponent implements OnInit {
+  budgetTypes: BudgetType[];
   budgets: Budget[];
   filteredBudgets: Budget[];
   amount: number;
   year: number;
   currentYear: number;
   selectedYear: number;
+  selectedUserId: number;
+  budgetTitle: string;
+
+  selectedBudgetType: number;
+
+  availableUsers: User[];
+
   years: number[];
   rlao: object;
   disableSetOrEditBudgets: boolean;
@@ -45,7 +55,7 @@ export class OtherBudgetsComponent implements OnInit {
     private config: ConfigService) {
     this.years = [];
     this.currentYear = (new Date()).getFullYear();
-
+    
     for (var year = this.currentYear + 1; year >= config.getOldestYear; year--) {
       this.years.push(year);
     }
@@ -64,39 +74,43 @@ export class OtherBudgetsComponent implements OnInit {
 
       this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
 
+      this.selectedBudgetType = params['budgetType'];
+
       if (this.selectedYear == this.currentYear || this.selectedYear == this.currentYear + 1) {
         this.disableSetOrEditBudgets = false;
-        this.getActiveUsersBudgets(this.selectedYear);
       }
       else {
         this.disableSetOrEditBudgets = true;
-        this.getBudgetsbyYear(this.selectedYear);
       }
 
+      this.budgetService.getUsersAvailableForBudgetType(this.selectedBudgetType).subscribe(users => this.availableUsers = users);
+
+      this.getActiveUsersBudgets(this.selectedYear);
+    });
+
+    this.budgetService.getBudgetsTypes().subscribe(types => {
+      this.budgetTypes = types
     });
   }
 
+
   getActiveUsersBudgets(year: number): void {
     this.year = year;
-    this.budgetService.getCurrentUsersBudgets(year).subscribe(budgets => { this.budgets = budgets, this.filteredBudgets = budgets });
+    var a = this.selectedBudgetType;
+    this.budgetService.getCurrentUsersBudgets(year).subscribe(budgets => { this.budgets = budgets, this.filteredBudgets = budgets.filter(b => {
+      return b.type == this.selectedBudgetType;
+     }) 
+    });
   }
-
-  getBudgetsbyYear(year: number): void {
-    this.year = year;
-    this.budgetService.getBudgetsByYear(year).subscribe(budgets => { this.budgets = budgets, this.filteredBudgets = budgets });
-  }
-
   setBudgetsForYear(): void {
-    var budget = new Budget();
-
-    budget.amount = this.amount;
-    budget.year = this.selectedYear;
-
-    this.budgetService.setBudgetsForYear(budget).subscribe(() => this.getActiveUsersBudgets(this.selectedYear));
+    if (this.selectedUserId == 0) {
+      this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType).subscribe(() => this.getActiveUsersBudgets(this.selectedYear));
+    } else {
+      this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType).subscribe(() => this.getActiveUsersBudgets(this.selectedYear));
+    }
   }
 
   openAmountModal(content) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-
 }

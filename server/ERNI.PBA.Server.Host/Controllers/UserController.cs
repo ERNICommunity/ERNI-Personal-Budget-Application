@@ -1,16 +1,15 @@
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Extensions;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -59,6 +58,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload)
         {
             var userExists = await _userRepository.ExistsAsync(payload.Email);
@@ -97,6 +97,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(payload.Id, cancellationToken);
@@ -145,6 +146,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Get(int id)
         {
             var user = await _userRepository.GetUser(id, CancellationToken.None);
@@ -204,7 +206,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("active")]
-        public async Task<IActionResult> GetActiveUsers(int year, CancellationToken cancellationToken)
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> GetActiveUsers(CancellationToken cancellationToken)
         {
             var users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 

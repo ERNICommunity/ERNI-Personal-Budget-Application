@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Request } from '../../model/request';
+import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
 import { RequestFilter } from '../requestFilter';
 import { ActivatedRoute, Params, Data } from '@angular/router';
@@ -118,12 +118,7 @@ export class RequestListComponent implements OnInit {
     }
 
     canRejectRequest(id: number): boolean {
-        if (this.isAdmin) {
-            return this.requestFilter != this.requestFilterType.Rejected;
-        }
-
-        var request = this.requests.find(req => req.id == id);
-        return this.requestFilter != this.requestFilterType.Rejected && request.state != RequestState.Approved;
+        return this.isAdmin && this.requestFilter != this.requestFilterType.Rejected;
     }
 
     showApprove(): boolean {

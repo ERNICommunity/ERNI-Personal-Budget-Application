@@ -5,10 +5,8 @@ import {AppComponent} from './app.component';
 import {RouterModule} from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {rootRouterConfig} from './app.routes';
-import {OAuthCallbackComponent} from './login-callback/oauth-callback.component';
 import {AdalService} from './services/adal.service';
 import {ConfigService} from './services/config.service';
-import {OAuthCallbackHandler} from './login-callback/oauth-callback.guard';
 import {OAuthHandshakeModule} from './login-callback/oauth-callback.module';
 import {AuthenticationGuard} from './services/guards/authentication.guard';
 import {AdminGuard} from './services/guards/admin.guard'
@@ -17,7 +15,6 @@ import {RequestListComponent} from './requests/requestList/requestList.component
 import {RequestService} from './services/request.service';
 import {HttpClientModule} from '@angular/common/http';
 import {UsersComponent} from './users/users.component';
-import {CategoriesComponent} from './categories/categories.component';
 import {UserService} from './services/user.service';
 import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
 import {UserListComponent} from './users/userList/userList.component';
@@ -25,9 +22,6 @@ import {UserDetailComponent} from './users/userDetail/userDetail.component';
 import {MyBudgetComponent} from './budgets/myBudget/myBudget.component';
 import {BudgetService} from './services/budget.service';
 import {FormsModule} from '@angular/forms';
-import {CategoryListComponent} from "./categories/categoryList/categoryList.component";
-import {CategoryDetailComponent} from "./categories/categoryDetail/categoryDetail.component";
-import {CategoryService} from "./services/category.service";
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
@@ -37,14 +31,17 @@ import { OtherBudgetsComponent } from './budgets/otherBudgets/otherBudgets.compo
 import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherBudgetsDetail.component';
 import { AuthInterceptor } from './interceptors/authInterceptor'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BudgetsComponent } from './budgets/budgets.component';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
 import { UnregisteredInterceptor } from './interceptors/unregisteredInterceptor';
 import { ViewerGuard } from './services/guards/viewer.guard';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { AlertComponent } from './directives/alert/alert.component';
+import { BudgetComponent } from './budgets/budget/budget.component';
+import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
+import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
+import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
+import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 
 @NgModule({
     declarations: [
@@ -53,32 +50,33 @@ import { AlertComponent } from './directives/alert/alert.component';
         RequestsComponent,
         RequestListComponent,
         UsersComponent,
-        CategoriesComponent,
         UserListComponent,
         UserDetailComponent,
         CreateUserComponent,
-        BudgetsComponent,
+        BudgetComponent,
         MyBudgetComponent,
-        CategoriesComponent,
-        CategoryListComponent,
-        CategoryDetailComponent,
         RequestAddComponent,
         RequestDetailComponent,
+        EditRequestModalComponent,
         RequestEditComponent,
         RequestMassComponent,
         OtherBudgetsComponent,
         OtherBudgetsDetailComponent,
-        AlertComponent
+        AlertComponent,
+        NewRequestModalComponent,
+        RequestDetailModalComponent
     ],
     imports: [
-        NgbModule.forRoot(),
+        NgbModule,
         FormsModule,
         HttpClientModule,
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig, { useHash: true }),
         OAuthHandshakeModule,
-        BsDatepickerModule.forRoot(),
         ReactiveFormsModule
+    ],
+    entryComponents: [
+        NewRequestModalComponent, RequestDetailComponent, RequestEditComponent
     ],
     providers: [
         AdalService,
@@ -88,9 +86,9 @@ import { AlertComponent } from './directives/alert/alert.component';
         RequestService,
         UserService,
         BudgetService,
-        CategoryService,
         BusyIndicatorService,
         AdminGuard,
+        DataChangeNotificationService,
         ViewerGuard,
         {
             provide: HTTP_INTERCEPTORS,

@@ -95,7 +95,7 @@
             <th scope="col">Employee</th>
             <th scope="col">Title</th>
             <th scope="col">Amount</th>
-            <th scope="col">Category</th>
+            <th scope="col">Budget</th>
             <th scope="col">Date</th>
             <th scope="col"></th>
         </tr>
@@ -107,7 +107,7 @@
             </th>
             <td>{{request.title}}</td>
             <td>{{request.amount}}</td>
-            <td>{{request.category.title}}</td>
+            <td>{{request.budget.title}}</td>
             <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
 
             <td>
@@ -127,7 +127,7 @@
                 class="btn btn-primary float-right mr-1"
                 href="#"
                 role="button"
-                routerLink="/request/detail/{{request.id}}">
+                routerLink="detail/{{request.id}}">
                 Detail
             </a></td>
             <td *ngIf="requestFilter != requestFilterType.Rejected" class="button-table-cell">
@@ -206,3 +206,5 @@
         </tr>
     </tbody>
 </table>
+
+<router-outlet></router-outlet>

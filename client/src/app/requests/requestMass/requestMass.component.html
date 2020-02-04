@@ -1,6 +1,6 @@
 <h2>Create Request</h2>
 <br>
-<form *ngIf="categories" [formGroup]="requestForm">
+<form [formGroup]="requestForm">
     <div class="form-group">
         <h5>
             <label class="col-md-6">
@@ -18,9 +18,9 @@
             <h5>
                 <label class="input-group col-md-6">
                     Date of occasion
-                    <input type="text" class="form-control" placeholder="dd/mm/yyyy" [(ngModel)]="selectedDate"
+                    <!-- <input type="text" class="form-control" placeholder="dd/mm/yyyy" [(ngModel)]="selectedDate"
                         [ngModelOptions]="{standalone: true}" bsDatepicker
-                        [bsConfig]="{dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-dark-blue'}">
+                        [bsConfig]="{dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-dark-blue'}"> -->
                 </label>
             </h5>
         </div>
@@ -39,29 +39,6 @@
         <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
     </div>
 
-    <div class="form-group">
-        <h5>
-            <label class="col-md-6">
-                Category
-                <select class="form-control form-control-sm" [(ngModel)]="selectedCategory" formControlName="category"
-                    (input)="usersWithBudgetLeft()">
-                    <option *ngFor="let categoryItem of categories" [ngValue]="categoryItem">
-                        {{categoryItem.title}}
-                    </option>
-                </select>
-            </label>
-        </h5>
-    </div>
-
-    <div class="form-group">
-        <h5>
-            <label class="col-md-6">
-                Url
-                <input [(ngModel)]="requestUrl" formControlName="url" class="form-control" type="url">
-            </label>
-        </h5>
-    </div>
-    <br>
     <div class="form-group">
         <div *ngIf="invalidUsersExist()" class="alert alert-danger col-md-6">
             <div>
@@ -203,10 +180,6 @@
         </div>
     </div>
 
-    <div *ngIf="validate('url')" class="alert alert-danger">
-        <div *ngIf="requestForm.controls['url'].errors.required">Url is required.</div>
-    </div>
-
     <button class="btn btn-primary mr-1" (click)="goBack()">
         back
     </button>
@@ -215,10 +188,3 @@
         save
     </button>
 </form>
-<br>
-<br>
-<div *ngIf="httpResponseError">
-    <font color="red" size="4">
-        {{httpResponseError}}
-    </font>
-</div>

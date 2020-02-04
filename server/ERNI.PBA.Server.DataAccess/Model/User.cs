@@ -22,6 +22,6 @@
 
         public UserState State { get; set; }
 
-        public virtual User Superior { get; set; }
+        public User Superior { get; set; }
     }
 }
