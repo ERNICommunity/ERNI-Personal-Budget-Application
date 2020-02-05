@@ -21,7 +21,7 @@ export class TeamBudgetComponent implements OnInit {
         this.route.params.subscribe((params: Params) => {
             var yearParam = params['year'];
             this.budgetService.getTeamBudgets(yearParam).subscribe(budget => {
-                this.budget = budget
+                this.budget = budget;
             });
         });
     }

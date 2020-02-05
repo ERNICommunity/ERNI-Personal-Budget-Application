@@ -12,7 +12,6 @@
 <div *ngIf="user">
     <div *ngFor="let budget of budgets">
         <app-budget [budget]="budget"></app-budget>
-
     </div>
 
     <div *ngIf="user.isSuperior">

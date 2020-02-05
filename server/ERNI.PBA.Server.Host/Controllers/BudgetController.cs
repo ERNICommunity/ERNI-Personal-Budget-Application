@@ -78,7 +78,10 @@ namespace ERNI.PBA.Server.Host.Controllers
                 {
                     Id = x.Id,
                     UserId = x.UserId,
+                    Title = x.Title,
+                    Amount = x.Requests.Sum(_ => _.Amount),
                     Date = x.Date,
+                    State = x.State,
                     Requests = x.Requests.Select(_ => new
                     {
                         Id = _.Id,
