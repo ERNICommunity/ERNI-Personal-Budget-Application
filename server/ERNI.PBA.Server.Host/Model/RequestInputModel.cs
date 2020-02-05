@@ -2,7 +2,7 @@
 
 namespace ERNI.PBA.Server.Host.Model
 {
-    public class RequestInputModel
+    public abstract class RequestInputModel
     {
         public DateTime Date { get; set; }
 

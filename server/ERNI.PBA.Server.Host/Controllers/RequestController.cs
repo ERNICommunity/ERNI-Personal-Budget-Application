@@ -217,10 +217,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("team")]
         [Authorize(Roles = nameof(Role.Superior))]
-        public async Task<IActionResult> AddTeamRequest([FromBody]RequestInputModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddTeamRequest([FromBody]TeamRequestInputModel payload, CancellationToken cancellationToken)
         {
             var userId = User.GetId();
-            await _requestService.CreateTeamRequests(userId);
+            await _requestService.CreateTeamRequests(userId, payload, cancellationToken);
 
             return Ok();
         }

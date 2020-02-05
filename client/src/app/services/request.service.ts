@@ -9,6 +9,7 @@ import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
 import { PatchRequest } from '../model/PatchRequest';
+import { TeamRequest } from '../model/teamRequest';
 
 @Injectable()
 export class RequestService {
@@ -53,7 +54,7 @@ export class RequestService {
     return this.http.post(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
-  public addTeamRequest(request: NewRequest): Observable<any> {
+  public addTeamRequest(request: TeamRequest): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
   }
 

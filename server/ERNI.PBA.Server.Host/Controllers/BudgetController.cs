@@ -59,9 +59,11 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var userId = HttpContext.User.GetId();
 
-            var teamRequests = await _teamRequestRepository.GetAllAsync(userId);
             var teamBudges = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
+            if (!teamBudges.Any())
+                return Ok();
 
+            var teamRequests = await _teamRequestRepository.GetAllAsync(userId);
             var amount = teamBudges.Sum(_ => _.Amount);
             var amountLeft = teamRequests.SelectMany(_ => _.Requests).Sum(_ => _.Amount);
 

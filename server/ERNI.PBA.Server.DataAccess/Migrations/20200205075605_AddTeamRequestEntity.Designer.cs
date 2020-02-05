@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200117090431_AddTeamRequestEntity")]
+    [Migration("20200205075605_AddTeamRequestEntity")]
     partial class AddTeamRequestEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,6 +111,10 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date");
+
+                    b.Property<int>("State");
+
+                    b.Property<string>("Title");
 
                     b.Property<int>("UserId");
 

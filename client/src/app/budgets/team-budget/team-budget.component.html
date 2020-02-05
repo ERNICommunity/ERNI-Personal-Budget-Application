@@ -1,7 +1,7 @@
 <div *ngIf="budget" class="card text-center" style="margin-bottom:20px;">
     <div class="card-header">
         {{budget.title}}
-        <a *ngIf="budget" class="float-right" [routerLink]="'create-team-request'">
+        <a *ngIf="budget" class="float-right" [routerLink]="['create-team-request', year]">
             Create new request
         </a>
     </div>

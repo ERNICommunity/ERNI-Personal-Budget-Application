@@ -1,13 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { NewRequest } from '../../model/newRequest';
-import { Budget } from '../../model/budget';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestService } from '../../services/request.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
-import { TeamBudget } from '../../model/request/team-budget';
+import { TeamRequest } from '../../model/teamRequest';
 
 @Component({
     selector: 'app-team-request-add',
@@ -17,6 +15,7 @@ import { TeamBudget } from '../../model/request/team-budget';
 export class TeamRequestAddComponent implements OnInit {
     httpResponseError: string;
     requestForm: FormGroup;
+    year: number;
 
     constructor(
         public modal: NgbActiveModal,
@@ -47,7 +46,14 @@ export class TeamRequestAddComponent implements OnInit {
 
         this.busyIndicatorService.start();
 
-        this.requestService.addTeamRequest({ title, amount, date } as NewRequest)
+        let teamRequest = {
+            year: this.year,
+            title: title,
+            amount: amount,
+            date: date
+        };
+        
+        this.requestService.addTeamRequest(teamRequest as TeamRequest)
             .subscribe(() => {
                 this.busyIndicatorService.end();
                 this.modal.close();

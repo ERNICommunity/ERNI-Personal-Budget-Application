@@ -110,6 +110,10 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
                     b.Property<DateTime>("Date");
 
+                    b.Property<int>("State");
+
+                    b.Property<string>("Title");
+
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");

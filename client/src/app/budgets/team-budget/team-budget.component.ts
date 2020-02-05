@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { BudgetService } from '../../services/budget.service';
 import { TeamBudget } from '../../model/request/team-budget';
+import { RequestFilter } from '../../requests/requestFilter';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
     selector: 'app-team-budget',
@@ -9,13 +11,18 @@ import { TeamBudget } from '../../model/request/team-budget';
 })
 export class TeamBudgetComponent implements OnInit {
     budget: TeamBudget;
-    currentYear: number;
+    requestStateType = RequestFilter;
 
-    constructor(private budgetService: BudgetService) { }
+    @Input() year: number;
+
+    constructor(private route: ActivatedRoute, private budgetService: BudgetService) { }
 
     ngOnInit() {
-        this.currentYear = (new Date()).getFullYear();
-
-        this.budgetService.getTeamBudgets(this.currentYear).subscribe(budget => this.budget = budget);
+        this.route.params.subscribe((params: Params) => {
+            var yearParam = params['year'];
+            this.budgetService.getTeamBudgets(yearParam).subscribe(budget => {
+                this.budget = budget
+            });
+        });
     }
 }

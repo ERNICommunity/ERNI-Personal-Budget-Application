@@ -21,7 +21,7 @@ export class NewTeamRequestModalComponent implements OnDestroy {
 
             // When router navigates on this component is takes the params and opens up the photo detail modal
             this.currentDialog = this.modalService.open(TeamRequestAddComponent, { centered: true });
-            this.currentDialog.componentInstance.budgetId = params.budgetId;
+            this.currentDialog.componentInstance.year = params.year;
 
             // Go back to home page after the modal is closed
             this.currentDialog.result.then(result => {
