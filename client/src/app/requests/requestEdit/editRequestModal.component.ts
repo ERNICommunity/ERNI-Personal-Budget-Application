@@ -20,19 +20,22 @@ export class EditRequestModalComponent implements OnDestroy {
     router: Router
   ) {
     route.params.pipe(takeUntil(this.destroy)).subscribe(params => {
+      let isTeamRequest = params.type !== undefined && params.type == "team";
+      console.log(params);
 
-        // When router navigates on this component is takes the params and opens up the photo detail modal
-        this.currentDialog = this.modalService.open(RequestEditComponent, {centered: true});
-        this.currentDialog.componentInstance.showRequest(params.requestId);
+      // When router navigates on this component is takes the params and opens up the photo detail modal
+      this.currentDialog = this.modalService.open(RequestEditComponent, { centered: true });
+      this.currentDialog.componentInstance.isTeamRequest = isTeamRequest;
+      this.currentDialog.componentInstance.showRequest(params.requestId);
 
-        // Go back to home page after the modal is closed
-        this.currentDialog.result.then(result => {
-            //router.navigateByUrl('/');
-            router.navigate(['.'], { relativeTo: route.parent });
-        }, reason => {
-            //router.navigateByUrl('/');
-            router.navigate(['.'], { relativeTo: route.parent });
-        });
+      // Go back to home page after the modal is closed
+      this.currentDialog.result.then(result => {
+        //router.navigateByUrl('/');
+        router.navigate(['.'], { relativeTo: route.parent });
+      }, reason => {
+        //router.navigateByUrl('/');
+        router.navigate(['.'], { relativeTo: route.parent });
+      });
     });
   }
 

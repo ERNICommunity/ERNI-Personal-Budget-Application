@@ -27,12 +27,12 @@ namespace ERNI.PBA.Server.Host.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateTeamRequests(int userId, TeamRequestInputModel requestInputModel, CancellationToken cancellationToken)
+        public async Task<TeamRequest> CreateTeamRequests(int userId, TeamRequestInputModel requestInputModel, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
             var teamBudgets = await CreateTeamBudgets(userId, requestInputModel, cancellationToken);
             if (!teamBudgets.Any())
-                return;
+                return null;
 
             var requests = new List<Request>();
             foreach (var teamBudget in teamBudgets)
@@ -54,13 +54,13 @@ namespace ERNI.PBA.Server.Host.Services
             {
                 UserId = userId,
                 Title = requestInputModel.Title,
+                Year = requestInputModel.Year,
                 Date = requestInputModel.Date.ToLocalTime(),
                 State = RequestState.Pending,
                 Requests = requests
             };
 
-            await _teamRequestRepository.AddAsync(teamRequest);
-            await _unitOfWork.SaveChanges(cancellationToken);
+            return teamRequest;
         }
 
         private async Task<IList<TeamBudget>> CreateTeamBudgets(int userId, TeamRequestInputModel requestInputModel, CancellationToken cancellationToken)

@@ -21,6 +21,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
+                    Year = table.Column<int>(nullable: false),
                     Date = table.Column<DateTime>(nullable: false),
                     State = table.Column<int>(nullable: false)
                 },

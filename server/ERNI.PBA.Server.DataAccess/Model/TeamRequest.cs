@@ -11,6 +11,8 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public string Title { get; set; }
 
+        public int Year { get; set; }
+
         public DateTime Date { get; set; }
 
         public RequestState State { get; set; }

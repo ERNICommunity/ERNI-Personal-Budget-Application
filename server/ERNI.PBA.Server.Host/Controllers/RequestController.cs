@@ -29,6 +29,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
+        private readonly ITeamRequestRepository _teamRequestRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly ILogger _logger;
@@ -38,6 +39,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             IRequestRepository requestRepository,
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
+            ITeamRequestRepository teamRequestRepository,
             IUnitOfWork unitOfWork,
             IConfiguration configuration,
             ILogger<RequestController> logger)
@@ -46,6 +48,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _budgetRepository = budgetRepository;
+            _teamRequestRepository = teamRequestRepository;
             _unitOfWork = unitOfWork;
             _mailService = new MailService(configuration);
             _logger = logger;
@@ -97,6 +100,28 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Id = request.Id,
                 Title = request.Title,
                 Amount = request.Amount,
+                Date = request.Date,
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet("team/{id}")]
+        [Authorize(Roles = "Admin, Superior, Viewer")]
+        public async Task<IActionResult> GetTeamRequest(int id, CancellationToken cancellationToken)
+        {
+            var request = await _teamRequestRepository.GetAsync(id);
+            if (request == null)
+            {
+                _logger.LogWarning("Not a valid id");
+                return BadRequest("Not a valid id");
+            }
+
+            var result = new Request
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Amount = request.Requests.Sum(x => x.Amount),
                 Date = request.Date,
             };
 
@@ -220,7 +245,12 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddTeamRequest([FromBody]TeamRequestInputModel payload, CancellationToken cancellationToken)
         {
             var userId = User.GetId();
-            await _requestService.CreateTeamRequests(userId, payload, cancellationToken);
+            var teamRequest = await _requestService.CreateTeamRequests(userId, payload, cancellationToken);
+            if (teamRequest == null)
+                return BadRequest();
+
+            await _teamRequestRepository.AddAsync(teamRequest);
+            await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();
         }
@@ -341,6 +371,36 @@ namespace ERNI.PBA.Server.Host.Controllers
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();
 
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut("team")]
+        public async Task<IActionResult> UpdateTeamRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
+        {
+            var userId = HttpContext.User.GetId();
+            var request = await _teamRequestRepository.GetAsync(payload.Id);
+
+            if (request == null)
+                return BadRequest($"Request with id {payload.Id} not found.");
+
+            if (userId != request.UserId)
+                return BadRequest("No Access for request!");
+
+            var requestInputModel = new TeamRequestInputModel
+            {
+                Title = payload.Title,
+                Amount = payload.Amount,
+                Date = payload.Date,
+                Year = request.Year
+            };
+            var teamRequest = await _requestService.CreateTeamRequests(userId, requestInputModel, cancellationToken);
+            if (teamRequest == null)
+                return BadRequest();
+
+            _teamRequestRepository.Remove(request);
+            await _teamRequestRepository.AddAsync(teamRequest);
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();

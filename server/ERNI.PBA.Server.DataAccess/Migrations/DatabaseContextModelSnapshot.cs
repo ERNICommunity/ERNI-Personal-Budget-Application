@@ -116,6 +116,8 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<int>("Year");
+
                     b.HasKey("Id");
 
                     b.ToTable("TeamRequests");

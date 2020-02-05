@@ -42,6 +42,10 @@ export class RequestService {
     return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions())
   }
 
+  public getTeamRequest(id): Observable<Request> {
+    return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + 'team/' + id, this.serviceHelper.getHttpOptions());
+  }
+
   public approveRequest(id: number): Observable<Request> {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/approve', this.serviceHelper.getHttpOptions())
   }
@@ -64,6 +68,10 @@ export class RequestService {
 
   public updateRequest(request: PatchRequest): Observable<any> {
     return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
+  }
+
+  public updateTeamRequest(request: PatchRequest): Observable<any> {
+    return this.http.put(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
   }
 
   public deleteRequest(id: number): Observable<Request> {

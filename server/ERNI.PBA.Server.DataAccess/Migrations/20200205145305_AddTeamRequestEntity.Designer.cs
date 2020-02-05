@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200205075605_AddTeamRequestEntity")]
+    [Migration("20200205145305_AddTeamRequestEntity")]
     partial class AddTeamRequestEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,6 +117,8 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.Property<string>("Title");
 
                     b.Property<int>("UserId");
+
+                    b.Property<int>("Year");
 
                     b.HasKey("Id");
 

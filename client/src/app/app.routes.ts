@@ -49,7 +49,8 @@ export const rootRouterConfig: Routes = [
                     { path: 'create-request/:budgetId', component: NewRequestModalComponent, canActivate: [AuthenticationGuard] },
                     { path: 'create-team-request/:year', component: NewTeamRequestModalComponent, canActivate: [AuthenticationGuard] },
                     { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [AuthenticationGuard] },
-                    { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [AuthenticationGuard] }
+                    { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'request/:requestId/edit/:type', component: EditRequestModalComponent, canActivate: [AuthenticationGuard] },
                 ]
             }
         ]
