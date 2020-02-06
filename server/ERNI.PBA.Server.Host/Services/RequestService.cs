@@ -70,7 +70,7 @@ namespace ERNI.PBA.Server.Host.Services
             {
                 BudgetId = x.Id,
                 UserId = x.UserId,
-                Amount = x.Amount - (x.Requests?.Sum(_ => _.Amount) ?? 0)
+                Amount = x.Amount - (x.Requests?.Where(_ => _.TeamRequestId != requestInputModel.RequestId).Sum(_ => _.Amount) ?? 0)
             }).ToList();
 
             var availableFunds = teamBudgets.Sum(_ => _.Amount);

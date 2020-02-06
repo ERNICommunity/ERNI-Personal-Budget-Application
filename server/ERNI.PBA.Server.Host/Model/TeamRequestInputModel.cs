@@ -2,6 +2,8 @@
 {
     public class TeamRequestInputModel : RequestInputModel
     {
+        public int RequestId { get; set; }
+
         public int Year { get; set; }
     }
 }

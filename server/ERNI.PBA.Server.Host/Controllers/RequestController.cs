@@ -399,6 +399,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var requestInputModel = new TeamRequestInputModel
             {
+                RequestId = payload.Id,
                 Title = payload.Title,
                 Amount = payload.Amount,
                 Date = payload.Date,
