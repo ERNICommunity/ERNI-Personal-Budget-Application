@@ -78,6 +78,10 @@ export class RequestService {
     return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions());
   }
 
+  public deleteTeamRequest(id: number): Observable<any> {
+    return this.http.delete<any>(this.configService.apiUrlBase + this.requestUrl + 'team/' + id, this.serviceHelper.getHttpOptions());
+  }
+
   public getUsersWithBudgetLeft(request: BudgetLeft): Observable<User[]> {
     return this.http.get<User[]>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.amount + '/' + request.year, this.serviceHelper.getHttpOptions());
   }

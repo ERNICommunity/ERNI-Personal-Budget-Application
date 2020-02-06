@@ -34,7 +34,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync();
         }
 
-        public void Remove(TeamRequest teamRequest)
+        public void Delete(TeamRequest teamRequest)
         {
             _context.TeamRequests.Remove(teamRequest);
         }

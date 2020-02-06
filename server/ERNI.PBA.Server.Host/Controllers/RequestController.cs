@@ -399,7 +399,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (teamRequest == null)
                 return BadRequest();
 
-            _teamRequestRepository.Remove(request);
+            _teamRequestRepository.Delete(request);
             await _teamRequestRepository.AddAsync(teamRequest);
             await _unitOfWork.SaveChanges(cancellationToken);
 
@@ -418,6 +418,22 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             await _requestRepository.DeleteRequest(request);
 
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete("team/{id}")]
+        public async Task<IActionResult> DeleteTeamRequest(int id, CancellationToken cancellationToken)
+        {
+            var request = await _teamRequestRepository.GetAsync(id);
+            if (request == null)
+                return BadRequest("Not a valid id");
+
+            if (HttpContext.User.GetId() != request.UserId)
+                return Forbid();
+
+            _teamRequestRepository.Delete(request);
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();

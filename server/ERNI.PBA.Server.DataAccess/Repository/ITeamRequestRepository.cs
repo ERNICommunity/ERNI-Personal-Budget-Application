@@ -11,6 +11,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<TeamRequest[]> GetAllAsync(int userId);
 
-        void Remove(TeamRequest teamRequest);
+        void Delete(TeamRequest teamRequest);
     }
 }
