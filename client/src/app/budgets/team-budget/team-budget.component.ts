@@ -35,7 +35,9 @@ export class TeamBudgetComponent implements OnInit {
     }
 
     deleteRequest(id: number): void {
-        this.requestService.deleteTeamRequest(id).subscribe(() => { });
+        this.requestService.deleteTeamRequest(id).subscribe(() => {
+            this.initializeTeamBudgets(this.year);
+        });
     }
 
     private initializeTeamBudgets(year: number): void {
