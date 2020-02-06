@@ -8,6 +8,7 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Examples;
+using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Services;
@@ -245,12 +246,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddTeamRequest([FromBody]TeamRequestInputModel payload, CancellationToken cancellationToken)
         {
             var userId = User.GetId();
-            var teamRequest = await _requestService.CreateTeamRequests(userId, payload, cancellationToken);
-            if (teamRequest == null)
-                return BadRequest();
 
-            await _teamRequestRepository.AddAsync(teamRequest);
-            await _unitOfWork.SaveChanges(cancellationToken);
+            try
+            {
+                var teamRequest = await _requestService.CreateTeamRequests(userId, payload, cancellationToken);
+                if (teamRequest == null)
+                    return BadRequest();
+
+                await _teamRequestRepository.AddAsync(teamRequest);
+                await _unitOfWork.SaveChanges(cancellationToken);
+            }
+            catch (NoAvailableFundsException)
+            {
+                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
 
             return Ok();
         }
@@ -395,13 +404,20 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Date = payload.Date,
                 Year = request.Year
             };
-            var teamRequest = await _requestService.CreateTeamRequests(userId, requestInputModel, cancellationToken);
-            if (teamRequest == null)
-                return BadRequest();
+            try
+            {
+                var teamRequest = await _requestService.CreateTeamRequests(userId, requestInputModel, cancellationToken);
+                if (teamRequest == null)
+                    return BadRequest();
 
-            _teamRequestRepository.Delete(request);
-            await _teamRequestRepository.AddAsync(teamRequest);
-            await _unitOfWork.SaveChanges(cancellationToken);
+                _teamRequestRepository.Delete(request);
+                await _teamRequestRepository.AddAsync(teamRequest);
+                await _unitOfWork.SaveChanges(cancellationToken);
+            }
+            catch (NoAvailableFundsException)
+            {
+                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
 
             return Ok();
         }
