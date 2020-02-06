@@ -109,6 +109,7 @@ export class RequestEditComponent {
                 .subscribe(() => {
                     this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
                     this.modal.close();
+                    this.requestService.teamBudgetChanged.emit(null);
                 },
                     err => {
                         this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");

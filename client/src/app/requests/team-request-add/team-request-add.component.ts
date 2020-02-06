@@ -52,12 +52,13 @@ export class TeamRequestAddComponent implements OnInit {
             amount: amount,
             date: date
         };
-        
+
         this.requestService.addTeamRequest(teamRequest as TeamRequest)
             .subscribe(() => {
                 this.busyIndicatorService.end();
                 this.modal.close();
                 this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
+                this.requestService.teamBudgetChanged.emit(null);
             },
                 err => {
                     this.busyIndicatorService.end();

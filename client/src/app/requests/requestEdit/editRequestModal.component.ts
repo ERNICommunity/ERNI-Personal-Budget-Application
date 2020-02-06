@@ -21,7 +21,6 @@ export class EditRequestModalComponent implements OnDestroy {
   ) {
     route.params.pipe(takeUntil(this.destroy)).subscribe(params => {
       let isTeamRequest = params.type !== undefined && params.type == "team";
-      console.log(params);
 
       // When router navigates on this component is takes the params and opens up the photo detail modal
       this.currentDialog = this.modalService.open(RequestEditComponent, { centered: true });

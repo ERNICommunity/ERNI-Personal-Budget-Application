@@ -28,6 +28,10 @@ export class TeamBudgetComponent implements OnInit {
             this.year = params['year'];
             this.initializeTeamBudgets(this.year);
         });
+
+        this.requestService.teamBudgetChanged.subscribe(() => {
+            this.initializeTeamBudgets(this.year);
+        })
     }
 
     openDeleteConfirmationModal(content) {

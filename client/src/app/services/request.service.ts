@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Request } from '../model/request/request';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -13,6 +13,7 @@ import { TeamRequest } from '../model/teamRequest';
 
 @Injectable()
 export class RequestService {
+  teamBudgetChanged: EventEmitter<any> = new EventEmitter();
 
   requestUrl = "Request/";
 
