@@ -1,6 +1,7 @@
-import { BudgetType } from "../budgetType";
+import { BudgetTypeEnum } from "../budgetTypeEnum";
+
 export class Budget {
     id: number;
     title: string;
-    type: BudgetType;
+    type: BudgetTypeEnum;
 }

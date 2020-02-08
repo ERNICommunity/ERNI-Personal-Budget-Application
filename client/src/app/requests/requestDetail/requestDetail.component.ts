@@ -4,7 +4,7 @@ import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
 import { FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { RequestType } from '../../model/request-type';
+import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 
 @Component({
     selector: 'app-request-detail',
@@ -16,7 +16,7 @@ export class RequestDetailComponent implements OnInit {
     selectedDate: Date;
     requestForm: FormGroup;
     httpResponseError: string;
-    requestType: RequestType;
+    requestType: BudgetTypeEnum;
 
     constructor(private requestService: RequestService,
         private location: Location,
@@ -26,7 +26,7 @@ export class RequestDetailComponent implements OnInit {
     ngOnInit() { }
 
     public getRequest(id: number): void {
-        if (this.requestType == RequestType.TeamBudget) {
+        if (this.requestType == BudgetTypeEnum.TeamBudget) {
             this.requestService.getTeamRequest(id)
                 .subscribe(request => {
                     this.request = request;

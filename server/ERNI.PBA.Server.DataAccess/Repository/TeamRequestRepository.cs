@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
@@ -26,12 +29,13 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(_ => _.Id == requestId);
         }
 
-        public async Task<TeamRequest[]> GetAllAsync()
+        public async Task<TeamRequest[]> GetAllAsync(Expression<Func<TeamRequest, bool>> filter, CancellationToken cancellationToken)
         {
             return await _context.TeamRequests
+                .Where(filter)
                 .Include(_ => _.Requests)
                 .Include(_ => _.User)
-                .ToArrayAsync();
+                .ToArrayAsync(cancellationToken);
         }
 
         public async Task<TeamRequest[]> GetAllByUserAsync(int userId)

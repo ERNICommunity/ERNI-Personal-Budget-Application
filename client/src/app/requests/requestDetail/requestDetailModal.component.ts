@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RequestDetailComponent } from './requestDetail.component';
-import { RequestType } from '../../model/request-type';
 
 @Component({
     selector: 'app-modal-container',

@@ -167,6 +167,39 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        [HttpPost("team/{id}/approve")]
+        public async Task<IActionResult> ApproveTeamRequest(int id, CancellationToken cancellationToken)
+        {
+            var teamRequest = await _teamRequestRepository.GetAsync(id);
+            if (teamRequest == null)
+            {
+                _logger.LogWarning("Not a valid id");
+                return BadRequest("Not a valid id");
+            }
+
+            var isAdmin = HttpContext.User.IsInRole(Role.Admin.ToString());
+            if (!isAdmin)
+            {
+                _logger.LogWarning($"User cannot manipulate the request id={teamRequest.Id}");
+                return BadRequest($"User cannot manipulate the request id={teamRequest.Id}");
+            }
+
+            teamRequest.State = RequestState.Approved;
+            foreach (var request in teamRequest.Requests)
+            {
+                request.State = RequestState.Approved;
+            }
+
+            string message = "Request: " + teamRequest.Title + " of amount: " + teamRequest.Requests.Sum(_ => _.Amount) + " has been " +
+                             teamRequest.State + ".";
+
+            _mailService.SendMail(message, teamRequest.User.Username);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
         [HttpPost("{id}/reject")]
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
@@ -473,7 +506,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
-            var teamRequests = await _teamRequestRepository.GetAllAsync();
+            var teamRequests = await _teamRequestRepository.GetAllAsync(x => x.Year == year && requestStates.Contains(x.State), cancellationToken);
 
             var result = requests.Select(RequestModelHelper.GetModel).ToList();
             result.AddRange(teamRequests.Select(RequestModelHelper.GetModel));

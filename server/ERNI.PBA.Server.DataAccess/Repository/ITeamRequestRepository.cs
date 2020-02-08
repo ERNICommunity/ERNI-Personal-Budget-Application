@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
@@ -9,7 +12,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         Task<TeamRequest> GetAsync(int requestId);
 
-        Task<TeamRequest[]> GetAllAsync();
+        Task<TeamRequest[]> GetAllAsync(Expression<Func<TeamRequest, bool>> filter, CancellationToken cancellationToken);
 
         Task<TeamRequest[]> GetAllByUserAsync(int userId);
 

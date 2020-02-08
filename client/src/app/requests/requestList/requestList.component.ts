@@ -8,6 +8,7 @@ import { UserService } from '../../services/user.service';
 import { RequestState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 
 @Component({
     selector: 'app-request-list',
@@ -53,7 +54,7 @@ export class RequestListComponent implements OnInit {
         private userService: UserService,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        private config: ConfigService,
+        private config: ConfigService
     ) {
 
         this.years = [];
@@ -109,8 +110,18 @@ export class RequestListComponent implements OnInit {
         requests.subscribe(requests => { this.requests = requests, this.filteredRequests = this.requests });
     }
 
-    approveRequest(id: number): void {
-        this.requestService.approveRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
+    approveRequest(request: Request): void {
+        if (request.budget.type == BudgetTypeEnum.TeamBudget) {
+            this.requestService.approveTeamRequest(request.id).subscribe(
+                () => {
+                    this.requests = this.requests.filter(req => req.id !== request.id), this.filteredRequests = this.requests
+                });
+        } else {
+            this.requestService.approveRequest(request.id).subscribe(
+                () => {
+                    this.requests = this.requests.filter(req => req.id !== request.id), this.filteredRequests = this.requests
+                });
+        }
     }
 
     rejectRequest(id: number): void {
