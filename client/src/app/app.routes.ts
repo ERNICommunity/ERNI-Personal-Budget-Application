@@ -64,28 +64,28 @@ export const rootRouterConfig: Routes = [
             {
                 path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [ViewerGuard],
                 children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'detail/:requestId/type/:type', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
                 ]
             },
             {
                 path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [ViewerGuard],
                 children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'detail/:requestId/type/:type', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
                 ]
             },
             {
                 path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [ViewerGuard],
                 children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'detail/:requestId/type/:type', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
                 ]
             },
             {
                 path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [ViewerGuard],
                 children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
+                    { path: 'detail/:requestId/type/:type', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
                 ]
             }

@@ -83,7 +83,7 @@ export class RequestListComponent implements OnInit {
             this.getRequests(this.requestFilter, this.selectedYear);
         });
 
-        this.userService.getCurrentUser().subscribe(u => {this.isAdmin = u.isAdmin; this.isViewer = u.isViewer});
+        this.userService.getCurrentUser().subscribe(u => { this.isAdmin = u.isAdmin; this.isViewer = u.isViewer });
     }
 
     getRequests(filter: RequestFilter, year: number): void {
