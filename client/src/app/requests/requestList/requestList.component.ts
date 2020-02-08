@@ -153,10 +153,17 @@ export class RequestListComponent implements OnInit {
         this.modalService.open(content, { centered: true, backdrop: 'static' });
     }
 
-    deleteRequest(id: number): void {
-        this.requestService.deleteRequest(id).subscribe(() => {
-            this.requests = this.requests.filter(req => req.id !== id),
-                this.filteredRequests = this.requests
-        });
+    deleteRequest(request: Request): void {
+        if (request.budget.type == BudgetTypeEnum.TeamBudget) {
+            this.requestService.deleteTeamRequest(request.id).subscribe(() => {
+                this.requests = this.requests.filter(req => req.id !== request.id),
+                    this.filteredRequests = this.requests
+            });
+        } else {
+            this.requestService.deleteRequest(request.id).subscribe(() => {
+                this.requests = this.requests.filter(req => req.id !== request.id),
+                    this.filteredRequests = this.requests
+            });
+        }
     }
 }
