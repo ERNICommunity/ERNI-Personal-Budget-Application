@@ -63,7 +63,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (!teamBudges.Any())
                 return Ok();
 
-            var teamRequests = await _teamRequestRepository.GetAllAsync(userId);
+            var teamRequests = await _teamRequestRepository.GetAllByUserAsync(userId);
             var amount = teamBudges.Sum(_ => _.Amount);
             var amountLeft = teamRequests.SelectMany(_ => _.Requests).Sum(_ => _.Amount);
 

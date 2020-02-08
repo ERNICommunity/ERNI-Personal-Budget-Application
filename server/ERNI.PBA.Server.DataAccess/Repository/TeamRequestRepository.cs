@@ -26,7 +26,15 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(_ => _.Id == requestId);
         }
 
-        public async Task<TeamRequest[]> GetAllAsync(int userId)
+        public async Task<TeamRequest[]> GetAllAsync()
+        {
+            return await _context.TeamRequests
+                .Include(_ => _.Requests)
+                .Include(_ => _.User)
+                .ToArrayAsync();
+        }
+
+        public async Task<TeamRequest[]> GetAllByUserAsync(int userId)
         {
             return await _context.TeamRequests
                 .Include(_ => _.Requests)

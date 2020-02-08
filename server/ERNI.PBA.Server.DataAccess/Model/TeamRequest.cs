@@ -17,6 +17,8 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public RequestState State { get; set; }
 
+        public virtual User User { get; set; }
+
         public virtual IList<Request> Requests { get; set; }
     }
 }
