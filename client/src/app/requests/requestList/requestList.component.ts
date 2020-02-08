@@ -124,8 +124,12 @@ export class RequestListComponent implements OnInit {
         }
     }
 
-    rejectRequest(id: number): void {
-        this.requestService.rejectRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
+    rejectRequest(request: Request): void {
+        if (request.budget.type == BudgetTypeEnum.TeamBudget) {
+            this.requestService.rejectTeamRequest(request.id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== request.id), this.filteredRequests = this.requests });
+        } else {
+            this.requestService.rejectRequest(request.id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== request.id), this.filteredRequests = this.requests });
+        }
     }
 
     canRejectRequest(id: number): boolean {

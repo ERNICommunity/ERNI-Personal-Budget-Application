@@ -236,6 +236,32 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        [HttpPost("team/{id}/reject")]
+        public async Task<IActionResult> RejectTeamRequest(int id, CancellationToken cancellationToken)
+        {
+            var teamRequest = await _teamRequestRepository.GetAsync(id);
+            if (teamRequest == null)
+                return BadRequest("Not a valid id");
+
+            var isAdmin = HttpContext.User.IsInRole(Role.Admin.ToString());
+            if (!isAdmin)
+            {
+                return BadRequest($"User cannot manipulate the request id={teamRequest.Id}");
+            }
+
+            teamRequest.State = RequestState.Rejected;
+            foreach (var request in teamRequest.Requests)
+            {
+                request.State = RequestState.Rejected;
+            }
+
+            _mailService.SendMail("Your request: " + teamRequest.Title + " has been " + teamRequest.State + ".", teamRequest.User.Username);
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddRequest([FromBody]SingleRequestInputModel payload, CancellationToken cancellationToken)
         {

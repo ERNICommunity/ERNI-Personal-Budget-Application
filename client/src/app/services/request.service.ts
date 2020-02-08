@@ -59,6 +59,10 @@ export class RequestService {
     return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
   }
 
+  public rejectTeamRequest(id: number): Observable<Request> {
+    return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + 'team/' + id + '/reject', this.serviceHelper.getHttpOptions())
+  }
+
   public addRequest(request: NewRequest): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
