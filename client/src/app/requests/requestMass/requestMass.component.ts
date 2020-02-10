@@ -10,6 +10,8 @@ import { User } from '../../model/user';
 import { UserState } from '../../model/userState';
 import { RequestMass } from '../../model/requestMass';
 import { BudgetLeft } from '../../model/budgetLeft';
+import { AlertService } from '../../services/alert.service';
+import { Alert, AlertType } from '../../model/alert.model';
 
 
 @Component({
@@ -18,7 +20,6 @@ import { BudgetLeft } from '../../model/budgetLeft';
     styleUrls: ['./requestMass.component.css']
 })
 export class RequestMassComponent implements OnInit {
-    httpResponseError: string;
     selectedDate: Date;
     requestForm: FormGroup;
     users: User[];
@@ -35,6 +36,7 @@ export class RequestMassComponent implements OnInit {
         private location: Location,
         private route: ActivatedRoute,
         private fb: FormBuilder,
+        private alertService: AlertService,
         private busyIndicatorService: BusyIndicatorService) {
         this.createForm();
     }
@@ -143,11 +145,12 @@ export class RequestMassComponent implements OnInit {
 
         this.requestService.addMassRequest({ title, amount, date, users } as RequestMass)
             .subscribe(() => {
+                this.alertService.alert(new Alert({ message: "Multiple requests created", type: AlertType.Success, keepAfterRouteChange: true }));
                 this.busyIndicatorService.end();
                 this.goBack();
             },
                 err => {
-                    this.httpResponseError = JSON.stringify(err.error);
+                    this.alertService.error("Error while creating request: " + JSON.stringify(err.error));
                     this.busyIndicatorService.end();
                 }).add(() => this.busyIndicatorService.end());
     }

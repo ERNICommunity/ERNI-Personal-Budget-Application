@@ -6,6 +6,7 @@ import { PatchRequest } from '../../model/PatchRequest';
 import { NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { Request } from '../../model/request/request';
 
 @Component({
@@ -19,15 +20,16 @@ export class RequestEditComponent {
     dirty: boolean;
     isTeamRequest: boolean;
 
-    requestId: number;
-
-    constructor(private requestService: RequestService,
-        public modal: NgbActiveModal,
-        private location: Location,
-        private fb: FormBuilder,
-        private alertService: AlertService) {
-        this.createForm();
-    }
+  requestId: number;
+  
+  constructor(private requestService: RequestService,
+              public modal: NgbActiveModal,
+              private location: Location,
+              private fb: FormBuilder,
+              private alertService: AlertService,
+              private dataChangeNotificationService: DataChangeNotificationService){
+                this.createForm();
+               }
 
     createForm() {
         this.requestForm = this.fb.group({
@@ -118,6 +120,7 @@ export class RequestEditComponent {
             this.requestService.updateRequest(data)
                 .subscribe(() => {
                     this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
+                    this.dataChangeNotificationService.notify();
                     this.modal.close();
                 },
                     err => {

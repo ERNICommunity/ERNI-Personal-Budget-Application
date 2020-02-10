@@ -8,6 +8,10 @@ import { RequestFilter } from '../../requests/requestFilter';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { map, switchMap, switchAll } from 'rxjs/operators';
+import { Observable, of, combineLatest } from 'rxjs';
+import { RequestService } from '../../services/request.service';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
     selector: 'app-my-Budget',
@@ -27,7 +31,8 @@ export class MyBudgetComponent implements OnInit {
         private userService: UserService,
         private route: ActivatedRoute,
         private config: ConfigService,
-        public busyIndicatorService: BusyIndicatorService) {
+        public busyIndicatorService: BusyIndicatorService,
+        private dataChangeNotificationService: DataChangeNotificationService) {
         this.years = [];
         this.currentYear = (new Date()).getFullYear();
 
@@ -40,7 +45,7 @@ export class MyBudgetComponent implements OnInit {
 
         this.getUser();
 
-        this.route.params.subscribe((params: Params) => {
+        combineLatest(this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([params, unit]) => {
 
             // the following line forces routerLinkActive to update even if the route did nto change
             // see see https://github.com/angular/angular/issues/13865 for futher info

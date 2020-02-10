@@ -27,6 +27,10 @@ export class BudgetService {
     return this.http.get<TeamBudget>(this.configService.apiUrlBase + this.url + 'user/team/year/' + year, this.serviceHelper.getHttpOptions());
   }
 
+  public getBudget(budgetId: number): Observable<Budget> {
+    return this.http.get<Budget>(this.configService.apiUrlBase + this.url + budgetId, this.serviceHelper.getHttpOptions());
+  }
+
   public getUserBudgetByYear(userId, year: number): Observable<Budget> {
     return this.http.get<Budget>(this.configService.apiUrlBase + this.url + 'user/' + userId + '/year/' + year, this.serviceHelper.getHttpOptions())
   }
@@ -35,14 +39,14 @@ export class BudgetService {
     return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url + 'year/' + year, this.serviceHelper.getHttpOptions())
   }
 
-  public updateBudget(budget: Budget): Observable<any> {
-    return this.http.put(this.configService.apiUrlBase + this.url, budget, this.serviceHelper.getHttpOptions());
+  public updateBudget(id: number, amount: number): Observable<any> {
+    return this.http.put(this.configService.apiUrlBase + this.url, { id, amount }, this.serviceHelper.getHttpOptions());
   }
 
   public createBudget(title: string, amount: number, userId: number, budgetType: number): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.url + "users/" + userId, { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
   }
-  
+
   public createBudgetsForAllActiveUsers(title: string, amount: number, budgetType: number): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.url + "users/all", { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
   }

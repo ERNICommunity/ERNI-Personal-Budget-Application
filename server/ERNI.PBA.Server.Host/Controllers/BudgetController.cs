@@ -4,12 +4,12 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -35,12 +35,14 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("user/{userId}/year/{year}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetUserBudgetByYear(int userId, int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgets(userId, year, cancellationToken);
 
             var result = budgets.Select(budget => new
             {
+                Id = budget.Id,
                 Year = budget.Year,
                 Amount = budget.Amount,
                 User = new User
@@ -94,6 +96,29 @@ namespace ERNI.PBA.Server.Host.Controllers
             });
         }
 
+        [HttpGet("{budgetId}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        public async Task<IActionResult> GetUserBudgetByYear(int budgetId, CancellationToken cancellationToken)
+        {
+            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
+
+            var result = new
+            {
+                Id = budget.Id,
+                Year = budget.Year,
+                Amount = budget.Amount,
+                User = new User
+                {
+                    Id = budget.User.Id,
+                    FirstName = budget.User.FirstName,
+                    LastName = budget.User.LastName,
+                }
+            };
+
+            return Ok(result);
+        }
+
+
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
@@ -121,6 +146,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("users/active/year/{year}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
@@ -131,6 +157,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var result = budgets.Select(b =>
                     new
                     {
+                        Id = b.Id,
                         User = new
                         {
                             Id = b.User.Id,
@@ -149,6 +176,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("year/{year}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
@@ -170,36 +198,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUsersBudgets(int userId, CancellationToken cancellationToken)  //not used
-        {
-            var budgets = await _budgetRepository.GetBudgetsByUser(userId, cancellationToken);
-
-            var result = budgets.Select(_ => new
-            {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
-
-            return Ok(result);
-        }
-
-
-        [HttpGet("user/current")]
-        public async Task<IActionResult> GetCurrentUsersBudgets(CancellationToken cancellationToken)  //not used
-        {
-            var budgets = await _budgetRepository.GetBudgetsByUser(HttpContext.User.GetId(), cancellationToken);
-
-            var result = budgets.Select(_ => new
-            {
-                Year = _.Year,
-                Amount = _.Amount,
-            });
-
-            return Ok(result);
-        }
-
         [HttpGet("usersAvailableForBudgetType/{budgetTypeId}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetUsersAvailableForBudget(BudgetTypeEnum budgetTypeId,
             CancellationToken cancellationToken)
         {
@@ -232,7 +232,10 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("users/all")]
-        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody]CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> CreateBudgetsForAllActiveUsers(
+            [FromBody]CreateBudgetsForAllActiveUsersRequest payload,
+            CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
 
@@ -278,7 +281,10 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("users/{userId}")]
-        public async Task<IActionResult> CreateBudget(int userId, [FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> CreateBudget(int userId,
+            [FromBody] CreateBudgetRequest payload,
+            CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
             var user = await _userRepository.GetUser(userId, cancellationToken);
@@ -315,34 +321,19 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> AddOrUpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
         {
-            //var budget = await _budgetRepository.GetBudgets(payload.User.Id, payload.Year, cancellationToken);
+            var budget = await _budgetRepository.GetBudget(payload.Id, cancellationToken);
 
-            //if (budget == null)
-            //{
-            //    budget = new Budget()
-            //    {
-            //        UserId = payload.User.Id,
-            //        Year = payload.Year,
-            //        Amount = payload.Amount
-            //    };
+            if (budget == null)
+            {
+                return BadRequest($"Budget with id {payload.Id} not found");
+            }
 
-            //    _budgetRepository.AddBudget(budget);
+            budget.Amount = payload.Amount;
 
-            //    await _unitOfWork.SaveChanges(cancellationToken);
-
-            //    return Ok();
-            //}
-            //else
-            //{
-            //    budget.Amount = payload.Amount;
-
-            //    await _unitOfWork.SaveChanges(cancellationToken);
-
-            //    return Ok();
-            //}
-
+            await _unitOfWork.SaveChanges(cancellationToken);
             return Ok();
         }
 

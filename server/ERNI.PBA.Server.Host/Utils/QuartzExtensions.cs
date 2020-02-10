@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
@@ -14,19 +13,13 @@ namespace ERNI.PBA.Server.Host.Utils
         {
             services.Add(new ServiceDescriptor(typeof(IJob), jobType, ServiceLifetime.Transient));
             services.AddSingleton<IJobFactory, ScheduledJobFactory>();
-            services.AddSingleton(provider =>
-            {
-                return JobBuilder.Create<DailyMailNotifications>()
-                  .Build();
-            });
+            services.AddSingleton(provider => JobBuilder.Create<DailyMailNotifications>()
+                .Build());
 
-            services.AddSingleton(provider =>
-            {
-                return TriggerBuilder.Create()
+            services.AddSingleton(provider => TriggerBuilder.Create()
                 .StartNow()
                 .WithCronSchedule(cron)
-                .Build();
-            });
+                .Build());
 
             services.AddSingleton(provider =>
             {

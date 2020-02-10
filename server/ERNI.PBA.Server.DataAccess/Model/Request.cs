@@ -28,9 +28,9 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public virtual Budget Budget { get; set; }
 
-        public virtual RequestCategory Category { get; set; }
+        public RequestCategory Category { get; set; }
 
-        public virtual User User { get; set; }
+        public User User { get; set; }
 
         public virtual TeamRequest TeamRequest { get; set; }
 

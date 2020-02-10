@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Utils;
@@ -10,14 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using ERNI.PBA.Server.Host.Services;
 
-namespace ERNI.PBA.Server
+namespace ERNI.PBA.Server.Host
 {
     public class Startup
     {
@@ -89,17 +89,17 @@ namespace ERNI.PBA.Server
 
                                 if (user.IsAdmin)
                                 {
-                                    claims.Add(new Claim(Claims.Role, Role.Admin.ToString()));
+                                    claims.Add(new Claim(Claims.Role, Roles.Admin));
                                 }
 
                                 if (user.IsViewer)
                                 {
-                                    claims.Add(new Claim(Claims.Role, Role.Viewer.ToString()));
+                                    claims.Add(new Claim(Claims.Role, Roles.Viewer));
                                 }
 
                                 if (user.IsSuperior)
                                 {
-                                    claims.Add(new Claim(Claims.Role, Role.Superior.ToString()));
+                                    claims.Add(new Claim(Claims.Role, Roles.Superior));
                                 }
 
                                 context.Principal.AddIdentity(

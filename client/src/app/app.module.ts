@@ -44,6 +44,7 @@ import { TeamBudgetComponent } from './budgets/team-budget/team-budget.component
 import { TeamRequestAddComponent } from './requests/team-request-add/team-request-add.component';
 import { NewTeamRequestModalComponent } from './requests/new-team-request-modal/new-team-request-modal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
+import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 
 @NgModule({
     declarations: [
@@ -93,6 +94,7 @@ import { EditRequestModalComponent } from './requests/requestEdit/editRequestMod
         BudgetService,
         BusyIndicatorService,
         AdminGuard,
+        DataChangeNotificationService,
         ViewerGuard,
         {
             provide: HTTP_INTERCEPTORS,

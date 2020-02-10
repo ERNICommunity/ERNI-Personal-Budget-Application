@@ -1,4 +1,5 @@
 using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.Host.Model;
 
 public class UserOutputModel
 {

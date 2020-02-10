@@ -35,8 +35,8 @@ export const rootRouterConfig: Routes = [
         path: 'other-budgets', canActivate: [AdminGuard],
         children: [
             { path: '', redirectTo: currentYear + "/1", pathMatch: 'full' },
-            { path: ':year/:budgetType', component: OtherBudgetsComponent, canActivate: [AdminGuard] },
-            { path: ':year/edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminGuard] }
+            { path: 'edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminGuard] },
+            { path: ':year/:budgetType', component: OtherBudgetsComponent, canActivate: [AdminGuard] }
         ]
     },
     {
@@ -102,6 +102,6 @@ export const rootRouterConfig: Routes = [
             { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
         ]
     },
-    { path: 'request-mass', component: RequestMassComponent, canActivate: [AdminGuard] }
+    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminGuard] }
 ];
 

@@ -1,6 +1,6 @@
 <h2>Create Request</h2>
 <br>
-<form *ngIf="categories" [formGroup]="requestForm">
+<form [formGroup]="requestForm">
     <div class="form-group">
         <h5>
             <label class="col-md-6">
@@ -188,10 +188,3 @@
         save
     </button>
 </form>
-<br>
-<br>
-<div *ngIf="httpResponseError">
-    <font color="red" size="4">
-        {{httpResponseError}}
-    </font>
-</div>

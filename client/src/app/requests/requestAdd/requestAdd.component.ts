@@ -7,6 +7,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../services/alert.service';
 import { NewRequest } from '../../model/newRequest';
 import { Alert, AlertType } from '../../model/alert.model';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
     selector: 'app-request-add',
@@ -20,14 +21,15 @@ export class RequestAddComponent implements OnInit {
 
     budgetId: number;
 
-    constructor(
-        public modal: NgbActiveModal,
-        private requestService: RequestService,
-        private fb: FormBuilder,
-        private busyIndicatorService: BusyIndicatorService,
-        private alertService: AlertService) {
-        this.createForm();
-    }
+  constructor(
+    public modal: NgbActiveModal,
+    private requestService: RequestService,
+    private fb: FormBuilder,
+    private busyIndicatorService: BusyIndicatorService,
+    private alertService: AlertService,
+    private dataChangeNotificationService: DataChangeNotificationService) {
+    this.createForm();
+  }
 
     ngOnInit() {
     }
@@ -50,15 +52,16 @@ export class RequestAddComponent implements OnInit {
 
         this.busyIndicatorService.start();
 
-        this.requestService.addRequest({ budgetId, title, amount, date } as NewRequest)
-            .subscribe(() => {
-                this.busyIndicatorService.end();
-                this.modal.close();
-                this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
-            },
-                err => {
-                    this.busyIndicatorService.end();
-                    this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
-                });
-    }
+    this.requestService.addRequest({ budgetId, title, amount, date } as NewRequest)
+      .subscribe(() => {
+        this.busyIndicatorService.end();
+        this.modal.close();
+        this.dataChangeNotificationService.notify();
+        this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
+      },
+        err => {
+          this.busyIndicatorService.end();
+          this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
+        });
+  }
 }
