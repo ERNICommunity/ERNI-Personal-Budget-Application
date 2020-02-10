@@ -156,6 +156,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("team/{id}/approve")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> ApproveTeamRequest(int id, CancellationToken cancellationToken)
         {
             var teamRequest = await _teamRequestRepository.GetAsync(id);
@@ -163,13 +164,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 _logger.LogWarning("Not a valid id");
                 return BadRequest("Not a valid id");
-            }
-
-            var isAdmin = HttpContext.User.IsInRole(Role.Admin.ToString());
-            if (!isAdmin)
-            {
-                _logger.LogWarning($"User cannot manipulate the request id={teamRequest.Id}");
-                return BadRequest($"User cannot manipulate the request id={teamRequest.Id}");
             }
 
             teamRequest.State = RequestState.Approved;
@@ -208,17 +202,12 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("team/{id}/reject")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> RejectTeamRequest(int id, CancellationToken cancellationToken)
         {
             var teamRequest = await _teamRequestRepository.GetAsync(id);
             if (teamRequest == null)
                 return BadRequest("Not a valid id");
-
-            var isAdmin = HttpContext.User.IsInRole(Role.Admin.ToString());
-            if (!isAdmin)
-            {
-                return BadRequest($"User cannot manipulate the request id={teamRequest.Id}");
-            }
 
             teamRequest.State = RequestState.Rejected;
             foreach (var request in teamRequest.Requests)
@@ -272,7 +261,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("team")]
-        [Authorize(Roles = nameof(Role.Superior))]
+        [Authorize(Roles = Roles.Superior)]
         public async Task<IActionResult> AddTeamRequest([FromBody]TeamRequestInputModel payload, CancellationToken cancellationToken)
         {
             var userId = User.GetId();
