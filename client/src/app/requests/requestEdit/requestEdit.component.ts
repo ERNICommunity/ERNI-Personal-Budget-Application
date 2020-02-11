@@ -20,7 +20,8 @@ export class RequestEditComponent {
   httpResponseError : string;
   dirty: boolean;
 
-  requestId: number;
+  public requestId: number;
+  
   
   constructor(private requestService: RequestService,
               public modal: NgbActiveModal,

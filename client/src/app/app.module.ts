@@ -42,6 +42,8 @@ import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
 import { DataChangeNotificationService } from './services/dataChangeNotification.service';
+import { FileUploadComponent } from './file-upload/file-upload.component';
+import { InvoiceImageService } from './services/invoice-image.service';
 
 @NgModule({
     declarations: [
@@ -64,7 +66,8 @@ import { DataChangeNotificationService } from './services/dataChangeNotification
         OtherBudgetsDetailComponent,
         AlertComponent,
         NewRequestModalComponent,
-        RequestDetailModalComponent
+        RequestDetailModalComponent,
+        FileUploadComponent
     ],
     imports: [
         NgbModule,
@@ -89,6 +92,7 @@ import { DataChangeNotificationService } from './services/dataChangeNotification
         BusyIndicatorService,
         AdminGuard,
         DataChangeNotificationService,
+        InvoiceImageService,
         ViewerGuard,
         {
             provide: HTTP_INTERCEPTORS,

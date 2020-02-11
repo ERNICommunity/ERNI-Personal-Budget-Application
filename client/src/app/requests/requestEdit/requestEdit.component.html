@@ -39,6 +39,10 @@
             class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
         </div>
+        <div class="form-group">
+            <label>Invoices</label>
+            <app-file-upload [requestId] = requestId></app-file-upload>
+        </div>
     </form>
 </div>
 
