@@ -26,6 +26,14 @@ namespace ERNI.PBA.Server.Host.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet("{requestId}")]
+        public async Task<IActionResult> GetInvoiceImagesName(int requestId, CancellationToken cancellationToken)
+        {
+            //check if id exist 
+            var imagesName = await _invoiceImageRepository.GetInvoiceImagesName(requestId, cancellationToken);
+            return Ok(imagesName);
+        }
+
         [HttpPost]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel,

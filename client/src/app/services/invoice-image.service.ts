@@ -3,6 +3,7 @@ import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/c
 import { ConfigService } from './config.service';
 import { Observable, Subject } from 'rxjs';
 import { InvoiceImage } from '../model/InvoiceImage';
+import { ServiceHelper } from './service.helper';
 
 @Injectable()
 
@@ -10,8 +11,14 @@ export class InvoiceImageService {
   requestUrl = "InvoiceImage";
 
   constructor(private http: HttpClient,
-    private configService : ConfigService)
+    private configService : ConfigService,
+    private serviceHelper : ServiceHelper)
    {  }
+
+   public getInvoiceImagesNames(requestId : number) : Observable<string[]>
+   {
+      return this.http.get<string[]>(this.configService.apiUrlBase + this.requestUrl + '/' +  requestId, this.serviceHelper.getHttpOptions());
+   }
 
    public addInvoiceImage(invoiceImage : InvoiceImage) : Observable<number>
    {
