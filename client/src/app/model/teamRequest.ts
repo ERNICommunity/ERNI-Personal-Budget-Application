@@ -1,5 +1,6 @@
-import { NewRequest } from "./newRequest";
-
-export class TeamRequest extends NewRequest {
+export class TeamRequest {
     year: number;
+    amount: number;
+    title: string;
+    date: Date;
 }
