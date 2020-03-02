@@ -5,6 +5,7 @@ import { RequestFilter } from '../../requests/requestFilter';
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestService } from '../../services/request.service';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
     selector: 'app-team-budget',
@@ -21,6 +22,7 @@ export class TeamBudgetComponent implements OnInit {
         private route: ActivatedRoute,
         private budgetService: BudgetService,
         private requestService: RequestService,
+        private dataChangeNotificationService: DataChangeNotificationService,
         private modalService: NgbModal) { }
 
     ngOnInit() {
@@ -29,9 +31,9 @@ export class TeamBudgetComponent implements OnInit {
             this.initializeTeamBudgets(this.year);
         });
 
-        this.requestService.teamBudgetChanged.subscribe(() => {
+        this.dataChangeNotificationService.notifications$.subscribe(() => {
             this.initializeTeamBudgets(this.year);
-        })
+        });
     }
 
     openDeleteConfirmationModal(content) {

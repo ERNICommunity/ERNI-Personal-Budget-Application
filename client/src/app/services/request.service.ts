@@ -13,8 +13,6 @@ import { TeamRequest } from '../model/teamRequest';
 
 @Injectable()
 export class RequestService {
-  teamBudgetChanged: EventEmitter<any> = new EventEmitter();
-
   requestUrl = "Request/";
 
   constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }

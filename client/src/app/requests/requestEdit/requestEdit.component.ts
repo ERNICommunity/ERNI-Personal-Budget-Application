@@ -20,16 +20,16 @@ export class RequestEditComponent {
     dirty: boolean;
     isTeamRequest: boolean;
 
-  requestId: number;
-  
-  constructor(private requestService: RequestService,
-              public modal: NgbActiveModal,
-              private location: Location,
-              private fb: FormBuilder,
-              private alertService: AlertService,
-              private dataChangeNotificationService: DataChangeNotificationService){
-                this.createForm();
-               }
+    requestId: number;
+
+    constructor(private requestService: RequestService,
+        public modal: NgbActiveModal,
+        private location: Location,
+        private fb: FormBuilder,
+        private alertService: AlertService,
+        private dataChangeNotificationService: DataChangeNotificationService) {
+        this.createForm();
+    }
 
     createForm() {
         this.requestForm = this.fb.group({
@@ -111,7 +111,7 @@ export class RequestEditComponent {
                 .subscribe(() => {
                     this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
                     this.modal.close();
-                    this.requestService.teamBudgetChanged.emit(null);
+                    this.dataChangeNotificationService.notify();
                 },
                     err => {
                         this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");

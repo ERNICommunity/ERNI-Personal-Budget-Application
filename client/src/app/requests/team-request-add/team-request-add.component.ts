@@ -6,6 +6,7 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { TeamRequest } from '../../model/teamRequest';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
     selector: 'app-team-request-add',
@@ -22,7 +23,8 @@ export class TeamRequestAddComponent implements OnInit {
         private requestService: RequestService,
         private fb: FormBuilder,
         private busyIndicatorService: BusyIndicatorService,
-        private alertService: AlertService) {
+        private alertService: AlertService,
+        private dataChangeNotificationService: DataChangeNotificationService) {
         this.createForm();
     }
 
@@ -54,12 +56,13 @@ export class TeamRequestAddComponent implements OnInit {
         };
 
         this.requestService.addTeamRequest(teamRequest as TeamRequest)
-            .subscribe(() => {
-                this.busyIndicatorService.end();
-                this.modal.close();
-                this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
-                this.requestService.teamBudgetChanged.emit(null);
-            },
+            .subscribe(
+                () => {
+                    this.busyIndicatorService.end();
+                    this.modal.close();
+                    this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
+                    this.dataChangeNotificationService.notify();
+                },
                 err => {
                     this.busyIndicatorService.end();
                     this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
