@@ -1,0 +1,6 @@
+div.fileLists{
+    display: block;
+    height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

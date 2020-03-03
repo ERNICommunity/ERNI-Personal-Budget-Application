@@ -1,30 +1,23 @@
 <p>Uploaded files</p>
-<ul class="InvoiceImage">
-  <li *ngFor="let image of images">
-    {{image}}
-  </li>
-</ul>
-<div *ngIf="uploadingImages?.length>0"> 
-  <p>Files in progress</p>
+<div class="fileLists">
+  <div *ngIf="images?.length == 0 && uploadingImages?.length == 0">No files :(</div>
+  <ul class="pl-0">
+    <li *ngFor="let image of images">
+      <div class="row mt-2">
+        <div class="col-md-8">{{image.name}}</div>
+        <button class="col-md-3 btn btn-outline-primary"
+        (click)="download(image.id)">Download</button>
+        <a #downloadLink></a>
+      </div>
+    </li>
+  </ul>
+  <ul>
+    <li *ngFor="let uploadingImage of uploadingImages">
+      <p>{{uploadingImage.name}}</p>
+      <ngb-progressbar height="20px" [value]=uploadingImage.progress>
+      </ngb-progressbar>
+    </li>
+  </ul>
 </div>
-<ul>
-  <li *ngFor="let uploadingImage of uploadingImages">
-    <p>{{uploadingImage.name}}</p>
-    <ngb-progressbar height="20px"
-     [value] = uploadingImage.progress>
-    </ngb-progressbar>>
-  </li>
-</ul>
-<button
-(click)="onButtonClick()">Add file</button>
-
-<input 
-  id="fileDialog"
-  type="file"  
-  #file
-  (change)="onImageAdded($event.target.files)"
-  style="display: none;"/>
-
-
-  
-
+<button class="btn btn-outline-primary" (click)="onButtonClick()">Add file</button>
+<input id="fileDialog" type="file" #file (change)="onImageAdded($event.target.files)" style="display: none;" />

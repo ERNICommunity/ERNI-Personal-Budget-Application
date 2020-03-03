@@ -4,7 +4,7 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
 {
     public class InvoiceImageModel
     {
-        public string RequestId { get; set; }
-        public IFormFile FileKey { get; set; }
+        public int RequestId { get; set; }
+        public IFormFile File { get; set; }
     }
 }

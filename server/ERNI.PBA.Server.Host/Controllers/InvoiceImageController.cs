@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,8 +6,8 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -26,12 +24,33 @@ namespace ERNI.PBA.Server.Host.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet("{requestId}")]
-        public async Task<IActionResult> GetInvoiceImagesName(int requestId, CancellationToken cancellationToken)
+        [HttpGet("images/{requestId}")]
+        public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
-            //check if id exist 
-            var imagesName = await _invoiceImageRepository.GetInvoiceImagesName(requestId, cancellationToken);
-            return Ok(imagesName);
+            var imagesName = await _invoiceImageRepository.GetInvoiceImagesNameId(requestId, cancellationToken);
+            var result = imagesName.Select(image => new
+            {
+                Id = image.Item1,
+                Name = image.Item2
+            });
+            return Ok(result);
+        }
+
+        [HttpGet("image/{imageId}")]
+        public async Task<IActionResult> GetInvoiceImageFile(int imageId,
+            CancellationToken cancellationToken)
+        {
+            var image = await _invoiceImageRepository.GetInvoiceImage(imageId, cancellationToken);
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(image.Name + image.Extension, out var contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return new FileContentResult(image.Data, contentType)
+            {
+                FileDownloadName = image.Name + image.Extension
+            };
         }
 
         [HttpPost]
@@ -40,19 +59,17 @@ namespace ERNI.PBA.Server.Host.Controllers
             CancellationToken cancellationToken)
         {
             byte[] buffer;
+            var fullName = invoiceImageModel.File.FileName;
 
-            //Exclude from controller
-            using (var memStream = new MemoryStream())
+            using (var openReadStream = invoiceImageModel.File.OpenReadStream())
             {
-                await invoiceImageModel.FileKey.CopyToAsync(memStream, cancellationToken);
-                buffer = memStream.ToArray();
+                buffer = new byte[invoiceImageModel.File.Length];
+                openReadStream.Read(buffer, 0, buffer.Length);
             }
 
             //Check if id is valid, and is in DB (415)
-            var requestId = Convert.ToInt32(invoiceImageModel.RequestId);
-
             //Check if format is supported (415)
-            var fullName = invoiceImageModel.FileKey.FileName;
+            
             var extension = Path.GetExtension(fullName);
             var fileName = Path.GetFileNameWithoutExtension(fullName);
 
@@ -61,7 +78,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Data = buffer, 
                 Name = fileName,
                 Extension = extension,
-                RequestId = requestId
+                RequestId = invoiceImageModel.RequestId
             };
 
             await _invoiceImageRepository.AddInvoiceImage(image, cancellationToken);

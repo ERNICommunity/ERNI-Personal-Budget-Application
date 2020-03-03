@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
 import { InvoiceImageService } from '../services/invoice-image.service';
 import { InvoiceImage } from '../model/InvoiceImage';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-file-upload',
@@ -13,14 +12,16 @@ import { Observable } from 'rxjs';
 export class FileUploadComponent implements OnInit, OnChanges {
   @Input() requestIdInput: number;
   @ViewChild('file') file;
+  @ViewChild('downloadLink') downloadLink : ElementRef;
 
-  images: string[];
+  images: [number,string][];
   uploadingImages: uploadingImage[] = [];
   requestId: number;
 
   constructor(private invoiceImageService: InvoiceImageService) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+  }
 
   ngOnChanges(changes: SimpleChanges) {
 
@@ -33,10 +34,18 @@ export class FileUploadComponent implements OnInit, OnChanges {
   }
 
   updateImagesList() {
-    this.invoiceImageService.getInvoiceImagesNames(this.requestId).subscribe(names => {
+    this.invoiceImageService.getInvoiceImages(this.requestId).subscribe(names => {
       this.images = names;
-      console.log(names);
     });
+  }
+
+  download(imageId : number )
+  {
+    let url = this.invoiceImageService.getInvoiceImateUrl(imageId);
+    let link = this.downloadLink.nativeElement;
+    link.href = url;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
   public onImageAdded(files: FileList) {
@@ -50,14 +59,11 @@ export class FileUploadComponent implements OnInit, OnChanges {
       newItem.name = image.file.name;
       newItem.progress = 0;
       this.uploadingImages.push(newItem);
-      console.log('new item pushed');
 
       this.invoiceImageService.addInvoiceImage(image).subscribe(progress => {
         newItem.progress = progress;
-        console.log(progress);
       }, (error) => {
-        console.log("Error ocurred");
-        console.log(error);
+        this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
       },
         () => {
           this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
@@ -70,8 +76,6 @@ export class FileUploadComponent implements OnInit, OnChanges {
     element.click();
   }
 }
-
-//Is this valid ???
 
 class uploadingImage {
   name: string;
