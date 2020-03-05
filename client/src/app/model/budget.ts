@@ -1,4 +1,5 @@
 import { User } from "./user";
+import {Request } from "./request/request";
 
 export class Budget {
   id: number;

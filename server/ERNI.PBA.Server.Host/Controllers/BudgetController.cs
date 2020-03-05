@@ -95,6 +95,11 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Amount = _.Amount,
                     Date = _.Date,
                     State = _.State,
+                    Transactions = _.Transactions.Select(x => new
+                    {
+                        Id = x.Id,
+                        Amount = x.Amount
+                    })
                 })
             });
 

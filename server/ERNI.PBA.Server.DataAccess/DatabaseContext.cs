@@ -17,7 +17,9 @@ namespace ERNI.PBA.Server.DataAccess
         public DbSet<Request> Requests { get; set; }
 
         public DbSet<User> Users { get; set; }
-        
+
+        public DbSet<Transaction> Transactions { get; set; }
+
         public DbSet<InvoiceImage> InvoiceImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +28,7 @@ namespace ERNI.PBA.Server.DataAccess
             modelBuilder.ApplyConfiguration(new RequestCategoryEntityConfiguration());
             modelBuilder.ApplyConfiguration(new RequestEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TransactionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new InvoiceImageEntityConfiguration());
         }
     }

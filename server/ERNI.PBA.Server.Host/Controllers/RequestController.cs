@@ -170,6 +170,15 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Amount = payload.Amount,
                 Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
+                Transactions = new[]
+                {
+                    new Transaction
+                    {
+                        BudgetId = budget.Id,
+                        UserId = userId,
+                        Amount = payload.Amount
+                    }
+                }
             };
 
             await _requestRepository.AddRequest(request);

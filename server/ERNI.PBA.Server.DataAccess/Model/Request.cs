@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ERNI.PBA.Server.DataAccess.Model
 {
@@ -29,6 +30,8 @@ namespace ERNI.PBA.Server.DataAccess.Model
         public RequestCategory Category { get; set; }
 
         public User User { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
 
         public override string ToString()
         {

@@ -38,6 +38,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             return _context.Budgets
                 .Include(_ => _.User)
                 .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
                 .Where(_ => _.UserId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
