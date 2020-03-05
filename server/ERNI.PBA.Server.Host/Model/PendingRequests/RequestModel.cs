@@ -16,7 +16,7 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
 
         public RequestState State { get; set; }
 
-        public UserModel User { get; set; }
+        public UserOutputModel User { get; set; }
 
         public int Year { get; set; }
     }

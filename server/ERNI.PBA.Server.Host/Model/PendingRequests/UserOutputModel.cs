@@ -1,6 +1,6 @@
 namespace ERNI.PBA.Server.Host.Model.PendingRequests
 {
-    public class UserModel
+    public class UserOutputModel
     {
         public int Id { get; set; }
 

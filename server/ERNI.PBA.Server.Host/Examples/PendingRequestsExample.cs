@@ -1,3 +1,4 @@
+using ERNI.PBA.Server.Host.Model.PendingRequests;
 using Swashbuckle.AspNetCore.Examples;
 
 namespace ERNI.PBA.Server.Host.Examples
@@ -8,13 +9,13 @@ namespace ERNI.PBA.Server.Host.Examples
         {
             return new[]
             {
-                new Model.PendingRequests.RequestModel
+                new RequestModel
                 {
                     Id = 1,
                     Title = "Deadpool",
                     Amount = 7.5M,
                     Year = 2018,
-                    User = new Model.PendingRequests.UserModel
+                    User = new UserOutputModel
                     {
                         Id = 1,
                         FirstName = "Johnny",
@@ -27,7 +28,7 @@ namespace ERNI.PBA.Server.Host.Examples
                     Title = "Massage",
                     Amount = 10M,
                     Year = 2018,
-                    User = new Model.PendingRequests.UserModel
+                    User = new UserOutputModel
                     {
                         Id = 1,
                         FirstName = "Hans",

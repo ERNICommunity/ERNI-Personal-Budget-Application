@@ -110,7 +110,6 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("Not a valid id");
             }
 
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             request.State = RequestState.Approved;
 
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -363,7 +362,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Year = request.Year,
                 Date = request.Date,
                 State = request.State,
-                User = new ERNI.PBA.Server.Host.Model.PendingRequests.UserModel
+                User = new UserOutputModel
                 {
                     Id = request.UserId,
                     FirstName = request.Budget.User.FirstName,
