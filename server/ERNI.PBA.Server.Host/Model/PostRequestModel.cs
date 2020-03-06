@@ -1,8 +1,10 @@
+using System;
+
 namespace ERNI.PBA.Server.Host.Model
 {
     public class PostRequestModel
     {
-        public System.DateTime Date { get; set; }
+        public DateTime Date { get; set; }
 
         public string Title { get; set; }
 

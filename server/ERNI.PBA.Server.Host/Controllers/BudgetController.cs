@@ -76,7 +76,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgets(HttpContext.User.GetId(), year, cancellationToken);
+            var userId = HttpContext.User.GetId();
+            var budgets = await _budgetRepository.GetBudgets(userId, year, cancellationToken);
 
             var result = budgets.Select(budget => new
             {

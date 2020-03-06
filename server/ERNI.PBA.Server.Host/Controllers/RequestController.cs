@@ -188,6 +188,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        [HttpPost("team")]
+        public async Task<IActionResult> AddTeamRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
+        {
+            return Ok();
+        }
+
         private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken)
         {
             return budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);

@@ -53,6 +53,10 @@ export class RequestService {
     return this.http.post(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
+  public addTeamRequest(request: NewRequest): Observable<any> {
+    return this.http.post(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
+  }
+
   public addMassRequest(request: RequestMass): Observable<any> {
     return this.http.post<RequestMass>(this.configService.apiUrlBase + this.requestUrl + 'mass', request, this.serviceHelper.getHttpOptions());
   }
