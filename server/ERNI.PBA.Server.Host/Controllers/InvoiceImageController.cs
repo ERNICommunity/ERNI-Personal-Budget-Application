@@ -6,12 +6,14 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class InvoiceImageController : Controller
     {
         private readonly IInvoiceImageRepository _invoiceImageRepository;
@@ -25,6 +27,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("images/{requestId}")]
+        [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
             var imagesName = await _invoiceImageRepository.GetInvoiceImagesNameId(requestId, cancellationToken);
@@ -37,6 +40,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("image/{imageId}")]
+        [Authorize]
         public async Task<IActionResult> GetInvoiceImageFile(int imageId,
             CancellationToken cancellationToken)
         {
@@ -55,6 +59,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
+        [Authorize]
         public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel,
             CancellationToken cancellationToken)
         {

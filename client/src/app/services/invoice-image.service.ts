@@ -18,9 +18,22 @@ export class InvoiceImageService {
     return this.http.get<[number,string][]>(this.configService.apiUrlBase + this.requestUrl + "/images/" + requestId, this.serviceHelper.getHttpOptions());
   }
 
-  public getInvoiceImateUrl(imageId : number) : string 
+  public getInvoiceImageUrl(imageId : number) : string 
   {
     return this.configService.apiUrlBase + this.requestUrl + "/image/" + imageId;
+  }
+
+  public getInvoiceImage(imageId : number) : Observable<Blob>
+  { 
+    const headerDict = {
+      'Content-type' : 'application/octet-stream'
+    }
+
+    return this.http.get<Blob>(this.configService.apiUrlBase + this.requestUrl + "/image/" + imageId, 
+    {
+      headers : new HttpHeaders(headerDict),
+      responseType : 'blob' as 'json'
+    });
   }
 
   public addInvoiceImage(invoiceImage: InvoiceImage): Observable<number> {
@@ -44,11 +57,6 @@ export class InvoiceImageService {
       if (event.type === HttpEventType.UploadProgress) {
         let percentDone = Math.round(100 * event.loaded / event.total);
         progress.next(percentDone);
-      }
-      else if (event.type === HttpEventType.ResponseHeader) {
-        if (event.status === 409) {
-          progress.error("Name already in DB");
-        }
       }
       else if (event instanceof HttpResponse) {
         progress.complete();

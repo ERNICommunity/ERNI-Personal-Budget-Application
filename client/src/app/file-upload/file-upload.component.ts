@@ -12,16 +12,15 @@ import { InvoiceImage } from '../model/InvoiceImage';
 export class FileUploadComponent implements OnInit, OnChanges {
   @Input() requestIdInput: number;
   @ViewChild('file') file;
-  @ViewChild('downloadLink') downloadLink : ElementRef;
+  @ViewChild('downloadLink') downloadLink: ElementRef;
 
-  images: [number,string][];
+  images: [number, string][];
   uploadingImages: uploadingImage[] = [];
   requestId: number;
 
   constructor(private invoiceImageService: InvoiceImageService) { }
 
-  ngOnInit() { 
-  }
+  ngOnInit() {  }
 
   ngOnChanges(changes: SimpleChanges) {
 
@@ -39,10 +38,15 @@ export class FileUploadComponent implements OnInit, OnChanges {
     });
   }
 
-  download(imageId : number )
-  {
-    let url = this.invoiceImageService.getInvoiceImateUrl(imageId);
+  download(imageId: number, imageName: string) {
+    this.invoiceImageService.getInvoiceImage(imageId).subscribe(blob => { this.processBlob(blob, imageName); })
+  }
+
+  processBlob(blob: Blob, name: string) {
+    let fileObject = new File([blob], name);
+    let url = window.URL.createObjectURL(fileObject);
     let link = this.downloadLink.nativeElement;
+    link.setAttribute('download', name);
     link.href = url;
     link.click();
     window.URL.revokeObjectURL(url);
