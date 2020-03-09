@@ -16,6 +16,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Utils;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
@@ -25,6 +26,7 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class RequestController : Controller
     {
+        private readonly IRequestService _requestService;
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -32,10 +34,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly MailService _mailService;
         private readonly ILogger _logger;
 
-        public RequestController(IRequestRepository requestRepository, IUserRepository userRepository,
-            IBudgetRepository budgetRepository, IUnitOfWork unitOfWork, IConfiguration configuration,
+        public RequestController(
+            IRequestService requestService,
+            IRequestRepository requestRepository,
+            IUserRepository userRepository,
+            IBudgetRepository budgetRepository,
+            IUnitOfWork unitOfWork,
+            IConfiguration configuration,
             ILogger<RequestController> logger)
         {
+            _requestService = requestService;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
@@ -191,6 +199,43 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("team")]
         public async Task<IActionResult> AddTeamRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
         {
+            var userId = User.GetId();
+            var currentYear = DateTime.Now.Year;
+
+            var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
+
+            if (budget == null)
+            {
+                return BadRequest($"Budget {payload.BudgetId} was not found.");
+            }
+
+            try
+            {
+                var transactions = await _requestService.CreateTeamTransactions(userId, payload, cancellationToken);
+                if (transactions == null)
+                    return BadRequest();
+
+                var request = new Request
+                {
+                    BudgetId = budget.Id,
+                    UserId = userId,
+                    Year = currentYear,
+                    Title = payload.Title,
+                    Amount = payload.Amount,
+                    Date = payload.Date.ToLocalTime(),
+                    State = RequestState.Pending,
+                    Transactions = transactions
+                };
+
+                await _requestRepository.AddRequest(request);
+
+                await _unitOfWork.SaveChanges(cancellationToken);
+            }
+            catch (NoAvailableFundsException)
+            {
+                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
+
             return Ok();
         }
 
