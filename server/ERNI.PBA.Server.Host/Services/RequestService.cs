@@ -19,10 +19,10 @@ namespace ERNI.PBA.Server.Host.Services
             _budgetRepository = budgetRepository;
         }
 
-        public async Task<Transaction[]> CreateTeamTransactions(int userId, decimal amount, CancellationToken cancellationToken)
+        public async Task<Transaction[]> CreateTeamTransactions(int requestId, int userId, decimal amount, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
-            var teamBudgets = await CreateTeamBudgets(userId, currentYear, amount, cancellationToken);
+            var teamBudgets = await CreateTeamBudgets(requestId, userId, currentYear, amount, cancellationToken);
             if (!teamBudgets.Any())
                 return null;
 
@@ -41,13 +41,13 @@ namespace ERNI.PBA.Server.Host.Services
             return transactions.ToArray();
         }
 
-        private async Task<IList<TeamBudget>> CreateTeamBudgets(int userId, int year, decimal amount, CancellationToken cancellationToken)
+        private async Task<IList<TeamBudget>> CreateTeamBudgets(int requestId, int userId, int year, decimal amount, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
             var teamBudgets = budgets.Select(x => new TeamBudget
             {
                 BudgetId = x.Id,
-                Amount = x.Amount - (x.Transactions?.Sum(_ => _.Amount) ?? 0)
+                Amount = x.Amount - (x.Transactions?.Where(_ => _.RequestId != requestId).Sum(_ => _.Amount) ?? 0)
             }).ToList();
 
             var availableFunds = teamBudgets.Sum(_ => _.Amount);

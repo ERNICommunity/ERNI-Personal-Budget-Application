@@ -208,7 +208,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
             }
 
-            var transactions = await _requestService.CreateTeamTransactions(userId, payload.Amount, cancellationToken);
+            var transactions = await _requestService.CreateTeamTransactions(0, userId, payload.Amount, cancellationToken);
             if (transactions == null)
                 return BadRequest();
 
@@ -369,7 +369,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (userId != request.UserId)
                 return BadRequest("No Access for request!");
 
-            Transaction[] transactions = await _requestService.CreateTeamTransactions(userId, payload.Amount, cancellationToken);
+            var transactions = await _requestService.CreateTeamTransactions(payload.Id, userId, payload.Amount, cancellationToken);
             if (transactions == null)
                 return BadRequest();
 
