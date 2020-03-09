@@ -3,31 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Exceptions;
-using ERNI.PBA.Server.Host.Model;
+using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Host.Services
 {
     public class RequestService : IRequestService
     {
         private readonly IBudgetRepository _budgetRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public RequestService(
-            IBudgetRepository budgetRepository,
-            IUnitOfWork unitOfWork)
+        public RequestService(IBudgetRepository budgetRepository)
         {
             _budgetRepository = budgetRepository;
-            _unitOfWork = unitOfWork;
         }
 
-        public async Task<Transaction[]> CreateTeamTransactions(int userId, PostRequestModel postRequestModel, CancellationToken cancellationToken)
+        public async Task<Transaction[]> CreateTeamTransactions(int userId, decimal amount, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
-            var teamBudgets = await CreateTeamBudgets(userId, currentYear, postRequestModel, cancellationToken);
+            var teamBudgets = await CreateTeamBudgets(userId, currentYear, amount, cancellationToken);
             if (!teamBudgets.Any())
                 return null;
 
@@ -46,7 +41,7 @@ namespace ERNI.PBA.Server.Host.Services
             return transactions.ToArray();
         }
 
-        private async Task<IList<TeamBudget>> CreateTeamBudgets(int userId, int year, PostRequestModel postRequestModel, CancellationToken cancellationToken)
+        private async Task<IList<TeamBudget>> CreateTeamBudgets(int userId, int year, decimal amount, CancellationToken cancellationToken)
         {
             var budgets = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
             var teamBudgets = budgets.Select(x => new TeamBudget
@@ -56,10 +51,10 @@ namespace ERNI.PBA.Server.Host.Services
             }).ToList();
 
             var availableFunds = teamBudgets.Sum(_ => _.Amount);
-            if (availableFunds < postRequestModel.Amount)
-                throw new NoAvailableFundsException();
+            if (availableFunds < amount)
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {amount} exceeds the limit.");
 
-            var payment = postRequestModel.Amount / budgets.Length;
+            var payment = amount / budgets.Length;
             foreach (var budget in teamBudgets)
             {
                 budget.Payment += Math.Abs(payment);

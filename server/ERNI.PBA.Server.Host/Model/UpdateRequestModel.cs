@@ -1,10 +1,12 @@
-﻿namespace ERNI.PBA.Server.Host.Model
+﻿using System;
+
+namespace ERNI.PBA.Server.Host.Model
 {
     public class UpdateRequestModel
     {
         public int Id { get; set; }
 
-        public System.DateTime Date { get; set; }
+        public DateTime Date { get; set; }
 
         public string Title { get; set; }
 

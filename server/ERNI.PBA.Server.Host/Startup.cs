@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Filters;
+using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +47,8 @@ namespace ERNI.PBA.Server.Host
             services.AddTransient<IRequestRepository, RequestRepository>();
             services.AddTransient<IRequestCategoryRepository, RequestCategoryRepository>();
             services.AddTransient<IInvoiceImageRepository, InvoiceImageRepository>();
+            services.AddTransient<IRequestService, RequestService>();
+            services.AddTransient<ApiExceptionFilter>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
@@ -124,7 +128,7 @@ namespace ERNI.PBA.Server.Host
                 c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "Bearer", Enumerable.Empty<string>() } });
             });
 
-            services.AddMvc();
+            services.AddMvc(c => { c.Filters.AddService<ApiExceptionFilter>(); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -146,8 +150,6 @@ namespace ERNI.PBA.Server.Host
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
-
-            // app.ConfigureExceptionHandler(logger);
 
             app.UseMvc();
         }

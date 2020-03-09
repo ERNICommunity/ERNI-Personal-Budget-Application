@@ -16,7 +16,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Utils;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
@@ -209,32 +208,25 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
             }
 
-            try
+            var transactions = await _requestService.CreateTeamTransactions(userId, payload.Amount, cancellationToken);
+            if (transactions == null)
+                return BadRequest();
+
+            var request = new Request
             {
-                var transactions = await _requestService.CreateTeamTransactions(userId, payload, cancellationToken);
-                if (transactions == null)
-                    return BadRequest();
+                BudgetId = budget.Id,
+                UserId = userId,
+                Year = currentYear,
+                Title = payload.Title,
+                Amount = payload.Amount,
+                Date = payload.Date.ToLocalTime(),
+                State = RequestState.Pending,
+                Transactions = transactions
+            };
 
-                var request = new Request
-                {
-                    BudgetId = budget.Id,
-                    UserId = userId,
-                    Year = currentYear,
-                    Title = payload.Title,
-                    Amount = payload.Amount,
-                    Date = payload.Date.ToLocalTime(),
-                    State = RequestState.Pending,
-                    Transactions = transactions
-                };
+            await _requestRepository.AddRequest(request);
 
-                await _requestRepository.AddRequest(request);
-
-                await _unitOfWork.SaveChanges(cancellationToken);
-            }
-            catch (NoAvailableFundsException)
-            {
-                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
-            }
+            await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();
         }
@@ -360,6 +352,35 @@ namespace ERNI.PBA.Server.Host.Controllers
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();
+
+            await _unitOfWork.SaveChanges(cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut("team")]
+        public async Task<IActionResult> UpdateTeamRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
+        {
+            var userId = HttpContext.User.GetId();
+            var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
+            if (request == null)
+                return BadRequest($"Request with id {payload.Id} not found.");
+
+            if (userId != request.UserId)
+                return BadRequest("No Access for request!");
+
+            Transaction[] transactions = await _requestService.CreateTeamTransactions(userId, payload.Amount, cancellationToken);
+            if (transactions == null)
+                return BadRequest();
+
+            request.Title = payload.Title;
+            request.Amount = payload.Amount;
+            request.Date = payload.Date.ToLocalTime();
+            request.Transactions.Clear();
+            foreach (var transaction in transactions)
+            {
+                request.Transactions.Add(transaction);
+            }
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
