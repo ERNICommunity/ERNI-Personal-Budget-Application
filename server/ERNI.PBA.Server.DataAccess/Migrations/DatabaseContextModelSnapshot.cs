@@ -226,7 +226,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.Request", "Request")
                         .WithMany("Transactions")
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.User", "User")
                         .WithMany()

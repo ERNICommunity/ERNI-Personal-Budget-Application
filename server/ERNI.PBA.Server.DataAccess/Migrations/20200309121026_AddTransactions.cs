@@ -32,7 +32,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Transactions_Users_UserId",
                         column: x => x.UserId,

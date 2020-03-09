@@ -19,7 +19,11 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(_ => _.Category).WithMany();
-            builder.HasMany(x => x.Transactions).WithOne(x => x.Request).HasForeignKey(x => x.RequestId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.Transactions)
+                .WithOne(x => x.Request)
+                .HasForeignKey(x => new { x.RequestId })
+                .HasPrincipalKey(x => new { x.Id })
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

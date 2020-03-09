@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200305121937_AddTransactions")]
+    [Migration("20200309121026_AddTransactions")]
     partial class AddTransactions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -200,7 +200,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.Request", "Request")
                         .WithMany("Transactions")
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.User", "User")
                         .WithMany()

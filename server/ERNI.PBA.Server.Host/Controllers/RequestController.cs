@@ -353,6 +353,18 @@ namespace ERNI.PBA.Server.Host.Controllers
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();
 
+            var transactions = new[]
+            {
+                new Transaction
+                {
+                    RequestId = request.Id,
+                    BudgetId = budget.Id,
+                    UserId = currentUser.Id,
+                    Amount = payload.Amount
+                }
+            };
+            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
+
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();
@@ -376,11 +388,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();
-            request.Transactions.Clear();
-            foreach (var transaction in transactions)
-            {
-                request.Transactions.Add(transaction);
-            }
+            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
