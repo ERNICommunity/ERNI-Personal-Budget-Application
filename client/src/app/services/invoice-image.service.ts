@@ -18,11 +18,6 @@ export class InvoiceImageService {
     return this.http.get<[number,string][]>(this.configService.apiUrlBase + this.requestUrl + "/images/" + requestId, this.serviceHelper.getHttpOptions());
   }
 
-  public getInvoiceImageUrl(imageId : number) : string 
-  {
-    return this.configService.apiUrlBase + this.requestUrl + "/image/" + imageId;
-  }
-
   public getInvoiceImage(imageId : number) : Observable<Blob>
   { 
     let headerDict = {
