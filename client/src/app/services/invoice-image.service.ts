@@ -25,7 +25,7 @@ export class InvoiceImageService {
 
   public getInvoiceImage(imageId : number) : Observable<Blob>
   { 
-    const headerDict = {
+    let headerDict = {
       'Content-type' : 'application/octet-stream'
     }
 

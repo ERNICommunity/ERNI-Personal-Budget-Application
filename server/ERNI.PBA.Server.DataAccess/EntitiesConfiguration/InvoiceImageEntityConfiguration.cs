@@ -14,7 +14,6 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
         {
             builder.ToTable("InvoiceImage");
             builder.Property(_ => _.Name).IsRequired();
-            builder.Property(_ => _.Extension).IsRequired();
             builder.HasKey(_ => _.Id);
             builder.HasOne(_ => _.Request);
         }

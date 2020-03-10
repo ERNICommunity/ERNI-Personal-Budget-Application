@@ -50,9 +50,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
                     b.Property<byte[]>("Data");
 
-                    b.Property<string>("Extension")
-                        .IsRequired();
-
                     b.Property<string>("Name")
                         .IsRequired();
 

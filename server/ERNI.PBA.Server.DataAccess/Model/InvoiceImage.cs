@@ -10,8 +10,6 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public string Name { get; set; }
 
-        public string Extension { get; set; }
-
         public int RequestId { get; set; }
 
         public Request Request { get; set; }

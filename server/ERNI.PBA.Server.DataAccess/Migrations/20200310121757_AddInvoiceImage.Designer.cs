@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200206151336_Add_InvoiceImage_table")]
-    partial class Add_InvoiceImage_table
+    [Migration("20200310121757_AddInvoiceImage")]
+    partial class AddInvoiceImage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,9 +51,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<byte[]>("Data");
-
-                    b.Property<string>("Extension")
-                        .IsRequired();
 
                     b.Property<string>("Name")
                         .IsRequired();

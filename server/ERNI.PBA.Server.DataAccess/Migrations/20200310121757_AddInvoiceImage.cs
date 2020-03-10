@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
-    public partial class Add_InvoiceImage_table : Migration
+    public partial class AddInvoiceImage : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: false),
-                    Extension = table.Column<string>(nullable: false),
                     RequestId = table.Column<int>(nullable: false),
                     Data = table.Column<byte[]>(nullable: true)
                 },

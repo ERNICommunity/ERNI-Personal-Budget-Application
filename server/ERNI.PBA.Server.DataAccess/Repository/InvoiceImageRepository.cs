@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
@@ -17,12 +15,16 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context = context;
         }
 
-        public async Task<Tuple<int,string>[]> GetInvoiceImagesNameId(int requestId, CancellationToken cancellationToken)
+        public Task<IdNamePair[]> GetInvoiceImagesIdNamePairs(int requestId, CancellationToken cancellationToken)
         {
-            return await _context.InvoiceImages
+            return _context.InvoiceImages
                 .Where(image => image.RequestId == requestId)
-                .Select(image => new Tuple<int, string>(image.Id, image.Name + image.Extension))
-                .ToArrayAsync(cancellationToken);
+                .Select(image => new IdNamePair()
+                {
+                    Id = image.Id,
+                    Name = image.Name
+                })
+                .ToArrayAsync(cancellationToken: cancellationToken);
         }
 
         public async Task AddInvoiceImage(InvoiceImage invoiceImage, CancellationToken cancellationToken)

@@ -41,7 +41,7 @@ namespace ERNI.PBA.Server.Host
                 // NLog.LogManager.Shutdown();
             }
         }
-
+        
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()

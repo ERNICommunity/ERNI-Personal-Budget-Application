@@ -7,7 +7,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 {
     public interface IInvoiceImageRepository
     {
-        Task<Tuple<int, string>[]> GetInvoiceImagesNameId(int requestId, CancellationToken cancellationToken);
+        Task<IdNamePair[]> GetInvoiceImagesIdNamePairs(int requestId, CancellationToken cancellationToken);
         Task AddInvoiceImage(InvoiceImage invoiceImage, CancellationToken cancellationToken);
         Task<InvoiceImage> GetInvoiceImage(int imageId, CancellationToken cancellationToken);
     }
