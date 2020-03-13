@@ -20,4 +20,7 @@
   </ul>
 </div>
 <button class="btn btn-outline-primary" (click)="onButtonClick()">Add file</button>
+<div class="alert alert-danger m-1" *ngIf=fileIsTooLarge>
+  File is too large. Maximum size is 10 Mb.
+</div>
 <input id="fileDialog" type="file" #file (change)="onImageAdded($event.target.files)" style="display: none;" />

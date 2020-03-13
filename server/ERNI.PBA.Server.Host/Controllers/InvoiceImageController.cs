@@ -66,14 +66,16 @@ namespace ERNI.PBA.Server.Host.Controllers
             byte[] buffer;
             var fullName = invoiceImageModel.File.FileName;
 
+            if (invoiceImageModel.File.Length > 1048576)
+            {
+                return StatusCode(413);
+            }
+
             using (var openReadStream = invoiceImageModel.File.OpenReadStream())
             {
                 buffer = new byte[invoiceImageModel.File.Length];
                 openReadStream.Read(buffer, 0, buffer.Length);
             }
-
-            //Check if id is valid, and is in DB (415)
-            //Check if format is supported (415)
 
             var image = new InvoiceImage
             {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpEventType, HttpResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpEventType, HttpResponse, HttpHeaders, HttpHeaderResponse } from '@angular/common/http';
 import { ConfigService } from './config.service';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { ServiceHelper } from './service.helper';
 import { InvoiceImage } from '../model/InvoiceImage';
 
@@ -32,6 +32,12 @@ export class InvoiceImageService {
   }
 
   public addInvoiceImage(invoiceImage: InvoiceImage): Observable<number> {
+
+    if(invoiceImage.file.size > 1048576)
+    {
+      return throwError("Payload is too large - 413");
+    }
+
     let formData: FormData = new FormData();
     formData.append('requestId', invoiceImage.requestId.toString());
     formData.append('file', invoiceImage.file, invoiceImage.file.name);
@@ -44,9 +50,7 @@ export class InvoiceImageService {
       });
 
     request.headers.set("Content-Type", "multipart/form-data")
-
     let progress = new Subject<number>();
-
     this.http.request(request).subscribe(event => {
 
       if (event.type === HttpEventType.UploadProgress) {
