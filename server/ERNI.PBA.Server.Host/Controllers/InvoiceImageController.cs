@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Model.InvoiceImage;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
-            var imagesName = await _invoiceImageRepository.GetInvoiceImagesIdNamePairs(requestId, cancellationToken);
+            var imagesName = await _invoiceImageRepository.GetInvoiceImages(requestId, cancellationToken);
             var result = imagesName.Select(image => new
             {
                 Id = image.Id,
@@ -45,6 +46,10 @@ namespace ERNI.PBA.Server.Host.Controllers
             CancellationToken cancellationToken)
         {
             var image = await _invoiceImageRepository.GetInvoiceImage(imageId, cancellationToken);
+            if (image == null)
+            {
+                return BadRequest();
+            }
             var provider = new FileExtensionContentTypeProvider();
             if (!provider.TryGetContentType(image.Name , out var contentType))
             {
@@ -64,6 +69,10 @@ namespace ERNI.PBA.Server.Host.Controllers
             CancellationToken cancellationToken)
         {
             byte[] buffer;
+            if (invoiceImageModel?.File == null)
+            {
+                return BadRequest();
+            }
             var fullName = invoiceImageModel.File.FileName;
 
             if (invoiceImageModel.File.Length > 1048576)

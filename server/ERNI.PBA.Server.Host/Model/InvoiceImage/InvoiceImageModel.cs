@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Host.Model.PendingRequests
+namespace ERNI.PBA.Server.Host.Model.InvoiceImage
 {
     public class InvoiceImageModel
     {

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.DataAccess.Model.Projection;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
@@ -15,11 +16,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context = context;
         }
 
-        public Task<IdNamePair[]> GetInvoiceImagesIdNamePairs(int requestId, CancellationToken cancellationToken)
+        public Task<InvoiceImageProjection[]> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
             return _context.InvoiceImages
                 .Where(image => image.RequestId == requestId)
-                .Select(image => new IdNamePair()
+                .Select(image => new InvoiceImageProjection()
                 {
                     Id = image.Id,
                     Name = image.Name
@@ -34,7 +35,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public async Task<InvoiceImage> GetInvoiceImage(int imageId, CancellationToken cancellationToken)
         {
-            return await _context.InvoiceImages.FirstAsync(image => image.Id == imageId, cancellationToken);
+            return await _context.InvoiceImages.FirstOrDefaultAsync(image => image.Id == imageId, cancellationToken);
         }
     }
 }

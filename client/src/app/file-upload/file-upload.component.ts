@@ -17,7 +17,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
   images: [number, string][];
   uploadingImages: uploadingImage[] = [];
   requestId: number;
-  fileIsTooLarge : boolean = false;
+  showError : boolean = false;
 
   constructor(private invoiceImageService: InvoiceImageService) { }
 
@@ -36,7 +36,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
   updateImagesList() {
     this.invoiceImageService.getInvoiceImages(this.requestId).subscribe(names => {
       this.images = names;
-      this.fileIsTooLarge = false;
+      this.showError = false;
     });
   }
 
@@ -70,7 +70,8 @@ export class FileUploadComponent implements OnInit, OnChanges {
       this.invoiceImageService.addInvoiceImage(image).subscribe(progress => {
         newItem.progress = progress;
       }, (error) => {
-        this.fileIsTooLarge = true;
+        
+        this.showError = true;
         this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
       },
         () => {
