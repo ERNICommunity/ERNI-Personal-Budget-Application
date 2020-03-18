@@ -7,6 +7,7 @@ using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model.InvoiceImage;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
+using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -19,18 +20,26 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly PermissionHelper _permissionHelper;
 
         public InvoiceImageController(IInvoiceImageRepository invoiceImageRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            PermissionHelper permissionHelper)
         {
             _invoiceImageRepository = invoiceImageRepository;
             _unitOfWork = unitOfWork;
+            _permissionHelper = permissionHelper;
         }
 
         [HttpGet("images/{requestId}")]
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
+            var userId = HttpContext.User.GetId();
+            if (!await _permissionHelper.IsUsersRequestOrAdmin(userId, requestId, cancellationToken))
+            {
+                return Unauthorized();
+            }
             var imagesName = await _invoiceImageRepository.GetInvoiceImages(requestId, cancellationToken);
             var result = imagesName.Select(image => new
             {
@@ -46,10 +55,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             CancellationToken cancellationToken)
         {
             var image = await _invoiceImageRepository.GetInvoiceImage(imageId, cancellationToken);
-            if (image == null)
+            var userId = HttpContext.User.GetId();
+            if (!await _permissionHelper.IsUsersRequestOrAdmin(userId, image.RequestId, cancellationToken))
             {
-                return BadRequest();
+                return Unauthorized();
             }
+
             var provider = new FileExtensionContentTypeProvider();
             if (!provider.TryGetContentType(image.Name , out var contentType))
             {
@@ -68,13 +79,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel,
             CancellationToken cancellationToken)
         {
+            var requestId = invoiceImageModel.RequestId;
+            var userId = HttpContext.User.GetId();
+            if (!await _permissionHelper.IsUsersRequestOrAdmin(userId, requestId, cancellationToken))
+            {
+                return Unauthorized();
+            }
+
             byte[] buffer;
             if (invoiceImageModel?.File == null)
             {
                 return BadRequest();
             }
-            var fullName = invoiceImageModel.File.FileName;
 
+            var fullName = invoiceImageModel.File.FileName;
             if (invoiceImageModel.File.Length > 1048576)
             {
                 return StatusCode(413);
@@ -90,7 +108,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 Data = buffer, 
                 Name = fullName,
-                RequestId = invoiceImageModel.RequestId
+                RequestId = requestId
             };
 
             await _invoiceImageRepository.AddInvoiceImage(image, cancellationToken);
