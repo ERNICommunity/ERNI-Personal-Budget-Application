@@ -21,5 +21,10 @@ namespace ERNI.PBA.Server.Host.Utils
 
             return id;
         }
+
+        public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier)
+        {
+            return claimsPrincipal.FindFirstValue(identifier);
+        }
     }
 }
