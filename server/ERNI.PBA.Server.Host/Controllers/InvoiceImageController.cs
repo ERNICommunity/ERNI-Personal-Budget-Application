@@ -1,12 +1,10 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Model.InvoiceImage;
-using ERNI.PBA.Server.Host.Model.PendingRequests;
+using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,27 +17,34 @@ namespace ERNI.PBA.Server.Host.Controllers
     public class InvoiceImageController : Controller
     {
         private readonly IInvoiceImageRepository _invoiceImageRepository;
+        private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly PermissionHelper _permissionHelper;
 
         public InvoiceImageController(IInvoiceImageRepository invoiceImageRepository,
-            IUnitOfWork unitOfWork,
-            PermissionHelper permissionHelper)
+            IRequestRepository requestRepository,
+            IUnitOfWork unitOfWork)
         {
             _invoiceImageRepository = invoiceImageRepository;
+            _requestRepository = requestRepository;
             _unitOfWork = unitOfWork;
-            _permissionHelper = permissionHelper;
         }
 
         [HttpGet("images/{requestId}")]
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
-            var userId = HttpContext.User.GetId();
-            if (!await _permissionHelper.IsUsersRequestOrAdmin(userId, requestId, cancellationToken))
+            var request = await _requestRepository.GetRequest(requestId, cancellationToken);
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
+            var user = HttpContext.User;
+            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
             {
                 return Unauthorized();
             }
+
             var imagesName = await _invoiceImageRepository.GetInvoiceImages(requestId, cancellationToken);
             var result = imagesName.Select(image => new
             {
@@ -55,8 +60,19 @@ namespace ERNI.PBA.Server.Host.Controllers
             CancellationToken cancellationToken)
         {
             var image = await _invoiceImageRepository.GetInvoiceImage(imageId, cancellationToken);
-            var userId = HttpContext.User.GetId();
-            if (!await _permissionHelper.IsUsersRequestOrAdmin(userId, image.RequestId, cancellationToken))
+            if (image == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
+            var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken);
+            if (request == null)
+            {
+                return BadRequest("Not a valid id");
+            }
+
+            var user = HttpContext.User;
+            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
             {
                 return Unauthorized();
             }
@@ -80,8 +96,10 @@ namespace ERNI.PBA.Server.Host.Controllers
             CancellationToken cancellationToken)
         {
             var requestId = invoiceImageModel.RequestId;
-            var userId = HttpContext.User.GetId();
-            if (!await _permissionHelper.IsUsersRequestOrAdmin(userId, requestId, cancellationToken))
+            var request = await _requestRepository.GetRequest(requestId, cancellationToken);
+            var user = HttpContext.User;
+
+            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
             {
                 return Unauthorized();
             }

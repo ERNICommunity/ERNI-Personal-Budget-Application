@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Host.Model.InvoiceImage
+namespace ERNI.PBA.Server.Host.Model
 {
     public class InvoiceImageModel
     {
