@@ -63,7 +63,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             _context.Requests.Remove(request);
         }
 
-        public async Task AddOrUpdateTransactions(int requestId, Transaction[] transactions)
+        public async Task AddOrUpdateTransactions(int requestId, IEnumerable<Transaction> transactions)
         {
             var request = await _context.Requests.Include(_ => _.Transactions).FirstOrDefaultAsync(_ => _.Id == requestId);
             if (request == null)

@@ -212,9 +212,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var transactions = await _requestService.CreateTeamTransactions(0, userId, payload.Amount, cancellationToken);
-            if (transactions == null)
-                return BadRequest();
-
             var request = new Request
             {
                 BudgetId = budget.Id,
@@ -389,9 +386,6 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("No Access for request!");
 
             var transactions = await _requestService.CreateTeamTransactions(payload.Id, userId, payload.Amount, cancellationToken);
-            if (transactions == null)
-                return BadRequest();
-
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();

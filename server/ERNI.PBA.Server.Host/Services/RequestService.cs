@@ -19,12 +19,10 @@ namespace ERNI.PBA.Server.Host.Services
             _budgetRepository = budgetRepository;
         }
 
-        public async Task<Transaction[]> CreateTeamTransactions(int requestId, int userId, decimal amount, CancellationToken cancellationToken)
+        public async Task<IList<Transaction>> CreateTeamTransactions(int requestId, int userId, decimal amount, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
             var teamBudgets = await CreateTeamBudgets(requestId, userId, currentYear, amount, cancellationToken);
-            if (!teamBudgets.Any())
-                return null;
 
             var transactions = new List<Transaction>();
             foreach (var teamBudget in teamBudgets)
@@ -38,7 +36,7 @@ namespace ERNI.PBA.Server.Host.Services
                 transactions.Add(transaction);
             }
 
-            return transactions.ToArray();
+            return transactions;
         }
 
         private async Task<IList<TeamBudget>> CreateTeamBudgets(int requestId, int userId, int year, decimal amount, CancellationToken cancellationToken)
