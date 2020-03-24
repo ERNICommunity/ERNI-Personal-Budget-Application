@@ -201,8 +201,11 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userId = User.GetId();
             var currentYear = DateTime.Now.Year;
 
-            var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
+            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
+            if (!currentUser.IsSuperior)
+                return Forbid();
 
+            var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
             if (budget == null)
             {
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
@@ -374,6 +377,10 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> UpdateTeamRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
             var userId = HttpContext.User.GetId();
+            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
+            if (!currentUser.IsSuperior)
+                return Forbid();
+
             var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
             if (request == null)
                 return BadRequest($"Request with id {payload.Id} not found.");

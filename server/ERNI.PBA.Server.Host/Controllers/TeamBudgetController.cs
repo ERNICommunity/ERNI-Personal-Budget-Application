@@ -29,7 +29,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userId = HttpContext.User.GetId();
             var user = await _userRepository.GetUser(userId, cancellationToken);
             if (!user.IsSuperior)
-                return BadRequest("No Access to budget.");
+                return Forbid();
 
             var budgets = await _budgetRepository.GetCumulativeBudgets(userId, year, cancellationToken);
             var masterBudget = budgets.SingleOrDefault(x => x.UserId == userId);
