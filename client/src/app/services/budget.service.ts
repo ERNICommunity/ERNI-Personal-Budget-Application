@@ -26,10 +26,6 @@ export class BudgetService {
     return this.http.get<Budget>(this.configService.apiUrlBase + this.url +  budgetId, this.serviceHelper.getHttpOptions())
   }
 
-  public getBudgetsByYear(year : number): Observable<Budget[]> {
-    return this.http.get<Budget[]>(this.configService.apiUrlBase + this.url +  'year/'+ year , this.serviceHelper.getHttpOptions())
-  }
-
   public updateBudget(id: number, amount: number): Observable<any> {
     return this.http.put(this.configService.apiUrlBase + this.url, { id, amount }, this.serviceHelper.getHttpOptions());
   }

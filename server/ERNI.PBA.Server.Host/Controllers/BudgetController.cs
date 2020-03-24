@@ -28,28 +28,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet("user/{userId}/year/{year}")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
-        public async Task<IActionResult> GetUserBudgetByYear(int userId, int year, CancellationToken cancellationToken)
-        {
-            var budgets = await _budgetRepository.GetBudgets(userId, year, cancellationToken);
-
-            var result = budgets.Select(budget => new
-            {
-                Id = budget.Id,
-                Year = budget.Year,
-                Amount = budget.Amount,
-                User = new User
-                {
-                    Id = budget.User.Id,
-                    FirstName = budget.User.FirstName,
-                    LastName = budget.User.LastName,
-                }
-            });
-
-            return Ok(result);
-        }
-
         [HttpGet("{budgetId}")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetUserBudgetByYear(int budgetId, CancellationToken cancellationToken)

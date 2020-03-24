@@ -7,8 +7,10 @@ import { UserService } from '../../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { combineLatest } from 'rxjs';
+import { combineLatest, forkJoin, of } from 'rxjs';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
+import { TeamBudgetService } from '../../services/team-budget.service';
+import { catchError } from 'rxjs/operators';
 
 @Component({
     selector: 'app-my-Budget',
@@ -24,7 +26,9 @@ export class MyBudgetComponent implements OnInit {
     years: number[];
     rlao: object;
 
-    constructor(private budgetService: BudgetService,
+    constructor(
+        private budgetService: BudgetService,
+        private teamBudgetService: TeamBudgetService,
         private userService: UserService,
         private route: ActivatedRoute,
         config: ConfigService,
@@ -63,10 +67,18 @@ export class MyBudgetComponent implements OnInit {
     }
 
     getBudgets(year: number): void {
+        this.budgets = [];
         this.busyIndicatorService.start();
-        this.budgetService.getCurrentUserBudgets(year).subscribe(budgets => {
-            this.budgets = budgets
-            this.busyIndicatorService.end();
-        });
+
+        let requests = [this.budgetService.getCurrentUserBudgets(year).pipe(catchError(() => of([])))];
+        if (this.user.isSuperior) {
+            requests.push(this.teamBudgetService.getCurrentUserBudgets(year).pipe(catchError(() => of([]))));
+        }
+
+        forkJoin(requests).subscribe(
+            data => {
+                data.forEach(budgets => this.budgets = this.budgets.concat(budgets));
+            })
+            .add(() => this.busyIndicatorService.end());
     }
 }

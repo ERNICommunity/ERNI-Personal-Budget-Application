@@ -46,6 +46,7 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InvoiceImageService } from './services/invoice-image.service';
 import { UserCodesComponent } from './userCodes/user-codes.component';
 import { UserCodeService } from './services/user-code.service';
+import { TeamBudgetService } from './services/team-budget.service';
 
 @NgModule({
     declarations: [
@@ -92,6 +93,7 @@ import { UserCodeService } from './services/user-code.service';
         RequestService,
         UserService,
         BudgetService,
+        TeamBudgetService,
         BusyIndicatorService,
         UserCodeService,
         AdminGuard,
