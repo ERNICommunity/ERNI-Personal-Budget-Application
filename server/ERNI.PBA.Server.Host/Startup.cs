@@ -44,6 +44,7 @@ namespace ERNI.PBA.Server.Host
             services.AddTransient<IBudgetRepository, BudgetRepository>();
             services.AddTransient<IRequestRepository, RequestRepository>();
             services.AddTransient<IRequestCategoryRepository, RequestCategoryRepository>();
+            services.AddTransient<IInvoiceImageRepository, InvoiceImageRepository>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
