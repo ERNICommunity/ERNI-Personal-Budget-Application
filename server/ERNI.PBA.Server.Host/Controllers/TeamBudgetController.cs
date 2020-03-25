@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -32,12 +33,15 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return Forbid();
 
             var budgets = await _budgetRepository.GetCumulativeBudgets(userId, year, cancellationToken);
+            if (!budgets.Any())
+                return Ok();
+
             var masterBudget = budgets.SingleOrDefault(x => x.UserId == userId);
             if (masterBudget == null)
                 return BadRequest("Cumulative budget does not exists");
 
             var amount = budgets.Sum(_ => _.Amount);
-            var amountLeft = amount - budgets.SelectMany(_ => _.Transactions).Sum(_ => _.Amount);
+            var amountLeft = amount - budgets.SelectMany(_ => _.Transactions ?? Enumerable.Empty<Transaction>()).Sum(_ => _.Amount);
 
             var model = new
             {

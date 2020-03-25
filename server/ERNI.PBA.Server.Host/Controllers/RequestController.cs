@@ -211,7 +211,10 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
             }
 
-            var transactions = await _requestService.CreateTeamTransactions(0, userId, payload.Amount, cancellationToken);
+            var budgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var calculator = new TransactionCalculator(budgets, userId);
+            calculator.Calculate(payload.Amount);
+
             var request = new Request
             {
                 BudgetId = budget.Id,
@@ -221,7 +224,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Amount = payload.Amount,
                 Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
-                Transactions = transactions
+                Transactions = calculator.Transactions
             };
 
             await _requestRepository.AddRequest(request);
@@ -385,11 +388,14 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (userId != request.UserId)
                 return BadRequest("No Access for request!");
 
-            var transactions = await _requestService.CreateTeamTransactions(payload.Id, userId, payload.Amount, cancellationToken);
+            var budgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var calculator = new TransactionCalculator(budgets, userId);
+            calculator.Calculate(payload.Id, payload.Amount);
+
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();
-            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
+            await _requestRepository.AddOrUpdateTransactions(request.Id, calculator.Transactions);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

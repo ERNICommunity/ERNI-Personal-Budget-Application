@@ -7,10 +7,10 @@ import { UserService } from '../../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { combineLatest, forkJoin, of } from 'rxjs';
+import { combineLatest, forkJoin, of, Observable } from 'rxjs';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { TeamBudgetService } from '../../services/team-budget.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-my-Budget',
@@ -43,10 +43,8 @@ export class MyBudgetComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        this.getUser();
-
-        combineLatest(this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([params]) => {
+        combineLatest(this.getUser(), this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([user, params]) => {
+            this.user = user;
 
             // the following line forces routerLinkActive to update even if the route did nto change
             // see see https://github.com/angular/angular/issues/13865 for futher info
@@ -61,24 +59,41 @@ export class MyBudgetComponent implements OnInit {
         });
     }
 
-    getUser(): void {
-        this.userService.getCurrentUser()
-            .subscribe(user => this.user = user);
+    getUser(): Observable<any> {
+        return this.userService.getCurrentUser();
     }
 
     getBudgets(year: number): void {
         this.budgets = [];
         this.busyIndicatorService.start();
 
-        let requests = [this.budgetService.getCurrentUserBudgets(year).pipe(catchError(() => of([])))];
+        let requests = [this.budgetService.getCurrentUserBudgets(year)
+            .pipe(map(this.handleResponse), catchError(this.handleResponse))];
+
         if (this.user.isSuperior) {
-            requests.push(this.teamBudgetService.getCurrentUserBudgets(year).pipe(catchError(() => of([]))));
+            requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
+                .pipe(map(this.handleResponse), catchError(this.handleResponse)));
         }
 
         forkJoin(requests).subscribe(
             data => {
-                data.forEach(budgets => this.budgets = this.budgets.concat(budgets));
+                data.forEach(budgets => {
+                    if (budgets.length > 0) {
+                        this.budgets = this.budgets.concat(budgets)
+                    }
+                });
             })
             .add(() => this.busyIndicatorService.end());
+    }
+
+    private handleResponse(data) {
+        if (data == null)
+            return of([]);
+
+        return data;
+    }
+
+    private handleError() {
+        return of([]);
     }
 }
