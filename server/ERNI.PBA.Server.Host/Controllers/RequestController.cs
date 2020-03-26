@@ -25,7 +25,6 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class RequestController : Controller
     {
-        private readonly IRequestService _requestService;
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -34,7 +33,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly ILogger _logger;
 
         public RequestController(
-            IRequestService requestService,
             IRequestRepository requestRepository,
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
@@ -42,7 +40,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             IConfiguration configuration,
             ILogger<RequestController> logger)
         {
-            _requestService = requestService;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _requestRepository = requestRepository;

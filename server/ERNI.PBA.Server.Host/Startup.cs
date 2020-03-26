@@ -6,7 +6,6 @@ using System.Security.Claims;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Filters;
-using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
