@@ -53,7 +53,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            return Ok();
+            return Ok(user);
         }
 
         [HttpPost("create")]

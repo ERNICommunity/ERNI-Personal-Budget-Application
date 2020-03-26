@@ -8,6 +8,7 @@ import { switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class UserService {
+    private currentUser: string = "currentUser";
 
     url = "User";
 
@@ -35,25 +36,32 @@ export class UserService {
     }
 
     public getCurrentUser(): Observable<User> {
-        let json = localStorage.getItem('currentUser');
+        let json = localStorage.getItem(this.currentUser);
         if (json) {
             let user = JSON.parse(json);
             return new Observable<User>(
                 observer => {
-                        observer.next(user);
-                    })
+                    observer.next(user);
+                });
         }
         else {
-            return this.registerUser().pipe(switchMap(_ => {
-                let observable = this.http.get<User>(this.configService.apiUrlBase + this.url + "/current", this.serviceHelper.getHttpOptions());
-                observable.subscribe(u => localStorage.setItem('currentUser', JSON.stringify(u)));
-                return observable;
+            return this.registerUser().pipe(switchMap(user => {
+                this.setCurrentUser(user);
+
+                return new Observable<User>(
+                    observer => {
+                        observer.next(user);
+                    });
             }));
         }
     }
 
-    public getCurrentUserStorage(): User{
-        return JSON.parse(localStorage.getItem('currentUser'));
+    public getCurrentUserStorage(): User {
+        return JSON.parse(localStorage.getItem(this.currentUser));
+    }
+
+    public setCurrentUser(user: User): void {
+        localStorage.setItem(this.currentUser, JSON.stringify(user));
     }
 
     public updateUser(user: User): Observable<any> {

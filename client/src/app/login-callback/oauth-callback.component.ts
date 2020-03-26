@@ -4,6 +4,7 @@ import { AdalService } from '../services/adal.service';
 import { UserService } from '../services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AlertService } from '../services/alert.service';
+import { User } from '../model/user';
 
 @Component({
     templateUrl: './oauth-callback.component.html'
@@ -24,7 +25,8 @@ export class OAuthCallbackComponent implements OnInit {
             this.router.navigate(['/login']);
         } else {
             this.userService.registerUser().subscribe(
-                () => {
+                (user: User) => {
+                    this.userService.setCurrentUser(user);
                     this.router.navigate(['/my-budget']);
                 },
                 (err: HttpErrorResponse) => {
