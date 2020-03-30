@@ -210,13 +210,20 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
             }
 
-            var budgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            var availableFunds = budgets.Sum(_ => _.Amount - _.Transactions.Sum(t => t.Amount));
+            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var budgets = teamBudgets.Select(_ => new TeamBudget
+            {
+                BudgetId = _.Id,
+                UserId = _.UserId,
+                Amount = _.Amount - budget.Transactions.Sum(x => x.Amount)
+            }).OrderBy(_ => _.Amount).ToList();
+
+            var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
 
-            var calculator = new TransactionCalculator(budgets, userId);
-            var transactions = calculator.Calculate(payload.Amount);
+            var calculator = new TransactionCalculator();
+            var transactions = calculator.Calculate(budgets, payload.Amount);
 
             var request = new Request
             {
@@ -391,13 +398,20 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (userId != request.UserId)
                 return BadRequest("No Access for request!");
 
-            var budgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            var availableFunds = budgets.Sum(_ => _.Amount - _.Transactions.Where(t => t.RequestId != payload.Id).Sum(t => t.Amount));
+            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var budgets = teamBudgets.Select(budget => new TeamBudget
+            {
+                BudgetId = budget.Id,
+                UserId = budget.UserId,
+                Amount = budget.Amount - budget.Transactions.Where(_ => _.RequestId != payload.Id).Sum(x => x.Amount)
+            }).OrderBy(_ => _.Amount).ToList();
+
+            var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
 
-            var calculator = new TransactionCalculator(budgets, userId);
-            var transactions = calculator.Calculate(payload.Id, payload.Amount);
+            var calculator = new TransactionCalculator();
+            var transactions = calculator.Calculate(budgets, payload.Amount);
 
             request.Title = payload.Title;
             request.Amount = payload.Amount;
