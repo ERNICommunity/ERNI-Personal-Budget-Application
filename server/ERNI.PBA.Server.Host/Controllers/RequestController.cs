@@ -16,7 +16,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Utils;
+using Microsoft.AspNetCore.Http;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -209,8 +211,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var budgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var availableFunds = budgets.Sum(_ => _.Amount - _.Transactions.Sum(t => t.Amount));
+            if (availableFunds < payload.Amount)
+                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+
             var calculator = new TransactionCalculator(budgets, userId);
-            calculator.Calculate(payload.Amount);
+            var transactions = calculator.Calculate(payload.Amount);
 
             var request = new Request
             {
@@ -221,7 +227,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Amount = payload.Amount,
                 Date = payload.Date.ToLocalTime(),
                 State = RequestState.Pending,
-                Transactions = calculator.Transactions
+                Transactions = transactions
             };
 
             await _requestRepository.AddRequest(request);
@@ -386,13 +392,17 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("No Access for request!");
 
             var budgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var availableFunds = budgets.Sum(_ => _.Amount - _.Transactions.Where(t => t.RequestId != payload.Id).Sum(t => t.Amount));
+            if (availableFunds < payload.Amount)
+                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+
             var calculator = new TransactionCalculator(budgets, userId);
-            calculator.Calculate(payload.Id, payload.Amount);
+            var transactions = calculator.Calculate(payload.Id, payload.Amount);
 
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();
-            await _requestRepository.AddOrUpdateTransactions(request.Id, calculator.Transactions);
+            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

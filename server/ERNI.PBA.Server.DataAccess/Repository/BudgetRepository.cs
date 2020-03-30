@@ -45,6 +45,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public async Task<Budget[]> GetTeamBudgets(int userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
+                .Include(_ => _.Transactions)
                 .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
                 .Where(_ => _.BudgetType == BudgetTypeEnum.TeamBudget)
                 .Where(_ => (_.UserId == userId || _.User.SuperiorId == userId) && _.Year == year)
