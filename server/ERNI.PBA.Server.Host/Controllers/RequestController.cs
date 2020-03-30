@@ -222,9 +222,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (availableFunds < payload.Amount)
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
 
-            var calculator = new TransactionCalculator();
-            var transactions = calculator.Calculate(budgets, payload.Amount);
-
+            var transactions = TransactionCalculator.Calculate(budgets, payload.Amount);
             var request = new Request
             {
                 BudgetId = budget.Id,
@@ -410,9 +408,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (availableFunds < payload.Amount)
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
 
-            var calculator = new TransactionCalculator();
-            var transactions = calculator.Calculate(budgets, payload.Amount);
-
+            var transactions = TransactionCalculator.Calculate(budgets, payload.Amount);
             request.Title = payload.Title;
             request.Amount = payload.Amount;
             request.Date = payload.Date.ToLocalTime();

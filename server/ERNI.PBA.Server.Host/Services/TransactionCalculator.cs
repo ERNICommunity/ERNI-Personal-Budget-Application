@@ -6,9 +6,9 @@ using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Services
 {
-    public class TransactionCalculator
+    public static class TransactionCalculator
     {
-        public IList<Transaction> Calculate(IEnumerable<TeamBudget> budgets, decimal distributedAmount)
+        public static IList<Transaction> Calculate(IEnumerable<TeamBudget> budgets, decimal distributedAmount)
         {
             var transactions = new List<Transaction>();
             var teamBudgets = budgets.OrderBy(x => x.Amount).ToList();
@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Host.Services
             return transactions;
         }
 
-        private decimal PaymentRounding(decimal payment)
+        private static decimal PaymentRounding(decimal payment)
         {
             return Math.Floor(payment * 100) / 100;
         }
