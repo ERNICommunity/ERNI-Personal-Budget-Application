@@ -34,6 +34,10 @@ export class BudgetService {
     return this.http.put(this.configService.apiUrlBase + this.url, { id, amount }, this.serviceHelper.getHttpOptions());
   }
 
+  public transferBudget(budgetId: number, userId:number):Observable<any> {
+    return this.http.put(this.configService.apiUrlBase + this.url + budgetId + "/transfer/" + userId,this.serviceHelper.getHttpOptions());
+  }
+
   public createBudget(title: string, amount: number, userId: number, budgetType: number): Observable<any> {
     return this.http.post(this.configService.apiUrlBase + this.url + "users/" + userId, { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
   }
