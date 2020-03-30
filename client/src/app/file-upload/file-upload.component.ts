@@ -80,7 +80,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
         });
     }
   }
-  public onButtonClick(event: any) {
+  public onButtonClick() {
     let element: HTMLElement = document.getElementById('fileDialog') as HTMLElement;
     element.click();
   }
