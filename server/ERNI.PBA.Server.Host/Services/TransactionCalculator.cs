@@ -11,16 +11,14 @@ namespace ERNI.PBA.Server.Host.Services
         public static IList<Transaction> Calculate(IEnumerable<TeamBudget> budgets, decimal distributedAmount)
         {
             var transactions = new List<Transaction>();
-            var teamBudgets = budgets.OrderBy(x => x.Amount).ToList();
-
+            var availableBudgets = new Queue<TeamBudget>(budgets.OrderBy(x => x.Amount));
             var amount = distributedAmount;
-            var availableBudgets = new Queue<TeamBudget>(teamBudgets);
             while (availableBudgets.Any())
             {
-                var amountPerItem = PaymentRounding(amount / availableBudgets.Count);
+                var amountPerItem = amount / availableBudgets.Count;
 
                 var first = availableBudgets.Dequeue();
-                var amountToDeduct = Math.Min(amountPerItem, first.Amount);
+                var amountToDeduct = Math.Min(amountPerItem, first.Amount).Round();
 
                 transactions.Add(new Transaction
                 {
@@ -35,7 +33,7 @@ namespace ERNI.PBA.Server.Host.Services
             return transactions;
         }
 
-        private static decimal PaymentRounding(decimal payment)
+        private static decimal Round(this decimal payment)
         {
             return Math.Floor(payment * 100) / 100;
         }

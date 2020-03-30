@@ -216,7 +216,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 BudgetId = _.Id,
                 UserId = _.UserId,
                 Amount = _.Amount - budget.Transactions.Sum(x => x.Amount)
-            }).OrderBy(_ => _.Amount).ToList();
+            }).ToList();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
@@ -402,7 +402,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 BudgetId = budget.Id,
                 UserId = budget.UserId,
                 Amount = budget.Amount - budget.Transactions.Where(_ => _.RequestId != payload.Id).Sum(x => x.Amount)
-            }).OrderBy(_ => _.Amount).ToList();
+            }).ToList();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
