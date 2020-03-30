@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
@@ -33,6 +34,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
+            throw new NotSupportedException();
+
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
             if (request == null)
             {
@@ -59,6 +62,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetInvoiceImageFile(int imageId,
             CancellationToken cancellationToken)
         {
+            throw new NotSupportedException();
+
             var image = await _invoiceImageRepository.GetInvoiceImage(imageId, cancellationToken);
             if (image == null)
             {
@@ -95,6 +100,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel,
             CancellationToken cancellationToken)
         {
+            throw new NotSupportedException();
+
             var requestId = invoiceImageModel.RequestId;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
             var user = HttpContext.User;
