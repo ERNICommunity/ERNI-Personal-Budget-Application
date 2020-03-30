@@ -7,8 +7,8 @@
                 <div *ngIf="!budget.title">{{budgetTypeName}}</div>
             </div>
             <div class="col">
-                <a *ngIf="budget.year == currentYear" class="float-right"
-                    [routerLink]="'create-request/' + budget.id" [state]="{ budget: budget }">
+                <a *ngIf="budget.year == currentYear" class="float-right" [routerLink]="'create-request/' + budget.id"
+                    [state]="{ budget: budget }">
                     Create new request
                 </a></div>
         </div>
