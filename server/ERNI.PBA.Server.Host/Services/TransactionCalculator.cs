@@ -8,7 +8,7 @@ namespace ERNI.PBA.Server.Host.Services
 {
     public static class TransactionCalculator
     {
-        public static IList<Transaction> Calculate(IEnumerable<TeamBudget> budgets, decimal distributedAmount)
+        public static IList<Transaction> Create(IEnumerable<TeamBudget> budgets, decimal distributedAmount)
         {
             var transactions = new List<Transaction>();
             var availableBudgets = new Queue<TeamBudget>(budgets.OrderBy(x => x.Amount));
