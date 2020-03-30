@@ -22,6 +22,7 @@ import { AuthenticationGuard } from './services/guards/authentication.guard';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
+import { UserCodesComponent } from './userCodes/user-codes.component';
 
 const currentYear = "2020"; // = (new Date()).getFullYear();
 
@@ -97,6 +98,7 @@ export const rootRouterConfig: Routes = [
             { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
         ]
     },
-    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminGuard] }
+    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminGuard] },
+    { path: 'usercodes', component: UserCodesComponent, canActivate: [AuthenticationGuard] }
 ];
 
