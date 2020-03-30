@@ -62,7 +62,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         ,[BudgetId]
                         ,[UserId]
                         ,[Amount]
-                    FROM[PbaDatabase].[dbo].[Requests]");
+                    FROM [dbo].[Requests]");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
