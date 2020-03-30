@@ -83,7 +83,9 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Id = budget.Id,
                 Year = budget.Year,
                 Amount = budget.Amount,
-                AmountLeft = budget.Amount - budget.Requests.Sum(_ => _.Amount),
+                AmountLeft = budget.Amount - budget.Requests
+                    .Where(_ => _.State != RequestState.Rejected)
+                    .Sum(_ => _.Amount),
                 Title = budget.Title,
                 Type = budget.BudgetType,
                 Requests = budget.Requests.Select(_ => new

@@ -293,7 +293,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var budget = await _budgetRepository.GetBudget(request.BudgetId, cancellationToken);
 
-            if (payload.Amount > budget.Amount - requestedAmount)
+            if (payload.Amount > budget.Amount + request.Amount - requestedAmount)
             {
                 return BadRequest($"Requested amount {payload.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
             }

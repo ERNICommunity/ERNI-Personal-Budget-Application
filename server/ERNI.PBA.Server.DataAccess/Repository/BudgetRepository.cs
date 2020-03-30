@@ -71,7 +71,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken)
         {
             return _context.Budgets.Where(_ => _.Id == budgetId)
-                .Select(_ => _.Requests.Sum(r => r.Amount))
+                .Select(_ => _.Requests.Where(r => r.State != RequestState.Rejected).Sum(r => r.Amount))
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
@@ -82,7 +82,9 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Select(_ => new
                 {
                     BudgetId = _.Id,
-                    TotalAmount = _.Requests.Sum(r => r.Amount)
+                    TotalAmount = _.Requests
+                        .Where(r => r.State != RequestState.Rejected)
+                        .Sum(r => r.Amount)
                 })
                 .ToArrayAsync(cancellationToken))
                 .Select(_ => (BudgetId: _.BudgetId, TotalAmount: _.TotalAmount))
