@@ -1,0 +1,23 @@
+<h1>User codes</h1>
+
+<input class="form-control col-md-6 mr-2" placeholder="Search employee" id="searchBox" type="text"
+    [(ngModel)]="searchTerm">
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width: 200px;" scope="col">Last name</th>
+            <th style="width: 200px;" scope="col">First name</th>
+            <th style="width: 200px;" scope="col">Display name</th>
+            <th style="width: 200px;" scope="col">Code</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of filteredUsers">
+            <td style="width:200px;">{{user.lastName}}</td>
+            <td>{{user.firstName}}</td>
+            <td>{{user.displayName}}</td>
+            <td>{{user.code}}</td>
+        </tr>
+    </tbody>
+</table>

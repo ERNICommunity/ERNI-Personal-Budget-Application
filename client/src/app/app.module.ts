@@ -44,6 +44,8 @@ import { EditRequestModalComponent } from './requests/requestEdit/editRequestMod
 import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InvoiceImageService } from './services/invoice-image.service';
+import { UserCodesComponent } from './userCodes/user-codes.component';
+import { UserCodeService } from './services/user-code.service';
 
 @NgModule({
     declarations: [
@@ -67,7 +69,8 @@ import { InvoiceImageService } from './services/invoice-image.service';
         AlertComponent,
         NewRequestModalComponent,
         RequestDetailModalComponent,
-        FileUploadComponent
+        FileUploadComponent,
+        UserCodesComponent
     ],
     imports: [
         NgbModule,
@@ -90,6 +93,7 @@ import { InvoiceImageService } from './services/invoice-image.service';
         UserService,
         BudgetService,
         BusyIndicatorService,
+        UserCodeService,
         AdminGuard,
         DataChangeNotificationService,
         InvoiceImageService,
