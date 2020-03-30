@@ -32,7 +32,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (!user.IsSuperior)
                 return Forbid();
 
-            var budgets = await _budgetRepository.GetCumulativeBudgets(userId, year, cancellationToken);
+            var budgets = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
             if (!budgets.Any())
                 return Ok();
 
