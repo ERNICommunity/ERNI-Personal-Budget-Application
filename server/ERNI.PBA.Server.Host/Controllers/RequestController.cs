@@ -215,7 +215,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 BudgetId = _.Id,
                 UserId = _.UserId,
-                Amount = _.Amount - budget.Transactions.Sum(x => x.Amount)
+                Amount = _.Amount - _.Transactions.Sum(x => x.Amount)
             }).ToList();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
@@ -397,11 +397,11 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("No Access for request!");
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            var budgets = teamBudgets.Select(budget => new TeamBudget
+            var budgets = teamBudgets.Select(_ => new TeamBudget
             {
-                BudgetId = budget.Id,
-                UserId = budget.UserId,
-                Amount = budget.Amount - budget.Transactions.Where(_ => _.RequestId != payload.Id).Sum(x => x.Amount)
+                BudgetId = _.Id,
+                UserId = _.UserId,
+                Amount = _.Amount - _.Transactions.Where(t => t.RequestId != payload.Id).Sum(x => x.Amount)
             }).ToList();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
