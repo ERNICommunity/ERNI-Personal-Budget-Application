@@ -53,7 +53,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
-            return Ok(user);
+            return Ok(GetModel(user));
         }
 
         [HttpPost("create")]
@@ -126,7 +126,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (user == null)
                 return StatusCode(403);
 
-            return Ok(new UserModel
+            return Ok(GetModel(user));
+        }
+
+        private UserModel GetModel(User user)
+        {
+            return new UserModel
             {
                 Id = user.Id,
                 IsAdmin = user.IsAdmin,
@@ -135,13 +140,15 @@ namespace ERNI.PBA.Server.Host.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
-                Superior = user.Superior != null ? new SuperiorModel
-                {
-                    Id = user.Superior.Id,
-                    FirstName = user.Superior.FirstName,
-                    LastName = user.Superior.LastName,
-                } : null
-            });
+                Superior = user.Superior != null
+                    ? new SuperiorModel
+                    {
+                        Id = user.Superior.Id,
+                        FirstName = user.Superior.FirstName,
+                        LastName = user.Superior.LastName,
+                    }
+                    : null
+            };
         }
 
         [HttpGet("{id}")]
