@@ -102,9 +102,9 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Select(_ => new
                 {
                     BudgetId = _.Id,
-                    TotalAmount = _.Requests
-                        .Where(r => r.State != RequestState.Rejected)
-                        .Sum(r => r.Amount)
+                    TotalAmount = _.Transactions
+                        .Where(x => x.Request.State != RequestState.Rejected)
+                        .Sum(x => x.Amount)
                 })
                 .ToArrayAsync(cancellationToken))
                 .Select(_ => (BudgetId: _.BudgetId, TotalAmount: _.TotalAmount))

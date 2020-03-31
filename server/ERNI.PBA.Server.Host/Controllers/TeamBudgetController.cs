@@ -41,7 +41,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("Cumulative budget does not exists");
 
             var amount = budgets.Sum(_ => _.Amount);
-            var amountLeft = amount - budgets.SelectMany(_ => _.Transactions ?? Enumerable.Empty<Transaction>()).Sum(_ => _.Amount);
+            var amountLeft = amount - budgets.SelectMany(_ => _.Transactions.Where(x => x.Request.State != RequestState.Rejected)).Sum(_ => _.Amount);
 
             var model = new
             {

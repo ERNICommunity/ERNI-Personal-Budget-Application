@@ -215,7 +215,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 BudgetId = _.Id,
                 UserId = _.UserId,
-                Amount = _.Amount - _.Transactions.Sum(x => x.Amount)
+                Amount = _.Amount - _.Transactions
+                             .Where(x => x.Request.State != RequestState.Rejected)
+                             .Sum(x => x.Amount)
             }).ToList();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
@@ -401,7 +403,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 BudgetId = _.Id,
                 UserId = _.UserId,
-                Amount = _.Amount - _.Transactions.Where(t => t.RequestId != payload.Id).Sum(x => x.Amount)
+                Amount = _.Amount - _.Transactions
+                             .Where(t => t.RequestId != payload.Id && t.Request.State != RequestState.Rejected)
+                             .Sum(x => x.Amount)
             }).ToList();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
