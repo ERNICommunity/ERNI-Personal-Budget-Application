@@ -211,14 +211,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            var budgets = teamBudgets.Select(_ => new TeamBudget
-            {
-                BudgetId = _.Id,
-                UserId = _.UserId,
-                Amount = _.Amount - _.Transactions
-                             .Where(x => x.Request.State != RequestState.Rejected)
-                             .Sum(x => x.Amount)
-            }).ToList();
+            var budgets = teamBudgets.ToTeamBudgets();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
@@ -399,14 +392,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("No Access for request!");
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            var budgets = teamBudgets.Select(_ => new TeamBudget
-            {
-                BudgetId = _.Id,
-                UserId = _.UserId,
-                Amount = _.Amount - _.Transactions
-                             .Where(t => t.RequestId != payload.Id && t.Request.State != RequestState.Rejected)
-                             .Sum(x => x.Amount)
-            }).ToList();
+            var budgets = teamBudgets.ToTeamBudgets(x => x.RequestId != payload.Id);
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
