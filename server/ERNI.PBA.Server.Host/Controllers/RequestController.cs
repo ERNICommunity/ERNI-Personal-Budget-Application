@@ -160,6 +160,11 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
             }
 
+            if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
+            {
+                return BadRequest("No Access for request!");
+            }
+
             var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(payload.BudgetId, cancellationToken);
 
             if (payload.Amount > budget.Amount - requestedAmount)
@@ -208,6 +213,11 @@ namespace ERNI.PBA.Server.Host.Controllers
             if (budget == null)
             {
                 return BadRequest($"Budget {payload.BudgetId} was not found.");
+            }
+
+            if (budget.BudgetType != BudgetTypeEnum.TeamBudget)
+            {
+                return BadRequest("No Access for request!");
             }
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
@@ -349,6 +359,10 @@ namespace ERNI.PBA.Server.Host.Controllers
             var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(request.BudgetId, cancellationToken);
 
             var budget = await _budgetRepository.GetBudget(request.BudgetId, cancellationToken);
+            if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
+            {
+                return BadRequest("No Access for request!");
+            }
 
             if (payload.Amount > budget.Amount + request.Amount - requestedAmount)
             {
@@ -392,6 +406,11 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return BadRequest("No Access for request!");
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))
+            {
+                return BadRequest("No Access for request!");
+            }
+
             var budgets = teamBudgets.ToTeamBudgets(x => x.RequestId != payload.Id);
 
             var availableFunds = budgets.Sum(_ => _.Amount);
