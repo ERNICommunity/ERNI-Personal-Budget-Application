@@ -19,5 +19,7 @@ namespace ERNI.PBA.Server.DataAccess.Model
         public decimal Amount { get; set; }
 
         public ICollection<Request> Requests { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

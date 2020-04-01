@@ -1,27 +1,27 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import {AppComponent} from './app.component';
-import {RouterModule} from '@angular/router';
-import {LoginComponent} from './login/login.component';
-import {rootRouterConfig} from './app.routes';
-import {AdalService} from './services/adal.service';
-import {ConfigService} from './services/config.service';
-import {OAuthHandshakeModule} from './login-callback/oauth-callback.module';
-import {AuthenticationGuard} from './services/guards/authentication.guard';
-import {AdminGuard} from './services/guards/admin.guard'
-import {RequestsComponent} from './requests/requests.component';
-import {RequestListComponent} from './requests/requestList/requestList.component';
-import {RequestService} from './services/request.service';
-import {HttpClientModule} from '@angular/common/http';
-import {UsersComponent} from './users/users.component';
-import {UserService} from './services/user.service';
-import {NgbModule, NgbAlert} from '@ng-bootstrap/ng-bootstrap';
-import {UserListComponent} from './users/userList/userList.component';
-import {UserDetailComponent} from './users/userDetail/userDetail.component';
-import {MyBudgetComponent} from './budgets/myBudget/myBudget.component';
-import {BudgetService} from './services/budget.service';
-import {FormsModule} from '@angular/forms';
+import { AppComponent } from './app.component';
+import { RouterModule } from '@angular/router';
+import { LoginComponent } from './login/login.component';
+import { rootRouterConfig } from './app.routes';
+import { AdalService } from './services/adal.service';
+import { ConfigService } from './services/config.service';
+import { OAuthHandshakeModule } from './login-callback/oauth-callback.module';
+import { AuthenticationGuard } from './services/guards/authentication.guard';
+import { AdminGuard } from './services/guards/admin.guard'
+import { RequestsComponent } from './requests/requests.component';
+import { RequestListComponent } from './requests/requestList/requestList.component';
+import { RequestService } from './services/request.service';
+import { HttpClientModule } from '@angular/common/http';
+import { UsersComponent } from './users/users.component';
+import { UserService } from './services/user.service';
+import { NgbModule, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
+import { UserListComponent } from './users/userList/userList.component';
+import { UserDetailComponent } from './users/userDetail/userDetail.component';
+import { MyBudgetComponent } from './budgets/myBudget/myBudget.component';
+import { BudgetService } from './services/budget.service';
+import { FormsModule } from '@angular/forms';
 import { ServiceHelper } from './services/service.helper';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
@@ -46,6 +46,7 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InvoiceImageService } from './services/invoice-image.service';
 import { UserCodesComponent } from './userCodes/user-codes.component';
 import { UserCodeService } from './services/user-code.service';
+import { TeamBudgetService } from './services/team-budget.service';
 
 @NgModule({
     declarations: [
@@ -92,6 +93,7 @@ import { UserCodeService } from './services/user-code.service';
         RequestService,
         UserService,
         BudgetService,
+        TeamBudgetService,
         BusyIndicatorService,
         UserCodeService,
         AdminGuard,

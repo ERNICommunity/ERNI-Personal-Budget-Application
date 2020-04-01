@@ -56,7 +56,26 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public async Task DeleteRequest(Request request)
         {
+            var transactions = await _context.Transactions.Where(_ => _.RequestId == request.Id).ToArrayAsync();
+            if (transactions.Any())
+                _context.Transactions.RemoveRange(transactions);
+
             _context.Requests.Remove(request);
+        }
+
+        public async Task AddOrUpdateTransactions(int requestId, IEnumerable<Transaction> transactions)
+        {
+            var request = await _context.Requests.Include(_ => _.Transactions).FirstOrDefaultAsync(_ => _.Id == requestId);
+            if (request == null)
+                return;
+
+            _context.Transactions.RemoveRange(request.Transactions);
+
+            request.Transactions.Clear();
+            foreach (var transaction in transactions)
+            {
+                request.Transactions.Add(transaction);
+            }
         }
     }
 }

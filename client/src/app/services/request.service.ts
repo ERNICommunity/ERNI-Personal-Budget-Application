@@ -53,6 +53,10 @@ export class RequestService {
     return this.http.post(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
+  public addTeamRequest(request: NewRequest): Observable<any> {
+    return this.http.post(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
+  }
+
   public addMassRequest(request: RequestMass): Observable<any> {
     return this.http.post<RequestMass>(this.configService.apiUrlBase + this.requestUrl + 'mass', request, this.serviceHelper.getHttpOptions());
   }
@@ -61,11 +65,15 @@ export class RequestService {
     return this.http.put(this.configService.apiUrlBase + this.requestUrl, request, this.serviceHelper.getHttpOptions());
   }
 
+  public updateTeamRequest(request: PatchRequest): Observable<any> {
+    return this.http.put(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
+  }
+
   public deleteRequest(id: number): Observable<Request> {
     return this.http.delete<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions());
   }
 
   public getUsersWithBudgetLeft(request: BudgetLeft): Observable<User[]> {
-    return this.http.get<User[]>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.amount +'/' + request.year, this.serviceHelper.getHttpOptions());
+    return this.http.get<User[]>(this.configService.apiUrlBase + this.requestUrl + 'budget-left/' + request.amount + '/' + request.year, this.serviceHelper.getHttpOptions());
   }
 }

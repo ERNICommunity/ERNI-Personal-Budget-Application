@@ -20,5 +20,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         Task AddRequests(IEnumerable<Request> requests);
 
         Task DeleteRequest(Request request);
+
+        Task AddOrUpdateTransactions(int requestId, IEnumerable<Transaction> transactions);
     }
 }

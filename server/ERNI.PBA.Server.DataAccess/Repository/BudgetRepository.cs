@@ -33,11 +33,31 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
         }
 
+        public async Task<Budget[]> GetSingleBudgets(int userId, int year, CancellationToken cancellationToken)
+        {
+            return await _context.Budgets
+                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Where(_ => _.BudgetType != BudgetTypeEnum.TeamBudget)
+                .Where(_ => _.UserId == userId && _.Year == year)
+                .ToArrayAsync(cancellationToken);
+        }
+
+        public async Task<Budget[]> GetTeamBudgets(int userId, int year, CancellationToken cancellationToken)
+        {
+            return await _context.Budgets
+                .Include(_ => _.Transactions)
+                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Where(_ => _.BudgetType == BudgetTypeEnum.TeamBudget)
+                .Where(_ => (_.UserId == userId || _.User.SuperiorId == userId) && _.Year == year)
+                .ToArrayAsync(cancellationToken);
+        }
+
         public Task<Budget[]> GetBudgets(int userId, int year, CancellationToken cancellationToken)
         {
             return _context.Budgets
                 .Include(_ => _.User)
                 .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
                 .Where(_ => _.UserId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
@@ -82,9 +102,9 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Select(_ => new
                 {
                     BudgetId = _.Id,
-                    TotalAmount = _.Requests
-                        .Where(r => r.State != RequestState.Rejected)
-                        .Sum(r => r.Amount)
+                    TotalAmount = _.Transactions
+                        .Where(x => x.Request.State != RequestState.Rejected)
+                        .Sum(x => x.Amount)
                 })
                 .ToArrayAsync(cancellationToken))
                 .Select(_ => (BudgetId: _.BudgetId, TotalAmount: _.TotalAmount))

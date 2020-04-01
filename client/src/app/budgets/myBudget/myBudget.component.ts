@@ -4,14 +4,13 @@ import { Budget } from '../../model/budget';
 import { User } from '../../model/user';
 import { UserState } from '../../model/userState';
 import { UserService } from '../../services/user.service';
-import { RequestFilter } from '../../requests/requestFilter';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { map, switchMap, switchAll } from 'rxjs/operators';
-import { Observable, of, combineLatest } from 'rxjs';
-import { RequestService } from '../../services/request.service';
+import { combineLatest, forkJoin, of, Observable } from 'rxjs';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
+import { TeamBudgetService } from '../../services/team-budget.service';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-my-Budget',
@@ -27,10 +26,12 @@ export class MyBudgetComponent implements OnInit {
     years: number[];
     rlao: object;
 
-    constructor(private budgetService: BudgetService,
+    constructor(
+        private budgetService: BudgetService,
+        private teamBudgetService: TeamBudgetService,
         private userService: UserService,
         private route: ActivatedRoute,
-        private config: ConfigService,
+        config: ConfigService,
         public busyIndicatorService: BusyIndicatorService,
         private dataChangeNotificationService: DataChangeNotificationService) {
         this.years = [];
@@ -42,10 +43,8 @@ export class MyBudgetComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        this.getUser();
-
-        combineLatest(this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([params, unit]) => {
+        combineLatest(this.getUser(), this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([user, params]) => {
+            this.user = user;
 
             // the following line forces routerLinkActive to update even if the route did nto change
             // see see https://github.com/angular/angular/issues/13865 for futher info
@@ -60,16 +59,41 @@ export class MyBudgetComponent implements OnInit {
         });
     }
 
-    getUser(): void {
-        this.userService.getCurrentUser()
-            .subscribe(user => this.user = user);
+    getUser(): Observable<any> {
+        return this.userService.getCurrentUser();
     }
 
     getBudgets(year: number): void {
+        this.budgets = [];
         this.busyIndicatorService.start();
-        this.budgetService.getCurrentUserBudgets(year).subscribe(budgets => {
-            this.budgets = budgets
-            this.busyIndicatorService.end();
-        });
+
+        let requests = [this.budgetService.getCurrentUserBudgets(year)
+            .pipe(map(this.handleResponse), catchError(this.handleResponse))];
+
+        if (this.user.isSuperior) {
+            requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
+                .pipe(map(this.handleResponse), catchError(this.handleResponse)));
+        }
+
+        forkJoin(requests).subscribe(
+            data => {
+                data.forEach(budgets => {
+                    if (budgets.length > 0) {
+                        this.budgets = this.budgets.concat(budgets)
+                    }
+                });
+            })
+            .add(() => this.busyIndicatorService.end());
+    }
+
+    private handleResponse(data) {
+        if (data == null)
+            return of([]);
+
+        return data;
+    }
+
+    private handleError() {
+        return of([]);
     }
 }

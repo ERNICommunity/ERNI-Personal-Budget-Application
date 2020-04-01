@@ -42,7 +42,7 @@ export const rootRouterConfig: Routes = [
         path: 'my-budget', canActivate: [AuthenticationGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
-            { 
+            {
                 path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard],
                 children: [
                     { path: 'create-request/:budgetId', component: NewRequestModalComponent, canActivate: [AuthenticationGuard] },

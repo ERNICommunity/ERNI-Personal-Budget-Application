@@ -4,14 +4,16 @@ using ERNI.PBA.Server.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200309121026_AddTransactions")]
+    partial class AddTransactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,26 +42,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Budgets");
-                });
-
-            modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.InvoiceImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte[]>("Data");
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.Property<int>("RequestId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RequestId");
-
-                    b.ToTable("InvoiceImage");
                 });
 
             modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.Request", b =>
@@ -188,14 +170,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.HasOne("ERNI.PBA.Server.DataAccess.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.InvoiceImage", b =>
-                {
-                    b.HasOne("ERNI.PBA.Server.DataAccess.Model.Request", "Request")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

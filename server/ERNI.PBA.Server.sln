@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERNI.PBA.Server.Host", "ERN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERNI.PBA.Server.DataAccess", "ERNI.PBA.Server.DataAccess\ERNI.PBA.Server.DataAccess.csproj", "{B2C5A32D-F8D7-4777-8D6B-8D1840ADEC71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERNI.PBA.Server.Graph", "ERNI.PBA.Server.Graph\ERNI.PBA.Server.Graph.csproj", "{5CA6954C-8AB5-499C-99F1-31DE510064CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERNI.PBA.Server.Graph", "ERNI.PBA.Server.Graph\ERNI.PBA.Server.Graph.csproj", "{5CA6954C-8AB5-499C-99F1-31DE510064CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
