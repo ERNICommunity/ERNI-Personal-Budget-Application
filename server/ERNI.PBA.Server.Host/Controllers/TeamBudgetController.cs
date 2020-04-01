@@ -30,15 +30,21 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userId = HttpContext.User.GetId();
             var user = await _userRepository.GetUser(userId, cancellationToken);
             if (!user.IsSuperior)
+            {
                 return Forbid();
+            }
 
             var budgets = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
             if (!budgets.Any())
+            {
                 return Ok();
+            }
 
             var masterBudget = budgets.SingleOrDefault(x => x.UserId == userId);
             if (masterBudget == null)
+            {
                 return BadRequest("Cumulative budget does not exists");
+            }
 
             var amount = budgets.Sum(_ => _.Amount);
             var amountLeft = amount - budgets.SelectMany(_ => _.Transactions.Where(x => x.Request.State != RequestState.Rejected)).Sum(_ => _.Amount);

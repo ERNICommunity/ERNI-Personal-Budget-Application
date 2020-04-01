@@ -15,7 +15,9 @@ namespace ERNI.PBA.Server.Host
         private static void SeedUsers(DatabaseContext context)
         {
             if (context.Users.Any())
+            {
                 return;
+            }
 
             var names = new[]
             {

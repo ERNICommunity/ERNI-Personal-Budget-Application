@@ -208,7 +208,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var currentUser = await _userRepository.GetUser(userId, cancellationToken);
             if (!currentUser.IsSuperior)
+            {
                 return Forbid();
+            }
 
             var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
             if (budget == null)
@@ -226,7 +228,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
+            {
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
 
             var transactions = TransactionCalculator.Create(budgets, payload.Amount);
             var request = new Request
@@ -398,14 +402,20 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userId = HttpContext.User.GetId();
             var currentUser = await _userRepository.GetUser(userId, cancellationToken);
             if (!currentUser.IsSuperior)
+            {
                 return Forbid();
+            }
 
             var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
             if (request == null)
+            {
                 return BadRequest($"Request with id {payload.Id} not found.");
+            }
 
             if (userId != request.UserId)
+            {
                 return BadRequest("No Access for request!");
+            }
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
             if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))
@@ -417,7 +427,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
+            {
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
 
             var transactions = TransactionCalculator.Create(budgets, payload.Amount);
             request.Title = payload.Title;

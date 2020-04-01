@@ -38,14 +38,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var username = HttpContext.User.GetIdentifier(Claims.UserName);
             if (string.IsNullOrWhiteSpace(username))
+            {
                 return Forbid();
+            }
 
             var user = await _userRepository.GetAsync(username);
             if (user == null)
+            {
                 return Forbid();
+            }
 
             if (cancellationToken.IsCancellationRequested)
+            {
                 return BadRequest();
+            }
 
             user.UniqueIdentifier = HttpContext.User.GetIdentifier(Claims.UniqueIndetifier);
             user.FirstName = HttpContext.User.GetIdentifier(Claims.FirstName);
@@ -62,7 +68,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var userExists = await _userRepository.ExistsAsync(payload.Email);
             if (userExists)
+            {
                 return StatusCode(409);
+            }
 
             var user = new User
             {
@@ -124,7 +132,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (user == null)
+            {
                 return StatusCode(403);
+            }
 
             return Ok(GetModel(user));
         }
