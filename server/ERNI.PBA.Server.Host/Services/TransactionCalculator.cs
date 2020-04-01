@@ -15,10 +15,10 @@ namespace ERNI.PBA.Server.Host.Services
             var amount = distributedAmount;
             while (availableBudgets.Any())
             {
-                var amountPerItem = amount / availableBudgets.Count;
+                var amountPerItem = (amount / availableBudgets.Count).Round();
 
                 var first = availableBudgets.Dequeue();
-                var amountToDeduct = Math.Min(amountPerItem, first.Amount).Round();
+                var amountToDeduct = Math.Min(amountPerItem, first.Amount);
 
                 transactions.Add(new Transaction
                 {
