@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,8 +59,11 @@ namespace ERNI.PBA.Server.Host.Controllers
         private class User
         {
             public string LastName { get; set; }
+
             public string FirstName { get; set; }
+
             public string DisplayName { get; set; }
+
             public string Code { get; set; }
         }
     }
