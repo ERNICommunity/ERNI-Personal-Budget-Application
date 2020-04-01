@@ -96,6 +96,7 @@
             <th scope="col">Title</th>
             <th scope="col">Amount</th>
             <th scope="col">Budget</th>
+            <th scope="col">Create date</th>
             <th scope="col">Date</th>
             <th scope="col"></th>
         </tr>
@@ -108,6 +109,7 @@
             <td>{{request.title}}</td>
             <td>{{request.amount}}</td>
             <td>{{request.budget.title}}</td>
+            <td>{{request.createDate | date: 'dd/MM/yyyy'}}</td>
             <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
 
             <td>

@@ -180,6 +180,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Title = payload.Title,
                 Amount = payload.Amount,
                 Date = payload.Date.ToLocalTime(),
+                CreateDate = DateTime.Now,
                 State = RequestState.Pending,
                 Transactions = new[]
                 {
@@ -293,6 +294,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Title = payload.Title,
                     Amount = payload.Amount,
                     Date = payload.Date.ToLocalTime().Date,
+                    CreateDate = DateTime.Now,
                     State = RequestState.Approved,
                     BudgetId = budget.Id
                 };
@@ -483,6 +485,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Amount = request.Amount,
                 Year = request.Year,
                 Date = request.Date,
+                CreateDate = request.CreateDate,
                 State = request.State,
                 User = new UserOutputModel
                 {

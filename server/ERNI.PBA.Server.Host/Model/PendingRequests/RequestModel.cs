@@ -10,6 +10,8 @@ namespace ERNI.PBA.Server.Host.Model.PendingRequests
 
         public System.DateTime Date { get; set; }
 
+        public System.DateTime CreateDate { get; set; }
+
         public string Title { get; set; }
 
         public decimal Amount { get; set; }
