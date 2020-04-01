@@ -158,7 +158,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 var budgets =
                     (await _budgetRepository.GetBudgetsByYear(DateTime.Now.Year, cancellationToken)).Where(_ =>
-                        _.BudgetType == BudgetTypeEnum.PersonalBudget).Select(_ => _.UserId).ToHashSet();
+                        _.BudgetType == budgetType.Id).Select(_ => _.UserId).ToHashSet();
                 users = users.Where(_ => !budgets.Contains(_.Id));
             }
 
@@ -194,7 +194,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 var budgets =
                     (await _budgetRepository.GetBudgetsByYear(DateTime.Now.Year, cancellationToken)).Where(_ =>
-                        _.BudgetType == BudgetTypeEnum.PersonalBudget).Select(_ => _.UserId).ToHashSet();
+                        _.BudgetType == budgetType.Id).Select(_ => _.UserId).ToHashSet();
                 users = users.Where(_ => !budgets.Contains(_.Id));
             }
 
