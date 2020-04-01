@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
@@ -14,8 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Examples;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -108,20 +109,34 @@ namespace ERNI.PBA.Server.Host
 
             services.AddQuartz(typeof(DailyMailNotifications), Configuration["Crons:EmailCron"]);
 
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-                c.OperationFilter<ExamplesOperationFilter>();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.ExampleFilters();
 
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = "header",
+                    In = ParameterLocation.Header,
                     Description = "Please enter into field the word 'Bearer' following by space and JWT",
                     Name = "Authorization",
-                    Type = "apiKey"
+                    Type = SecuritySchemeType.ApiKey
                 });
 
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "Bearer", Enumerable.Empty<string>() } });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             services.AddMvc(configuration =>
