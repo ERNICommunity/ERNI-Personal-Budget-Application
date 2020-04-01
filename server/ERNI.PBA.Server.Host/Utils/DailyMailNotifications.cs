@@ -1,13 +1,13 @@
-using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Services;
-using Microsoft.Extensions.Configuration;
-using Quartz;
 using System;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Services;
+using Microsoft.Extensions.Configuration;
+using Quartz;
 
 namespace ERNI.PBA.Server.Host.Utils
 {
@@ -17,20 +17,22 @@ namespace ERNI.PBA.Server.Host.Utils
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly MailService _mailService;
-        // private readonly ILogger _logger;
+        /* private readonly ILogger _logger; */
 
-        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration)//, ILogger<DailyMailNotifications> logger)
+        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration) // , ILogger<DailyMailNotifications> logger)
         {
             _requestRepository = requestRepository;
             _userRepository = userRepository;
             _mailService = new MailService(configuration);
-            //_logger = logger;
+
+            // _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
             // await SendNotificationsForPendingRequests(context.CancellationToken);
             await SendNotificationsToAdmins(context.CancellationToken);
+
             // _logger.LogInformation("Scheduled Job for notifications executed");
         }
 

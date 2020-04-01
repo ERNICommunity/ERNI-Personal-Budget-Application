@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
-using System;
 
 namespace ERNI.PBA.Server.Host.Utils
 {
@@ -34,9 +34,7 @@ namespace ERNI.PBA.Server.Host.Utils
         public static void UseQuartz(this IApplicationBuilder app)
         {
             app.ApplicationServices.GetService<IScheduler>()
-                .ScheduleJob(app.ApplicationServices.GetService<IJobDetail>(),
-                app.ApplicationServices.GetService<ITrigger>()
-                );
+                .ScheduleJob(app.ApplicationServices.GetService<IJobDetail>(), app.ApplicationServices.GetService<ITrigger>());
         }
     }
 }

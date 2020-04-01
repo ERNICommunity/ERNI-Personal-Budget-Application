@@ -1,4 +1,4 @@
-using ERNI.PBA.Server.Host.Model.PendingRequests;
+﻿using ERNI.PBA.Server.Host.Model.PendingRequests;
 using Swashbuckle.AspNetCore.Examples;
 
 namespace ERNI.PBA.Server.Host.Examples

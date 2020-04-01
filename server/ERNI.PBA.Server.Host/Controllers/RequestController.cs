@@ -1,24 +1,24 @@
-using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Examples;
-using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Model.PendingRequests;
-using ERNI.PBA.Server.Host.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Host.Exceptions;
+using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Host.Model.PendingRequests;
+using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Examples;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -208,7 +208,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var currentUser = await _userRepository.GetUser(userId, cancellationToken);
             if (!currentUser.IsSuperior)
+            {
                 return Forbid();
+            }
 
             var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
             if (budget == null)
@@ -226,7 +228,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
+            {
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
 
             var transactions = TransactionCalculator.Create(budgets, payload.Amount);
             var request = new Request
@@ -254,11 +258,13 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         /// <summary>
-        /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
+        /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state.
         /// </summary>
         [HttpPost("mass")]
         [Authorize(Roles = Roles.Admin)]
+#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<IActionResult> AddRequestMass([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
+#pragma warning restore SA1202 // Elements should be ordered by access
         {
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (!currentUser.IsAdmin)
@@ -272,8 +278,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 var userId = user.Id;
 
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear,
-                    cancellationToken);
+                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear, cancellationToken);
 
                 if (budgets.Length > 1)
                 {
@@ -398,14 +403,20 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userId = HttpContext.User.GetId();
             var currentUser = await _userRepository.GetUser(userId, cancellationToken);
             if (!currentUser.IsSuperior)
+            {
                 return Forbid();
+            }
 
             var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
             if (request == null)
+            {
                 return BadRequest($"Request with id {payload.Id} not found.");
+            }
 
             if (userId != request.UserId)
+            {
                 return BadRequest("No Access for request!");
+            }
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
             if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))
@@ -417,7 +428,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < payload.Amount)
+            {
                 return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
+            }
 
             var transactions = TransactionCalculator.Create(budgets, payload.Amount);
             request.Title = payload.Title;
@@ -476,7 +489,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             return result;
         }
 
+#pragma warning disable SA1204 // Static elements should appear before instance elements
         private static RequestModel GetModel(Request request)
+#pragma warning restore SA1204 // Static elements should appear before instance elements
         {
             return new RequestModel
             {
@@ -504,7 +519,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("budget-left/{amount}/{year}")]
         [Authorize(Roles = Roles.Admin)]
+#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<UserModel[]> BudgetLeft(decimal amount, int year, CancellationToken cancellationToken)
+#pragma warning restore SA1202 // Elements should be ordered by access
         {
             var budgetAmount = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
                 .ToDictionary(_ => _.BudgetId, _ => _.Amount);
@@ -536,10 +553,13 @@ namespace ERNI.PBA.Server.Host.Controllers
                             FirstName = user.Superior.FirstName,
                             Id = user.Superior.Id,
                             LastName = user.Superior.LastName
-                        } : null
+                        }
+                        :
+                        null
                     });
                 }
             }
+
             return usersWithBudgetLeft.ToArray();
         }
     }

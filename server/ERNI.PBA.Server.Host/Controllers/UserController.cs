@@ -1,14 +1,14 @@
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -38,14 +38,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var username = HttpContext.User.GetIdentifier(Claims.UserName);
             if (string.IsNullOrWhiteSpace(username))
+            {
                 return Forbid();
+            }
 
             var user = await _userRepository.GetAsync(username);
             if (user == null)
+            {
                 return Forbid();
+            }
 
             if (cancellationToken.IsCancellationRequested)
+            {
                 return BadRequest();
+            }
 
             user.UniqueIdentifier = HttpContext.User.GetIdentifier(Claims.UniqueIndetifier);
             user.FirstName = HttpContext.User.GetIdentifier(Claims.FirstName);
@@ -62,7 +68,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var userExists = await _userRepository.ExistsAsync(payload.Email);
             if (userExists)
+            {
                 return StatusCode(409);
+            }
 
             var user = new User
             {
@@ -124,7 +132,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (user == null)
+            {
                 return StatusCode(403);
+            }
 
             return Ok(GetModel(user));
         }
@@ -153,7 +163,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = Roles.Admin)]
+#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<IActionResult> Get(int id)
+#pragma warning restore SA1202 // Elements should be ordered by access
         {
             var user = await _userRepository.GetUser(id, CancellationToken.None);
 
@@ -171,7 +183,9 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Id = user.Superior.Id,
                     FirstName = user.Superior.FirstName,
                     LastName = user.Superior.LastName,
-                } : null
+                }
+                :
+                null
             });
         }
 
@@ -205,7 +219,9 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Id = _.Superior.Id,
                     FirstName = _.Superior.FirstName,
                     LastName = _.Superior.LastName,
-                } : null
+                }
+                :
+                null
             }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
 
             return Ok(result);

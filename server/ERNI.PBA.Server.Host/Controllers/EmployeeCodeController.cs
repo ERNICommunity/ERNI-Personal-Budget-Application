@@ -1,11 +1,11 @@
-﻿using ERNI.PBA.Server.Graph;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Graph;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -13,17 +13,17 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class EmployeeCodeController : Controller
     {
-        private readonly IConfiguration _configuration;
-
         private static DateTime _timestamp;
-        private static User[] _cache;
+        private static UserModel[] _cache;
+
+        private readonly IConfiguration _configuration;
 
         public EmployeeCodeController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        [HttpGet()]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
@@ -32,7 +32,8 @@ namespace ERNI.PBA.Server.Host.Controllers
                 return Ok(_cache);
             }
 
-            var config = new GraphConfiguration(_configuration["Graph:ClientId"],
+            var config = new GraphConfiguration(
+                _configuration["Graph:ClientId"],
                 _configuration["Graph:TenantId"],
                 _configuration["Graph:ClientSecret"]);
 
@@ -42,7 +43,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var data = users
                 .Where(_ => _.UserPrincipalName.Contains("@"))
-                .Select(_ => new User
+                .Select(_ => new UserModel
             {
                 LastName = _.Surname,
                 FirstName = _.GivenName,
@@ -56,11 +57,14 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok(data);
         }
 
-        private class User
+        private class UserModel
         {
             public string LastName { get; set; }
+
             public string FirstName { get; set; }
+
             public string DisplayName { get; set; }
+
             public string Code { get; set; }
         }
     }

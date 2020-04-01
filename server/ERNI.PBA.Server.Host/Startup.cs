@@ -33,7 +33,8 @@ namespace ERNI.PBA.Server.Host
         {
             services.AddCors(options
                             =>
-                                options.AddPolicy("CorsPolicy",
+                                options.AddPolicy(
+                                    "CorsPolicy",
                                     b => b.AllowAnyOrigin()
                                         .AllowAnyMethod()
                                         .AllowAnyHeader()));
@@ -57,20 +58,19 @@ namespace ERNI.PBA.Server.Host
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
                 })
                 .AddJwtBearer(cfg =>
                 {
                     cfg.RequireHttpsMetadata = false;
                     cfg.SaveToken = true;
-                    cfg.Authority = String.Concat(Configuration["Authentication:AzureAd:AadInstance"], Configuration["Authentication:AzureAd:Tenant"]);
+                    cfg.Authority = string.Concat(Configuration["Authentication:AzureAd:AadInstance"], Configuration["Authentication:AzureAd:Tenant"]);
                     cfg.TokenValidationParameters = new TokenValidationParameters
                     {
-
                         ValidateIssuer = true,
                         ValidateLifetime = true,
-                        ValidIssuer = String.Concat(Configuration["Authentication:AzureAd:AadInstance"], Configuration["Authentication:AzureAd:Tenant"], "/v2.0"),
+                        ValidIssuer = string.Concat(Configuration["Authentication:AzureAd:AadInstance"], Configuration["Authentication:AzureAd:Tenant"], "/v2.0"),
                         ValidAudience = Configuration["Authentication:AzureAD:ClientId"],
+
                         // IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
@@ -102,9 +102,7 @@ namespace ERNI.PBA.Server.Host
                             }
                         }
                     };
-
                 });
-
 
             services.AddAuthorization();
 
@@ -130,7 +128,7 @@ namespace ERNI.PBA.Server.Host
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)//, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) // , ILogger<Startup> logger)
         {
             app.UseCors("CorsPolicy");
 

@@ -1,7 +1,7 @@
-using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
 using System;
 using System.Linq;
+using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -15,7 +15,9 @@ namespace ERNI.PBA.Server.Host
         private static void SeedUsers(DatabaseContext context)
         {
             if (context.Users.Any())
+            {
                 return;
+            }
 
             var names = new[]
             {
@@ -25,10 +27,10 @@ namespace ERNI.PBA.Server.Host
 
             var categories = new[]
             {
-                new RequestCategory {Title = "Sport", IsActive = true, IsUrlNeeded = false, SpendLimit = null},
-                new RequestCategory {Title = "Education", IsActive = true, IsUrlNeeded = false, SpendLimit = null},
-                new RequestCategory {Title = "Health", IsActive = true, IsUrlNeeded = true, SpendLimit = 200},
-                new RequestCategory {Title = "Other", IsActive = true, IsUrlNeeded = false, SpendLimit = null}
+                new RequestCategory { Title = "Sport", IsActive = true, IsUrlNeeded = false, SpendLimit = null },
+                new RequestCategory { Title = "Education", IsActive = true, IsUrlNeeded = false, SpendLimit = null },
+                new RequestCategory { Title = "Health", IsActive = true, IsUrlNeeded = true, SpendLimit = 200 },
+                new RequestCategory { Title = "Other", IsActive = true, IsUrlNeeded = false, SpendLimit = null }
             };
 
             context.RequestCategories.AddRange(categories);
@@ -44,8 +46,8 @@ namespace ERNI.PBA.Server.Host
                 IsSuperior = _ == 0,
                 IsViewer = _ == 0,
                 FirstName = names[_ * 2],
-                LastName = names[_ * 2 + 1],
-                Username = $"{names[_ * 2]}.{names[_ * 2 + 1]}",
+                LastName = names[(_ * 2) + 1],
+                Username = $"{names[_ * 2]}.{names[(_ * 2) + 1]}",
                 SuperiorId = null,
                 State = (UserState)(_ % 3)
             }).ToArray();
@@ -89,11 +91,10 @@ namespace ERNI.PBA.Server.Host
                 {
                     Budget = budget,
                     Title = _.ToString(),
-                    Amount = _ * 1878 % 50 + 10,
+                    Amount = ((_ * 1878) % 50) + 10,
                     Date = new DateTime(budget.Year, _, 5),
                     Category = categories[_ % categories.Count()]
-                }
-                ));
+                }));
             }
 
             context.SaveChanges();
