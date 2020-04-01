@@ -29,16 +29,22 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{budgetId}")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
-        public async Task<IActionResult> GetUserBudgetByYear(int budgetId, CancellationToken cancellationToken)
+        [Authorize]
+        public async Task<IActionResult> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
+            var user = HttpContext.User;
             var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
+            if (budget == null || (!user.IsInRole(Roles.Admin) && user.GetId() != budget.UserId))
+            {
+                return Unauthorized();
+            }
 
             var result = new
             {
                 Id = budget.Id,
                 Year = budget.Year,
                 Amount = budget.Amount,
+                Type = budget.BudgetType,
                 User = new User
                 {
                     Id = budget.User.Id,
@@ -276,6 +282,33 @@ namespace ERNI.PBA.Server.Host.Controllers
             await _unitOfWork.SaveChanges(cancellationToken);
             return Ok();
         }
+
+        [HttpPut("{budgetId}/transfer/{userId}")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> TransferBudget(int budgetId, int userId, CancellationToken cancellationToken)
+        {
+            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
+            if (budget == null)
+            {
+                return BadRequest($"Budget with id {budgetId} not found");
+            }
+
+            if (!BudgetType.Types.Single(type => type.Id == budget.BudgetType).IsTransferable)
+            {
+                return BadRequest($"Budget with id {budgetId} can not be transferred");
+            }
+
+            var user = await _userRepository.GetUser(userId, cancellationToken);
+            if (user == null)
+            {
+                return BadRequest($"User with id {userId} not found");
+            }
+
+            budget.UserId = userId;
+            await _unitOfWork.SaveChanges(cancellationToken);
+            return Ok();
+        }
+        
 
         [HttpGet("types")]
         public async Task<IActionResult> GetBudgetTypes()
