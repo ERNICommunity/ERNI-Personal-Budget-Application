@@ -168,15 +168,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName));
         }
 
-        public class CreateBudgetsForAllActiveUsersRequest
-        {
-            public string Title { get; set; }
-
-            public decimal Amount { get; set; }
-
-            public BudgetTypeEnum BudgetType { get; set; }
-        }
-
         [HttpPost("users/all")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudgetsForAllActiveUsers(
@@ -215,15 +206,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();
-        }
-
-        public class CreateBudgetRequest
-        {
-            public string Title { get; set; }
-
-            public decimal Amount { get; set; }
-
-            public BudgetTypeEnum BudgetType { get; set; }
         }
 
         [HttpPost("users/{userId}")]
