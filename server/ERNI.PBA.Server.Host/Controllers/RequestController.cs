@@ -258,7 +258,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         /// <summary>
-        /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state
+        /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state.
         /// </summary>
         [HttpPost("mass")]
         [Authorize(Roles = Roles.Admin)]
@@ -276,8 +276,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             {
                 var userId = user.Id;
 
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear,
-                    cancellationToken);
+                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear, cancellationToken);
 
                 if (budgets.Length > 1)
                 {
@@ -548,10 +547,13 @@ namespace ERNI.PBA.Server.Host.Controllers
                             FirstName = user.Superior.FirstName,
                             Id = user.Superior.Id,
                             LastName = user.Superior.LastName
-                        } : null
+                        }
+                        :
+                        null
                     });
                 }
             }
+
             return usersWithBudgetLeft.ToArray();
         }
     }

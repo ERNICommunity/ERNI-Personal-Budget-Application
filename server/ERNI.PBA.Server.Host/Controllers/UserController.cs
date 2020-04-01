@@ -181,7 +181,9 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Id = user.Superior.Id,
                     FirstName = user.Superior.FirstName,
                     LastName = user.Superior.LastName,
-                } : null
+                }
+                :
+                null
             });
         }
 
@@ -215,7 +217,9 @@ namespace ERNI.PBA.Server.Host.Controllers
                     Id = _.Superior.Id,
                     FirstName = _.Superior.FirstName,
                     LastName = _.Superior.LastName,
-                } : null
+                }
+                :
+                null
             }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
 
             return Ok(result);

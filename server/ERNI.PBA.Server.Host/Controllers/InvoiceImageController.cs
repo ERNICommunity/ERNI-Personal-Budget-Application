@@ -15,15 +15,14 @@ namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
+#pragma warning disable CS0162 // Unreachable code detected
     public class InvoiceImageController : Controller
     {
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public InvoiceImageController(IInvoiceImageRepository invoiceImageRepository,
-            IRequestRepository requestRepository,
-            IUnitOfWork unitOfWork)
+        public InvoiceImageController(IInvoiceImageRepository invoiceImageRepository, IRequestRepository requestRepository, IUnitOfWork unitOfWork)
         {
             _invoiceImageRepository = invoiceImageRepository;
             _requestRepository = requestRepository;
@@ -59,8 +58,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("image/{imageId}")]
         [Authorize]
-        public async Task<IActionResult> GetInvoiceImageFile(int imageId,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetInvoiceImageFile(int imageId, CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
 
@@ -83,22 +81,21 @@ namespace ERNI.PBA.Server.Host.Controllers
             }
 
             var provider = new FileExtensionContentTypeProvider();
-            if (!provider.TryGetContentType(image.Name , out var contentType))
+            if (!provider.TryGetContentType(image.Name, out var contentType))
             {
                 contentType = "application/octet-stream";
             }
 
             return new FileContentResult(image.Data, contentType)
             {
-                FileDownloadName = image.Name 
+                FileDownloadName = image.Name
             };
         }
 
         [HttpPost]
         [Consumes("multipart/form-data")]
         [Authorize]
-        public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel, CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
 
@@ -131,7 +128,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             var image = new InvoiceImage
             {
-                Data = buffer, 
+                Data = buffer,
                 Name = fullName,
                 RequestId = requestId
             };
@@ -142,4 +139,5 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
     }
+#pragma warning restore CS0162 // Unreachable code detected
 }

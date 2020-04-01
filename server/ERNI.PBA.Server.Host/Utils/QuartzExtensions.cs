@@ -34,9 +34,7 @@ namespace ERNI.PBA.Server.Host.Utils
         public static void UseQuartz(this IApplicationBuilder app)
         {
             app.ApplicationServices.GetService<IScheduler>()
-                .ScheduleJob(app.ApplicationServices.GetService<IJobDetail>(),
-                app.ApplicationServices.GetService<ITrigger>()
-                );
+                .ScheduleJob(app.ApplicationServices.GetService<IJobDetail>(), app.ApplicationServices.GetService<ITrigger>());
         }
     }
 }

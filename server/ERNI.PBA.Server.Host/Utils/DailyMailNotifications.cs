@@ -17,20 +17,22 @@ namespace ERNI.PBA.Server.Host.Utils
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly MailService _mailService;
-        // private readonly ILogger _logger;
+        /* private readonly ILogger _logger; */
 
-        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration)//, ILogger<DailyMailNotifications> logger)
+        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration) // , ILogger<DailyMailNotifications> logger)
         {
             _requestRepository = requestRepository;
             _userRepository = userRepository;
             _mailService = new MailService(configuration);
-            //_logger = logger;
+
+            // _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
             // await SendNotificationsForPendingRequests(context.CancellationToken);
             await SendNotificationsToAdmins(context.CancellationToken);
+
             // _logger.LogInformation("Scheduled Job for notifications executed");
         }
 
