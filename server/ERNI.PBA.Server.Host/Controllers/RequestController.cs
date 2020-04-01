@@ -262,7 +262,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         /// </summary>
         [HttpPost("mass")]
         [Authorize(Roles = Roles.Admin)]
+#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<IActionResult> AddRequestMass([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
+#pragma warning restore SA1202 // Elements should be ordered by access
         {
             var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
             if (!currentUser.IsAdmin)
@@ -487,7 +489,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             return result;
         }
 
+#pragma warning disable SA1204 // Static elements should appear before instance elements
         private static RequestModel GetModel(Request request)
+#pragma warning restore SA1204 // Static elements should appear before instance elements
         {
             return new RequestModel
             {
@@ -515,7 +519,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("budget-left/{amount}/{year}")]
         [Authorize(Roles = Roles.Admin)]
+#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<UserModel[]> BudgetLeft(decimal amount, int year, CancellationToken cancellationToken)
+#pragma warning restore SA1202 // Elements should be ordered by access
         {
             var budgetAmount = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
                 .ToDictionary(_ => _.BudgetId, _ => _.Amount);

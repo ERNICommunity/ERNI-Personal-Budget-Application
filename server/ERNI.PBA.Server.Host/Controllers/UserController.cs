@@ -163,7 +163,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = Roles.Admin)]
+#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<IActionResult> Get(int id)
+#pragma warning restore SA1202 // Elements should be ordered by access
         {
             var user = await _userRepository.GetUser(id, CancellationToken.None);
 
