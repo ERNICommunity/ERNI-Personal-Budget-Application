@@ -1,14 +1,14 @@
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {

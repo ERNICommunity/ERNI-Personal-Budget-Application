@@ -1,6 +1,6 @@
-﻿using Quartz;
+﻿using System;
+using Quartz;
 using Quartz.Spi;
-using System;
 
 namespace ERNI.PBA.Server.Host.Utils
 {

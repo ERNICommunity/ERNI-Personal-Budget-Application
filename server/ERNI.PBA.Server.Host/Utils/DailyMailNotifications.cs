@@ -1,13 +1,13 @@
-using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Services;
-using Microsoft.Extensions.Configuration;
-using Quartz;
 using System;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Services;
+using Microsoft.Extensions.Configuration;
+using Quartz;
 
 namespace ERNI.PBA.Server.Host.Utils
 {

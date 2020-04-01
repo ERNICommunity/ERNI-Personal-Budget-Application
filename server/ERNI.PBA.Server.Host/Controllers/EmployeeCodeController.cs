@@ -1,11 +1,11 @@
-﻿using ERNI.PBA.Server.Graph;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Graph;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {

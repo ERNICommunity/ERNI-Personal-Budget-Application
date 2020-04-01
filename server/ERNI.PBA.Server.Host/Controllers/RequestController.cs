@@ -1,24 +1,24 @@
-using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Examples;
-using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Model.PendingRequests;
-using ERNI.PBA.Server.Host.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Examples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Examples;
 using ERNI.PBA.Server.Host.Exceptions;
+using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Host.Model.PendingRequests;
+using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Examples;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
 namespace ERNI.PBA.Server.Host.Controllers
