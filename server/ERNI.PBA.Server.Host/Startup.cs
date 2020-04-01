@@ -124,7 +124,11 @@ namespace ERNI.PBA.Server.Host
                 c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "Bearer", Enumerable.Empty<string>() } });
             });
 
-            services.AddMvc(c => { c.Filters.AddService<ApiExceptionFilter>(); });
+            services.AddMvc(configuration =>
+            {
+                configuration.EnableEndpointRouting = false;
+                configuration.Filters.AddService<ApiExceptionFilter>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
