@@ -1,9 +1,9 @@
 ﻿using System;
 using ERNI.PBA.Server.DataAccess;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -16,7 +16,7 @@ namespace ERNI.PBA.Server.Host
             try
             {
                 // logger.Debug("init main");
-                var host = BuildWebHost(args);
+                var host = CreateHostBuilder(args).Build();
 
                 using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
                 {
@@ -39,18 +39,12 @@ namespace ERNI.PBA.Server.Host
             }
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseDefaultServiceProvider(options =>
-                    options.ValidateScopes = false)
-
-                // .ConfigureLogging(logging =>
-                // {
-                //    logging.ClearProviders();
-                //    logging.SetMinimumLevel(LogLevel.Trace);
-                // })
-                // .UseNLog()  // NLog: setup NLog for Dependency injection
-                .Build();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseDefaultServiceProvider(options => options.ValidateScopes = false);
+                });
     }
 }
