@@ -4,14 +4,16 @@ using ERNI.PBA.Server.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200401073610_addCreateDateForRequest")]
+    partial class addCreateDateForRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,31 +122,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.ToTable("RequestCategories");
                 });
 
-            modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<int>("BudgetId");
-
-                    b.Property<int>("RequestId");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BudgetId");
-
-                    b.HasIndex("RequestId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Transactions");
-                });
-
             modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.User", b =>
                 {
                     b.Property<int>("Id")
@@ -216,24 +193,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.Transaction", b =>
-                {
-                    b.HasOne("ERNI.PBA.Server.DataAccess.Model.Budget", "Budget")
-                        .WithMany("Transactions")
-                        .HasForeignKey("BudgetId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ERNI.PBA.Server.DataAccess.Model.Request", "Request")
-                        .WithMany("Transactions")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ERNI.PBA.Server.DataAccess.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERNI.PBA.Server.DataAccess.Model.User", b =>

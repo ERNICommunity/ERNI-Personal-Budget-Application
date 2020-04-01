@@ -23,6 +23,8 @@ namespace ERNI.PBA.Server.DataAccess.Model
 
         public DateTime Date { get; set; }
 
+        public DateTime CreateDate { get; set; }
+
         public RequestState State { get; set; }
 
         public Budget Budget { get; set; }

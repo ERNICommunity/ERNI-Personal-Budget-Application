@@ -9,5 +9,6 @@ export class Request {
     budget: Budget;
     title: string;
     date: Date;
+    createDate: Date;
     state: RequestState;
 }
