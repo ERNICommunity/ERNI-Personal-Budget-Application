@@ -4,8 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using Autofac;
 using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,14 +42,6 @@ namespace ERNI.PBA.Server.Host
                                         .AllowAnyHeader()));
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
-
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IBudgetRepository, BudgetRepository>();
-            services.AddTransient<IRequestRepository, RequestRepository>();
-            services.AddTransient<IRequestCategoryRepository, RequestCategoryRepository>();
-            services.AddTransient<IInvoiceImageRepository, InvoiceImageRepository>();
-            services.AddTransient<ApiExceptionFilter>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
@@ -145,6 +137,11 @@ namespace ERNI.PBA.Server.Host
                 configuration.EnableEndpointRouting = false;
                 configuration.Filters.AddService<ApiExceptionFilter>();
             });
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new ApplicationModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
