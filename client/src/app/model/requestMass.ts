@@ -1,8 +1,8 @@
-import {User} from "./user";
-import {RequestState} from "./requestState";
+import { User } from "./user";
+import { RequestState } from "./requestState";
 
 export class RequestMass {
-    id:number;
+    id: number;
     amount: number;
     users: User[];
     title: string;

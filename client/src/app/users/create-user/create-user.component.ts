@@ -91,8 +91,8 @@ export class CreateUserComponent implements OnInit {
             isAdmin: this.controls.isAdmin.value,
             isSuperior: this.controls.isSuperior.value,
             isViewer: false,
-            superior: this.controls.superior.value,
-            state: this.controls.state.value
+            superior: Number(this.controls.superior.value),
+            state: Number(this.controls.state.value)
         };
 
         this.userService.createUser(userData).subscribe(

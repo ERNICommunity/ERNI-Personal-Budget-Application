@@ -56,10 +56,9 @@ export class RequestMassComponent implements OnInit {
         });
     }
 
-    validate(controlName: string): boolean
-    {
-        return this.requestForm.controls[controlName].invalid && 
-        (this.requestForm.controls[controlName].dirty || this.requestForm.controls[controlName].touched);
+    validate(controlName: string): boolean {
+        return this.requestForm.controls[controlName].invalid &&
+            (this.requestForm.controls[controlName].dirty || this.requestForm.controls[controlName].touched);
     }
 
     get searchTerm(): string {
@@ -78,10 +77,9 @@ export class RequestMassComponent implements OnInit {
             user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
     }
 
-    usersWithBudgetLeft(): void{
+    usersWithBudgetLeft(): void {
         let amount = 0;
-        if(this.requestForm.controls['amount'].value)
-        {
+        if (this.requestForm.controls['amount'].value) {
             amount = this.requestForm.controls['amount'].value;
         }
 
@@ -94,7 +92,7 @@ export class RequestMassComponent implements OnInit {
     getInvalidUsers(): User[] {
         let invalidUsers = this.addedUsers.slice();
         this.sufficientBudgetLeftUsers.forEach(user => {
-            invalidUsers = invalidUsers.filter(f => f.id != user.id);          
+            invalidUsers = invalidUsers.filter(f => f.id != user.id);
         });
         return invalidUsers;
     }
@@ -118,7 +116,7 @@ export class RequestMassComponent implements OnInit {
         this.addedUsers.push(user);
     }
 
-    hasBudgetLeft(user: User): boolean{
+    hasBudgetLeft(user: User): boolean {
         return this.sufficientBudgetLeftUsers.some(u => u.id == user.id);;
     }
 
@@ -143,7 +141,14 @@ export class RequestMassComponent implements OnInit {
         var users = this.addedUsers;
         this.busyIndicatorService.start();
 
-        this.requestService.addMassRequest({ title, amount, date, users } as RequestMass)
+        let requestData = {
+            title: title,
+            amount: Number(amount),
+            date: date,
+            users: users
+        } as RequestMass;
+
+        this.requestService.addMassRequest(requestData)
             .subscribe(() => {
                 this.alertService.alert(new Alert({ message: "Multiple requests created", type: AlertType.Success, keepAfterRouteChange: true }));
                 this.busyIndicatorService.end();
