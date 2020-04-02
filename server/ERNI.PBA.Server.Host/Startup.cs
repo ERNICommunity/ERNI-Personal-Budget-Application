@@ -92,7 +92,7 @@ namespace ERNI.PBA.Server.Host
                                 }
 
                                 context.Principal.AddIdentity(
-                                    new System.Security.Claims.ClaimsIdentity(claims, null, null, Claims.Role));
+                                    new ClaimsIdentity(claims, null, null, Claims.Role));
                             }
                         }
                     };
@@ -137,6 +137,8 @@ namespace ERNI.PBA.Server.Host
                 configuration.EnableEndpointRouting = false;
                 configuration.Filters.AddService<ApiExceptionFilter>();
             });
+
+            services.AddOptions();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
