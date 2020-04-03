@@ -11,6 +11,7 @@ using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
+        private readonly IMediator _mediator;
         private readonly ILogger _logger;
 
         public RequestController(
@@ -36,6 +38,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             IBudgetRepository budgetRepository,
             IUnitOfWork unitOfWork,
             IConfiguration configuration,
+            IMediator mediator,
             ILogger<RequestController> logger)
         {
             _unitOfWork = unitOfWork;
@@ -43,31 +46,8 @@ namespace ERNI.PBA.Server.Host.Controllers
             _requestRepository = requestRepository;
             _budgetRepository = budgetRepository;
             _mailService = new MailService(configuration);
+            _mediator = mediator;
             _logger = logger;
-        }
-
-        [HttpGet("budget/{budgetId}")]
-        public async Task<IActionResult> GetRequests(int budgetId, CancellationToken cancellationToken)
-        {
-            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
-
-            if (!HttpContext.User.IsInRole(Roles.Admin) && budget.UserId != HttpContext.User.GetId())
-            {
-                return Unauthorized();
-            }
-
-            var requests = await _requestRepository.GetRequests(budgetId, cancellationToken);
-
-            var result = requests.Select(_ => new
-            {
-                Id = _.Id,
-                Title = _.Title,
-                Amount = _.Amount,
-                Date = _.Date,
-                State = _.State,
-            }).OrderByDescending(_ => _.Date);
-
-            return Ok(result);
         }
 
         [HttpGet("{id}")]

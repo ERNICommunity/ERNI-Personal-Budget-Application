@@ -9,6 +9,7 @@ using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Host.Handlers
 {
@@ -30,7 +31,7 @@ namespace ERNI.PBA.Server.Host.Handlers
             var user = await _userRepository.GetUser(request.UserId, cancellationToken);
             if (!user.IsSuperior)
             {
-                throw new OperationErrorException((int)HttpStatusCode.Forbidden);
+                AppExceptions.AuthorizationException();
             }
 
             var budgets = await _budgetRepository.GetTeamBudgets(request.UserId, request.Year, cancellationToken);
@@ -42,7 +43,7 @@ namespace ERNI.PBA.Server.Host.Handlers
             var masterBudget = budgets.SingleOrDefault(x => x.UserId == request.UserId);
             if (masterBudget == null)
             {
-                throw new OperationErrorException((int)HttpStatusCode.BadRequest, "Cumulative budget does not exists");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Cumulative budget does not exists");
             }
 
             var amount = budgets.Sum(_ => _.Amount);
