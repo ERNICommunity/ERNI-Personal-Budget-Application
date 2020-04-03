@@ -68,11 +68,11 @@ export class MyBudgetComponent implements OnInit {
         this.busyIndicatorService.start();
 
         let requests = [this.budgetService.getCurrentUserBudgets(year)
-            .pipe(map(this.handleResponse), catchError(this.handleResponse))];
+            .pipe(map(this.handleResponse), catchError(this.handleError))];
 
         if (this.user.isSuperior) {
             requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
-                .pipe(map(this.handleResponse), catchError(this.handleResponse)));
+                .pipe(map(this.handleResponse), catchError(this.handleError)));
         }
 
         forkJoin(requests).subscribe(
