@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Queries;
 using ERNI.PBA.Server.Host.Utils;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,61 +12,25 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class TeamBudgetController : Controller
     {
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IMediator _mediator;
 
-        public TeamBudgetController(
-            IBudgetRepository budgetRepository,
-            IUserRepository userRepository)
+        public TeamBudgetController(IMediator mediator)
         {
-            _budgetRepository = budgetRepository;
-            _userRepository = userRepository;
+            _mediator = mediator;
         }
 
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
             var userId = HttpContext.User.GetId();
-            var user = await _userRepository.GetUser(userId, cancellationToken);
-            if (!user.IsSuperior)
+            var query = new GetBudgetByYearQuery
             {
-                return Forbid();
-            }
-
-            var budgets = await _budgetRepository.GetTeamBudgets(userId, year, cancellationToken);
-            if (!budgets.Any())
-            {
-                return Ok();
-            }
-
-            var masterBudget = budgets.SingleOrDefault(x => x.UserId == userId);
-            if (masterBudget == null)
-            {
-                return BadRequest("Cumulative budget does not exists");
-            }
-
-            var amount = budgets.Sum(_ => _.Amount);
-            var amountLeft = amount - budgets.SelectMany(_ => _.Transactions.Where(x => x.Request.State != RequestState.Rejected)).Sum(_ => _.Amount);
-
-            var model = new
-            {
-                Id = masterBudget.Id,
-                Year = masterBudget.Year,
-                Amount = amount,
-                AmountLeft = amountLeft,
-                Title = masterBudget.Title,
-                Type = masterBudget.BudgetType,
-                Requests = masterBudget.Requests.Select(_ => new
-                {
-                    Id = _.Id,
-                    Title = _.Title,
-                    Amount = _.Amount,
-                    Date = _.Date,
-                    State = _.State
-                })
+                UserId = userId,
+                Year = year
             };
 
-            return Ok(new[] { model });
+            var outputModel = await _mediator.Send(query, cancellationToken);
+            return Ok(outputModel);
         }
     }
 }
