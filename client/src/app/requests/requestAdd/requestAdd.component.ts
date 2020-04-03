@@ -33,8 +33,7 @@ export class RequestAddComponent implements OnInit {
         this.createForm();
     }
 
-    ngOnInit() {
-    }
+    ngOnInit() { }
 
     createForm() {
         this.requestForm = this.fb.group({

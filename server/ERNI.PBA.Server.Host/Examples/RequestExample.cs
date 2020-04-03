@@ -1,11 +1,11 @@
 ﻿using ERNI.PBA.Server.Host.Model.PendingRequests;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace ERNI.PBA.Server.Host.Examples
 {
-    public class RequestExample : IExamplesProvider
+    public class RequestExample : IExamplesProvider<RequestModel[]>
     {
-        public object GetExamples()
+        public RequestModel[] GetExamples()
         {
             return new[]
             {
@@ -22,7 +22,7 @@ namespace ERNI.PBA.Server.Host.Examples
                         LastName = "Cash"
                     },
                 },
-                new Model.PendingRequests.RequestModel
+                new RequestModel
                 {
                     Id = 2,
                     Title = "Massage",

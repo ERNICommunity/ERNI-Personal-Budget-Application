@@ -8,7 +8,7 @@
                 Amount:
             </label>
             <br>
-            <input type="number" [(ngModel)]="budget.amount" placeholder="0.00" id="otherBudgetsDetailAmount">
+            <input type="number" name="otherBudgetsDetailAmount" [(ngModel)]="budget.amount" placeholder="0.00" id="otherBudgetsDetailAmount">
         </div>
         <div *ngIf="budget.type == 2" class="form-group">
             <label for="otherBudgetsDetailUser">

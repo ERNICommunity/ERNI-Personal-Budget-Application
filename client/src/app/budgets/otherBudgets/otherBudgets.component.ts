@@ -74,7 +74,7 @@ export class OtherBudgetsComponent implements OnInit {
 
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
 
-            this.selectedBudgetType = params['budgetType'];
+            this.selectedBudgetType = Number(params['budgetType']);
 
             if (this.selectedYear == this.currentYear || this.selectedYear == this.currentYear + 1) {
                 this.disableSetOrEditBudgets = false;

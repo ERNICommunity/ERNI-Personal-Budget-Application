@@ -28,7 +28,7 @@ export class EditRequestModalComponent implements OnDestroy {
 
             // When router navigates on this component is takes the params and opens up the photo detail modal
             this.currentDialog = this.modalService.open(RequestEditComponent, { centered: true });
-            this.currentDialog.componentInstance.showRequest(params.requestId);
+            this.currentDialog.componentInstance.showRequest(Number(params.requestId));
             this.currentDialog.componentInstance.budgetType = data.extras.state.budget.type;
 
             // Go back to home page after the modal is closed
