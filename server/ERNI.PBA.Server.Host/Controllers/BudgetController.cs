@@ -36,7 +36,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
             if (budget == null || (!user.IsInRole(Roles.Admin) && user.GetId() != budget.UserId))
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var result = new

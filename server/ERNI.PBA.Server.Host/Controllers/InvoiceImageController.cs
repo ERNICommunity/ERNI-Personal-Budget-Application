@@ -44,7 +44,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var user = HttpContext.User;
             if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var imagesName = await _invoiceImageRepository.GetInvoiceImages(requestId, cancellationToken);
@@ -77,7 +77,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var user = HttpContext.User;
             if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var provider = new FileExtensionContentTypeProvider();
@@ -105,7 +105,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             byte[] buffer;
