@@ -175,7 +175,7 @@ namespace ERNI.PBA.Server.Host
 
             app.UseAuthentication();
 
-            ////app.UseQuartz();
+            app.UseQuartz();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

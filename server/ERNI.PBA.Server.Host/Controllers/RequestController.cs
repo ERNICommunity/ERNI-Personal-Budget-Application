@@ -16,7 +16,6 @@ using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -29,7 +28,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly MailService _mailService;
         private readonly IMediator _mediator;
 
         public RequestController(
@@ -37,14 +35,12 @@ namespace ERNI.PBA.Server.Host.Controllers
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IUnitOfWork unitOfWork,
-            IConfiguration configuration,
             IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _budgetRepository = budgetRepository;
-            _mailService = new MailService(configuration);
             _mediator = mediator;
         }
 
@@ -84,52 +80,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRequest([FromBody]PostRequestModel payload, CancellationToken cancellationToken)
         {
-            var userId = User.GetId();
-            var currentYear = DateTime.Now.Year;
-
-            var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
-
-            if (budget == null)
+            var addRequestCommand = new AddRequestCommand
             {
-                return BadRequest($"Budget {payload.BudgetId} was not found.");
-            }
-
-            if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
-            {
-                return BadRequest("No Access for request!");
-            }
-
-            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(payload.BudgetId, cancellationToken);
-
-            if (payload.Amount > budget.Amount - requestedAmount)
-            {
-                return BadRequest($"Requested amount {payload.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
-            }
-
-            var request = new Request
-            {
-                BudgetId = budget.Id,
-                UserId = userId,
-                Year = currentYear,
+                BudgetId = payload.BudgetId,
+                UserId = User.GetId(),
                 Title = payload.Title,
                 Amount = payload.Amount,
-                Date = payload.Date.ToLocalTime(),
-                CreateDate = DateTime.Now,
-                State = RequestState.Pending,
-                Transactions = new[]
-                {
-                    new Transaction
-                    {
-                        BudgetId = budget.Id,
-                        UserId = userId,
-                        Amount = payload.Amount
-                    }
-                }
+                CurrentYear = DateTime.Now.Year,
+                Date = payload.Date
             };
-
-            await _requestRepository.AddRequest(request);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(addRequestCommand, cancellationToken);
 
             return Ok();
         }
@@ -137,51 +97,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("team")]
         public async Task<IActionResult> AddTeamRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
         {
-            var userId = User.GetId();
-            var currentYear = DateTime.Now.Year;
-
-            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
-            if (!currentUser.IsSuperior)
+            var addTeamRequestCommand = new AddTeamRequestCommand
             {
-                return Forbid();
-            }
-
-            var budget = await _budgetRepository.GetBudget(payload.BudgetId, cancellationToken);
-            if (budget == null)
-            {
-                return BadRequest($"Budget {payload.BudgetId} was not found.");
-            }
-
-            if (budget.BudgetType != BudgetTypeEnum.TeamBudget)
-            {
-                return BadRequest("No Access for request!");
-            }
-
-            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            var budgets = teamBudgets.ToTeamBudgets();
-
-            var availableFunds = budgets.Sum(_ => _.Amount);
-            if (availableFunds < payload.Amount)
-            {
-                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
-            }
-
-            var transactions = TransactionCalculator.Create(budgets, payload.Amount);
-            var request = new Request
-            {
-                BudgetId = budget.Id,
-                UserId = userId,
-                Year = currentYear,
+                BudgetId = payload.BudgetId,
+                UserId = User.GetId(),
                 Title = payload.Title,
                 Amount = payload.Amount,
-                Date = payload.Date.ToLocalTime(),
-                State = RequestState.Pending,
-                Transactions = transactions
+                CurrentYear = DateTime.Now.Year,
+                Date = payload.Date
             };
-
-            await _requestRepository.AddRequest(request);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(addTeamRequestCommand, cancellationToken);
 
             return Ok();
         }
