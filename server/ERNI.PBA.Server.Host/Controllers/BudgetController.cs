@@ -54,36 +54,15 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var userId = HttpContext.User.GetId();
-            var budgets = await _budgetRepository.GetSingleBudgets(userId, year, cancellationToken);
-
-            var result = budgets.Select(budget => new
+            var getCurrentUserBudgetByYearQuery = new GetCurrentUserBudgetByYearQuery
             {
-                Id = budget.Id,
-                Year = budget.Year,
-                Amount = budget.Amount,
-                AmountLeft = budget.Amount - budget.Requests
-                    .Where(_ => _.State != RequestState.Rejected)
-                    .Sum(_ => _.Amount),
-                Title = budget.Title,
-                Type = budget.BudgetType,
-                Requests = budget.Requests.Select(_ => new
-                {
-                    Id = _.Id,
-                    Title = _.Title,
-                    Amount = _.Amount,
-                    Date = _.Date,
-                    CreateDate = _.CreateDate,
-                    State = _.State,
-                    Transactions = _.Transactions.Select(x => new
-                    {
-                        Id = x.Id,
-                        Amount = x.Amount
-                    })
-                })
-            });
+                UserId = HttpContext.User.GetId(),
+                Year = year
+            };
 
-            return Ok(result);
+            var outputModels = await _mediator.Send(getCurrentUserBudgetByYearQuery, cancellationToken);
+
+            return Ok(outputModels);
         }
 
         [HttpGet("users/active/year/{year}")]

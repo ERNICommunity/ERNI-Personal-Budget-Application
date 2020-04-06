@@ -13,6 +13,8 @@ namespace ERNI.PBA.Server.Host.Model
 
         public DateTime Date { get; set; }
 
+        public DateTime CreateDate { get; set; }
+
         public RequestState State { get; set; }
     }
 }

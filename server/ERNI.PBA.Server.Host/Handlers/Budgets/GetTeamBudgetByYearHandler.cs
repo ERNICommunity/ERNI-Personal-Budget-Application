@@ -62,6 +62,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Budgets
                     Title = _.Title,
                     Amount = _.Amount,
                     Date = _.Date,
+                    CreateDate = _.CreateDate,
                     State = _.State
                 })
             };
