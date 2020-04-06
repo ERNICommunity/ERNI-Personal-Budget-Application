@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Commands;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Queries;
@@ -16,7 +17,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -31,7 +31,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly MailService _mailService;
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
 
         public RequestController(
             IRequestRepository requestRepository,
@@ -39,8 +38,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             IBudgetRepository budgetRepository,
             IUnitOfWork unitOfWork,
             IConfiguration configuration,
-            IMediator mediator,
-            ILogger<RequestController> logger)
+            IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -48,7 +46,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             _budgetRepository = budgetRepository;
             _mailService = new MailService(configuration);
             _mediator = mediator;
-            _logger = logger;
         }
 
         [HttpGet("{id}")]
@@ -68,21 +65,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> ApproveRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-            if (request == null)
-            {
-                _logger.LogWarning("Not a valid id");
-                return BadRequest("Not a valid id");
-            }
-
-            request.State = RequestState.Approved;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            var message = "Request: " + request.Title + " of amount: " + request.Amount + " has been " +
-                             request.State + ".";
-
-            _mailService.SendMail(message, request.User.Username);
+            var approveRequestCommand = new ApproveRequestCommand { RequestId = id };
+            await _mediator.Send(approveRequestCommand, cancellationToken);
 
             return Ok();
         }
@@ -91,17 +75,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-            if (request == null)
-            {
-                return BadRequest("Not a valid id");
-            }
-
-            request.State = RequestState.Rejected;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            _mailService.SendMail("Your request: " + request.Title + " has been " + request.State + ".", request.User.Username);
+            var rejectRequestCommand = new RejectRequestCommand { RequestId = id };
+            await _mediator.Send(rejectRequestCommand, cancellationToken);
 
             return Ok();
         }

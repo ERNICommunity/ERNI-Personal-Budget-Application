@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Host.Filters;
+using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -143,7 +144,21 @@ namespace ERNI.PBA.Server.Host
             services.AddOptions();
         }
 
-        public void ConfigureContainer(ContainerBuilder builder)
+        public void ConfigureProductionContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<MailService>().As<IMailService>().InstancePerDependency();
+
+            ConfigureModules(builder);
+        }
+
+        public void ConfigureDevelopmentContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<MailServiceMock>().As<IMailService>().InstancePerDependency();
+
+            ConfigureModules(builder);
+        }
+
+        public void ConfigureModules(ContainerBuilder builder)
         {
             builder.RegisterModule(new ApplicationModule());
         }
@@ -160,7 +175,7 @@ namespace ERNI.PBA.Server.Host
 
             app.UseAuthentication();
 
-            app.UseQuartz();
+            ////app.UseQuartz();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

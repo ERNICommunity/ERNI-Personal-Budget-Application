@@ -26,16 +26,16 @@ namespace ERNI.PBA.Server.Host.Handlers
             _logger = logger;
         }
 
-        public async Task<Request> Handle(GetRequestQuery payload, CancellationToken cancellationToken)
+        public async Task<Request> Handle(GetRequestQuery command, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(payload.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(command.RequestId, cancellationToken);
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
                 throw new OperationErrorException("Not a valid id");
             }
 
-            var currentUser = await _userRepository.GetUser(payload.Principal.GetId(), cancellationToken);
+            var currentUser = await _userRepository.GetUser(command.Principal.GetId(), cancellationToken);
             var isAdmin = currentUser.IsAdmin;
             var isViewer = currentUser.IsViewer;
 
