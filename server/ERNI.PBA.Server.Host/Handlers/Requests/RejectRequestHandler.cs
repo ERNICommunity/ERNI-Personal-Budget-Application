@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
-using ERNI.PBA.Server.Host.Commands;
+using ERNI.PBA.Server.Host.Commands.Requests;
 using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Host.Handlers
+namespace ERNI.PBA.Server.Host.Handlers.Requests
 {
     public class RejectRequestHandler : IRequestHandler<RejectRequestCommand, bool>
     {

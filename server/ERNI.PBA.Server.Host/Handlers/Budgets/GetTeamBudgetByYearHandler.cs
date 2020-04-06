@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Queries;
+using ERNI.PBA.Server.Host.Queries.Budgets;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Host.Handlers
+namespace ERNI.PBA.Server.Host.Handlers.Budgets
 {
     public class GetTeamBudgetByYearHandler : IRequestHandler<GetBudgetByYearQuery, BudgetOutputModel[]>
     {

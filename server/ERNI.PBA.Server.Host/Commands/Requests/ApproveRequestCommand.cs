@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Host.Commands
+﻿namespace ERNI.PBA.Server.Host.Commands.Requests
 {
     public class ApproveRequestCommand : CommandBase<bool>
     {

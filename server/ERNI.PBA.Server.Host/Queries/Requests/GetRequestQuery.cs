@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using ERNI.PBA.Server.DataAccess.Model;
 
-namespace ERNI.PBA.Server.Host.Queries
+namespace ERNI.PBA.Server.Host.Queries.Requests
 {
     public class GetRequestQuery : QueryBase<Request>
     {

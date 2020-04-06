@@ -1,6 +1,6 @@
 ﻿using ERNI.PBA.Server.Host.Model;
 
-namespace ERNI.PBA.Server.Host.Queries
+namespace ERNI.PBA.Server.Host.Queries.Budgets
 {
     public class GetBudgetByYearQuery : QueryBase<BudgetOutputModel[]>
     {
