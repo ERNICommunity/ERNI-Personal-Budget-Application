@@ -1,13 +1,8 @@
 <h2>Other Budgets - {{year}}</h2>
 
 <ul class="nav nav-pills">
-    <li
-        class="nav-item"
-        *ngFor="let year of years">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLinkActiveOptions]="rlao"
+    <li class="nav-item" *ngFor="let year of years">
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
             [routerLink]="['/other-budgets', year, selectedBudgetType]">
             {{year}}
         </a>
@@ -15,30 +10,21 @@
 </ul>
 
 <ul class="nav nav-pills">
-    <li
-        class="nav-item"
-        *ngFor="let budgetType of budgetTypes">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLinkActiveOptions]="rlao"
+    <li class="nav-item" *ngFor="let budgetType of budgetTypes">
+        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
             [routerLink]="['/other-budgets', selectedYear, budgetType.id]">
             {{budgetType.name}}
         </a>
     </li>
 </ul>
 
-<ng-template
-    #content
-    let-c="close"
-    let-d="dismiss">
+<ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-title">Create budgets</h4>
         <button type="button" class="close" aria-describedby="modal-title" (click)="c()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-
     <div class="modal-body">
         <p>
             You are going to set budgets in year {{year}} for users without budget.
@@ -46,53 +32,45 @@
 
         <div class="form-group">
             <label for="title">Budget title *</label>
-            <input type="text" class="form-control" id="title" placeholder="Enter budget title" [(ngModel)]="budgetTitle">
+            <input type="text" class="form-control" id="title" #title="ngModel" placeholder="Enter budget title"
+                [(ngModel)]="budgetTitle" required minlength="1">
+        </div>
+        <div *ngIf="title.invalid && (title.dirty || title.touched)" class="alert alert-danger">
+            Title is required
         </div>
 
         <div class="form-group">
-
             <label for="title">Amount</label>
-            <input
-                type="number"
-                class="form-control"
-                placeholder="0.0"
-                [(ngModel)]="amount">
+            <input type="number" class="form-control" placeholder="0.0" id="amount" #budgetAmount="ngModel"
+                [(ngModel)]="amount" required min="1">
         </div>
-
+        <div *ngIf="budgetAmount.invalid && (budgetAmount.dirty || budgetAmount.touched)" class="alert alert-danger">
+            Amount is required </div>
         <div class="form-group">
             <label for="exampleFormControlSelect1">Employee</label>
-            <select class="form-control" id="exampleFormControlSelect1" [(ngModel)]="selectedUserId">
+            <select class="form-control" id="exampleFormControlSelect1" #selectedUser="ngModel"
+                [(ngModel)]="selectedUserId" required>
                 <option value="0">All active users</option>
                 <option *ngFor="let user of availableUsers" [ngValue]="user.id">
                     {{user.lastName}} {{user.firstName}}
                 </option>
             </select>
         </div>
-        </div>
-        <div class="modal-footer">
-        <button
-            type="button"
-            class="btn btn-primary"
-            (click)="c(setBudgetsForYear())">
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="title.invalid || budgetAmount.invalid || selectedUser.invalid"
+            class="btn btn-primary" (click)="c(setBudgetsForYear())">
             Set
         </button>
     </div>
 </ng-template>
 <br>
 
-<button
-    class="btn btn-primary float-right"
-    (click)="openAmountModal(content)"
-    [disabled]="disableSetOrEditBudgets">
+<button class="btn btn-primary float-right" (click)="openAmountModal(content)" [disabled]="disableSetOrEditBudgets">
     Set budgets
 </button>
 
-<input
-    class="form-control col-md-6"
-    placeholder="Search employee"
-    id="searchBox"
-    type="text"
-    [(ngModel)]="searchTerm">
+<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm">
 <br>
 
 <table class="table">
@@ -115,20 +93,15 @@
             <td>{{budget.amount}}</td>
             <td>{{budget.amountLeft}}</td>
 
-            <td >
-                <a *ngIf="!disableSetOrEditBudgets"
-                    class="btn btn-primary float-right"
-                    href="#"
-                    role="button"
+            <td>
+                <a *ngIf="!disableSetOrEditBudgets" class="btn btn-primary float-right" href="#" role="button"
                     routerLink="/other-budgets/edit/{{budget.id}}">
                     Edit
                 </a>
             </td>
             <ng-template #cannotEdit>
                 <td>
-                    <button
-                        class="btn btn-primary float-right"
-                        disabled="true"
+                    <button class="btn btn-primary float-right" disabled="true"
                         title="Cannot edit request from years ago.">
                         Edit
                     </button>
