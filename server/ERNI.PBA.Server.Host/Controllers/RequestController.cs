@@ -9,6 +9,7 @@ using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
+using ERNI.PBA.Server.Host.Queries;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;
@@ -53,32 +54,14 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(id, cancellationToken);
-            if (request == null)
+            var requestQuery = new GetRequestQuery
             {
-                _logger.LogWarning("Not a valid id");
-                return BadRequest("Not a valid id");
-            }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            var isAdmin = currentUser.IsAdmin;
-            var isViewer = currentUser.IsViewer;
-
-            if (currentUser.Id != request.User.Id && !isAdmin && !isViewer)
-            {
-                _logger.LogWarning("No access for request!");
-                return StatusCode(401);
-            }
-
-            var result = new Request
-            {
-                Id = request.Id,
-                Title = request.Title,
-                Amount = request.Amount,
-                Date = request.Date,
+                Principal = HttpContext.User,
+                RequestId = id
             };
+            var request = await _mediator.Send(requestQuery, cancellationToken);
 
-            return Ok(result);
+            return Ok(request);
         }
 
         [HttpPost("{id}/approve")]
