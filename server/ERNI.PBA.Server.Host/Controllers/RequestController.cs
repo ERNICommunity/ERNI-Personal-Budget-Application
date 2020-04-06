@@ -11,7 +11,6 @@ using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UserModel = ERNI.PBA.Server.Host.Model.UserModel;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
