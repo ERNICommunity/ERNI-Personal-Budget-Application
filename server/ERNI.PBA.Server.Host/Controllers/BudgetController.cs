@@ -7,7 +7,9 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Host.Queries.Budgets;
 using ERNI.PBA.Server.Host.Utils;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,40 +22,33 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public BudgetController(IBudgetRepository budgetRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public BudgetController(
+            IBudgetRepository budgetRepository,
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork,
+            IMediator mediator)
         {
             _budgetRepository = budgetRepository;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
 
         [HttpGet("{budgetId}")]
         [Authorize]
         public async Task<IActionResult> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
-            var user = HttpContext.User;
-            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
-            if (budget == null || (!user.IsInRole(Roles.Admin) && user.GetId() != budget.UserId))
+            var getBudgetQuery = new GetBudgetQuery
             {
-                return Forbid();
-            }
-
-            var result = new
-            {
-                Id = budget.Id,
-                Year = budget.Year,
-                Amount = budget.Amount,
-                Type = budget.BudgetType,
-                User = new User
-                {
-                    Id = budget.User.Id,
-                    FirstName = budget.User.FirstName,
-                    LastName = budget.User.LastName,
-                }
+                Principal = HttpContext.User,
+                BudgetId = budgetId
             };
 
-            return Ok(result);
+            var outputModel = await _mediator.Send(getBudgetQuery, cancellationToken);
+
+            return Ok(outputModel);
         }
 
         [HttpGet("user/current/year/{year}")]
