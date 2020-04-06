@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.Host.Model.PendingRequests;
 
 namespace ERNI.PBA.Server.Host.Model
 {
@@ -16,6 +17,8 @@ namespace ERNI.PBA.Server.Host.Model
         public decimal AmountLeft { get; set; }
 
         public BudgetTypeEnum Type { get; set; }
+
+        public UserOutputModel User { get; set; }
 
         public IEnumerable<RequestOutputModel> Requests { get; set; }
     }

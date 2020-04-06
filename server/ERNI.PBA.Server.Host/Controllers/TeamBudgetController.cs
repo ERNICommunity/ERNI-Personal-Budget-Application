@@ -30,6 +30,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             };
 
             var outputModel = await _mediator.Send(query, cancellationToken);
+
             return Ok(outputModel);
         }
     }

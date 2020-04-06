@@ -60,7 +60,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Year = year
             };
 
-            var outputModels = await _mediator.Send(getCurrentUserBudgetByYearQuery, cancellationToken);
+            var outputModels = (await _mediator.Send(getCurrentUserBudgetByYearQuery, cancellationToken)).ToList();
 
             return Ok(outputModels);
         }
@@ -69,30 +69,10 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
+            var getActiveUsersBudgetsByYearQuery = new GetActiveUsersBudgetsByYearQuery { Year = year };
+            var outputModels = await _mediator.Send(getActiveUsersBudgetsByYearQuery, cancellationToken);
 
-            var amounts = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
-                .ToDictionary(_ => _.BudgetId, _ => _.Amount);
-
-            var result = budgets.Select(b =>
-                    new
-                    {
-                        Id = b.Id,
-                        User = new
-                        {
-                            Id = b.User.Id,
-                            FirstName = b.User.FirstName,
-                            LastName = b.User.LastName,
-                        },
-                        Title = b.Title,
-                        Amount = b.Amount,
-                        TotalAmount = amounts[b.Id],
-                        AmountLeft = b.Amount - amounts[b.Id],
-                        Type = b.BudgetType
-                    })
-                .OrderBy(_ => _.User.LastName).ThenBy(_ => _.User.FirstName);
-
-            return Ok(result);
+            return Ok(outputModels);
         }
 
         [HttpGet("year/{year}")]
