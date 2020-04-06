@@ -6,6 +6,7 @@ using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Queries.Requests;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Host.Handlers.Requests
@@ -32,7 +33,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Requests
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
-                throw new OperationErrorException("Not a valid id");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
             var currentUser = await _userRepository.GetUser(command.Principal.GetId(), cancellationToken);

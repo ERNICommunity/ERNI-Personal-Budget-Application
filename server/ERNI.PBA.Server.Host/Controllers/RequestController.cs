@@ -111,64 +111,24 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
-        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken)
-        {
-            return budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
-        }
-
         /// <summary>
         /// Creates one request for each user added to mass request with enough budget left. Created requests are in Approved state.
         /// </summary>
         [HttpPost("mass")]
         [Authorize(Roles = Roles.Admin)]
-#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<IActionResult> AddRequestMass([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
-#pragma warning restore SA1202 // Elements should be ordered by access
         {
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (!currentUser.IsAdmin)
+            var addMassRequestCommand = new AddMassRequestCommand
             {
-                return StatusCode(403);
-            }
-
-            var currentYear = DateTime.Now.Year;
-            var requests = new List<Request>();
-            foreach (var user in payload.Users)
-            {
-                var userId = user.Id;
-
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear, cancellationToken);
-
-                if (budgets.Length > 1)
-                {
-                    throw new InvalidOperationException($"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
-                }
-
-                var budget = budgets.Single();
-
-                if (payload.Amount > await GetRemainingAmount(budget, cancellationToken))
-                {
-                    continue;
-                }
-
-                var request = new Request
-                {
-                    UserId = userId,
-                    Year = currentYear,
-                    Title = payload.Title,
-                    Amount = payload.Amount,
-                    Date = payload.Date.ToLocalTime().Date,
-                    CreateDate = DateTime.Now,
-                    State = RequestState.Approved,
-                    BudgetId = budget.Id
-                };
-
-                requests.Add(request);
-            }
-
-            await _requestRepository.AddRequests(requests);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+                UserId = HttpContext.User.GetId(),
+                Title = payload.Title,
+                Amount = payload.Amount,
+                State = payload.State,
+                CurrentYear = DateTime.Now.Year,
+                Date = payload.Date,
+                Users = payload.Users
+            };
+            await _mediator.Send(addMassRequestCommand, cancellationToken);
 
             return Ok();
         }
