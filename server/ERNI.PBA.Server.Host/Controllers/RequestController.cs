@@ -52,6 +52,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Principal = HttpContext.User,
                 RequestId = id
             };
+
             var request = await _mediator.Send(requestQuery, cancellationToken);
 
             return Ok(request);
@@ -89,6 +90,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 CurrentYear = DateTime.Now.Year,
                 Date = payload.Date
             };
+
             await _mediator.Send(addRequestCommand, cancellationToken);
 
             return Ok();
@@ -106,6 +108,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 CurrentYear = DateTime.Now.Year,
                 Date = payload.Date
             };
+
             await _mediator.Send(addTeamRequestCommand, cancellationToken);
 
             return Ok();
@@ -128,6 +131,7 @@ namespace ERNI.PBA.Server.Host.Controllers
                 Date = payload.Date,
                 Users = payload.Users
             };
+
             await _mediator.Send(addMassRequestCommand, cancellationToken);
 
             return Ok();
@@ -192,50 +196,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
-
-            if (request == null)
+            var updateRequestCommand = new UpdateRequestCommand
             {
-                return BadRequest($"Request with id {payload.Id} not found.");
-            }
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-
-            if (currentUser.Id != request.User.Id)
-            {
-                return BadRequest("No Access for request!");
-            }
-
-            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(request.BudgetId, cancellationToken);
-
-            var budget = await _budgetRepository.GetBudget(request.BudgetId, cancellationToken);
-            if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
-            {
-                return BadRequest("No Access for request!");
-            }
-
-            if (payload.Amount > budget.Amount + request.Amount - requestedAmount)
-            {
-                return BadRequest($"Requested amount {payload.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
-            }
-
-            request.Title = payload.Title;
-            request.Amount = payload.Amount;
-            request.Date = payload.Date.ToLocalTime();
-
-            var transactions = new[]
-            {
-                new Transaction
-                {
-                    RequestId = request.Id,
-                    BudgetId = budget.Id,
-                    UserId = currentUser.Id,
-                    Amount = payload.Amount
-                }
+                UserId = HttpContext.User.GetId(),
+                RequestId = payload.Id,
+                Title = payload.Title,
+                Amount = payload.Amount,
+                Date = payload.Date
             };
-            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(updateRequestCommand, cancellationToken);
 
             return Ok();
         }
@@ -243,45 +213,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPut("team")]
         public async Task<IActionResult> UpdateTeamRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
-            var userId = HttpContext.User.GetId();
-            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
-            if (!currentUser.IsSuperior)
+            var updateTeamRequestCommand = new UpdateTeamRequestCommand
             {
-                return Forbid();
-            }
+                UserId = HttpContext.User.GetId(),
+                RequestId = payload.Id,
+                Title = payload.Title,
+                Amount = payload.Amount,
+                Date = payload.Date
+            };
 
-            var request = await _requestRepository.GetRequest(payload.Id, cancellationToken);
-            if (request == null)
-            {
-                return BadRequest($"Request with id {payload.Id} not found.");
-            }
-
-            if (userId != request.UserId)
-            {
-                return BadRequest("No Access for request!");
-            }
-
-            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
-            if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))
-            {
-                return BadRequest("No Access for request!");
-            }
-
-            var budgets = teamBudgets.ToTeamBudgets(x => x.RequestId != payload.Id);
-
-            var availableFunds = budgets.Sum(_ => _.Amount);
-            if (availableFunds < payload.Amount)
-            {
-                return BadRequest($"Requested amount {payload.Amount} exceeds the limit.");
-            }
-
-            var transactions = TransactionCalculator.Create(budgets, payload.Amount);
-            request.Title = payload.Title;
-            request.Amount = payload.Amount;
-            request.Date = payload.Date.ToLocalTime();
-            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(updateTeamRequestCommand, cancellationToken);
 
             return Ok();
         }
