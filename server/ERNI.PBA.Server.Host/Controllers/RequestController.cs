@@ -137,28 +137,56 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Pending }, cancellationToken);
+            var getRequestsQuery = new GetRequestsQuery
+            {
+                UserId = HttpContext.User.GetId(),
+                Year = year,
+                RequestStates = new[] { RequestState.Pending }
+            };
+
+            return await _mediator.Send(getRequestsQuery, cancellationToken);
         }
 
         [HttpGet("{year}/approved")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Approved }, cancellationToken);
+            var getRequestsQuery = new GetRequestsQuery
+            {
+                UserId = HttpContext.User.GetId(),
+                Year = year,
+                RequestStates = new[] { RequestState.Approved }
+            };
+
+            return await _mediator.Send(getRequestsQuery, cancellationToken);
         }
 
         [HttpGet("{year}/approvedBySuperior")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.ApprovedBySuperior }, cancellationToken);
+            var getRequestsQuery = new GetRequestsQuery
+            {
+                UserId = HttpContext.User.GetId(),
+                Year = year,
+                RequestStates = new[] { RequestState.ApprovedBySuperior }
+            };
+
+            return await _mediator.Send(getRequestsQuery, cancellationToken);
         }
 
         [HttpGet("{year}/rejected")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
-            return await GetRequests(year, new[] { RequestState.Rejected }, cancellationToken);
+            var getRequestsQuery = new GetRequestsQuery
+            {
+                UserId = HttpContext.User.GetId(),
+                Year = year,
+                RequestStates = new[] { RequestState.Rejected }
+            };
+
+            return await _mediator.Send(getRequestsQuery, cancellationToken);
         }
 
         [HttpPut]
@@ -279,57 +307,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             await _unitOfWork.SaveChanges(cancellationToken);
 
             return Ok();
-        }
-
-        private async Task<RequestModel[]> GetRequests(int year, IEnumerable<RequestState> requestStates, CancellationToken cancellationToken)
-        {
-            Expression<Func<Request, bool>> predicate;
-
-            var currentUser = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (currentUser.IsAdmin || currentUser.IsViewer)
-            {
-                predicate = request => request.Year == year && requestStates.Contains(request.State);
-            }
-            else
-            {
-                var subordinates = await _userRepository.GetSubordinateUsers(HttpContext.User.GetId(), cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                predicate = request => request.Year == year && requestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
-            }
-
-            var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
-
-            var result = requests.Select(GetModel).ToArray();
-
-            return result;
-        }
-
-#pragma warning disable SA1204 // Static elements should appear before instance elements
-        private static RequestModel GetModel(Request request)
-#pragma warning restore SA1204 // Static elements should appear before instance elements
-        {
-            return new RequestModel
-            {
-                Id = request.Id,
-                Title = request.Title,
-                Amount = request.Amount,
-                Year = request.Year,
-                Date = request.Date,
-                CreateDate = request.CreateDate,
-                State = request.State,
-                User = new UserOutputModel
-                {
-                    Id = request.UserId,
-                    FirstName = request.Budget.User.FirstName,
-                    LastName = request.Budget.User.LastName
-                },
-                Budget = new BudgetModel
-                {
-                    Id = request.BudgetId,
-                    Title = request.Budget.Title,
-                    Type = request.Budget.BudgetType
-                }
-            };
         }
 
         [HttpGet("budget-left/{amount}/{year}")]
