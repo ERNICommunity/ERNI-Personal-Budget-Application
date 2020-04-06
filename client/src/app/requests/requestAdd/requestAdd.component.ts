@@ -18,7 +18,10 @@ import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 export class RequestAddComponent implements OnInit {
     @Input() budget: Budget;
     httpResponseError: string;
-    requestForm: FormGroup;
+
+    title: string;
+    amount: number;
+    date: any;
 
     budgetId: number;
     budgetType: BudgetTypeEnum;
@@ -26,34 +29,25 @@ export class RequestAddComponent implements OnInit {
     constructor(
         public modal: NgbActiveModal,
         private requestService: RequestService,
-        private fb: FormBuilder,
         private busyIndicatorService: BusyIndicatorService,
         private alertService: AlertService,
         private dataChangeNotificationService: DataChangeNotificationService) {
-        this.createForm();
     }
 
     ngOnInit() { }
 
-    createForm() {
-        this.requestForm = this.fb.group({
-            title: ['', Validators.required],
-            amount: ['', Validators.required],
-            date: ['', Validators.required],
-        });
-    }
-
     save(): void {
-        let budgetId = this.budgetId;
-        let title = this.requestForm.get("title").value;
-        let amount = this.requestForm.get("amount").value;
-        let ngbDate = this.requestForm.get("date").value;
-
-        var date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
-
         this.busyIndicatorService.start();
 
+        let budgetId = this.budgetId;
+        let title = this.title;
+        let amount = this.amount;
+        let year = this.date.year;
+
+        let date = new Date(this.date.year, this.date.month, this.date.day);
+
         let requestData = { budgetId, title, amount, date } as NewRequest;
+        console.log(requestData);
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
             ? this.requestService.addTeamRequest(requestData)
             : this.requestService.addRequest(requestData);
