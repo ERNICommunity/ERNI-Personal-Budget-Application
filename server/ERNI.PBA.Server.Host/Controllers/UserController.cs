@@ -58,23 +58,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserCommand payload, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(payload.Id, cancellationToken);
-
-            if (user == null)
-            {
-                _logger.LogWarning("Not a valid id");
-                return NotFound("Not a valid id");
-            }
-
-            user.IsAdmin = payload.IsAdmin;
-            user.IsViewer = payload.IsViewer;
-            user.IsSuperior = payload.IsSuperior;
-            user.SuperiorId = payload.Superior?.Id;
-            user.State = payload.State;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(payload, cancellationToken);
 
             return Ok();
         }

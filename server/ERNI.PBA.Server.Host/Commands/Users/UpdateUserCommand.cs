@@ -1,8 +1,8 @@
-using ERNI.PBA.Server.DataAccess.Model;
+﻿using ERNI.PBA.Server.DataAccess.Model;
 
-namespace ERNI.PBA.Server.Host.Model
+namespace ERNI.PBA.Server.Host.Commands.Users
 {
-    public class UpdateUserModel
+    public class UpdateUserCommand : CommandBase<bool>
     {
         public int Id { get; set; }
 
