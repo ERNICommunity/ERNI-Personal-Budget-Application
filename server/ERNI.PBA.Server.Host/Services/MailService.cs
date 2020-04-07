@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using ERNI.PBA.Server.Domain.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Host.Services

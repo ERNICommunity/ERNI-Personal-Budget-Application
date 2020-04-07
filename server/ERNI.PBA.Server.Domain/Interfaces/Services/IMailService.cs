@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Host.Services
+﻿namespace ERNI.PBA.Server.Domain.Interfaces.Services
 {
     public interface IMailService
     {
