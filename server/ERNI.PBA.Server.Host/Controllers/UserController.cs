@@ -6,6 +6,7 @@ using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Commands.Users;
 using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Host.Queries.Users;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -69,63 +70,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(HttpContext.User.GetId(), cancellationToken);
-            if (user == null)
-            {
-                return StatusCode(403);
-            }
+            var getCurrentUserQuery = new GetCurrentUserQuery { Principal = HttpContext.User };
+            var userModel = await _mediator.Send(getCurrentUserQuery, cancellationToken);
 
-            return Ok(GetModel(user));
-        }
-
-        private UserModel GetModel(User user)
-        {
-            return new UserModel
-            {
-                Id = user.Id,
-                IsAdmin = user.IsAdmin,
-                IsSuperior = user.IsSuperior,
-                IsViewer = user.IsViewer,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                State = user.State,
-                Superior = user.Superior != null
-                    ? new SuperiorModel
-                    {
-                        Id = user.Superior.Id,
-                        FirstName = user.Superior.FirstName,
-                        LastName = user.Superior.LastName,
-                    }
-                    : null
-            };
+            return Ok(userModel);
         }
 
         [HttpGet("{id}")]
         [Authorize(Roles = Roles.Admin)]
-#pragma warning disable SA1202 // Elements should be ordered by access
         public async Task<IActionResult> Get(int id)
-#pragma warning restore SA1202 // Elements should be ordered by access
         {
-            var user = await _userRepository.GetUser(id, CancellationToken.None);
+            var getUserQuery = new GetUserQuery { UserId = id };
+            var userModel = await _mediator.Send(getUserQuery);
 
-            return Ok(new UserModel
-            {
-                Id = user.Id,
-                IsAdmin = user.IsAdmin,
-                IsSuperior = user.IsSuperior,
-                IsViewer = user.IsViewer,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                State = user.State,
-                Superior = user.Superior != null ? new SuperiorModel
-                {
-                    Id = user.Superior.Id,
-                    FirstName = user.Superior.FirstName,
-                    LastName = user.Superior.LastName,
-                }
-                :
-                null
-            });
+            return Ok(userModel);
         }
 
         [HttpGet]
