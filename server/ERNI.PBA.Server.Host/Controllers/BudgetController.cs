@@ -117,54 +117,26 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudget(int userId, [FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
         {
-            var currentYear = DateTime.Now.Year;
-            var user = await _userRepository.GetUser(userId, cancellationToken);
-
-            if (user == null || user.State != UserState.Active)
+            var createBudgetCommand = new CreateBudgetCommand
             {
-                return BadRequest($"No active user with id {userId} found");
-            }
-
-            var budgets = await _budgetRepository.GetBudgets(userId, currentYear, cancellationToken);
-
-            var budgetType = BudgetType.Types.Single(_ => _.Id == payload.BudgetType);
-
-            if (budgetType.SinglePerUser && budgets.Any(b => b.BudgetType == payload.BudgetType))
-            {
-                return BadRequest(
-                    $"User {userId} already has a budget of type {budgetType.Name} assigned for this year");
-            }
-
-            var budget = new Budget
-            {
-                UserId = user.Id,
-                Year = currentYear,
+                UserId = userId,
+                Title = payload.Title,
+                CurrentYear = DateTime.Now.Year,
                 Amount = payload.Amount,
-                BudgetType = payload.BudgetType,
-                Title = payload.Title
+                BudgetType = payload.BudgetType
             };
 
-            _budgetRepository.AddBudget(budget);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(createBudgetCommand, cancellationToken);
 
             return Ok();
         }
 
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetCommand payload, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(payload.Id, cancellationToken);
+            await _mediator.Send(payload, cancellationToken);
 
-            if (budget == null)
-            {
-                return BadRequest($"Budget with id {payload.Id} not found");
-            }
-
-            budget.Amount = payload.Amount;
-
-            await _unitOfWork.SaveChanges(cancellationToken);
             return Ok();
         }
 
