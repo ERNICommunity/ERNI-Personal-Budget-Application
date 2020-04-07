@@ -6,6 +6,8 @@ namespace ERNI.PBA.Server.Host.Model.Budgets
     {
         public int Id { get; set; }
 
+        public string Title { get; set; }
+
         public int Year { get; set; }
 
         public decimal Amount { get; set; }

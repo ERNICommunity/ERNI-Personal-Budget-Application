@@ -79,47 +79,20 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgetsByYear(year, cancellationToken);
+            var getBudgetsByYearQuery = new GetBudgetsByYearQuery { Year = year };
+            var outputModels = await _mediator.Send(getBudgetsByYearQuery, cancellationToken);
 
-            var result = budgets.Select(_ => new
-            {
-                Id = _.Id,
-                Year = _.Year,
-                Amount = _.Amount,
-                Title = _.Title,
-                User = new User
-                {
-                    FirstName = _.User.FirstName,
-                    LastName = _.User.LastName
-                },
-                Type = _.BudgetType
-            }).OrderBy(_ => _.User.LastName).ThenBy(_ => _.User.FirstName);
-            return Ok(result);
+            return Ok(outputModels);
         }
 
         [HttpGet("usersAvailableForBudgetType/{budgetTypeId}")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetUsersAvailableForBudget(BudgetTypeEnum budgetTypeId, CancellationToken cancellationToken)
         {
-            IEnumerable<User> users =
-                await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
+            var getUsersAvailableForBudgetQuery = new GetUsersAvailableForBudgetQuery { BudgetType = budgetTypeId };
+            var outputModels = await _mediator.Send(getUsersAvailableForBudgetQuery, cancellationToken);
 
-            var budgetType = BudgetType.Types.Single(_ => _.Id == budgetTypeId);
-
-            if (budgetType.SinglePerUser)
-            {
-                var budgets =
-                    (await _budgetRepository.GetBudgetsByYear(DateTime.Now.Year, cancellationToken)).Where(_ =>
-                        _.BudgetType == budgetType.Id).Select(_ => _.UserId).ToHashSet();
-                users = users.Where(_ => !budgets.Contains(_.Id));
-            }
-
-            return Ok(users.Select(_ => new
-            {
-                Id = _.Id,
-                FirstName = _.FirstName,
-                LastName = _.LastName
-            }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName));
+            return Ok(outputModels);
         }
 
         [HttpPost("users/all")]

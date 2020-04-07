@@ -36,6 +36,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Budgets
             return new SingleBudgetOutputModel
             {
                 Id = budget.Id,
+                Title = budget.Title,
                 Year = budget.Year,
                 Amount = budget.Amount,
                 Type = budget.BudgetType,
