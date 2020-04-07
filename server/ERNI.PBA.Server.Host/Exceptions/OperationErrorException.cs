@@ -10,6 +10,11 @@ namespace ERNI.PBA.Server.Host.Exceptions
         {
         }
 
+        public OperationErrorException(int httpStatusCode)
+        {
+            HttpStatusCode = httpStatusCode;
+        }
+
         public OperationErrorException(int httpStatusCode, string message)
             : base(message)
         {

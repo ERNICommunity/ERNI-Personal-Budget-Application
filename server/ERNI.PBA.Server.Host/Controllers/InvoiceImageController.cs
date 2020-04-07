@@ -1,94 +1,55 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Commands.InvoiceImages;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Utils;
+using ERNI.PBA.Server.Host.Queries.InvoiceImages;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-#pragma warning disable CS0162 // Unreachable code detected
     public class InvoiceImageController : Controller
     {
-        private readonly IInvoiceImageRepository _invoiceImageRepository;
-        private readonly IRequestRepository _requestRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public InvoiceImageController(IInvoiceImageRepository invoiceImageRepository, IRequestRepository requestRepository, IUnitOfWork unitOfWork)
+        public InvoiceImageController(IMediator mediator)
         {
-            _invoiceImageRepository = invoiceImageRepository;
-            _requestRepository = requestRepository;
-            _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
 
         [HttpGet("images/{requestId}")]
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
-
-            var request = await _requestRepository.GetRequest(requestId, cancellationToken);
-            if (request == null)
+            var getInvoiceImagesQuery = new GetInvoiceImagesQuery
             {
-                return BadRequest("Not a valid id");
-            }
+                Principal = HttpContext.User,
+                RequestId = requestId
+            };
 
-            var user = HttpContext.User;
-            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
-            {
-                return Forbid();
-            }
+            var outputModels = await _mediator.Send(getInvoiceImagesQuery, cancellationToken);
 
-            var imagesName = await _invoiceImageRepository.GetInvoiceImages(requestId, cancellationToken);
-            var result = imagesName.Select(image => new
-            {
-                Id = image.Id,
-                Name = image.Name
-            });
-            return Ok(result);
+            return Ok(outputModels);
         }
 
         [HttpGet("image/{imageId}")]
         [Authorize]
         public async Task<IActionResult> GetInvoiceImageFile(int imageId, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
-
-            var image = await _invoiceImageRepository.GetInvoiceImage(imageId, cancellationToken);
-            if (image == null)
+            var getInvoiceImageFileQuery = new GetInvoiceImageFileQuery
             {
-                return BadRequest("Not a valid id");
-            }
+                Principal = HttpContext.User,
+                ImageId = imageId
+            };
 
-            var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken);
-            if (request == null)
-            {
-                return BadRequest("Not a valid id");
-            }
+            var imageFileModel = await _mediator.Send(getInvoiceImageFileQuery, cancellationToken);
 
-            var user = HttpContext.User;
-            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
+            return new FileContentResult(imageFileModel.InvoiceImage.Data, imageFileModel.ContentType)
             {
-                return Forbid();
-            }
-
-            var provider = new FileExtensionContentTypeProvider();
-            if (!provider.TryGetContentType(image.Name, out var contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-
-            return new FileContentResult(image.Data, contentType)
-            {
-                FileDownloadName = image.Name
+                FileDownloadName = imageFileModel.InvoiceImage.Name
             };
         }
 
@@ -97,47 +58,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize]
         public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
-
-            var requestId = invoiceImageModel.RequestId;
-            var request = await _requestRepository.GetRequest(requestId, cancellationToken);
-            var user = HttpContext.User;
-
-            if (!user.IsInRole(Roles.Admin) && user.GetId() != request.UserId)
+            var addInvoiceImageCommand = new AddInvoiceImageCommand
             {
-                return Forbid();
-            }
-
-            byte[] buffer;
-            if (invoiceImageModel?.File == null)
-            {
-                return BadRequest();
-            }
-
-            var fullName = invoiceImageModel.File.FileName;
-            if (invoiceImageModel.File.Length > 1048576)
-            {
-                return StatusCode(413);
-            }
-
-            using (var openReadStream = invoiceImageModel.File.OpenReadStream())
-            {
-                buffer = new byte[invoiceImageModel.File.Length];
-                openReadStream.Read(buffer, 0, buffer.Length);
-            }
-
-            var image = new InvoiceImage
-            {
-                Data = buffer,
-                Name = fullName,
-                RequestId = requestId
+                Principal = HttpContext.User,
+                RequestId = invoiceImageModel.RequestId,
+                File = invoiceImageModel.File
             };
 
-            await _invoiceImageRepository.AddInvoiceImage(image, cancellationToken);
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(addInvoiceImageCommand, cancellationToken);
 
             return Ok();
         }
     }
-#pragma warning restore CS0162 // Unreachable code detected
 }
