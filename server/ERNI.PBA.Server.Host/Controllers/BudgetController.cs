@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Commands.Budgets;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Queries.Budgets;
 using ERNI.PBA.Server.Host.Utils;
@@ -97,40 +98,17 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("users/all")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateBudgetsForAllActiveUsers(
-            [FromBody]CreateBudgetsForAllActiveUsersRequest payload,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody]CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
         {
-            var currentYear = DateTime.Now.Year;
-
-            IEnumerable<User> users =
-                await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
-
-            var budgetType = BudgetType.Types.Single(_ => _.Id == payload.BudgetType);
-
-            if (budgetType.SinglePerUser)
+            var createBudgetsForAllActiveUsersCommand = new CreateBudgetsForAllActiveUsersCommand
             {
-                var budgets =
-                    (await _budgetRepository.GetBudgetsByYear(DateTime.Now.Year, cancellationToken)).Where(_ =>
-                        _.BudgetType == budgetType.Id).Select(_ => _.UserId).ToHashSet();
-                users = users.Where(_ => !budgets.Contains(_.Id));
-            }
+                Title = payload.Title,
+                CurrentYear = DateTime.Now.Year,
+                Amount = payload.Amount,
+                BudgetType = payload.BudgetType
+            };
 
-            foreach (var user in users)
-            {
-                var budget = new Budget()
-                {
-                    UserId = user.Id,
-                    Year = currentYear,
-                    Amount = payload.Amount,
-                    BudgetType = payload.BudgetType,
-                    Title = payload.Title
-                };
-
-                _budgetRepository.AddBudget(budget);
-            }
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await _mediator.Send(createBudgetsForAllActiveUsersCommand, cancellationToken);
 
             return Ok();
         }
