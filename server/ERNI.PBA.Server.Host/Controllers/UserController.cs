@@ -49,41 +49,9 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("create")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload)
+        public async Task<IActionResult> CreateUser([FromBody]CreateUserCommand payload, CancellationToken cancellationToken)
         {
-            var userExists = await _userRepository.ExistsAsync(payload.Email);
-            if (userExists)
-            {
-                return StatusCode(409);
-            }
-
-            var user = new User
-            {
-                FirstName = payload.FirstName,
-                LastName = payload.LastName,
-                Username = payload.Email,
-                IsAdmin = payload.IsAdmin,
-                IsSuperior = payload.IsSuperior,
-                IsViewer = payload.IsViewer,
-                SuperiorId = payload.Superior,
-                State = payload.State
-            };
-
-            await _userRepository.AddUserAsync(user);
-
-            if (payload.State == UserState.Active)
-            {
-                var budget = new Budget
-                {
-                    UserId = user.Id,
-                    User = user,
-                    Amount = payload.Amount,
-                    Year = payload.Year
-                };
-                await _budgetRepository.AddBudgetAsync(budget);
-            }
-
-            await _unitOfWork.SaveChanges(default(CancellationToken));
+            await _mediator.Send(payload, cancellationToken);
 
             return Ok();
         }
