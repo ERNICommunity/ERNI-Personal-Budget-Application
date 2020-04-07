@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.DataAccess
 {

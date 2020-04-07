@@ -1,4 +1,4 @@
-namespace ERNI.PBA.Server.DataAccess.Model
+namespace ERNI.PBA.Server.Domain.Model
 {
     public enum RequestState
     {

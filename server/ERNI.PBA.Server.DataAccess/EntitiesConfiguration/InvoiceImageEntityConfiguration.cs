@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ERNI.PBA.Server.DataAccess.Model;
+﻿using ERNI.PBA.Server.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
 {

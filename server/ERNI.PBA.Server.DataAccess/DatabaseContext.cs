@@ -1,5 +1,5 @@
 ﻿using ERNI.PBA.Server.DataAccess.EntitiesConfiguration;
-using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess

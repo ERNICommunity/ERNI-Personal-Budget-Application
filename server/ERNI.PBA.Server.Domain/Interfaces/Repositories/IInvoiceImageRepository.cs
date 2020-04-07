@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Model.Projection;
+using ERNI.PBA.Server.Domain.Model;
+using ERNI.PBA.Server.Domain.Model.Projection;
 
-namespace ERNI.PBA.Server.DataAccess.Repository
+namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {
     public interface IInvoiceImageRepository
     {

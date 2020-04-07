@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Model.InvoiceImages;
 using ERNI.PBA.Server.Host.Queries.InvoiceImages;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ERNI.PBA.Server.DataAccess.Model
+﻿namespace ERNI.PBA.Server.Domain.Model
 {
     public class Transaction
     {

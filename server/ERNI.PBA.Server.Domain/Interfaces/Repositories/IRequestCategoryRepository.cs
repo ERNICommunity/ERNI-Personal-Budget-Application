@@ -1,8 +1,8 @@
-using ERNI.PBA.Server.DataAccess.Model;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Model;
 
-namespace ERNI.PBA.Server.DataAccess.Repository
+namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {
     public interface IRequestCategoryRepository
     {

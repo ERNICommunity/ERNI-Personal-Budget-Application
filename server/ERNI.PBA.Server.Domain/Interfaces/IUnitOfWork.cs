@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ERNI.PBA.Server.DataAccess
+namespace ERNI.PBA.Server.Domain.Interfaces
 {
     public interface IUnitOfWork
     {

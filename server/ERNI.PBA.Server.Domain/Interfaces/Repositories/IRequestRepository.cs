@@ -1,11 +1,11 @@
-using ERNI.PBA.Server.DataAccess.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Model;
 
-namespace ERNI.PBA.Server.DataAccess.Repository
+namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {
     public interface IRequestRepository
     {

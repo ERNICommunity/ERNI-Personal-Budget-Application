@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.DataAccess.Model;
+﻿using ERNI.PBA.Server.Domain.Model;
 using ERNI.PBA.Server.Host.Model;
 
 namespace ERNI.PBA.Server.Host.Utils
