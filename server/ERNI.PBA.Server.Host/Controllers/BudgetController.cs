@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Commands.Budgets;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Queries.Budgets;
@@ -20,20 +17,10 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class BudgetController : Controller
     {
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
-        public BudgetController(
-            IBudgetRepository budgetRepository,
-            IUserRepository userRepository,
-            IUnitOfWork unitOfWork,
-            IMediator mediator)
+        public BudgetController(IMediator mediator)
         {
-            _budgetRepository = budgetRepository;
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
         }
 
@@ -144,25 +131,14 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> TransferBudget(int budgetId, int userId, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
-            if (budget == null)
+            var transferBudgetCommand = new TransferBudgetCommand
             {
-                return BadRequest($"Budget with id {budgetId} not found");
-            }
+                UserId = userId,
+                BudgetId = budgetId
+            };
 
-            if (!BudgetType.Types.Single(type => type.Id == budget.BudgetType).IsTransferable)
-            {
-                return BadRequest($"Budget with id {budgetId} can not be transferred");
-            }
+            await _mediator.Send(transferBudgetCommand, cancellationToken);
 
-            var user = await _userRepository.GetUser(userId, cancellationToken);
-            if (user == null)
-            {
-                return BadRequest($"User with id {userId} not found");
-            }
-
-            budget.UserId = userId;
-            await _unitOfWork.SaveChanges(cancellationToken);
             return Ok();
         }
 
