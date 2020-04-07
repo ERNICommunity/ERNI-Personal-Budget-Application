@@ -10,7 +10,6 @@ using ERNI.PBA.Server.Host.Commands.Requests;
 using ERNI.PBA.Server.Host.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace ERNI.PBA.Server.Host.Handlers.Requests
 {

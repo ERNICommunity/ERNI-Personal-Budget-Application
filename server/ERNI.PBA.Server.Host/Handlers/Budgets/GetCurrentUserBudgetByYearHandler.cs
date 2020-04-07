@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Queries.Budgets;
 using MediatR;
 

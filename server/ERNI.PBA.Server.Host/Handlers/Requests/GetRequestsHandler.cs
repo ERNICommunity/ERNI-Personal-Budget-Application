@@ -8,7 +8,6 @@ using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Queries.Requests;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace ERNI.PBA.Server.Host.Handlers.Requests
 {
