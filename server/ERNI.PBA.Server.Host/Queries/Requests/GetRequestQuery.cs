@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using ERNI.PBA.Server.Domain.Model;
+using ERNI.PBA.Server.Domain.Entities;
 
 namespace ERNI.PBA.Server.Host.Queries.Requests
 {

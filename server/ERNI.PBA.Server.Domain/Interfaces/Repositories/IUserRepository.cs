@@ -2,7 +2,7 @@ using System;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Model;
+using ERNI.PBA.Server.Domain.Entities;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {

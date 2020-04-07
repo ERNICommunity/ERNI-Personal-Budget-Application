@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Entities;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Model;
 using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Model.Budgets;
 using ERNI.PBA.Server.Host.Queries.Budgets;

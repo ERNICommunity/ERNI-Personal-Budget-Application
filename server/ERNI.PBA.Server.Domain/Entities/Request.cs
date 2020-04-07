@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ERNI.PBA.Server.Domain.Model
+namespace ERNI.PBA.Server.Domain.Entities
 {
     public class Request
     {

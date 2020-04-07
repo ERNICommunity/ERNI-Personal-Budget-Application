@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ERNI.PBA.Server.Domain.Model;
+using ERNI.PBA.Server.Domain.Entities;
 using ERNI.PBA.Server.Host.Utils;
 
 namespace ERNI.PBA.Server.Host.Services

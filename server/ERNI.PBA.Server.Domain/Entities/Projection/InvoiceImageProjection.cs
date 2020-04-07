@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Domain.Model.Projection
+﻿namespace ERNI.PBA.Server.Domain.Entities.Projection
 {
     public class InvoiceImageProjection
     {
