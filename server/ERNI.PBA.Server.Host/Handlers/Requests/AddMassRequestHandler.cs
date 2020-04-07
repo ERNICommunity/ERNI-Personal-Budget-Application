@@ -38,7 +38,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Requests
             var currentUser = await _userRepository.GetUser(command.UserId, cancellationToken);
             if (!currentUser.IsAdmin)
             {
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             var requests = new List<Request>();

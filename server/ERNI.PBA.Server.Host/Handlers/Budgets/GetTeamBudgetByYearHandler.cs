@@ -31,7 +31,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Budgets
             var user = await _userRepository.GetUser(request.UserId, cancellationToken);
             if (!user.IsSuperior)
             {
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             var budgets = await _budgetRepository.GetTeamBudgets(request.UserId, request.Year, cancellationToken);

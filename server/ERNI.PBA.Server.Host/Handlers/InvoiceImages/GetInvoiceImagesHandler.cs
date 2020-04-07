@@ -39,7 +39,7 @@ namespace ERNI.PBA.Server.Host.Handlers.InvoiceImages
 
             if (!query.Principal.IsInRole(Roles.Admin) && query.Principal.GetId() != request.UserId)
             {
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             var imagesName = await _invoiceImageRepository.GetInvoiceImages(query.RequestId, cancellationToken);

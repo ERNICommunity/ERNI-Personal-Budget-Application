@@ -30,7 +30,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Budgets
 
             if (!request.Principal.IsInRole(Roles.Admin) && request.Principal.GetId() != budget.UserId)
             {
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             return new SingleBudgetOutputModel

@@ -37,7 +37,7 @@ namespace ERNI.PBA.Server.Host.Handlers.InvoiceImages
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
             if (!command.Principal.IsInRole(Roles.Admin) && command.Principal.GetId() != request.UserId)
             {
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             byte[] buffer;

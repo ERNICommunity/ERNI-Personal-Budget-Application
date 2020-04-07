@@ -38,7 +38,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Requests
             var currentUser = await _userRepository.GetUser(command.UserId, cancellationToken);
             if (!currentUser.IsSuperior)
             {
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             var budget = await _budgetRepository.GetBudget(command.BudgetId, cancellationToken);

@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Model;
 using ERNI.PBA.Server.DataAccess.Repository;
+using ERNI.PBA.Server.Host.Commands.Users;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Utils;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,46 +22,29 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
+        private readonly IMediator _mediator;
 
         public UserController(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IUnitOfWork unitOfWork,
-            ILogger<UserController> logger)
+            ILogger<UserController> logger,
+            IMediator mediator)
         {
             _userRepository = userRepository;
             _budgetRepository = budgetRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
         {
-            var username = HttpContext.User.GetIdentifier(Claims.UserName);
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return Forbid();
-            }
+            var registerUserCommand = new RegisterUserCommand { Principal = HttpContext.User };
+            var userModel = await _mediator.Send(registerUserCommand, cancellationToken);
 
-            var user = await _userRepository.GetAsync(username);
-            if (user == null)
-            {
-                return Forbid();
-            }
-
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return BadRequest();
-            }
-
-            user.UniqueIdentifier = HttpContext.User.GetIdentifier(Claims.UniqueIndetifier);
-            user.FirstName = HttpContext.User.GetIdentifier(Claims.FirstName);
-            user.LastName = HttpContext.User.GetIdentifier(Claims.LastName);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
-
-            return Ok(GetModel(user));
+            return Ok(userModel);
         }
 
         [HttpPost("create")]

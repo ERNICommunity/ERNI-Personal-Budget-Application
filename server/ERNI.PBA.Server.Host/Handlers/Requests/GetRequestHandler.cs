@@ -43,7 +43,7 @@ namespace ERNI.PBA.Server.Host.Handlers.Requests
             if (currentUser.Id != request.User.Id && !isAdmin && !isViewer)
             {
                 _logger.LogWarning("No access for request!");
-                AppExceptions.AuthorizationException();
+                throw AppExceptions.AuthorizationException();
             }
 
             return new Request
