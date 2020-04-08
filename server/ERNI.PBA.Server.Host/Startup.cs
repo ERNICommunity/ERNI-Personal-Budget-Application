@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using Autofac;
+using ERNI.PBA.Server.Business;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
@@ -142,7 +143,7 @@ namespace ERNI.PBA.Server.Host
                 configuration.Filters.AddService<ApiExceptionFilter>();
             });
 
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(Assembly.GetAssembly(typeof(BusinessModule)));
             services.AddOptions();
         }
 
