@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Host.Model;
+﻿using ERNI.PBA.Server.Domain.Output;
 
 namespace ERNI.PBA.Server.Host.Queries.Budgets
 {

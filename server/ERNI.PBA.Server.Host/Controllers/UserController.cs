@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Host.Commands.Users;
+using ERNI.PBA.Server.Domain.Commands.Users;
 using ERNI.PBA.Server.Host.Queries.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

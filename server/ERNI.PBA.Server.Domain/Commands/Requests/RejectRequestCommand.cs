@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Host.Commands.Requests
+﻿namespace ERNI.PBA.Server.Domain.Commands.Requests
 {
     public class RejectRequestCommand : CommandBase<bool>
     {

@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Host.Commands.Budgets
+﻿namespace ERNI.PBA.Server.Domain.Commands.Budgets
 {
     public class TransferBudgetCommand : CommandBase<bool>
     {

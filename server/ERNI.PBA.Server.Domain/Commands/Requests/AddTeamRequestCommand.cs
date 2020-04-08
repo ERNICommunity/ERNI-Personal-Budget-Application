@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ERNI.PBA.Server.Host.Commands.Requests
+namespace ERNI.PBA.Server.Domain.Commands.Requests
 {
-    public class AddRequestCommand : CommandBase<bool>
+    public class AddTeamRequestCommand : CommandBase<bool>
     {
         public int BudgetId { get; set; }
 

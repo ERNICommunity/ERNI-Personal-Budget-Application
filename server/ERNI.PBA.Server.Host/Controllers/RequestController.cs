@@ -1,8 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Commands.Requests;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Host.Commands.Requests;
+using ERNI.PBA.Server.Domain.Output;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;
 using ERNI.PBA.Server.Host.Queries.Budgets;

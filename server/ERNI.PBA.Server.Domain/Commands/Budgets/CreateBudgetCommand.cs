@@ -1,9 +1,11 @@
 ﻿using ERNI.PBA.Server.Domain.Models;
 
-namespace ERNI.PBA.Server.Host.Commands.Budgets
+namespace ERNI.PBA.Server.Domain.Commands.Budgets
 {
-    public class CreateBudgetsForAllActiveUsersCommand : CommandBase<bool>
+    public class CreateBudgetCommand : CommandBase<bool>
     {
+        public int UserId { get; set; }
+
         public string Title { get; set; }
 
         public int CurrentYear { get; set; }

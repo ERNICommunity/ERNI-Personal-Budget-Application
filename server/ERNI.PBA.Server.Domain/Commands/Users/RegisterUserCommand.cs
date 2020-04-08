@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
-using ERNI.PBA.Server.Host.Model;
+using ERNI.PBA.Server.Domain.Output;
 
-namespace ERNI.PBA.Server.Host.Commands.Users
+namespace ERNI.PBA.Server.Domain.Commands.Users
 {
     public class RegisterUserCommand : CommandBase<UserModel>
     {

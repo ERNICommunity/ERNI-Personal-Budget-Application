@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Host.Commands.Requests;
 using ERNI.PBA.Server.Host.Exceptions;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;

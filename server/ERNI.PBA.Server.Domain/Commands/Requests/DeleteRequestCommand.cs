@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace ERNI.PBA.Server.Host.Commands.Requests
+namespace ERNI.PBA.Server.Domain.Commands.Requests
 {
     public class DeleteRequestCommand : CommandBase<bool>
     {

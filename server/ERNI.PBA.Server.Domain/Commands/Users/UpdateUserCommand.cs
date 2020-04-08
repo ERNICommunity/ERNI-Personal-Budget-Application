@@ -1,6 +1,6 @@
 ﻿using ERNI.PBA.Server.Domain.Models;
 
-namespace ERNI.PBA.Server.Host.Commands.Users
+namespace ERNI.PBA.Server.Domain.Commands.Users
 {
     public class UpdateUserCommand : CommandBase<bool>
     {

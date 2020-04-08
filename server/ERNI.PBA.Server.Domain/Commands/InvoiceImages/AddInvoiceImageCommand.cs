@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Host.Commands.InvoiceImages
+namespace ERNI.PBA.Server.Domain.Commands.InvoiceImages
 {
     public class AddInvoiceImageCommand : CommandBase<bool>
     {
