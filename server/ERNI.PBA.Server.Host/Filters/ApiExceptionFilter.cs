@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Host.Exceptions;
+﻿using ERNI.PBA.Server.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

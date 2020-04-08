@@ -1,14 +1,15 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Commands.Requests;
-using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Output;
 using ERNI.PBA.Server.Domain.Output.PendingRequests;
 using ERNI.PBA.Server.Domain.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Queries.Requests;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.Domain.Models
 {

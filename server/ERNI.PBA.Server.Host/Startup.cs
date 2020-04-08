@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Security.Claims;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;

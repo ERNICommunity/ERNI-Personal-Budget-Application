@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Commands.Users;
 using ERNI.PBA.Server.Domain.Queries.Users;
 using MediatR;

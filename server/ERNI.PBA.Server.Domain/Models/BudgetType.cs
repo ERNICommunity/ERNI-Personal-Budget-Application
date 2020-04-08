@@ -1,10 +1,48 @@
-﻿namespace ERNI.PBA.Server.Domain.Models
+﻿using System.Collections.Generic;
+using ERNI.PBA.Server.Domain.Enums;
+
+namespace ERNI.PBA.Server.Domain.Models
 {
-    public enum BudgetTypeEnum
+    public class BudgetType
     {
-        PersonalBudget = 1,
-        CommunityBudget = 2,
-        TeamBudget = 3,
-        RecreationBudget = 4
+        public static readonly IReadOnlyCollection<BudgetType> Types = new[]
+        {
+            new BudgetType
+            {
+                Id = BudgetTypeEnum.PersonalBudget,
+                Name = "Personal budget",
+                SinglePerUser = true,
+                IsTransferable = false
+            },
+            new BudgetType
+            {
+                Id = BudgetTypeEnum.CommunityBudget,
+                Name = "Community budget",
+                SinglePerUser = false,
+                IsTransferable = true
+            },
+            new BudgetType
+            {
+                Id = BudgetTypeEnum.TeamBudget,
+                Name = "Team budget",
+                SinglePerUser = false,
+                IsTransferable = false
+            },
+            new BudgetType
+            {
+                Id = BudgetTypeEnum.RecreationBudget,
+                Name = "Recreation budget",
+                SinglePerUser = true,
+                IsTransferable = false
+            }
+        };
+
+        public BudgetTypeEnum Id { get; private set; }
+
+        public string Name { get; private set; }
+
+        public bool SinglePerUser { get; private set; }
+
+        public bool IsTransferable { get; private set; }
     }
 }

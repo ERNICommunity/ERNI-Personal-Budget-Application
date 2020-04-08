@@ -1,4 +1,4 @@
-using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.Domain.Output
 {

@@ -1,4 +1,5 @@
-﻿using ERNI.PBA.Server.Domain.Models;
+﻿using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Models;
 
 namespace ERNI.PBA.Server.Host.Model
 {
