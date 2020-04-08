@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Output;
-using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Queries.Users;
+using ERNI.PBA.Server.Domain.Queries.Users;
 using MediatR;
 
 namespace ERNI.PBA.Server.Host.Handlers.Users

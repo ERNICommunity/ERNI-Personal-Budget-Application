@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Queries.Requests;
 using ERNI.PBA.Server.Host.Exceptions;
-using ERNI.PBA.Server.Host.Queries.Requests;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Http;

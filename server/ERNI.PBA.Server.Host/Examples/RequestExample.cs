@@ -1,4 +1,5 @@
-﻿using ERNI.PBA.Server.Host.Model.PendingRequests;
+﻿using ERNI.PBA.Server.Domain.Output;
+using ERNI.PBA.Server.Domain.Output.PendingRequests;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace ERNI.PBA.Server.Host.Examples

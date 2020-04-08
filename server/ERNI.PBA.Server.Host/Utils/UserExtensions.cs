@@ -1,6 +1,5 @@
 ﻿using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Output;
-using ERNI.PBA.Server.Host.Model;
 
 namespace ERNI.PBA.Server.Host.Utils
 {

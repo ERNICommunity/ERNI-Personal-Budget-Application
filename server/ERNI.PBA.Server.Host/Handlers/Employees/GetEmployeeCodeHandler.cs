@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Output;
+using ERNI.PBA.Server.Domain.Queries.Employees;
 using ERNI.PBA.Server.Graph;
-using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Queries.Employees;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 

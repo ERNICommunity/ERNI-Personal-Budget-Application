@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Output.InvoiceImages;
+using ERNI.PBA.Server.Domain.Queries.InvoiceImages;
 using ERNI.PBA.Server.Host.Exceptions;
-using ERNI.PBA.Server.Host.Model.InvoiceImages;
-using ERNI.PBA.Server.Host.Queries.InvoiceImages;
 using ERNI.PBA.Server.Host.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Http;
