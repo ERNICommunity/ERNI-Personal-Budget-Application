@@ -4,8 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Entities;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {

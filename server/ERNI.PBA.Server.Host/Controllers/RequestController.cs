@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Entities;
+using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Host.Commands.Requests;
 using ERNI.PBA.Server.Host.Model;
 using ERNI.PBA.Server.Host.Model.PendingRequests;

@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Entities;
+using ERNI.PBA.Server.Domain.Models;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {

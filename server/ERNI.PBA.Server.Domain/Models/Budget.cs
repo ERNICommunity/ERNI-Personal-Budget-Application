@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ERNI.PBA.Server.Domain.Entities
+namespace ERNI.PBA.Server.Domain.Models
 {
     public class Budget
     {

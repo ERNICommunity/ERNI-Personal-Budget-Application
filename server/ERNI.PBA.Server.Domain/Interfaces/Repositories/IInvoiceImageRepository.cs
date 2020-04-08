@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Entities;
-using ERNI.PBA.Server.Domain.Entities.Projection;
+using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Models.Projection;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {

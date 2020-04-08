@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Entities;
-using ERNI.PBA.Server.Domain.Entities.Projection;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Models.Projection;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository

@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Domain.Entities;
+﻿using ERNI.PBA.Server.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
