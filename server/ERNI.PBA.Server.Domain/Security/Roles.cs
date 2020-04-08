@@ -1,4 +1,4 @@
-namespace ERNI.PBA.Server.Domain
+namespace ERNI.PBA.Server.Domain.Security
 {
     public static class Roles
     {

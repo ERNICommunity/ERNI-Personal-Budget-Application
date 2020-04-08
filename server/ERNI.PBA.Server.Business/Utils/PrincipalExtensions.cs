@@ -1,6 +1,6 @@
 using System;
 using System.Security.Claims;
-using ERNI.PBA.Server.Domain;
+using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Utils
 {

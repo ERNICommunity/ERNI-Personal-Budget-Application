@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Extensions;
 using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Commands.Users;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Output;
+using ERNI.PBA.Server.Domain.Security;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

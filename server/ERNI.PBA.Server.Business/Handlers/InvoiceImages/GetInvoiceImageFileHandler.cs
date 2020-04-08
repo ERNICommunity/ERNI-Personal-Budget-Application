@@ -2,11 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Output.InvoiceImages;
 using ERNI.PBA.Server.Domain.Queries.InvoiceImages;
+using ERNI.PBA.Server.Domain.Security;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
