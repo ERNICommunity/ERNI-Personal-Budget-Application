@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Domain
+﻿namespace ERNI.PBA.Server.Domain.Models
 {
     public class TeamBudget
     {
