@@ -1,4 +1,6 @@
-﻿namespace ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages
+﻿using ERNI.PBA.Server.Domain.Models.Entities;
+
+namespace ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages
 {
     public class ImageFileModel
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using ERNI.PBA.Server.Domain.Enums;
-using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Domain.Commands.Requests
 {

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Domain.Queries.Users;
 using MediatR;

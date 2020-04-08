@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Domain.Models;
+﻿using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Outputs;
 
 namespace ERNI.PBA.Server.Business.Extensions

@@ -8,6 +8,7 @@ using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Models.Entities;
 using MediatR;
 
 namespace ERNI.PBA.Server.Business.Handlers.Budgets

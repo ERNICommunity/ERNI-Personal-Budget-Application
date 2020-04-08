@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Domain.Models
+namespace ERNI.PBA.Server.Domain.Models.Entities
 {
     public class Budget
     {
