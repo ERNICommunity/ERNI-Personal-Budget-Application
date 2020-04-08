@@ -4,7 +4,7 @@ using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Domain.Output.Budgets;
+using ERNI.PBA.Server.Domain.Models.Outputs.Budgets;
 using ERNI.PBA.Server.Domain.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Security;
 using MediatR;

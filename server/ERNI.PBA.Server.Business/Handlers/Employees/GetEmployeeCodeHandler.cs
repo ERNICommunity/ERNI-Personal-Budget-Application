@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Output;
+using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Domain.Queries.Employees;
 using ERNI.PBA.Server.Graph;
 using MediatR;

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ERNI.PBA.Server.Domain.Output.Budgets;
+using ERNI.PBA.Server.Domain.Models.Outputs.Budgets;
 
 namespace ERNI.PBA.Server.Domain.Queries.Budgets
 {

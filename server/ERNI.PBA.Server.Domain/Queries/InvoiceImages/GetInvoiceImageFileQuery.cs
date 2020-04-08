@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using ERNI.PBA.Server.Domain.Output.InvoiceImages;
+using ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages;
 
 namespace ERNI.PBA.Server.Domain.Queries.InvoiceImages
 {

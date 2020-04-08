@@ -1,7 +1,7 @@
 using System;
 using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Domain.Output.PendingRequests
+namespace ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests
 {
     public class RequestModel
     {

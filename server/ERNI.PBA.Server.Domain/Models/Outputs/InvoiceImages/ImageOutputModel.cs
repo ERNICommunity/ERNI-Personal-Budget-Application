@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Domain.Output.InvoiceImages
+﻿namespace ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages
 {
     public class ImageOutputModel
     {

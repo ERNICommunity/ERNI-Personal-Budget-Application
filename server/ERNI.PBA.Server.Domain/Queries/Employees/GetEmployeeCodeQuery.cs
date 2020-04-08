@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Domain.Output;
+﻿using ERNI.PBA.Server.Domain.Models.Outputs;
 
 namespace ERNI.PBA.Server.Domain.Queries.Employees
 {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Output;
+using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Domain.Queries.Budgets;
 using MediatR;
 using Microsoft.AspNetCore.Http;

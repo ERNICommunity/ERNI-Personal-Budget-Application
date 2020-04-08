@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ERNI.PBA.Server.Domain.Enums;
-using ERNI.PBA.Server.Domain.Output.PendingRequests;
+using ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests;
 
 namespace ERNI.PBA.Server.Domain.Queries.Requests
 {

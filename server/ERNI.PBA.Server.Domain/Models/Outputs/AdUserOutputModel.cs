@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Domain.Output
+﻿namespace ERNI.PBA.Server.Domain.Models.Outputs
 {
     public class AdUserOutputModel
     {

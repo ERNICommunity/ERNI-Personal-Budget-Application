@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Domain.Output;
-using ERNI.PBA.Server.Domain.Output.PendingRequests;
+using ERNI.PBA.Server.Domain.Models.Outputs;
+using ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests;
 using ERNI.PBA.Server.Domain.Queries.Requests;
 using MediatR;
 
