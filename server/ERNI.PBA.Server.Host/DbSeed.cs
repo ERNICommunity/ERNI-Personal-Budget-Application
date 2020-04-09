@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using ERNI.PBA.Server.DataAccess;
-using ERNI.PBA.Server.DataAccess.Model;
+using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Host
 {

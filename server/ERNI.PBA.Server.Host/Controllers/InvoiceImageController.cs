@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Host.Commands.InvoiceImages;
+using ERNI.PBA.Server.Domain.Commands.InvoiceImages;
+using ERNI.PBA.Server.Domain.Queries.InvoiceImages;
 using ERNI.PBA.Server.Host.Model;
-using ERNI.PBA.Server.Host.Queries.InvoiceImages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

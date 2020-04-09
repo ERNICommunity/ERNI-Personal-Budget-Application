@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.DataAccess.Model;
-using ERNI.PBA.Server.DataAccess.Model.Projection;
+using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models.Entities;
+using ERNI.PBA.Server.Domain.Models.Projection;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
@@ -20,7 +21,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.InvoiceImages
                 .Where(image => image.RequestId == requestId)
-                .Select(image => new InvoiceImageProjection()
+                .Select(image => new InvoiceImageProjection
                 {
                     Id = image.Id,
                     Name = image.Name

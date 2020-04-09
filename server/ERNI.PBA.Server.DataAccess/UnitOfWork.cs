@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Interfaces;
 
 namespace ERNI.PBA.Server.DataAccess
 {
