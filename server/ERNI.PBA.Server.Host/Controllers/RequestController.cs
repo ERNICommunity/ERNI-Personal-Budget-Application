@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Commands.Requests;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Queries.Requests;
 using ERNI.PBA.Server.Domain.Security;
@@ -20,23 +23,24 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class RequestController : Controller
     {
+        private readonly Lazy<IGetRequestQuery> _getRequestQuery;
+        private readonly Lazy<IAddTeamRequestCommand> _addTeamRequestCommand;
         private readonly IMediator _mediator;
 
-        public RequestController(IMediator mediator)
+        public RequestController(
+            Lazy<IGetRequestQuery> getRequestQuery,
+            Lazy<IAddTeamRequestCommand> addTeamRequestCommand,
+            IMediator mediator)
         {
+            _getRequestQuery = getRequestQuery;
+            _addTeamRequestCommand = addTeamRequestCommand;
             _mediator = mediator;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
         {
-            var requestQuery = new GetRequestQuery
-            {
-                Principal = HttpContext.User,
-                RequestId = id
-            };
-
-            var request = await _mediator.Send(requestQuery, cancellationToken);
+            var request = await _getRequestQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
             return Ok(request);
         }
@@ -82,17 +86,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("team")]
         public async Task<IActionResult> AddTeamRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
         {
-            var addTeamRequestCommand = new AddTeamRequestCommand
-            {
-                BudgetId = payload.BudgetId,
-                UserId = User.GetId(),
-                Title = payload.Title,
-                Amount = payload.Amount,
-                CurrentYear = DateTime.Now.Year,
-                Date = payload.Date
-            };
-
-            await _mediator.Send(addTeamRequestCommand, cancellationToken);
+            await _addTeamRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }

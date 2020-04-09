@@ -1,42 +1,43 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
+using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Queries.Requests;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace ERNI.PBA.Server.Business.Handlers.Requests
+namespace ERNI.PBA.Server.Business.Queries.Requests
 {
-    public class GetRequestHandler : IRequestHandler<GetRequestQuery, Request>
+    public class GetRequestQuery : IQuery<int, Request>, IGetRequestQuery
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILogger _logger;
 
-        public GetRequestHandler(
+        public GetRequestQuery(
             IRequestRepository requestRepository,
             IUserRepository userRepository,
-            ILogger<GetRequestHandler> logger)
+            ILogger<GetRequestQuery> logger)
         {
             _requestRepository = requestRepository;
             _userRepository = userRepository;
             _logger = logger;
         }
 
-        public async Task<Request> Handle(GetRequestQuery command, CancellationToken cancellationToken)
+        public async Task<Request> ExecuteAsync(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(command.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            var currentUser = await _userRepository.GetUser(command.Principal.GetId(), cancellationToken);
+            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             var isAdmin = currentUser.IsAdmin;
             var isViewer = currentUser.IsViewer;
 

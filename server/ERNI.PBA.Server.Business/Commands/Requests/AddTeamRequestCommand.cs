@@ -1,27 +1,30 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Extensions;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain.Commands.Requests;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using MediatR;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Handlers.Requests
+namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class AddTeamRequestHandler : IRequestHandler<AddTeamRequestCommand, bool>
+    public class AddTeamRequestCommand : Command<PostRequestModel, bool>, IAddTeamRequestCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddTeamRequestHandler(
+        public AddTeamRequestCommand(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IRequestRepository requestRepository,
@@ -33,18 +36,20 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(AddTeamRequestCommand command, CancellationToken cancellationToken)
+        protected override async Task<bool> Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var currentUser = await _userRepository.GetUser(command.UserId, cancellationToken);
+            var userId = principal.GetId();
+            var currentYear = DateTime.Now.Year;
+            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
             if (!currentUser.IsSuperior)
             {
                 throw AppExceptions.AuthorizationException();
             }
 
-            var budget = await _budgetRepository.GetBudget(command.BudgetId, cancellationToken);
+            var budget = await _budgetRepository.GetBudget(parameter.BudgetId, cancellationToken);
             if (budget == null)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Budget {command.BudgetId} was not found.");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Budget {parameter.BudgetId} was not found.");
             }
 
             if (budget.BudgetType != BudgetTypeEnum.TeamBudget)
@@ -52,24 +57,24 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
             }
 
-            var teamBudgets = await _budgetRepository.GetTeamBudgets(command.UserId, command.CurrentYear, cancellationToken);
+            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, currentYear, cancellationToken);
             var budgets = teamBudgets.ToTeamBudgets();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
-            if (availableFunds < command.Amount)
+            if (availableFunds < parameter.Amount)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {command.Amount} exceeds the limit.");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
-            var transactions = TransactionCalculator.Create(budgets, command.Amount);
+            var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
             var request = new Request
             {
                 BudgetId = budget.Id,
-                UserId = command.UserId,
-                Year = command.CurrentYear,
-                Title = command.Title,
-                Amount = command.Amount,
-                Date = command.Date.ToLocalTime(),
+                UserId = userId,
+                Year = currentYear,
+                Title = parameter.Title,
+                Amount = parameter.Amount,
+                Date = parameter.Date.ToLocalTime(),
                 State = RequestState.Pending,
                 Transactions = transactions
             };
