@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Queries.Budgets;
-using MediatR;
 
-namespace ERNI.PBA.Server.Business.Handlers.Budgets
+namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetUsersAvailableForBudgetHandler : IRequestHandler<GetUsersAvailableForBudgetQuery, IEnumerable<UserOutputModel>>
+    public class GetUsersAvailableForBudgetQuery : Query<BudgetTypeEnum, IEnumerable<UserOutputModel>>, IGetUsersAvailableForBudgetQuery
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetUsersAvailableForBudgetHandler(
+        public GetUsersAvailableForBudgetQuery(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository)
         {
@@ -26,12 +27,12 @@ namespace ERNI.PBA.Server.Business.Handlers.Budgets
             _budgetRepository = budgetRepository;
         }
 
-        public async Task<IEnumerable<UserOutputModel>> Handle(GetUsersAvailableForBudgetQuery request, CancellationToken cancellationToken)
+        protected override async Task<IEnumerable<UserOutputModel>> Execute(BudgetTypeEnum parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             IEnumerable<User> users =
                 await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-            var budgetType = BudgetType.Types.Single(_ => _.Id == request.BudgetType);
+            var budgetType = BudgetType.Types.Single(_ => _.Id == parameter);
 
             if (budgetType.SinglePerUser)
             {

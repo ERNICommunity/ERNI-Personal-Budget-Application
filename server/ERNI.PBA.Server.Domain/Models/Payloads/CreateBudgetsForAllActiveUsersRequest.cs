@@ -1,12 +1,10 @@
 ﻿using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Domain.Commands.Budgets
+namespace ERNI.PBA.Server.Domain.Models.Payloads
 {
-    public class CreateBudgetsForAllActiveUsersCommand : CommandBase<bool>
+    public class CreateBudgetsForAllActiveUsersRequest
     {
         public string Title { get; set; }
-
-        public int CurrentYear { get; set; }
 
         public decimal Amount { get; set; }
 

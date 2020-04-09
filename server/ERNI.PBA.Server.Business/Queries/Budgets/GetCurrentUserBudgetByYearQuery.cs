@@ -1,27 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Queries.Budgets;
-using MediatR;
 
-namespace ERNI.PBA.Server.Business.Handlers.Budgets
+namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetCurrentUserBudgetByYearHandler : IRequestHandler<GetCurrentUserBudgetByYearQuery, IEnumerable<BudgetOutputModel>>
+    public class GetCurrentUserBudgetByYearQuery : Query<int, IEnumerable<BudgetOutputModel>>, IGetCurrentUserBudgetByYearQuery
     {
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetCurrentUserBudgetByYearHandler(IBudgetRepository budgetRepository)
+        public GetCurrentUserBudgetByYearQuery(IBudgetRepository budgetRepository)
         {
             _budgetRepository = budgetRepository;
         }
 
-        public async Task<IEnumerable<BudgetOutputModel>> Handle(GetCurrentUserBudgetByYearQuery request, CancellationToken cancellationToken)
+        protected override async Task<IEnumerable<BudgetOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetSingleBudgets(request.UserId, request.Year, cancellationToken);
+            var budgets = await _budgetRepository.GetSingleBudgets(principal.GetId(), parameter, cancellationToken);
 
             return budgets.Select(budget => new BudgetOutputModel
             {
