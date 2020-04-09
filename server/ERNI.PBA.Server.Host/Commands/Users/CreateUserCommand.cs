@@ -1,8 +1,8 @@
 ﻿using ERNI.PBA.Server.DataAccess.Model;
 
-namespace ERNI.PBA.Server.Host.Model
+namespace ERNI.PBA.Server.Host.Commands.Users
 {
-    public class CreateUserModel
+    public class CreateUserCommand : CommandBase<bool>
     {
         public string FirstName { get; set; }
 

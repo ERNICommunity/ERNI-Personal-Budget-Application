@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ERNI.PBA.Server.DataAccess.Model
+﻿namespace ERNI.PBA.Server.DataAccess.Model
 {
     public class InvoiceImage
     {

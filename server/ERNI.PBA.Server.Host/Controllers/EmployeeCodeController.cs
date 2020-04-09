@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Graph;
+using ERNI.PBA.Server.Host.Queries.Employees;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
@@ -13,59 +11,20 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class EmployeeCodeController : Controller
     {
-        private static DateTime _timestamp;
-        private static UserModel[] _cache;
+        private readonly IMediator _mediator;
 
-        private readonly IConfiguration _configuration;
-
-        public EmployeeCodeController(IConfiguration configuration)
+        public EmployeeCodeController(IMediator mediator)
         {
-            _configuration = configuration;
+            _mediator = mediator;
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
-            if (_cache != null && _timestamp.AddHours(4) > DateTime.Now)
-            {
-                return Ok(_cache);
-            }
+            var outputModels = await _mediator.Send(new GetEmployeeCodeQuery(), cancellationToken);
 
-            var config = new GraphConfiguration(
-                _configuration["Graph:ClientId"],
-                _configuration["Graph:TenantId"],
-                _configuration["Graph:ClientSecret"]);
-
-            var f = new GraphFacade(config);
-
-            var users = await f.GetUsers();
-
-            var data = users
-                .Where(_ => _.UserPrincipalName.Contains("@"))
-                .Select(_ => new UserModel
-            {
-                LastName = _.Surname,
-                FirstName = _.GivenName,
-                DisplayName = _.DisplayName,
-                Code = _.UserPrincipalName.Split('@')[0]
-            }).ToArray();
-
-            _timestamp = DateTime.Now;
-            _cache = data;
-
-            return Ok(data);
-        }
-
-        private class UserModel
-        {
-            public string LastName { get; set; }
-
-            public string FirstName { get; set; }
-
-            public string DisplayName { get; set; }
-
-            public string Code { get; set; }
+            return Ok(outputModels);
         }
     }
 }

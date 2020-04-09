@@ -14,7 +14,7 @@
             <label for="otherBudgetsDetailUser">
                 Assigned user:
             </label>
-            <select class="form-control" [(ngModel)]="selectedUserId" id="otherBudgetsDetailUser">
+            <select class="form-control" [(ngModel)]="selectedUserId" id="otherBudgetsDetailUser" name="otherBudgetsDetailUser">
                 <option *ngFor="let user of availableUsers" [ngValue]="user.id">
                     {{user.lastName}} {{user.firstName}}
                 </option>

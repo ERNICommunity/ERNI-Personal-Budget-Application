@@ -33,10 +33,6 @@ export class RequestService {
         return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/rejected', this.serviceHelper.getHttpOptions())
     }
 
-    public getRequests(budgetId: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + 'budget/' + budgetId, this.serviceHelper.getHttpOptions())
-    }
-
     public getRequest(id): Observable<Request> {
         return this.http.get<Request>(this.configService.apiUrlBase + this.requestUrl + id, this.serviceHelper.getHttpOptions())
     }

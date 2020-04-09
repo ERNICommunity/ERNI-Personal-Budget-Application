@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Host.Services
 {
-    public class MailService
+    public class MailService : IMailService
     {
         private readonly string _smtpServer;
         private readonly string _port;
