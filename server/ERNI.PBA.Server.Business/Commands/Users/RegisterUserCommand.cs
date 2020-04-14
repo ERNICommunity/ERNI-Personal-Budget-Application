@@ -1,24 +1,26 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Extensions;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain.Commands.Users;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Domain.Security;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Handlers.Users
+namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, UserModel>
+    public class RegisterUserCommand : Command<RegisterUserModel, UserModel>, IRegisterUserCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RegisterUserHandler(
+        public RegisterUserCommand(
             IUserRepository userRepository,
             IUnitOfWork unitOfWork)
         {
@@ -26,9 +28,9 @@ namespace ERNI.PBA.Server.Business.Handlers.Users
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<UserModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        protected override async Task<UserModel> Execute(RegisterUserModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var username = request.Principal.GetIdentifier(Claims.UserName);
+            var username = principal.GetIdentifier(Claims.UserName);
             if (string.IsNullOrWhiteSpace(username))
             {
                 throw AppExceptions.AuthorizationException();
@@ -45,9 +47,9 @@ namespace ERNI.PBA.Server.Business.Handlers.Users
                 throw new OperationErrorException(StatusCodes.Status400BadRequest);
             }
 
-            user.UniqueIdentifier = request.Principal.GetIdentifier(Claims.UniqueIndetifier);
-            user.FirstName = request.Principal.GetIdentifier(Claims.FirstName);
-            user.LastName = request.Principal.GetIdentifier(Claims.LastName);
+            user.UniqueIdentifier = principal.GetIdentifier(Claims.UniqueIndetifier);
+            user.FirstName = principal.GetIdentifier(Claims.FirstName);
+            user.LastName = principal.GetIdentifier(Claims.LastName);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

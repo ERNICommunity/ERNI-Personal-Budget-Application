@@ -1,30 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Queries.Users;
-using MediatR;
 
-namespace ERNI.PBA.Server.Business.Handlers.Users
+namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetSubordinateUsersHandler : IRequestHandler<GetSubordinateUsersQuery, IEnumerable<UserModel>>
+    public class GetSubordinateUsersQuery : Query<IEnumerable<UserModel>>, IGetSubordinateUsersQuery
     {
         private readonly IUserRepository _userRepository;
 
-        public GetSubordinateUsersHandler(IUserRepository userRepository)
+        public GetSubordinateUsersQuery(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<UserModel>> Handle(GetSubordinateUsersQuery request, CancellationToken cancellationToken)
+        protected override async Task<IEnumerable<UserModel>> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             User[] users;
 
-            var user = await _userRepository.GetUser(request.Principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (user.IsAdmin)
             {
                 users = await _userRepository.GetAllUsers(cancellationToken);

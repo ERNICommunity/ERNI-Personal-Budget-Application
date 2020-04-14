@@ -1,9 +1,11 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Commands.Users;
-using ERNI.PBA.Server.Domain.Queries.Users;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
+using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,36 +15,54 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class UserController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly Lazy<IGetCurrentUserQuery> _getCurrentUserQuery;
+        private readonly Lazy<IGetUserQuery> _getUserQuery;
+        private readonly Lazy<IGetSubordinateUsersQuery> _getSubordinateUsersQuery;
+        private readonly Lazy<IGetActiveUsersQuery> _getActiveUsersQuery;
+        private readonly Lazy<IRegisterUserCommand> _registerUserCommand;
+        private readonly Lazy<ICreateUserCommand> _createUserCommand;
+        private readonly Lazy<IUpdateUserCommand> _updateUserCommand;
 
-        public UserController(IMediator mediator)
+        public UserController(
+            Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
+            Lazy<IGetUserQuery> getUserQuery,
+            Lazy<IGetSubordinateUsersQuery> getSubordinateUsersQuery,
+            Lazy<IGetActiveUsersQuery> getActiveUsersQuery,
+            Lazy<IRegisterUserCommand> registerUserCommand,
+            Lazy<ICreateUserCommand> createUserCommand,
+            Lazy<IUpdateUserCommand> updateUserCommand)
         {
-            _mediator = mediator;
+            _getCurrentUserQuery = getCurrentUserQuery;
+            _getUserQuery = getUserQuery;
+            _getSubordinateUsersQuery = getSubordinateUsersQuery;
+            _getActiveUsersQuery = getActiveUsersQuery;
+            _registerUserCommand = registerUserCommand;
+            _createUserCommand = createUserCommand;
+            _updateUserCommand = updateUserCommand;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
         {
-            var registerUserCommand = new RegisterUserCommand { Principal = HttpContext.User };
-            var userModel = await _mediator.Send(registerUserCommand, cancellationToken);
+            var userModel = await _registerUserCommand.Value.ExecuteAsync(new RegisterUserModel(), HttpContext.User, cancellationToken);
 
             return Ok(userModel);
         }
 
         [HttpPost("create")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateUser([FromBody]CreateUserCommand payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload, CancellationToken cancellationToken)
         {
-            await _mediator.Send(payload, cancellationToken);
+            await _createUserCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
 
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserCommand payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserModel payload, CancellationToken cancellationToken)
         {
-            await _mediator.Send(payload, cancellationToken);
+            await _updateUserCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -51,18 +71,16 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
-            var getCurrentUserQuery = new GetCurrentUserQuery { Principal = HttpContext.User };
-            var userModel = await _mediator.Send(getCurrentUserQuery, cancellationToken);
+            var userModel = await _getCurrentUserQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModel);
         }
 
         [HttpGet("{id}")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var getUserQuery = new GetUserQuery { UserId = id };
-            var userModel = await _mediator.Send(getUserQuery);
+            var userModel = await _getUserQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
             return Ok(userModel);
         }
@@ -70,8 +88,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSubordinateUsers(CancellationToken cancellationToken)
         {
-            var getSubordinateUsersQuery = new GetSubordinateUsersQuery { Principal = HttpContext.User };
-            var userModels = await _mediator.Send(getSubordinateUsersQuery, cancellationToken);
+            var userModels = await _getSubordinateUsersQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModels);
         }
@@ -80,7 +97,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetActiveUsers(CancellationToken cancellationToken)
         {
-            var userModels = await _mediator.Send(new GetActiveUsersQuery(), cancellationToken);
+            var userModels = await _getActiveUsersQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModels);
         }

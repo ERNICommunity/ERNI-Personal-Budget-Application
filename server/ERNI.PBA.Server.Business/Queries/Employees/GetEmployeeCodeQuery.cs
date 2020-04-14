@@ -5,14 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Employees;
-using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Graph;
 using Microsoft.Extensions.Configuration;
 
 namespace ERNI.PBA.Server.Business.Queries.Employees
 {
-    public class GetEmployeeCodeQuery : Query<EmployeeCodeModel, AdUserOutputModel[]>, IGetEmployeeCodeQuery
+    public class GetEmployeeCodeQuery : Query<AdUserOutputModel[]>, IGetEmployeeCodeQuery
     {
         private static DateTime _timestamp;
         private static AdUserOutputModel[] _cache;
@@ -24,7 +23,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
             _configuration = configuration;
         }
 
-        protected override async Task<AdUserOutputModel[]> Execute(EmployeeCodeModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task<AdUserOutputModel[]> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             if (_cache != null && _timestamp.AddHours(4) > DateTime.Now)
             {

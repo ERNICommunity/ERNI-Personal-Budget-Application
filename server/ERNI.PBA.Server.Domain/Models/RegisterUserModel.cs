@@ -1,6 +1,6 @@
 ﻿namespace ERNI.PBA.Server.Domain.Models
 {
-    public class EmployeeCodeModel
+    public class RegisterUserModel
     {
     }
 }

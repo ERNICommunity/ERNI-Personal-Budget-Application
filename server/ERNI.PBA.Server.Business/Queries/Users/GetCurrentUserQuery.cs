@@ -1,27 +1,28 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Extensions;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Queries.Users;
-using MediatR;
 
-namespace ERNI.PBA.Server.Business.Handlers.Users
+namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetCurrentUserHandler : IRequestHandler<GetCurrentUserQuery, UserModel>
+    public class GetCurrentUserQuery : Query<UserModel>, IGetCurrentUserQuery
     {
         private readonly IUserRepository _userRepository;
 
-        public GetCurrentUserHandler(IUserRepository userRepository)
+        public GetCurrentUserQuery(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public async Task<UserModel> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+        protected override async Task<UserModel> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(request.Principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (user == null)
             {
                 throw AppExceptions.AuthorizationException();

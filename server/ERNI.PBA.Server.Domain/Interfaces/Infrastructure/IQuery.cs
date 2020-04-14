@@ -8,4 +8,9 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Infrastructure
     {
         Task<TOutput> ExecuteAsync(TInput parameter, ClaimsPrincipal principal, CancellationToken cancellationToken);
     }
+
+    public interface IQuery<TOutput>
+    {
+        Task<TOutput> ExecuteAsync(ClaimsPrincipal principal, CancellationToken cancellationToken);
+    }
 }

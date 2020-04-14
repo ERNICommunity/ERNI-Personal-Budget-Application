@@ -26,6 +26,9 @@ namespace ERNI.PBA.Server.Business
             builder.RegisterAssemblyTypes(assembly).Where(t => t.IsClosedTypeOf(typeof(IQuery<,>)))
                 .AsImplementedInterfaces()
                 .InstancePerDependency();
+            builder.RegisterAssemblyTypes(assembly).Where(t => t.IsClosedTypeOf(typeof(IQuery<>)))
+                .AsImplementedInterfaces()
+                .InstancePerDependency();
         }
     }
 }

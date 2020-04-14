@@ -1,24 +1,25 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Queries.Users;
-using MediatR;
 
-namespace ERNI.PBA.Server.Business.Handlers.Users
+namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetUserHandler : IRequestHandler<GetUserQuery, UserModel>
+    public class GetUserQuery : Query<int, UserModel>, IGetUserQuery
     {
         private readonly IUserRepository _userRepository;
 
-        public GetUserHandler(IUserRepository userRepository)
+        public GetUserQuery(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public async Task<UserModel> Handle(GetUserQuery request, CancellationToken cancellationToken)
+        protected override async Task<UserModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(request.UserId, CancellationToken.None);
+            var user = await _userRepository.GetUser(parameter, CancellationToken.None);
 
             return new UserModel
             {

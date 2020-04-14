@@ -1,34 +1,36 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Commands.Users;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using MediatR;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace ERNI.PBA.Server.Business.Handlers.Users
+namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, bool>
+    public class UpdateUserCommand : Command<UpdateUserModel>, IUpdateUserCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public UpdateUserHandler(
+        public UpdateUserCommand(
             IUserRepository userRepository,
             IUnitOfWork unitOfWork,
-            ILogger<UpdateUserHandler> logger)
+            ILogger<UpdateUserCommand> logger)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
-        public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        protected override async Task Execute(UpdateUserModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(request.Id, cancellationToken);
+            var user = await _userRepository.GetUser(parameter.Id, cancellationToken);
 
             if (user == null)
             {
@@ -37,15 +39,13 @@ namespace ERNI.PBA.Server.Business.Handlers.Users
                 throw new OperationErrorException(StatusCodes.Status404NotFound, "Not a valid id");
             }
 
-            user.IsAdmin = request.IsAdmin;
-            user.IsViewer = request.IsViewer;
-            user.IsSuperior = request.IsSuperior;
-            user.SuperiorId = request.Superior?.Id;
-            user.State = request.State;
+            user.IsAdmin = parameter.IsAdmin;
+            user.IsViewer = parameter.IsViewer;
+            user.IsSuperior = parameter.IsSuperior;
+            user.SuperiorId = parameter.Superior?.Id;
+            user.State = parameter.State;
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 }

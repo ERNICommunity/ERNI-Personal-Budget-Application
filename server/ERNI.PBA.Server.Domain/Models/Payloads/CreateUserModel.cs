@@ -1,8 +1,8 @@
 ﻿using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Domain.Commands.Users
+namespace ERNI.PBA.Server.Domain.Models.Payloads
 {
-    public class CreateUserCommand : CommandBase<bool>
+    public class CreateUserModel
     {
         public string FirstName { get; set; }
 

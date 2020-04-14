@@ -24,7 +24,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             IMailService mailService,
             IRequestRepository requestRepository,
             IUnitOfWork unitOfWork,
-            ILogger logger)
+            ILogger<ApproveRequestCommand> logger)
         {
             _mailService = mailService;
             _requestRepository = requestRepository;
