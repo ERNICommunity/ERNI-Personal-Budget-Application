@@ -1,7 +1,7 @@
 ﻿using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Models.Entities;
 
-namespace ERNI.PBA.Server.Host.Model
+namespace ERNI.PBA.Server.Domain.Models.Payloads
 {
     public class RequestMassModel
     {

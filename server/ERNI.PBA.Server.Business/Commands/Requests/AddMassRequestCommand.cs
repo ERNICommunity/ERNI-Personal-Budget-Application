@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Commands.Requests;
+using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using MediatR;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Handlers.Requests
+namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class AddMassRequestHandler : IRequestHandler<AddMassRequestCommand, bool>
+    public class AddMassRequestCommand : Command<RequestMassModel>, IAddMassRequestCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddMassRequestHandler(
+        public AddMassRequestCommand(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IRequestRepository requestRepository,
@@ -33,28 +36,29 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(AddMassRequestCommand command, CancellationToken cancellationToken)
+        protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var currentUser = await _userRepository.GetUser(command.UserId, cancellationToken);
+            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (!currentUser.IsAdmin)
             {
                 throw AppExceptions.AuthorizationException();
             }
 
+            var currentYear = DateTime.Now.Year;
             var requests = new List<Request>();
-            foreach (var user in command.Users)
+            foreach (var user in parameter.Users)
             {
                 var userId = user.Id;
 
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, command.CurrentYear, cancellationToken);
+                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear, cancellationToken);
 
                 if (budgets.Length > 1)
                 {
-                    throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {command.CurrentYear}");
+                    throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
                 }
 
                 var budget = budgets.Single();
-                if (command.Amount > await GetRemainingAmount(budget, cancellationToken))
+                if (parameter.Amount > await GetRemainingAmount(budget, cancellationToken))
                 {
                     continue;
                 }
@@ -62,10 +66,10 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
                 var request = new Request
                 {
                     UserId = userId,
-                    Year = command.CurrentYear,
-                    Title = command.Title,
-                    Amount = command.Amount,
-                    Date = command.Date.ToLocalTime().Date,
+                    Year = currentYear,
+                    Title = parameter.Title,
+                    Amount = parameter.Amount,
+                    Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
                     State = RequestState.Approved,
                     BudgetId = budget.Id
@@ -77,8 +81,6 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
             await _requestRepository.AddRequests(requests);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
 
         private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken)

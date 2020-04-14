@@ -1,29 +1,30 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Commands.Requests;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace ERNI.PBA.Server.Business.Handlers.Requests
+namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class ApproveRequestHandler : IRequestHandler<ApproveRequestCommand, bool>
+    public class ApproveRequestCommand : Command<int>, IApproveRequestCommand
     {
         private readonly IMailService _mailService;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public ApproveRequestHandler(
+        public ApproveRequestCommand(
             IMailService mailService,
             IRequestRepository requestRepository,
             IUnitOfWork unitOfWork,
-            ILogger<ApproveRequestHandler> logger)
+            ILogger logger)
         {
             _mailService = mailService;
             _requestRepository = requestRepository;
@@ -31,9 +32,9 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
             _logger = logger;
         }
 
-        public async Task<bool> Handle(ApproveRequestCommand command, CancellationToken cancellationToken)
+        protected override async Task Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(command.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
@@ -48,8 +49,6 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
                           request.State + ".";
 
             _mailService.SendMail(message, request.User.Username);
-
-            return true;
         }
     }
 }

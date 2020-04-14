@@ -1,8 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain.Queries.Budgets;
-using MediatR;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,24 +11,17 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class TeamBudgetController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly Lazy<IGetBudgetByYearQuery> _getBudgetByYearQuery;
 
-        public TeamBudgetController(IMediator mediator)
+        public TeamBudgetController(Lazy<IGetBudgetByYearQuery> getBudgetByYearQuery)
         {
-            _mediator = mediator;
+            _getBudgetByYearQuery = getBudgetByYearQuery;
         }
 
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var userId = HttpContext.User.GetId();
-            var query = new GetBudgetByYearQuery
-            {
-                UserId = userId,
-                Year = year
-            };
-
-            var outputModel = await _mediator.Send(query, cancellationToken);
+            var outputModel = await _getBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModel);
         }

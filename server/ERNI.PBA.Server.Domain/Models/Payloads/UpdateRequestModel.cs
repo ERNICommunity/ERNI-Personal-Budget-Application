@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ERNI.PBA.Server.Host.Model
+namespace ERNI.PBA.Server.Domain.Models.Payloads
 {
     public class UpdateRequestModel
     {

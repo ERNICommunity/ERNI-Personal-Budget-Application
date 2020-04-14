@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Queries.Budgets;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Handlers.Budgets
+namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetTeamBudgetByYearHandler : IRequestHandler<GetBudgetByYearQuery, BudgetOutputModel[]>
+    public class GetBudgetByYearQuery : Query<int, BudgetOutputModel[]>, IGetBudgetByYearQuery
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetTeamBudgetByYearHandler(
+        public GetBudgetByYearQuery(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository)
         {
@@ -25,21 +27,21 @@ namespace ERNI.PBA.Server.Business.Handlers.Budgets
             _budgetRepository = budgetRepository;
         }
 
-        public async Task<BudgetOutputModel[]> Handle(GetBudgetByYearQuery request, CancellationToken cancellationToken)
+        protected override async Task<BudgetOutputModel[]> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(request.UserId, cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (!user.IsSuperior)
             {
                 throw AppExceptions.AuthorizationException();
             }
 
-            var budgets = await _budgetRepository.GetTeamBudgets(request.UserId, request.Year, cancellationToken);
+            var budgets = await _budgetRepository.GetTeamBudgets(user.Id, parameter, cancellationToken);
             if (!budgets.Any())
             {
                 return Array.Empty<BudgetOutputModel>();
             }
 
-            var masterBudget = budgets.SingleOrDefault(x => x.UserId == request.UserId);
+            var masterBudget = budgets.SingleOrDefault(x => x.UserId == user.Id);
             if (masterBudget == null)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Cumulative budget does not exists");

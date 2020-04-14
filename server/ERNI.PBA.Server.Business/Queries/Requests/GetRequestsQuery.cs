@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Outputs;
 using ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests;
-using ERNI.PBA.Server.Domain.Queries.Requests;
-using MediatR;
 
-namespace ERNI.PBA.Server.Business.Handlers.Requests
+namespace ERNI.PBA.Server.Business.Queries.Requests
 {
-    public class GetRequestsHandler : IRequestHandler<GetRequestsQuery, RequestModel[]>
+    public class GetRequestsQuery : Query<GetRequestsModel, RequestModel[]>, IGetRequestsQuery
     {
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
 
-        public GetRequestsHandler(
+        public GetRequestsQuery(
             IUserRepository userRepository,
             IRequestRepository requestRepository)
         {
@@ -25,20 +28,21 @@ namespace ERNI.PBA.Server.Business.Handlers.Requests
             _requestRepository = requestRepository;
         }
 
-        public async Task<RequestModel[]> Handle(GetRequestsQuery query, CancellationToken cancellationToken)
+        protected override async Task<RequestModel[]> Execute(GetRequestsModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             Expression<Func<Request, bool>> predicate;
 
-            var currentUser = await _userRepository.GetUser(query.UserId, cancellationToken);
+            var userId = principal.GetId();
+            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
             if (currentUser.IsAdmin || currentUser.IsViewer)
             {
-                predicate = request => request.Year == query.Year && query.RequestStates.Contains(request.State);
+                predicate = request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State);
             }
             else
             {
-                var subordinates = await _userRepository.GetSubordinateUsers(query.UserId, cancellationToken);
+                var subordinates = await _userRepository.GetSubordinateUsers(userId, cancellationToken);
                 var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                predicate = request => request.Year == query.Year && query.RequestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
+                predicate = request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
             }
 
             var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
