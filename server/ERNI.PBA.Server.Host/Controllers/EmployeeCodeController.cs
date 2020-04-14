@@ -1,7 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Queries.Employees;
-using MediatR;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Employees;
+using ERNI.PBA.Server.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,18 +12,18 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class EmployeeCodeController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly Lazy<IGetEmployeeCodeQuery> _getEmployeeCodeQuery;
 
-        public EmployeeCodeController(IMediator mediator)
+        public EmployeeCodeController(Lazy<IGetEmployeeCodeQuery> getEmployeeCodeQuery)
         {
-            _mediator = mediator;
+            _getEmployeeCodeQuery = getEmployeeCodeQuery;
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
-            var outputModels = await _mediator.Send(new GetEmployeeCodeQuery(), cancellationToken);
+            var outputModels = await _getEmployeeCodeQuery.Value.ExecuteAsync(new EmployeeCodeModel(), HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
