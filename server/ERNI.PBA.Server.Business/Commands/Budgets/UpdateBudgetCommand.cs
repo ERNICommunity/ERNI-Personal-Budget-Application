@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
-    public class UpdateBudgetCommand : Command<UpdateBudgetRequest, bool>, IUpdateBudgetCommand
+    public class UpdateBudgetCommand : Command<UpdateBudgetRequest>, IUpdateBudgetCommand
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -24,7 +24,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task<bool> Execute(UpdateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(UpdateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(parameter.Id, cancellationToken);
             if (budget == null)
@@ -35,8 +35,6 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             budget.Amount = parameter.Amount;
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 }

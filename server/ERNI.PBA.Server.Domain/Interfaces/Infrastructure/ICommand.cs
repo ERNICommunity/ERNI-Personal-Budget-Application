@@ -8,4 +8,9 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Infrastructure
     {
         Task<TResult> ExecuteAsync(T parameter, ClaimsPrincipal principal, CancellationToken cancellationToken);
     }
+
+    public interface ICommand<in T>
+    {
+        Task ExecuteAsync(T parameter, ClaimsPrincipal principal, CancellationToken cancellationToken);
+    }
 }

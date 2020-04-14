@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
-    public class TransferBudgetCommand : Command<TransferBudgetModel, bool>, ITransferBudgetCommand
+    public class TransferBudgetCommand : Command<TransferBudgetModel>, ITransferBudgetCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -29,7 +29,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task<bool> Execute(TransferBudgetModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(TransferBudgetModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var budget = await _budgetRepository.GetBudget(parameter.BudgetId, cancellationToken);
             if (budget == null)
@@ -51,8 +51,6 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             budget.UserId = parameter.UserId;
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 }

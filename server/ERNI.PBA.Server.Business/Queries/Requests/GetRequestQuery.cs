@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
-using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Queries.Requests
 {
-    public class GetRequestQuery : IQuery<int, Request>, IGetRequestQuery
+    public class GetRequestQuery : Query<int, Request>, IGetRequestQuery
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
@@ -28,7 +28,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
             _logger = logger;
         }
 
-        public async Task<Request> ExecuteAsync(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task<Request> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var request = await _requestRepository.GetRequest(parameter, cancellationToken);
             if (request == null)

@@ -15,7 +15,7 @@ using ERNI.PBA.Server.Domain.Models.Payloads;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
-    public class CreateBudgetsForAllActiveUsersCommand : Command<CreateBudgetsForAllActiveUsersRequest, bool>, ICreateBudgetsForAllActiveUsersCommand
+    public class CreateBudgetsForAllActiveUsersCommand : Command<CreateBudgetsForAllActiveUsersRequest>, ICreateBudgetsForAllActiveUsersCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -31,7 +31,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task<bool> Execute(CreateBudgetsForAllActiveUsersRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(CreateBudgetsForAllActiveUsersRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
             IEnumerable<User> users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
@@ -61,8 +61,6 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             }
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 }

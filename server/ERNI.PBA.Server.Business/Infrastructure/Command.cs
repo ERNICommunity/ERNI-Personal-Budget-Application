@@ -14,4 +14,14 @@ namespace ERNI.PBA.Server.Business.Infrastructure
             return await Execute(parameter, principal, cancellationToken);
         }
     }
+
+    public abstract class Command<T> : ICommand<T>
+    {
+        protected abstract Task Execute(T parameter, ClaimsPrincipal principal, CancellationToken cancellationToken);
+
+        public async Task ExecuteAsync(T parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        {
+            await Execute(parameter, principal, cancellationToken);
+        }
+    }
 }

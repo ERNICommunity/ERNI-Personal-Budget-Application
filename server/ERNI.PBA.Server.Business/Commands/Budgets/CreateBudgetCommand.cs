@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
-    public class CreateBudgetCommand : Command<CreateBudgetRequest, bool>, ICreateBudgetCommand
+    public class CreateBudgetCommand : Command<CreateBudgetRequest>, ICreateBudgetCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -33,7 +33,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task<bool> Execute(CreateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(CreateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
             var userId = principal.GetId();
@@ -62,8 +62,6 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             _budgetRepository.AddBudget(budget);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 }

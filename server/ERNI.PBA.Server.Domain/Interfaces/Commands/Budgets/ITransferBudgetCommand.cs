@@ -3,7 +3,7 @@ using ERNI.PBA.Server.Domain.Models.Payloads;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets
 {
-    public interface ITransferBudgetCommand : ICommand<TransferBudgetModel, bool>
+    public interface ITransferBudgetCommand : ICommand<TransferBudgetModel>
     {
     }
 }

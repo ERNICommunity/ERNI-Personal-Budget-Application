@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class AddTeamRequestCommand : Command<PostRequestModel, bool>, IAddTeamRequestCommand
+    public class AddTeamRequestCommand : Command<PostRequestModel>, IAddTeamRequestCommand
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -36,7 +36,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task<bool> Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
             var currentYear = DateTime.Now.Year;
@@ -82,8 +82,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             await _requestRepository.AddRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 }
