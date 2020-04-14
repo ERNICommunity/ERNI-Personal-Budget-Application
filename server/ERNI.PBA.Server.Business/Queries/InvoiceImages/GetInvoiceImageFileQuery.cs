@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages;
-using ERNI.PBA.Server.Domain.Queries.InvoiceImages;
 using ERNI.PBA.Server.Domain.Security;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 
-namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
+namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
 #pragma warning disable CS0162 // Unreachable code detected
-    public class GetInvoiceImageFileHandler : IRequestHandler<GetInvoiceImageFileQuery, ImageFileModel>
+    public class GetInvoiceImageFileQuery : Query<int, ImageFileModel>, IGetInvoiceImageFileQuery
     {
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IRequestRepository _requestRepository;
 
-        public GetInvoiceImageFileHandler(
+        public GetInvoiceImageFileQuery(
             IInvoiceImageRepository invoiceImageRepository,
             IRequestRepository requestRepository)
         {
@@ -27,11 +28,11 @@ namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
             _requestRepository = requestRepository;
         }
 
-        public async Task<ImageFileModel> Handle(GetInvoiceImageFileQuery query, CancellationToken cancellationToken)
+        protected override async Task<ImageFileModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
 
-            var image = await _invoiceImageRepository.GetInvoiceImage(query.ImageId, cancellationToken);
+            var image = await _invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken);
             if (image == null)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
@@ -43,7 +44,7 @@ namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!query.Principal.IsInRole(Roles.Admin) && query.Principal.GetId() != request.UserId)
+            if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
             {
                 throw AppExceptions.AuthorizationException();
             }

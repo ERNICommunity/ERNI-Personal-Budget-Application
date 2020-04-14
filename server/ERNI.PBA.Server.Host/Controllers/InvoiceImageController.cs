@@ -1,9 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Commands.InvoiceImages;
-using ERNI.PBA.Server.Domain.Queries.InvoiceImages;
-using ERNI.PBA.Server.Host.Model;
-using MediatR;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.InvoiceImages;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,24 +13,25 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class InvoiceImageController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly Lazy<IGetInvoiceImagesQuery> _getInvoiceImagesQuery;
+        private readonly Lazy<IGetInvoiceImageFileQuery> _getInvoiceImageFileQuery;
+        private readonly Lazy<IAddInvoiceImageCommand> _addInvoiceImageCommand;
 
-        public InvoiceImageController(IMediator mediator)
+        public InvoiceImageController(
+            Lazy<IGetInvoiceImagesQuery> getInvoiceImagesQuery,
+            Lazy<IGetInvoiceImageFileQuery> getInvoiceImageFileQuery,
+            Lazy<IAddInvoiceImageCommand> addInvoiceImageCommand)
         {
-            _mediator = mediator;
+            _getInvoiceImagesQuery = getInvoiceImagesQuery;
+            _getInvoiceImageFileQuery = getInvoiceImageFileQuery;
+            _addInvoiceImageCommand = addInvoiceImageCommand;
         }
 
         [HttpGet("images/{requestId}")]
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
         {
-            var getInvoiceImagesQuery = new GetInvoiceImagesQuery
-            {
-                Principal = HttpContext.User,
-                RequestId = requestId
-            };
-
-            var outputModels = await _mediator.Send(getInvoiceImagesQuery, cancellationToken);
+            var outputModels = await _getInvoiceImagesQuery.Value.ExecuteAsync(requestId, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -39,13 +40,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize]
         public async Task<IActionResult> GetInvoiceImageFile(int imageId, CancellationToken cancellationToken)
         {
-            var getInvoiceImageFileQuery = new GetInvoiceImageFileQuery
-            {
-                Principal = HttpContext.User,
-                ImageId = imageId
-            };
-
-            var imageFileModel = await _mediator.Send(getInvoiceImageFileQuery, cancellationToken);
+            var imageFileModel = await _getInvoiceImageFileQuery.Value.ExecuteAsync(imageId, HttpContext.User, cancellationToken);
 
             return new FileContentResult(imageFileModel.InvoiceImage.Data, imageFileModel.ContentType)
             {
@@ -58,14 +53,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize]
         public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel, CancellationToken cancellationToken)
         {
-            var addInvoiceImageCommand = new AddInvoiceImageCommand
-            {
-                Principal = HttpContext.User,
-                RequestId = invoiceImageModel.RequestId,
-                File = invoiceImageModel.File
-            };
-
-            await _mediator.Send(addInvoiceImageCommand, cancellationToken);
+            await _addInvoiceImageCommand.Value.ExecuteAsync(invoiceImageModel, HttpContext.User, cancellationToken);
 
             return Ok();
         }

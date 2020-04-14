@@ -1,26 +1,28 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain.Commands.InvoiceImages;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
+namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 {
 #pragma warning disable CS0162 // Unreachable code detected
-    public class AddInvoiceImageHandler : IRequestHandler<AddInvoiceImageCommand, bool>
+    public class AddInvoiceImageCommand : Command<InvoiceImageModel>, IAddInvoiceImageCommand
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddInvoiceImageHandler(
+        public AddInvoiceImageCommand(
             IRequestRepository requestRepository,
             IInvoiceImageRepository invoiceImageRepository,
             IUnitOfWork unitOfWork)
@@ -30,32 +32,32 @@ namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(AddInvoiceImageCommand command, CancellationToken cancellationToken)
+        protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
 
-            var requestId = command.RequestId;
+            var requestId = parameter.RequestId;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
-            if (!command.Principal.IsInRole(Roles.Admin) && command.Principal.GetId() != request.UserId)
+            if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
             {
                 throw AppExceptions.AuthorizationException();
             }
 
             byte[] buffer;
-            if (command.File == null)
+            if (parameter.File == null)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest);
             }
 
-            var fullName = command.File.FileName;
-            if (command.File.Length > 1048576)
+            var fullName = parameter.File.FileName;
+            if (parameter.File.Length > 1048576)
             {
                 throw new OperationErrorException(StatusCodes.Status413PayloadTooLarge);
             }
 
-            using (var openReadStream = command.File.OpenReadStream())
+            using (var openReadStream = parameter.File.OpenReadStream())
             {
-                buffer = new byte[command.File.Length];
+                buffer = new byte[parameter.File.Length];
                 openReadStream.Read(buffer, 0, buffer.Length);
             }
 
@@ -69,8 +71,6 @@ namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
             await _invoiceImageRepository.AddInvoiceImage(image, cancellationToken);
 
             await _unitOfWork.SaveChanges(cancellationToken);
-
-            return true;
         }
     }
 #pragma warning restore CS0162 // Unreachable code detected

@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages;
-using ERNI.PBA.Server.Domain.Queries.InvoiceImages;
 using ERNI.PBA.Server.Domain.Security;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
+namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
 #pragma warning disable CS0162 // Unreachable code detected
-    public class GetInvoiceImagesHandler : IRequestHandler<GetInvoiceImagesQuery, IEnumerable<ImageOutputModel>>
+    public class GetInvoiceImagesQuery : Query<int, IEnumerable<ImageOutputModel>>, IGetInvoiceImagesQuery
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IInvoiceImageRepository _invoiceImageRepository;
 
-        public GetInvoiceImagesHandler(
+        public GetInvoiceImagesQuery(
             IRequestRepository requestRepository,
             IInvoiceImageRepository invoiceImageRepository)
         {
@@ -28,22 +29,22 @@ namespace ERNI.PBA.Server.Business.Handlers.InvoiceImages
             _invoiceImageRepository = invoiceImageRepository;
         }
 
-        public async Task<IEnumerable<ImageOutputModel>> Handle(GetInvoiceImagesQuery query, CancellationToken cancellationToken)
+        protected override async Task<IEnumerable<ImageOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
 
-            var request = await _requestRepository.GetRequest(query.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
             if (request == null)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!query.Principal.IsInRole(Roles.Admin) && query.Principal.GetId() != request.UserId)
+            if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
             {
                 throw AppExceptions.AuthorizationException();
             }
 
-            var imagesName = await _invoiceImageRepository.GetInvoiceImages(query.RequestId, cancellationToken);
+            var imagesName = await _invoiceImageRepository.GetInvoiceImages(parameter, cancellationToken);
             return imagesName.Select(image => new ImageOutputModel
             {
                 Id = image.Id,
