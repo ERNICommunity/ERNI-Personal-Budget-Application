@@ -1,6 +1,6 @@
 ﻿using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests;
+using ERNI.PBA.Server.Domain.Models.Responses.PendingRequests;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Queries.Requests
 {

@@ -9,7 +9,7 @@ using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Domain.Models.Outputs;
+using ERNI.PBA.Server.Domain.Models.Responses;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 

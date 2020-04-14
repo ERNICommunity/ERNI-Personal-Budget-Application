@@ -1,7 +1,7 @@
 ﻿using System;
 using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Domain.Models.Outputs
+namespace ERNI.PBA.Server.Domain.Models.Responses
 {
     public class RequestOutputModel
     {

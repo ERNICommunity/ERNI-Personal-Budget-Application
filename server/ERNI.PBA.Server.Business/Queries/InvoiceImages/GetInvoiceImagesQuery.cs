@@ -9,7 +9,7 @@ using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Outputs.InvoiceImages;
+using ERNI.PBA.Server.Domain.Models.Responses.InvoiceImages;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 

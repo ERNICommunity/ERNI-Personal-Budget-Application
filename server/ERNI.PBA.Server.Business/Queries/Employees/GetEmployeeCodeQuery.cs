@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Employees;
-using ERNI.PBA.Server.Domain.Models.Outputs;
+using ERNI.PBA.Server.Domain.Models.Responses;
 using ERNI.PBA.Server.Graph;
 using Microsoft.Extensions.Configuration;
 

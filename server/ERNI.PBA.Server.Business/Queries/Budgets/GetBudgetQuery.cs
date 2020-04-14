@@ -7,7 +7,7 @@ using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Outputs.Budgets;
+using ERNI.PBA.Server.Domain.Models.Responses.Budgets;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 

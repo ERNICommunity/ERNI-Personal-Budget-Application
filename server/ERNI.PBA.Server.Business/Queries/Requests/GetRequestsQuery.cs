@@ -10,8 +10,8 @@ using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Outputs;
-using ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests;
+using ERNI.PBA.Server.Domain.Models.Responses;
+using ERNI.PBA.Server.Domain.Models.Responses.PendingRequests;
 
 namespace ERNI.PBA.Server.Business.Queries.Requests
 {

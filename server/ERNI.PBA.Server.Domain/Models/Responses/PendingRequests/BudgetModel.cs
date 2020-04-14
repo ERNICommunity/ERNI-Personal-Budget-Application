@@ -1,6 +1,6 @@
 using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Domain.Models.Outputs.PendingRequests
+namespace ERNI.PBA.Server.Domain.Models.Responses.PendingRequests
 {
     public class BudgetModel
     {

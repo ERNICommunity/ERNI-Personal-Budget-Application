@@ -1,6 +1,6 @@
-namespace ERNI.PBA.Server.Domain.Models.Outputs
+namespace ERNI.PBA.Server.Domain.Models.Responses
 {
-    public class SuperiorModel
+    public class UserOutputModel
     {
         public int Id { get; set; }
 

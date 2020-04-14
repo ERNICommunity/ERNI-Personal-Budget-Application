@@ -1,7 +1,7 @@
 ﻿using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Models.Entities;
 
-namespace ERNI.PBA.Server.Domain.Models.Outputs.Budgets
+namespace ERNI.PBA.Server.Domain.Models.Responses.Budgets
 {
     public class SingleBudgetOutputModel
     {

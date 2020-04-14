@@ -7,7 +7,7 @@ using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Outputs.Budgets;
+using ERNI.PBA.Server.Domain.Models.Responses.Budgets;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {

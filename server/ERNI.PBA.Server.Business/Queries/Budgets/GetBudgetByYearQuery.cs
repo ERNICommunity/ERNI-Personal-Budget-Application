@@ -9,7 +9,7 @@ using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Outputs;
+using ERNI.PBA.Server.Domain.Models.Responses;
 using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
