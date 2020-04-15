@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -37,10 +38,15 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 throw new OperationErrorException(StatusCodes.Status409Conflict);
             }
 
+            if (string.IsNullOrWhiteSpace(parameter.FirstName) || string.IsNullOrWhiteSpace(parameter.LastName))
+            {
+                throw new OperationErrorException(StatusCodes.Status400BadRequest);
+            }
+
             var user = new User
             {
-                FirstName = parameter.FirstName,
-                LastName = parameter.LastName,
+                FirstName = parameter.FirstName.Trim(),
+                LastName = parameter.LastName.Trim(),
                 Username = parameter.Email,
                 IsAdmin = parameter.IsAdmin,
                 IsSuperior = parameter.IsSuperior,

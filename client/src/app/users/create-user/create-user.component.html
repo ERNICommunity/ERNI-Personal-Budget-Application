@@ -5,7 +5,7 @@
         <div class="form-group">
             <label for="firstName">First name</label>
             <input type="text" formControlName="firstName" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && controls.firstName.errors }" />
+                [ngClass]="{ 'is-invalid': submitted && controls.firstName.errors }" (blur)="trimControlValue(controls.firstName)"/>
             <div *ngIf="submitted && controls.firstName.errors" class="invalid-feedback">
                 <div *ngIf="controls.firstName.errors.required">First name is required</div>
             </div>
@@ -14,7 +14,7 @@
         <div class="form-group">
             <label for="lastName">Last name</label>
             <input type="text" formControlName="lastName" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && controls.lastName.errors }" />
+                [ngClass]="{ 'is-invalid': submitted && controls.lastName.errors }" (blur)="trimControlValue(controls.lastName)"/>
             <div *ngIf="submitted && controls.lastName.errors" class="invalid-feedback">
                 <div *ngIf="controls.lastName.errors.required">Last name is required</div>
             </div>
