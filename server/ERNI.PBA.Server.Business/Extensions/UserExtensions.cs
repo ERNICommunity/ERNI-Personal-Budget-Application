@@ -1,5 +1,5 @@
 ﻿using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Outputs;
+using ERNI.PBA.Server.Domain.Models.Responses;
 
 namespace ERNI.PBA.Server.Business.Extensions
 {

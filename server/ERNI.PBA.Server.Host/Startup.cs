@@ -5,14 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using Autofac;
-using ERNI.PBA.Server.Business;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
 using ERNI.PBA.Server.Domain.Security;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -143,7 +141,6 @@ namespace ERNI.PBA.Server.Host
                 configuration.Filters.AddService<ApiExceptionFilter>();
             });
 
-            services.AddMediatR(Assembly.GetAssembly(typeof(BusinessModule)));
             services.AddOptions();
         }
 

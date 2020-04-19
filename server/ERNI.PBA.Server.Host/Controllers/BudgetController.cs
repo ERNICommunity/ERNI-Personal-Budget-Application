@@ -1,15 +1,12 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
+using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Domain.Queries.Budgets;
+using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using ERNI.PBA.Server.Host.Model;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,24 +16,43 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class BudgetController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly Lazy<IGetBudgetQuery> _getBudgetQuery;
+        private readonly Lazy<IGetCurrentUserBudgetByYearQuery> _getCurrentUserBudgetByYearQuery;
+        private readonly Lazy<IGetActiveUsersBudgetsByYearQuery> _getActiveUsersBudgetsByYearQuery;
+        private readonly Lazy<IGetBudgetsByYearQuery> _getBudgetsByYearQuery;
+        private readonly Lazy<IGetUsersAvailableForBudgetQuery> _getUsersAvailableForBudgetQuery;
+        private readonly Lazy<ICreateBudgetsForAllActiveUsersCommand> _createBudgetsForAllActiveUsersCommand;
+        private readonly Lazy<ICreateBudgetCommand> _createBudgetCommand;
+        private readonly Lazy<IUpdateBudgetCommand> _updateBudgetCommand;
+        private readonly Lazy<ITransferBudgetCommand> _transferBudgetCommand;
 
-        public BudgetController(IMediator mediator)
+        public BudgetController(
+            Lazy<IGetBudgetQuery> getBudgetQuery,
+            Lazy<IGetCurrentUserBudgetByYearQuery> getCurrentUserBudgetByYearQuery,
+            Lazy<IGetActiveUsersBudgetsByYearQuery> getActiveUsersBudgetsByYearQuery,
+            Lazy<IGetBudgetsByYearQuery> getBudgetsByYearQuery,
+            Lazy<IGetUsersAvailableForBudgetQuery> getUsersAvailableForBudgetQuery,
+            Lazy<ICreateBudgetsForAllActiveUsersCommand> createBudgetsForAllActiveUsersCommand,
+            Lazy<ICreateBudgetCommand> createBudgetCommand,
+            Lazy<IUpdateBudgetCommand> updateBudgetCommand,
+            Lazy<ITransferBudgetCommand> transferBudgetCommand)
         {
-            _mediator = mediator;
+            _getBudgetQuery = getBudgetQuery;
+            _getCurrentUserBudgetByYearQuery = getCurrentUserBudgetByYearQuery;
+            _getActiveUsersBudgetsByYearQuery = getActiveUsersBudgetsByYearQuery;
+            _getBudgetsByYearQuery = getBudgetsByYearQuery;
+            _getUsersAvailableForBudgetQuery = getUsersAvailableForBudgetQuery;
+            _createBudgetsForAllActiveUsersCommand = createBudgetsForAllActiveUsersCommand;
+            _createBudgetCommand = createBudgetCommand;
+            _updateBudgetCommand = updateBudgetCommand;
+            _transferBudgetCommand = transferBudgetCommand;
         }
 
         [HttpGet("{budgetId}")]
         [Authorize]
         public async Task<IActionResult> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
-            var getBudgetQuery = new GetBudgetQuery
-            {
-                Principal = HttpContext.User,
-                BudgetId = budgetId
-            };
-
-            var outputModel = await _mediator.Send(getBudgetQuery, cancellationToken);
+            var outputModel = await _getBudgetQuery.Value.ExecuteAsync(budgetId, HttpContext.User, cancellationToken);
 
             return Ok(outputModel);
         }
@@ -44,13 +60,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var getCurrentUserBudgetByYearQuery = new GetCurrentUserBudgetByYearQuery
-            {
-                UserId = HttpContext.User.GetId(),
-                Year = year
-            };
-
-            var outputModels = (await _mediator.Send(getCurrentUserBudgetByYearQuery, cancellationToken)).ToList();
+            var outputModels = await _getCurrentUserBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -59,8 +69,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var getActiveUsersBudgetsByYearQuery = new GetActiveUsersBudgetsByYearQuery { Year = year };
-            var outputModels = await _mediator.Send(getActiveUsersBudgetsByYearQuery, cancellationToken);
+            var outputModels = await _getActiveUsersBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -69,8 +78,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var getBudgetsByYearQuery = new GetBudgetsByYearQuery { Year = year };
-            var outputModels = await _mediator.Send(getBudgetsByYearQuery, cancellationToken);
+            var outputModels = await _getBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -79,8 +87,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetUsersAvailableForBudget(BudgetTypeEnum budgetTypeId, CancellationToken cancellationToken)
         {
-            var getUsersAvailableForBudgetQuery = new GetUsersAvailableForBudgetQuery { BudgetType = budgetTypeId };
-            var outputModels = await _mediator.Send(getUsersAvailableForBudgetQuery, cancellationToken);
+            var outputModels = await _getUsersAvailableForBudgetQuery.Value.ExecuteAsync(budgetTypeId, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -89,15 +96,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody]CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
         {
-            var createBudgetsForAllActiveUsersCommand = new CreateBudgetsForAllActiveUsersCommand
-            {
-                Title = payload.Title,
-                CurrentYear = DateTime.Now.Year,
-                Amount = payload.Amount,
-                BudgetType = payload.BudgetType
-            };
-
-            await _mediator.Send(createBudgetsForAllActiveUsersCommand, cancellationToken);
+            await _createBudgetsForAllActiveUsersCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -106,40 +105,25 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudget(int userId, [FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
         {
-            var createBudgetCommand = new CreateBudgetCommand
-            {
-                UserId = userId,
-                Title = payload.Title,
-                CurrentYear = DateTime.Now.Year,
-                Amount = payload.Amount,
-                BudgetType = payload.BudgetType
-            };
-
-            await _mediator.Send(createBudgetCommand, cancellationToken);
+            await _createBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
 
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetCommand payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetRequest payload, CancellationToken cancellationToken)
         {
-            await _mediator.Send(payload, cancellationToken);
+            await _updateBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
 
         [HttpPut("{budgetId}/transfer/{userId}")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> TransferBudget(int budgetId, int userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> TransferBudget(TransferBudgetModel payload, CancellationToken cancellationToken)
         {
-            var transferBudgetCommand = new TransferBudgetCommand
-            {
-                UserId = userId,
-                BudgetId = budgetId
-            };
-
-            await _mediator.Send(transferBudgetCommand, cancellationToken);
+            await _transferBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
