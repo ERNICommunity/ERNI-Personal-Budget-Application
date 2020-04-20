@@ -50,7 +50,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             if (parameter.Amount > budget.Amount - requestedAmount)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
             var userId = principal.GetId();
