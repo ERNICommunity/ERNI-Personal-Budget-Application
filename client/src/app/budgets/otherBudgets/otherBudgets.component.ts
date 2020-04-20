@@ -112,6 +112,14 @@ export class OtherBudgetsComponent implements OnInit {
     }
 
     openAmountModal(content) {
+        this.setBudgetToDefault();
         this.modalService.open(content, { centered: true, backdrop: 'static' });
+    }
+
+    setBudgetToDefault()
+    {
+        this.budgetTitle = "";
+        this.amount = 0;
+        this.selectedUserId = undefined;
     }
 }
