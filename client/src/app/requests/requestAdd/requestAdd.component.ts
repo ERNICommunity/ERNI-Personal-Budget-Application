@@ -42,12 +42,10 @@ export class RequestAddComponent implements OnInit {
         let budgetId = this.budgetId;
         let title = this.title;
         let amount = this.amount;
-        let year = this.date.year;
 
         let date = new Date(this.date.year, this.date.month, this.date.day);
 
         let requestData = { budgetId, title, amount, date } as NewRequest;
-        console.log(requestData);
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
             ? this.requestService.addTeamRequest(requestData)
             : this.requestService.addRequest(requestData);
