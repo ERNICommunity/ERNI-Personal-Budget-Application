@@ -101,9 +101,8 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
-        [HttpPost("users/{userId}")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateBudget(int userId, [FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBudget([FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
         {
             await _createBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 

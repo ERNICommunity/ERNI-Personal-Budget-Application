@@ -25,7 +25,7 @@ namespace ERNI.PBA.Server.Domain.Models
             {
                 Id = BudgetTypeEnum.TeamBudget,
                 Name = "Team budget",
-                SinglePerUser = false,
+                SinglePerUser = true,
                 IsTransferable = false
             },
             new BudgetType
