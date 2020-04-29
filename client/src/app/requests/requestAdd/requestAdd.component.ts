@@ -36,6 +36,10 @@ export class RequestAddComponent implements OnInit {
 
     ngOnInit() { }
 
+    trimTitle() : void {
+        this.title = this.title.trim();
+    }
+
     save(): void {
         this.busyIndicatorService.start();
 

@@ -33,7 +33,11 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         protected override async Task Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            
+            if (string.IsNullOrWhiteSpace(parameter.Title))
+            {
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Title must not be empty");
+            }
+
             if (parameter.Amount < 0)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"The amount must be greater than 0");
@@ -65,7 +69,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 BudgetId = budget.Id,
                 UserId = userId,
                 Year = currentYear,
-                Title = parameter.Title,
+                Title = parameter.Title.Trim(),
                 Amount = parameter.Amount,
                 Date = parameter.Date.ToLocalTime(),
                 CreateDate = DateTime.Now,
