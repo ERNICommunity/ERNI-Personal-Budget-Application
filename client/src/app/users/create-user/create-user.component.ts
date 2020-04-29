@@ -73,12 +73,17 @@ export class CreateUserComponent implements OnInit {
         return this.createForm.controls;
     }
 
+    trimControlValue(control) {
+        control.setValue(control.value.trim());
+    }
+
     onSubmit() {
         this.alertService.clear();
         this.submitted = true;
 
-        if (this.createForm.invalid)
+        if (this.createForm.invalid) {
             return;
+        }
 
         this.busyIndicatorService.start();
 
