@@ -33,8 +33,14 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         protected override async Task Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var currentYear = DateTime.Now.Year;
+            
+            if (parameter.Amount < 0)
+            {
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"The amount must be greater than 0");
+            }
+
             var budget = await _budgetRepository.GetBudget(parameter.BudgetId, cancellationToken);
+            var currentYear = DateTime.Now.Year;
 
             if (budget == null)
             {
