@@ -6,12 +6,14 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { BudgetType } from '../../model/budgetType';
 import { User } from '../../model/user';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-other-budgets',
     templateUrl: './otherBudgets.component.html',
     styleUrls: ['./otherBudgets.component.css']
 })
+
 export class OtherBudgetsComponent implements OnInit {
     budgetTypes: BudgetType[];
     budgets: Budget[];
@@ -30,7 +32,6 @@ export class OtherBudgetsComponent implements OnInit {
     years: number[];
     rlao: object;
     disableSetOrEditBudgets: boolean;
-
     private _searchTerm: string;
 
     get searchTerm(): string {
@@ -52,6 +53,7 @@ export class OtherBudgetsComponent implements OnInit {
     constructor(private budgetService: BudgetService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
+        private alertService:AlertService,
         private config: ConfigService) {
         this.years = [];
         this.currentYear = (new Date()).getFullYear();
@@ -103,11 +105,20 @@ export class OtherBudgetsComponent implements OnInit {
             })
         });
     }
+
     setBudgetsForYear(): void {
         if (this.selectedUserId == 0) {
-            this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType).subscribe(() => this.getActiveUsersBudgets(this.selectedYear));
+            this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType)
+            .subscribe(() => this.getActiveUsersBudgets(this.selectedYear), 
+            err => {
+                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error));
+            });
         } else {
-            this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType).subscribe(() => this.getActiveUsersBudgets(this.selectedYear));
+            this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType)
+            .subscribe(() => this.getActiveUsersBudgets(this.selectedYear),
+            err => {
+                this.alertService.error("Error while creating request: " + JSON.stringify(err.error));
+            });
         }
     }
 

@@ -47,7 +47,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             var budgetType = BudgetType.Types.Single(_ => _.Id == parameter.BudgetType);
             if (budgetType.SinglePerUser && budgets.Any(b => b.BudgetType == parameter.BudgetType))
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {userId} already has a budget of type {budgetType.Name} assigned for this year");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {user.LastName} {user.FirstName}  already has a budget of type {budgetType.Name} assigned for this year");
             }
 
             var budget = new Budget
