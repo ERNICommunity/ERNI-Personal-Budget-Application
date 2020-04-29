@@ -36,7 +36,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
         protected override async Task Execute(CreateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
-            var userId = principal.GetId();
+            var userId = parameter.UserId;
             var user = await _userRepository.GetUser(userId, cancellationToken);
             if (user == null || user.State != UserState.Active)
             {

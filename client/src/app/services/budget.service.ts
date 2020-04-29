@@ -35,7 +35,7 @@ export class BudgetService {
     }
 
     public createBudget(title: string, amount: number, userId: number, budgetType: number): Observable<any> {
-        return this.http.post(this.configService.apiUrlBase + this.url + "users/" + userId, { title, amount, budgetType }, this.serviceHelper.getHttpOptions());
+        return this.http.post(this.configService.apiUrlBase + this.url , { userId, title, amount, budgetType }, this.serviceHelper.getHttpOptions());
     }
 
     public createBudgetsForAllActiveUsers(title: string, amount: number, budgetType: number): Observable<any> {

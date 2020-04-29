@@ -4,6 +4,8 @@ namespace ERNI.PBA.Server.Domain.Models.Payloads
 {
     public class CreateBudgetRequest
     {
+        public int UserId { get; set; }
+
         public string Title { get; set; }
 
         public decimal Amount { get; set; }
