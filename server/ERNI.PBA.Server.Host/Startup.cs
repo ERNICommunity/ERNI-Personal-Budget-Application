@@ -111,6 +111,13 @@ namespace ERNI.PBA.Server.Host
             ConfigureModules(builder);
         }
 
+        public void ConfigureIntegrationTestingContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<MailServiceMock>().As<IMailService>().InstancePerDependency();
+
+            ConfigureModules(builder);
+        }
+
         public void ConfigureModules(ContainerBuilder builder)
         {
             builder.RegisterModule(new ApplicationModule());
@@ -141,7 +148,7 @@ namespace ERNI.PBA.Server.Host
 
             app.UseAuthentication();
 
-            if (!env.IsDevelopment())
+            if (!env.IsDevelopment() && !env.IsInt())
             {
                 app.UseQuartz();
             }

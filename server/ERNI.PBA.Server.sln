@@ -26,9 +26,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERNI.PBA.Server.Business.Un
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E768A552-BDF9-4F5A-BE69-A9CC2A729B0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERNI.PBA.Server.IntegrationTests", "..\test\ERNI.PBA.Server.IntegrationTests\ERNI.PBA.Server.IntegrationTests.csproj", "{1053E5F8-3B6F-4BE0-9E08-3ABE486742D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERNI.PBA.Test.TestHarness", "..\test\ERNI.PBA.Test.TestHarness\ERNI.PBA.Test.TestHarness.csproj", "{6FD888B8-7F9D-4300-A5C0-50FCEAF55706}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERNI.PBA.Server.TestHarness", "..\test\ERNI.PBA.Server.TestHarness\ERNI.PBA.Server.TestHarness.csproj", "{EB41967E-18AA-41B6-9FCB-9A6F2FE3F8D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERNI.PBA.Test.IntegrationTests", "..\test\ERNI.PBA.Test.IntegrationTests\ERNI.PBA.Test.IntegrationTests.csproj", "{B8E44C6C-1860-42C4-A0A4-15CAFCFC6A25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,11 +72,21 @@ Global
 		{EB41967E-18AA-41B6-9FCB-9A6F2FE3F8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB41967E-18AA-41B6-9FCB-9A6F2FE3F8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB41967E-18AA-41B6-9FCB-9A6F2FE3F8D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD888B8-7F9D-4300-A5C0-50FCEAF55706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD888B8-7F9D-4300-A5C0-50FCEAF55706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD888B8-7F9D-4300-A5C0-50FCEAF55706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD888B8-7F9D-4300-A5C0-50FCEAF55706}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E44C6C-1860-42C4-A0A4-15CAFCFC6A25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E44C6C-1860-42C4-A0A4-15CAFCFC6A25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E44C6C-1860-42C4-A0A4-15CAFCFC6A25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E44C6C-1860-42C4-A0A4-15CAFCFC6A25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{6FD888B8-7F9D-4300-A5C0-50FCEAF55706} = {E768A552-BDF9-4F5A-BE69-A9CC2A729B0F}
+		{B8E44C6C-1860-42C4-A0A4-15CAFCFC6A25} = {E768A552-BDF9-4F5A-BE69-A9CC2A729B0F}
 		{AC692FDB-F1F9-4A45-B2E7-5979E7712982} = {07039F70-131C-45FF-A49B-7EFEF3C22DFA}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution

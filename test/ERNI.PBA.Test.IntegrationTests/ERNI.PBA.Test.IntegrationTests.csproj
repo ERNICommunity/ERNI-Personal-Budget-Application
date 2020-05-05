@@ -13,4 +13,9 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\server\ERNI.PBA.Server.DataAccess\ERNI.PBA.Server.DataAccess.csproj" />
+    <ProjectReference Include="..\ERNI.PBA.Test.TestHarness\ERNI.PBA.Test.TestHarness.csproj" />
+  </ItemGroup>
+
 </Project>
