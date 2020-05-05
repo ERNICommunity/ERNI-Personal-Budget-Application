@@ -26,6 +26,7 @@
         </button>
     </div>
     <div class="modal-body">
+        <app-alert id="addOtherBudget"></app-alert>
         <p>
             You are going to set budgets in year {{year}} for users without budget.
         </p>
@@ -58,8 +59,9 @@
         </div>
     </div>
     <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)=close()>Close</button>
         <button type="button" [disabled]="title.invalid || budgetAmount.invalid || selectedUser.invalid"
-            class="btn btn-primary" (click)="c(setBudgetsForYear())">
+            class="btn btn-primary" (click)="setBudgetsForYear()">
             Set
         </button>
     </div>
