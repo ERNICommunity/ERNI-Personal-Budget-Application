@@ -4,7 +4,7 @@ namespace ERNI.PBA.Test.TestHarness.Services
 {
     internal class IdentityService : IIdentityService
     {
-        public AzureIdentity AzureIdentity { get; private set; } = AzureIdentity.Default;
+        public AzureIdentity AzureIdentity { get; private set; } = AzureIdentity.Admin;
 
         public void SetIdentity(AzureIdentity azureIdentity)
         {

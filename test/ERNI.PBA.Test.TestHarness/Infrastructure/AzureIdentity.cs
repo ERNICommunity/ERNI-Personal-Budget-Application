@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using ERNI.PBA.Server.Domain.Security;
 using ERNI.PBA.Test.TestHarness.Authentication;
 
@@ -6,7 +7,7 @@ namespace ERNI.PBA.Test.TestHarness.Infrastructure
 {
     public class AzureIdentity
     {
-        public static AzureIdentity Default => new AzureIdentity
+        public static AzureIdentity Admin => new AzureIdentity
         {
             FirstName = "Joe",
             LastName = "Doe",
@@ -30,16 +31,35 @@ namespace ERNI.PBA.Test.TestHarness.Infrastructure
 
         public ClaimsIdentity ToIdentity()
         {
-            return new ClaimsIdentity(
-                new[]
-                {
-                    new Claim(Claims.FirstName, FirstName),
-                    new Claim(Claims.LastName, LastName),
-                    new Claim(Claims.UserName, UserName),
-                    new Claim(Claims.UniqueIndetifier, UniqueIndetifier),
-                    new Claim(Claims.Role, Role),
-                    new Claim(Claims.Id, Id.ToString())
-                }, Constants.TestAuthenticateScheme);
+            var claims = new List<Claim> { new Claim(Claims.Id, Id.ToString()) };
+
+            if (!string.IsNullOrWhiteSpace(FirstName))
+            {
+                claims.Add(new Claim(Claims.FirstName, FirstName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(LastName))
+            {
+                claims.Add(new Claim(Claims.LastName, LastName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(UserName))
+            {
+                claims.Add(new Claim(Claims.UserName, UserName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(UniqueIndetifier))
+            {
+                claims.Add(new Claim(Claims.UniqueIndetifier, UniqueIndetifier));
+            }
+
+            if (!string.IsNullOrWhiteSpace(Role))
+            {
+                claims.Add(new Claim(Claims.Role, Role));
+                claims.Add(new Claim(ClaimTypes.Role, Role));
+            }
+
+            return new ClaimsIdentity(claims, Constants.TestAuthenticateScheme);
         }
     }
 }
