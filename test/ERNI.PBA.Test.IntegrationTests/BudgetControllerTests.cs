@@ -18,7 +18,7 @@ namespace ERNI.PBA.Test.IntegrationTests
 
         [Fact]
         [Trait(Category, CI)]
-        public async Task GetEmployeeCode()
+        public async Task GetCurrentUserBudgetByYear_Then_ReturnsEmptyList()
         {
             // Act
             var budgetOutputModels = await Client.GetCurrentUserBudgetByYear(2020);

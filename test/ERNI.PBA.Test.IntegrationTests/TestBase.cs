@@ -21,7 +21,7 @@ namespace ERNI.PBA.Test.IntegrationTests
 
             _identityService = Host.Services.GetService<IIdentityService>();
 
-            SetIdentity(AzureIdentity.Default);
+            SetIdentity(AzureIdentity.Admin);
         }
 
         protected ClientFacade Client { get; }
