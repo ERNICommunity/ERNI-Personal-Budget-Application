@@ -6,9 +6,9 @@ namespace ERNI.PBA.Test.TestHarness.Extensions
 {
     public static class TestAuthenticationExtensions
     {
-        public static AuthenticationBuilder AddTestAuth(this AuthenticationBuilder builder, Action<TestAuthenticationOptions> configureOptions)
+        public static AuthenticationBuilder AddTestAuth(this AuthenticationBuilder builder, Action<AuthenticationSchemeOptions> configureOptions)
         {
-            return builder.AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>(Constants.TestAuthenticateScheme, Constants.TestAuthenticateSchemeName, configureOptions);
+            return builder.AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(Constants.TestAuthenticateScheme, Constants.TestAuthenticateSchemeName, configureOptions);
         }
     }
 }
