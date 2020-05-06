@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using ERNI.PBA.Server.Host;
 using ERNI.PBA.Test.TestHarness.Authentication;
 using ERNI.PBA.Test.TestHarness.Extensions;
+using ERNI.PBA.Test.TestHarness.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,7 @@ namespace ERNI.PBA.Test.TestHarness.Infrastructure
         {
             webHostBuilder.ConfigureServices(services =>
             {
+                services.AddSingleton<IIdentityService, IdentityService>();
                 services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = Constants.TestAuthenticateScheme;
