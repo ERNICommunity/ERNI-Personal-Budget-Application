@@ -17,6 +17,20 @@
             {{httpResponseError}}
         </font>
     </div>
+    <h5>Uploaded files</h5>
+    <div class="fileLists">
+        <div *ngIf="images?.length == 0">No files yet</div>
+        <ul class="pl-0">
+            <li *ngFor="let image of images">
+                <div class="row mt-2">
+                    <div class="col-md-8">{{image.name}}</div>
+                    <button class="col-md-3 btn btn-outline-primary"
+                        (click)="download(image.id, image.name)">Download</button>
+                    <a #downloadLink></a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <div class="modal-footer">
