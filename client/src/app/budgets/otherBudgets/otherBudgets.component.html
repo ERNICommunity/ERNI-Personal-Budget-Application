@@ -109,6 +109,28 @@
                     </button>
                 </td>
             </ng-template>
+            <td>
+                <button class="btn btn-danger" (click)="openModal(deleteBudgetModalTemplate)">
+                    Delete
+                </button>
+            </td>
+            <ng-template #deleteBudgetModalTemplate let-c="close">
+                <div class="modal-body float-centre">
+                    Are you sure you want to delete {{budget.title}} budget ?
+                </div>
+                <div class="modal-footer">
+                    <button
+                            class="btn btn-danger mr-1"
+                            (click)="c(deleteBudget(budget.id))">
+                            Yes
+                        </button>
+                        <button
+                            class="btn btn-primary"
+                            (click)="c()">
+                            No
+                        </button>
+                </div>
+            </ng-template>
         </tr>
     </tbody>
 </table>

@@ -127,8 +127,24 @@ export class OtherBudgetsComponent implements OnInit {
         }
     }
 
-    openAmountModal(content) {
+    deleteBudget(budgetId : number)
+    {
+        this.budgetService.deleteBudget(budgetId).subscribe(() => this.getActiveUsersBudgets(this.selectedYear)
+        ,err => {
+            this.alertService.error("Error while deleting budget: " + JSON.stringify(err.error));
+        });
+        this.getActiveUsersBudgets(this.selectedYear);
+    }
+
+    openAmountModal(content)
+    {
         this.setBudgetToDefault();
+        this.openModal(content);
+    }
+
+    openModal(content) {
+        
+        this.modalService.open(content, { centered: true, backdrop: 'static' });
         this._modal = this.modalService.open(content, { centered: true, backdrop: 'static' });
     }
     

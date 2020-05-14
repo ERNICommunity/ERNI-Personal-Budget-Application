@@ -49,4 +49,9 @@ export class BudgetService {
     public getUsersAvailableForBudgetType(budgetType: number): Observable<any> {
         return this.http.get<User>(this.configService.apiUrlBase + this.url + 'usersAvailableForBudgetType/' + budgetType, this.serviceHelper.getHttpOptions());
     }
+
+    public deleteBudget(id : number): Observable<any>
+    {
+        return this.http.delete(this.configService.apiUrlBase + this.url + id, this.serviceHelper.getHttpOptions());
+    }
 }

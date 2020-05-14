@@ -32,5 +32,7 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
         Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken);
 
         Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken);
+
+        void DeleteBudget(Budget budget);
     }
 }
