@@ -33,6 +33,7 @@ export class OtherBudgetsComponent implements OnInit {
     rlao: object;
     disableSetOrEditBudgets: boolean;
     private _searchTerm: string;
+    private _modal: any;
 
     get searchTerm(): string {
         return this._searchTerm;
@@ -109,22 +110,31 @@ export class OtherBudgetsComponent implements OnInit {
     setBudgetsForYear(): void {
         if (this.selectedUserId == 0) {
             this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType)
-            .subscribe(() => this.getActiveUsersBudgets(this.selectedYear), 
+            .subscribe(() =>
+            {
+                this.getActiveUsersBudgets(this.selectedYear);
+                this._modal.close();
+            }, 
             err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error));
+                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
             });
         } else {
             this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType)
             .subscribe(() => this.getActiveUsersBudgets(this.selectedYear),
             err => {
-                this.alertService.error("Error while creating request: " + JSON.stringify(err.error));
+                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
             });
         }
     }
 
     openAmountModal(content) {
         this.setBudgetToDefault();
-        this.modalService.open(content, { centered: true, backdrop: 'static' });
+        this._modal = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    }
+    
+    close()
+    {
+        this._modal.close();
     }
 
     setBudgetToDefault()
