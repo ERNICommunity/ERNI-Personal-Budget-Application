@@ -26,6 +26,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IUpdateBudgetCommand> _updateBudgetCommand;
         private readonly Lazy<ITransferBudgetCommand> _transferBudgetCommand;
         private readonly Lazy<IDeleteBudgetCommand> _deleteBudgetCommand;
+        private readonly Lazy<IGetBudgetRequestsCountQuery> _getBudgetRequestCountQuery;
 
         public BudgetController(
             Lazy<IGetBudgetQuery> getBudgetQuery,
@@ -37,7 +38,8 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<ICreateBudgetCommand> createBudgetCommand,
             Lazy<IUpdateBudgetCommand> updateBudgetCommand,
             Lazy<ITransferBudgetCommand> transferBudgetCommand,
-            Lazy<IDeleteBudgetCommand> deleteBudgetCommand)
+            Lazy<IDeleteBudgetCommand> deleteBudgetCommand,
+            Lazy<IGetBudgetRequestsCountQuery> getBudgetRequestCountQuery)
         {
             _getBudgetQuery = getBudgetQuery;
             _getCurrentUserBudgetByYearQuery = getCurrentUserBudgetByYearQuery;
@@ -49,6 +51,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             _updateBudgetCommand = updateBudgetCommand;
             _transferBudgetCommand = transferBudgetCommand;
             _deleteBudgetCommand = deleteBudgetCommand;
+            _getBudgetRequestCountQuery = getBudgetRequestCountQuery;
         }
 
         [HttpGet("{budgetId}")]
@@ -135,6 +138,15 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> GetBudgetTypes()
         {
             return await Task.FromResult(Ok(BudgetType.Types));
+        }
+
+        [HttpGet("{id}/requestsCount")]
+        [Authorize]
+        public async Task<IActionResult> GetBudgetTotalRequestCount(int id, CancellationToken cancellationToken)
+        {
+            var count = await _getBudgetRequestCountQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
+
+            return Ok(count);
         }
 
         [HttpDelete("{id}")]
