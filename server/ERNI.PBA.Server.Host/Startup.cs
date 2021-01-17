@@ -8,6 +8,7 @@ using Autofac;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
 using ERNI.PBA.Server.Domain.Security;
+using ERNI.PBA.Server.Host.Extensions;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
@@ -100,7 +101,6 @@ namespace ERNI.PBA.Server.Host
                         }
                     };
                 });
-
             services.AddAuthorization();
 
             services.AddQuartz(typeof(DailyMailNotifications), Configuration["Crons:EmailCron"]);
@@ -158,6 +158,13 @@ namespace ERNI.PBA.Server.Host
             ConfigureModules(builder);
         }
 
+        public void ConfigureIntegrationTestingContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<MailServiceMock>().As<IMailService>().InstancePerDependency();
+
+            ConfigureModules(builder);
+        }
+
         public void ConfigureModules(ContainerBuilder builder)
         {
             builder.RegisterModule(new ApplicationModule());
@@ -175,7 +182,7 @@ namespace ERNI.PBA.Server.Host
 
             app.UseAuthentication();
 
-            if (!env.IsDevelopment())
+            if (!env.IsDevelopment() && !env.IsInt())
             {
                 app.UseQuartz();
             }
