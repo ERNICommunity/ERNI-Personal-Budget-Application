@@ -6,11 +6,14 @@ using System.Reflection;
 using System.Security.Claims;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
 using ERNI.PBA.Server.Domain.Security;
+using ERNI.PBA.Server.ExcelExport;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
+using ERNI.Rmt.ExcelExport;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -161,6 +164,9 @@ namespace ERNI.PBA.Server.Host
         public void ConfigureModules(ContainerBuilder builder)
         {
             builder.RegisterModule(new ApplicationModule());
+
+            builder.RegisterType<DownloadTokenManager>().As<IDownloadTokenManager>().SingleInstance();
+            builder.RegisterType<ExcelExportService>().As<IExcelExportService>().InstancePerLifetimeScope();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

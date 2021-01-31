@@ -8,6 +8,7 @@ import { UserService } from '../../services/user.service';
 import { RequestState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ExportService } from '../../services/export.service';
 
 @Component({
     selector: 'app-request-list',
@@ -54,6 +55,7 @@ export class RequestListComponent implements OnInit {
         private route: ActivatedRoute,
         private modalService: NgbModal,
         private config: ConfigService,
+        private exportService: ExportService
     ) {
 
         this.years = [];
@@ -127,6 +129,13 @@ export class RequestListComponent implements OnInit {
         }
 
         return this.requestFilter == this.requestFilterType.Pending;
+    }
+
+    export(month: number, year: number) {
+        console.log(month);
+        console.log(year);
+        alert('Exporting ' + month + ' ' + year);
+        this.exportService.downloadExport(month, year);
     }
 
     openDeleteConfirmationModal(content) {
