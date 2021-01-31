@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>7.3</LangVersion>
     <UserSecretsId>4624c157-9deb-48cc-9fe5-023a92045204</UserSecretsId>
-	  <Version>0.0.0.1</Version>
+	  <Version>0.0.0.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
