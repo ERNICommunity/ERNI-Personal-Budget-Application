@@ -47,6 +47,7 @@ import { InvoiceImageService } from './services/invoice-image.service';
 import { UserCodesComponent } from './userCodes/user-codes.component';
 import { UserCodeService } from './services/user-code.service';
 import { TeamBudgetService } from './services/team-budget.service';
+import { ExportService } from './services/export.service';
 
 @NgModule({
     declarations: [
@@ -90,6 +91,7 @@ import { TeamBudgetService } from './services/team-budget.service';
         ConfigService,
         AuthenticationGuard,
         ServiceHelper,
+        ExportService,
         RequestService,
         UserService,
         BudgetService,

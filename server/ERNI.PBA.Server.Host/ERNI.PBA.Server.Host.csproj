@@ -46,6 +46,7 @@
     <ProjectReference Include="..\ERNI.PBA.Server.Business\ERNI.PBA.Server.Business.csproj" />
     <ProjectReference Include="..\ERNI.PBA.Server.DataAccess\ERNI.PBA.Server.DataAccess.csproj" />
     <ProjectReference Include="..\ERNI.PBA.Server.Domain\ERNI.PBA.Server.Domain.csproj" />
+    <ProjectReference Include="..\ERNI.PBA.Server.ExcelExport\ERNI.Rmt.ExcelExport.csproj" />
     <ProjectReference Include="..\ERNI.PBA.Server.Graph\ERNI.PBA.Server.Graph.csproj" />
   </ItemGroup>
 

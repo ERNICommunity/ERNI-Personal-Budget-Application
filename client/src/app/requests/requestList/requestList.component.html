@@ -41,6 +41,28 @@
     </li>
 </ul>
 
+<div class="row">
+    <div class="col">
+        <div ngbDropdown class="d-inline-block">
+            <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>Export</button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <button (click)="export(1, selectedYear)" ngbDropdownItem>January</button>
+                <button (click)="export(2, selectedYear)" ngbDropdownItem>February</button>
+                <button (click)="export(3, selectedYear)" ngbDropdownItem>March</button>
+                <button (click)="export(4, selectedYear)" ngbDropdownItem>April</button>
+                <button (click)="export(5, selectedYear)" ngbDropdownItem>May</button>
+                <button (click)="export(6, selectedYear)" ngbDropdownItem>June</button>
+                <button (click)="export(7, selectedYear)" ngbDropdownItem>July</button>
+                <button (click)="export(8, selectedYear)" ngbDropdownItem>August</button>
+                <button (click)="export(9, selectedYear)" ngbDropdownItem>September</button>
+                <button (click)="export(10, selectedYear)" ngbDropdownItem>October</button>
+                <button (click)="export(11, selectedYear)" ngbDropdownItem>November</button>
+                <button (click)="export(12, selectedYear)" ngbDropdownItem>December</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <br>
 <input
     class="form-control col-md-6"

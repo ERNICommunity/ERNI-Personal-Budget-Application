@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
+using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -77,6 +78,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             {
                 request.Transactions.Add(transaction);
             }
+        }
+
+        public Task<Request[]> GetRequests(int year, int month, BudgetTypeEnum budgetType)
+        {
+            return _context.Requests.Where(_ => _.Budget.Year == year && _.Budget.BudgetType == budgetType)
+                .Include(_ => _.User)
+                .Include(_ => _.Transactions)
+                .ToArrayAsync();
         }
     }
 }

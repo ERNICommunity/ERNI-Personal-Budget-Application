@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
@@ -18,6 +19,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
         Task AddRequest(Request request);
 
         Task AddRequests(IEnumerable<Request> requests);
+
+        Task<Request[]> GetRequests(int year, int month, BudgetTypeEnum budgetType);
 
         Task DeleteRequest(Request request);
 

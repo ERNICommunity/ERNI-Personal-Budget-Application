@@ -24,7 +24,7 @@ import { RequestDetailModalComponent } from './requests/requestDetail/requestDet
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
 import { UserCodesComponent } from './userCodes/user-codes.component';
 
-const currentYear = "2020"; // = (new Date()).getFullYear();
+const currentYear = "2021"; // = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
     { path: '', redirectTo: 'my-budget', pathMatch: 'full' },
