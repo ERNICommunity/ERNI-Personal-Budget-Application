@@ -13,10 +13,27 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build server/ERNI.PBA.Server.Host/ERNI.PBA.Server.Host.csproj --configuration $(buildConfiguration)
+- task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'server/ERNI.PBA.Server.Host/ERNI.PBA.Server.Host.csproj'
+    arguments: '-c Release -r linux-x64 -o publish'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: ArchiveFiles@2
+  displayName: 'Zip build artifacts'
+  inputs:
+    rootFolderOrFile: 'publish'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
 
 - task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
