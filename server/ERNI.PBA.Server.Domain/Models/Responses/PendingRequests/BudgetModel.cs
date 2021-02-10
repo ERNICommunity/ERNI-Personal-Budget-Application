@@ -4,10 +4,10 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.PendingRequests
 {
     public class BudgetModel
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public BudgetTypeEnum Type { get; set; }
+        public BudgetTypeEnum Type { get; init; }
 
-        public string Title { get; set; }
+        public string Title { get; init; }
     }
 }

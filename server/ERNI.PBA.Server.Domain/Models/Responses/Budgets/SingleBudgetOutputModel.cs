@@ -5,16 +5,16 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.Budgets
 {
     public class SingleBudgetOutputModel
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public string Title { get; set; }
+        public string Title { get; init; }
 
-        public int Year { get; set; }
+        public int Year { get; init; }
 
-        public decimal Amount { get; set; }
+        public decimal Amount { get; init; }
 
-        public BudgetTypeEnum Type { get; set; }
+        public BudgetTypeEnum Type { get; init; }
 
-        public User User { get; set; }
+        public User User { get; init; }
     }
 }
