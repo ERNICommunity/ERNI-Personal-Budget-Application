@@ -24,7 +24,6 @@ namespace ERNI.PBA.Server.Host
                     var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
                     context.Database.Migrate();
-                    DbSeed.Seed(context);
                 }
 
                 host.Run();
