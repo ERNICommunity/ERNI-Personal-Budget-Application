@@ -45,9 +45,9 @@ namespace ERNI.Rmt.ExcelExport
                     {
                         worksheet.Column(i).AdjustToContents();
                     }
-
-                    workbook.SaveAs(stream);
                 }
+
+                workbook.SaveAs(stream);
             }
         }
     }
