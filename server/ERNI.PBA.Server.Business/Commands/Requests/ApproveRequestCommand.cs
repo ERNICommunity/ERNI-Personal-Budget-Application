@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -42,6 +43,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             }
 
             request.State = RequestState.Approved;
+            request.ApprovedDate = DateTime.Now;
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
