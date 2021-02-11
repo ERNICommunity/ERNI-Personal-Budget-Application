@@ -80,11 +80,15 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             }
         }
 
-        public Task<Request[]> GetRequests(int year, int month, BudgetTypeEnum budgetType)
+        public Task<Transaction[]> GetRequests(int year, int month, BudgetTypeEnum budgetType)
         {
-            return _context.Requests.Where(_ => _.Budget.Year == year && _.Budget.BudgetType == budgetType)
+            return _context
+                .Transactions
+                .Where(_ => _.Request.ApprovedDate.Value.Year == year
+                    && _.Request.ApprovedDate.Value.Month == month
+                    && _.Budget.BudgetType == budgetType)
                 .Include(_ => _.User)
-                .Include(_ => _.Transactions)
+                .Include(_ => _.Request)
                 .ToArrayAsync();
         }
     }

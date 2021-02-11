@@ -20,7 +20,7 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 
         Task AddRequests(IEnumerable<Request> requests);
 
-        Task<Request[]> GetRequests(int year, int month, BudgetTypeEnum budgetType);
+        Task<Transaction[]> GetRequests(int year, int month, BudgetTypeEnum budgetType);
 
         Task DeleteRequest(Request request);
 
