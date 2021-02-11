@@ -132,9 +132,6 @@ export class RequestListComponent implements OnInit {
     }
 
     export(month: number, year: number) {
-        console.log(month);
-        console.log(year);
-        alert('Exporting ' + month + ' ' + year);
         this.exportService.downloadExport(month, year);
     }
 
