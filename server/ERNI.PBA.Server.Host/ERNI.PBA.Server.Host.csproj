@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>7.3</LangVersion>
     <UserSecretsId>4624c157-9deb-48cc-9fe5-023a92045204</UserSecretsId>
 	  <Version>0.0.0.4</Version>
   </PropertyGroup>
