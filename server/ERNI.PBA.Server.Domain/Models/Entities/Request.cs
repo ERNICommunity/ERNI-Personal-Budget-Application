@@ -26,6 +26,8 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public DateTime CreateDate { get; set; }
 
+        public DateTime? ApprovedDate { get; set; }
+
         public RequestState State { get; set; }
 
         public Budget Budget { get; set; }
