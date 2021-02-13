@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ERNI.PBA.Server.Business;
+using ERNI.PBA.Server.Business.Queries.Employees;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Host.Filters;
 
@@ -24,6 +25,8 @@ namespace ERNI.PBA.Server.Host
         private void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<ApiExceptionFilter>().AsSelf().InstancePerDependency();
+
+            builder.RegisterType<SyncUserObjectIdCommand>().AsSelf().InstancePerDependency();
         }
     }
 }

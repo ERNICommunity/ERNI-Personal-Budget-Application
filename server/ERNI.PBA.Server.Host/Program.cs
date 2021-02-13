@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using Autofac.Extensions.DependencyInjection;
+using ERNI.PBA.Server.Business.Queries.Employees;
 using ERNI.PBA.Server.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,9 @@ namespace ERNI.PBA.Server.Host
                     var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
                     context.Database.Migrate();
+
+                    var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
+                    cmd.Execute().Wait();
                 }
 
                 host.Run();
