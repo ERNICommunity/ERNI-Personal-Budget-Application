@@ -1,17 +1,22 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { AuthenticationGuard } from './authentication.guard';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { AuthenticationService } from '../authentication.service';
 
 @Injectable()
-export class ViewerGuard extends AuthenticationGuard {
-
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-
-        if(super.canActivate)
-        {
-            return this.user.isViewer || this.user.isAdmin;
-        }
+export class ViewerGuard implements CanActivate {
+    constructor(private auth: AuthenticationService) {}
+  
+    canActivate(
+      route: ActivatedRouteSnapshot,
+      state: RouterStateSnapshot
+    ): Observable<boolean|UrlTree>|Promise<boolean|UrlTree>|boolean|UrlTree {
+      const userInfo = this.auth.userInfo;
+  
+      if (!userInfo) {
         return false;
+      }
+  
+      return userInfo.isUser || userInfo.isAdmin;
     }
-}
+  }

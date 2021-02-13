@@ -1,20 +1,20 @@
 import { Component, DoCheck, OnInit } from '@angular/core';
-import { AdalService } from './services/adal.service';
 import { UserService } from './services/user.service';
 import { Router, NavigationStart, NavigationCancel, NavigationError, NavigationEnd } from '@angular/router';
 import { BusyIndicatorService } from './services/busy-indicator.service';
 import { User } from './model/user';
+import { AuthenticationService } from './services/authentication.service';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements DoCheck {
+export class AppComponent {
     user: User;
     initialized: boolean;
 
-    constructor(public adalService: AdalService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
+    constructor(public authService: AuthenticationService, private userService: UserService, private router: Router, public busyIndicatorService: BusyIndicatorService) {
         this.initialized = false;
         this.user = new User();
 
@@ -37,21 +37,7 @@ export class AppComponent implements DoCheck {
         });
     }
 
-    ngDoCheck() {
-        if (!this.initialized && this.adalService.userInfo) {
-            this.getIsAdminOrSuperior();
-            this.initialized = true;
-        }
-    }
-
-    getIsAdminOrSuperior(): void {
-        var _this = this;
-        this.userService.getCurrentUser().subscribe(u => {
-            _this.user = u;
-        });
-    }
-
-    logout() {
-        this.adalService.logout();
+    async logout(): Promise<void> {
+        await this.authService.logout();
     }
 }

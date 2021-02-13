@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { OAuthCallbackHandler } from './login-callback/oauth-callback.guard';
-import { OAuthCallbackComponent } from './login-callback/oauth-callback.component';
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
@@ -16,43 +14,43 @@ import { OtherBudgetsDetailComponent } from './budgets/otherBudgetsDetail/otherB
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { RequestMassComponent } from './requests/requestMass/requestMass.component';
-import { AdminGuard } from './services/guards/admin.guard';
 import { ViewerGuard } from './services/guards/viewer.guard';
-import { AuthenticationGuard } from './services/guards/authentication.guard';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
 import { UserCodesComponent } from './userCodes/user-codes.component';
+import { AdminRoleGuard } from './services/guards/admin-role.guard';
+import { MsalGuard } from '@azure/msal-angular';
+import { UserRoleGuard } from './services/guards/user-role.guard';
 
 const currentYear = "2021"; // = (new Date()).getFullYear();
 
 export const rootRouterConfig: Routes = [
-    { path: '', redirectTo: 'my-budget', pathMatch: 'full' },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
-    { path: 'id_token', component: OAuthCallbackComponent, canActivate: [OAuthCallbackHandler] },
     {
-        path: 'other-budgets', canActivate: [AdminGuard],
+        path: 'other-budgets', canActivate: [AdminRoleGuard],
         children: [
             { path: '', redirectTo: currentYear + "/1", pathMatch: 'full' },
-            { path: 'edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminGuard] },
-            { path: ':year/:budgetType', component: OtherBudgetsComponent, canActivate: [AdminGuard] }
+            { path: 'edit/:id', component: OtherBudgetsDetailComponent, canActivate: [AdminRoleGuard] },
+            { path: ':year/:budgetType', component: OtherBudgetsComponent, canActivate: [AdminRoleGuard] }
         ]
     },
     {
-        path: 'my-budget', canActivate: [AuthenticationGuard],
+        path: 'my-budget', canActivate: [MsalGuard, UserRoleGuard],
         children: [
             { path: '', redirectTo: currentYear, pathMatch: 'full' },
             {
-                path: ':year', component: MyBudgetComponent, canActivate: [AuthenticationGuard],
+                path: ':year', component: MyBudgetComponent, canActivate: [MsalGuard, UserRoleGuard],
                 children: [
-                    { path: 'create-request/:budgetId', component: NewRequestModalComponent, canActivate: [AuthenticationGuard] },
-                    { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [AuthenticationGuard] },
-                    { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [AuthenticationGuard] }
+                    { path: 'create-request/:budgetId', component: NewRequestModalComponent, canActivate: [MsalGuard, UserRoleGuard] },
+                    { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [MsalGuard, UserRoleGuard] },
+                    { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [MsalGuard, UserRoleGuard] }
                 ]
             }
         ]
     },
-    { path: 'create-request', component: RequestAddComponent, canActivate: [AuthenticationGuard] },
+    { path: 'create-request', component: RequestAddComponent, canActivate: [MsalGuard, UserRoleGuard] },
     {
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
         children: [
@@ -61,44 +59,44 @@ export const rootRouterConfig: Routes = [
                 path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard, UserRoleGuard] },
                 ]
             },
             {
                 path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard, UserRoleGuard] },
                 ]
             },
             {
                 path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard, UserRoleGuard] },
                 ]
             },
             {
                 path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [AuthenticationGuard] },
+                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard, UserRoleGuard] },
                 ]
             }
         ]
     },
     {
-        path: 'users', component: UsersComponent, canActivate: [AdminGuard],
+        path: 'users', component: UsersComponent, canActivate: [AdminRoleGuard],
         children: [
             { path: '', redirectTo: 'active', pathMatch: 'full' },
-            { path: 'active', component: UserListComponent, data: { filter: UserState.Active }, canActivate: [AuthenticationGuard] },
-            { path: 'new', component: UserListComponent, data: { filter: UserState.New }, canActivate: [AuthenticationGuard] },
-            { path: 'inactive', component: UserListComponent, data: { filter: UserState.Inactive }, canActivate: [AuthenticationGuard] },
-            { path: 'detail/:id', component: UserDetailComponent, canActivate: [AuthenticationGuard] },
-            { path: 'create', component: CreateUserComponent, canActivate: [AuthenticationGuard] }
+            { path: 'active', component: UserListComponent, data: { filter: UserState.Active }, canActivate: [MsalGuard, UserRoleGuard] },
+            { path: 'new', component: UserListComponent, data: { filter: UserState.New }, canActivate: [MsalGuard, UserRoleGuard] },
+            { path: 'inactive', component: UserListComponent, data: { filter: UserState.Inactive }, canActivate: [MsalGuard, UserRoleGuard] },
+            { path: 'detail/:id', component: UserDetailComponent, canActivate: [MsalGuard, UserRoleGuard] },
+            { path: 'create', component: CreateUserComponent, canActivate: [MsalGuard, UserRoleGuard] }
         ]
     },
-    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminGuard] },
-    { path: 'usercodes', component: UserCodesComponent, canActivate: [AuthenticationGuard] }
+    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminRoleGuard] },
+    { path: 'usercodes', component: UserCodesComponent, canActivate: [MsalGuard, UserRoleGuard] }
 ];
 

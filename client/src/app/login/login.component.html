@@ -1,15 +1,7 @@
-<div *ngIf="!isLoggedIn">
+<div>
     <button
         (click)="login()"
         class="btn btn-primary">
         Login with my ERNI account
-    </button>
-</div>
-
-<div *ngIf="isLoggedIn">
-    <button
-        (click)="logout()"
-        class="btn btn-primary">
-        Logout
     </button>
 </div>
