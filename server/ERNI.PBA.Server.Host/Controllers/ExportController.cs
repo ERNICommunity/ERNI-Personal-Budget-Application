@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
+using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("token")]
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult GetToken() => Ok(_downloadTokenManager.GenerateToken(DateTime.Now.AddSeconds(10)));
 
         [HttpGet("requests/{token}/{year}/{month}")]
