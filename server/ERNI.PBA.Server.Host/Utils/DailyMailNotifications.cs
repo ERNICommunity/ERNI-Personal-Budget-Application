@@ -63,7 +63,7 @@ namespace ERNI.PBA.Server.Host.Utils
         private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
         {
             var pendingRequests = await _requestRepository.GetRequests(
-                _ => _.Year == DateTime.Now.Year && (_.State == RequestState.ApprovedBySuperior
+                _ => _.Year == DateTime.Now.Year && (_.State == RequestState.Approved
                 || _.State == RequestState.Pending), cancellationToken);
 
             if (!pendingRequests.Any())
