@@ -25,6 +25,13 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
+        public Task<User> GetUser(Guid id, CancellationToken cancellationToken)
+        {
+            return _context.Users.Where(_ => _.ObjectId == id)
+                .Include(u => u.Superior)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public Task<User> GetUser(string sub, CancellationToken cancellationToken)
         {
             return _context.Users.Where(_ => _.UniqueIdentifier == sub)
@@ -81,6 +88,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public void Update(User user)
         {
             _context.Entry(user).State = EntityState.Modified;
+        }
+
+        public Task<User[]> GetSubordinateUsers(Guid superiorId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
