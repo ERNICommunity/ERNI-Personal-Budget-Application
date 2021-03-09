@@ -50,10 +50,10 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Request with id {parameter.Id} not found.");
             }
 
-            if (userId != request.UserId)
-            {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
-            }
+            //if (userId != request.UserId)
+            //{
+            //    throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
+            //}
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
             if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))

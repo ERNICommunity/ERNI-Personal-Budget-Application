@@ -30,10 +30,10 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Budget with id {parameter} not found");
             }
 
-            if (!principal.IsInRole(Roles.Admin) && principal.GetId() != budget.UserId)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
+            //if (!principal.IsInRole(Roles.Admin) && principal.GetId() != budget.UserId)
+            //{
+            //    throw AppExceptions.AuthorizationException();
+            //}
 
             return new SingleBudgetOutputModel
             {

@@ -39,10 +39,10 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Viewer) && principal.GetId() != request.UserId)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
+            //if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Viewer) && principal.GetId() != request.UserId)
+            //{
+            //    throw AppExceptions.AuthorizationException();
+            //}
 
             var imagesName = await _invoiceImageRepository.GetInvoiceImages(parameter, cancellationToken);
             return imagesName.Select(image => new ImageOutputModel

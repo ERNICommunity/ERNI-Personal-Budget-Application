@@ -19,15 +19,18 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public AddRequestCommand(
             IBudgetRepository budgetRepository,
             IRequestRepository requestRepository,
+            IUserRepository userRepository,
             IUnitOfWork unitOfWork)
         {
             _budgetRepository = budgetRepository;
             _requestRepository = requestRepository;
+            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -63,7 +66,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
-            var userId = principal.GetId();
+            var userId = (await _userRepository.GetUser(principal.GetId(), cancellationToken)).Id;
+
             var request = new Request
             {
                 BudgetId = budget.Id,

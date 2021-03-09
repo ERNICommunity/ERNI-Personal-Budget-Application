@@ -38,10 +38,10 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
             var requestId = parameter.RequestId;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
-            if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
+            //if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
+            //{
+            //    throw AppExceptions.AuthorizationException();
+            //}
 
             byte[] buffer;
             if (parameter.File == null)
