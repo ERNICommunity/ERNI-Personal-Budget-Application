@@ -23,6 +23,15 @@ steps:
     zipAfterPublish: false
     modifyOutputPath: false
 
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+
 - task: ArchiveFiles@2
   displayName: 'Zip build artifacts'
   inputs:
