@@ -14,12 +14,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetBudgetByYearQuery : Query<int, BudgetOutputModel[]>, IGetBudgetByYearQuery
+    public class GetTeamBudgetByYearQuery : Query<int, BudgetOutputModel[]>, IGetTeamBudgetByYearQuery
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetBudgetByYearQuery(
+        public GetTeamBudgetByYearQuery(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository)
         {

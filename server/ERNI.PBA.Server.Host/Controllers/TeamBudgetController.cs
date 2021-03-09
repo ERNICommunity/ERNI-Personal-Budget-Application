@@ -11,9 +11,9 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class TeamBudgetController : Controller
     {
-        private readonly Lazy<IGetBudgetByYearQuery> _getBudgetByYearQuery;
+        private readonly Lazy<IGetTeamBudgetByYearQuery> _getBudgetByYearQuery;
 
-        public TeamBudgetController(Lazy<IGetBudgetByYearQuery> getBudgetByYearQuery)
+        public TeamBudgetController(Lazy<IGetTeamBudgetByYearQuery> getBudgetByYearQuery)
         {
             _getBudgetByYearQuery = getBudgetByYearQuery;
         }
