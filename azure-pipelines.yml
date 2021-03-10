@@ -26,7 +26,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: '**\*UnitTest*.csproj'
+    projects: 'server/**/*UnitTest*.csproj'
 
 - task: ArchiveFiles@2
   displayName: 'Zip build artifacts'
