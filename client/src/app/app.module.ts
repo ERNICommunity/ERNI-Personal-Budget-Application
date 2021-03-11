@@ -71,7 +71,7 @@ import { AuthenticationService } from './services/authentication.service';
   export function MSALInstanceFactory(): IPublicClientApplication {
     return new PublicClientApplication({
       auth: {
-        clientId: '106aed90-25b3-4d81-bbc0-9093d97668d9',
+        clientId: environment.clientId,
         redirectUri: environment.msalLoginRedirectUri,
         postLogoutRedirectUri: environment.msalLogoutRedirectUri,
         authority: 'https://login.microsoftonline.com/eb25818e-5bd5-49bf-99de-53e3e7b42630'
