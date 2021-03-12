@@ -91,7 +91,7 @@ namespace ERNI.PBA.Server.Host
                 new Request
                 {
                     Budget = budget,
-                    Title = _.ToString(),
+                    Title = _.ToString(CultureInfo.InvariantCulture),
                     Amount = ((_ * 1878) % 50) + 10,
                     Date = new DateTime(budget.Year, _, 5),
                     Category = categories[_ % categories.Count()]

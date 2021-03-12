@@ -40,7 +40,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
             var users = await f.GetUsers();
 
             var data = users
-                .Where(_ => _.UserPrincipalName.Contains("@"))
+                .Where(_ => _.UserPrincipalName.Contains("@", StringComparison.InvariantCulture))
                 .Select(_ => new AdUserOutputModel
                 {
                     LastName = _.Surname,
