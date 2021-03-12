@@ -58,7 +58,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{id}")]
+#pragma warning disable CA1721 // Property names should not match get methods
         public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
+#pragma warning restore CA1721 // Property names should not match get methods
         {
             var request = await _getRequestQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
