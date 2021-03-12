@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Domain.Enums;
@@ -89,9 +90,9 @@ namespace ERNI.PBA.Server.Host
                 {
                     Budget = budget,
                     Title = _.ToString(CultureInfo.InvariantCulture),
-                    Amount = ((_ * 1878) % 50) + 10,
+                    Amount = (_ * 1878 % 50) + 10,
                     Date = new DateTime(budget.Year, _, 5),
-                    Category = categories[_ % categories.Count()]
+                    Category = categories[_ % categories.Length]
                 }));
             }
 

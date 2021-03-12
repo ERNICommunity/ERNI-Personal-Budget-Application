@@ -1,4 +1,4 @@
-using ERNI.PBA.Server.Domain.Exceptions;
+﻿using ERNI.PBA.Server.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Host.Filters
 {
-    public class ApiExceptionFilter : ExceptionFilterAttribute
+    public sealed class ApiExceptionFilter : ExceptionFilterAttribute
     {
         public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger) => Logger = logger;
 
@@ -26,10 +26,12 @@ namespace ERNI.PBA.Server.Host.Filters
                     Detail = "Operation failed"
                 });
 
-                _logger.LogError($"Something went wrong: {context.Exception}");
+                Logger.LogError($"Something went wrong: {context.Exception}");
             }
 
             base.OnException(context);
         }
+
+        public ILogger<ApiExceptionFilter> Logger { get; }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
@@ -82,20 +83,20 @@ namespace ERNI.PBA.Server.Host
 
                             if (user != null)
                             {
-                                var claims = new List<Claim> { new Claim(Claims.Id, user.Id.ToString()) };
+                                var claims = new List<Claim> { new Claim(UserClaims.Id, user.Id.ToString(CultureInfo.InvariantCulture)) };
 
                                 if (user.IsAdmin)
                                 {
-                                    claims.Add(new Claim(Claims.Role, Roles.Admin));
+                                    claims.Add(new Claim(UserClaims.Role, Roles.Admin));
                                 }
 
                                 if (user.IsViewer)
                                 {
-                                    claims.Add(new Claim(Claims.Role, Roles.Viewer));
+                                    claims.Add(new Claim(UserClaims.Role, Roles.Viewer));
                                 }
 
                                 context.Principal.AddIdentity(
-                                    new ClaimsIdentity(claims, null, null, Claims.Role));
+                                    new ClaimsIdentity(claims, null, null, UserClaims.Role));
                             }
                         }
                     };
