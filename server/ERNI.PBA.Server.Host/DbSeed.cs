@@ -6,12 +6,9 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Host
 {
-    public class DbSeed
+    public static class DbSeed
     {
-        internal static void Seed(DatabaseContext context)
-        {
-            SeedUsers(context);
-        }
+        internal static void Seed(DatabaseContext context) => SeedUsers(context);
 
         private static void SeedUsers(DatabaseContext context)
         {

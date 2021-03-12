@@ -129,9 +129,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("types")]
-        public async Task<IActionResult> GetBudgetTypes()
-        {
-            return await Task.FromResult(Ok(BudgetType.Types));
-        }
+        public async Task<IActionResult> GetBudgetTypes() => await Task.FromResult(Ok(Domain.Models.BudgetType.Types));
     }
 }

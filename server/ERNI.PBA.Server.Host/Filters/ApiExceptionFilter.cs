@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Domain.Exceptions;
+using ERNI.PBA.Server.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,12 +8,7 @@ namespace ERNI.PBA.Server.Host.Filters
 {
     public class ApiExceptionFilter : ExceptionFilterAttribute
     {
-        private readonly ILogger _logger;
-
-        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger)
-        {
-            _logger = logger;
-        }
+        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger) => Logger = logger;
 
         public override void OnException(ExceptionContext context)
         {

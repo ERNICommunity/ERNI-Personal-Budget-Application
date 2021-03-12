@@ -13,10 +13,8 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly Lazy<IGetBudgetByYearQuery> _getBudgetByYearQuery;
 
-        public TeamBudgetController(Lazy<IGetBudgetByYearQuery> getBudgetByYearQuery)
-        {
+        public TeamBudgetController(Lazy<IGetBudgetByYearQuery> getBudgetByYearQuery) =>
             _getBudgetByYearQuery = getBudgetByYearQuery;
-        }
 
         [HttpGet("user/current/year/{year}")]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
