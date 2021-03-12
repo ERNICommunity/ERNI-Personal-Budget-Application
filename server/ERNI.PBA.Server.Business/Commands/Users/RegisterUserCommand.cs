@@ -30,7 +30,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
 
         protected override async Task<UserModel> Execute(RegisterUserModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var username = principal.GetIdentifier(Claims.UserName);
+            var username = principal.GetIdentifier(UserClaims.UserName);
             if (string.IsNullOrWhiteSpace(username))
             {
                 throw AppExceptions.AuthorizationException();
@@ -47,9 +47,9 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 throw new OperationErrorException(StatusCodes.Status400BadRequest);
             }
 
-            user.UniqueIdentifier = principal.GetIdentifier(Claims.UniqueIndetifier);
-            user.FirstName = principal.GetIdentifier(Claims.FirstName);
-            user.LastName = principal.GetIdentifier(Claims.LastName);
+            user.UniqueIdentifier = principal.GetIdentifier(UserClaims.UniqueIndetifier);
+            user.FirstName = principal.GetIdentifier(UserClaims.FirstName);
+            user.LastName = principal.GetIdentifier(UserClaims.LastName);
 
             await _unitOfWork.SaveChanges(cancellationToken);
 
