@@ -23,6 +23,11 @@ steps:
     zipAfterPublish: false
     modifyOutputPath: false
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'server/**/*UnitTest*.csproj'
+
 - task: ArchiveFiles@2
   displayName: 'Zip build artifacts'
   inputs:
