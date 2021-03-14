@@ -28,14 +28,11 @@ namespace ERNI.PBA.Server.Host.Utils
             // _logger = logger;
         }
 
-        public async Task Execute(IJobExecutionContext context)
-        {
+        public async Task Execute(IJobExecutionContext context) =>
             // await SendNotificationsForPendingRequests(context.CancellationToken);
             await SendNotificationsToAdmins(context.CancellationToken);
 
-            // _logger.LogInformation("Scheduled Job for notifications executed");
-        }
-
+        // _logger.LogInformation("Scheduled Job for notifications executed");
         private async Task SendNotificationsForPendingRequests(CancellationToken cancellationToken)
         {
             var pendingRequests = await _requestRepository.GetRequests(

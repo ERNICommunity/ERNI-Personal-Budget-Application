@@ -26,7 +26,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Utils
             Assert.IsTrue(result.Any(_ => _.BudgetId == 3 && _.Amount == 250));
             Assert.IsTrue(result.Any(_ => _.BudgetId == 4 && _.Amount == 250));
         }
-        
+
         [TestMethod]
         public void SingleBudgetTest()
         {
@@ -40,12 +40,14 @@ namespace ERNI.PBA.Server.Business.UnitTests.Utils
             Assert.AreEqual(1, result.BudgetId);
             Assert.AreEqual(200, result.Amount);
         }
-        
+
         private static TeamBudget CreateTeamBudget(int id, decimal amount)
         {
             return new()
             {
-                BudgetId = id, UserId = id, Amount = amount
+                BudgetId = id,
+                UserId = id,
+                Amount = amount
             };
         }
     }

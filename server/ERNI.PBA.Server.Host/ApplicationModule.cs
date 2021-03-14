@@ -15,15 +15,13 @@ namespace ERNI.PBA.Server.Host
             RegisterServices(builder);
         }
 
-        private void RegisterModules(ContainerBuilder builder)
+        private static void RegisterModules(ContainerBuilder builder)
         {
             builder.RegisterModule<BusinessModule>();
             builder.RegisterModule<DataAccessModule>();
         }
 
-        private void RegisterServices(ContainerBuilder builder)
-        {
+        private static void RegisterServices(ContainerBuilder builder) =>
             builder.RegisterType<ApiExceptionFilter>().AsSelf().InstancePerDependency();
-        }
     }
 }

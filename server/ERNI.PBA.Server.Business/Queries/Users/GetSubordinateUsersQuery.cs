@@ -16,24 +16,16 @@ namespace ERNI.PBA.Server.Business.Queries.Users
     {
         private readonly IUserRepository _userRepository;
 
-        public GetSubordinateUsersQuery(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        public GetSubordinateUsersQuery(IUserRepository userRepository) => _userRepository = userRepository;
 
         protected override async Task<IEnumerable<UserModel>> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             User[] users;
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            if (user.IsAdmin)
-            {
-                users = await _userRepository.GetAllUsers(cancellationToken);
-            }
-            else
-            {
-                users = await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
-            }
+            users = user.IsAdmin
+                ? await _userRepository.GetAllUsers(cancellationToken)
+                : await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
 
             return users.Select(_ => new UserModel
             {

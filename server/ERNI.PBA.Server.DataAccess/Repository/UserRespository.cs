@@ -13,10 +13,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         private readonly DatabaseContext _context;
 
-        public UserRepository(DatabaseContext context)
-        {
-            _context = context;
-        }
+        public UserRepository(DatabaseContext context) => _context = context;
 
         public Task<User> GetUser(int id, CancellationToken cancellationToken)
         {
@@ -31,10 +28,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public Task<User> GetAsync(string username)
-        {
-            return _context.Users.SingleOrDefaultAsync(x => x.Username == username);
-        }
+        public Task<User> GetAsync(string username) => _context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
         public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {
@@ -68,19 +62,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task AddUserAsync(User user)
-        {
-            await _context.Users.AddAsync(user);
-        }
+        public async Task AddUserAsync(User user) => await _context.Users.AddAsync(user);
 
-        public async Task<bool> ExistsAsync(string username)
-        {
-            return await _context.Users.AnyAsync(x => x.Username == username);
-        }
+        public async Task<bool> ExistsAsync(string username) => await _context.Users.AnyAsync(x => x.Username == username);
 
-        public void Update(User user)
-        {
-            _context.Entry(user).State = EntityState.Modified;
-        }
+        public void Update(User user) => _context.Entry(user).State = EntityState.Modified;
     }
 }

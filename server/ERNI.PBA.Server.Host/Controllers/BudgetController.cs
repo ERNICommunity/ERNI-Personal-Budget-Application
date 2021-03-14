@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
-using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
@@ -94,7 +93,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("users/all")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody]CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody] CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
         {
             await _createBudgetsForAllActiveUsersCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
@@ -129,9 +128,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("types")]
-        public async Task<IActionResult> GetBudgetTypes()
-        {
-            return await Task.FromResult(Ok(BudgetType.Types));
-        }
+        public async Task<IActionResult> GetBudgetTypes() => await Task.FromResult(Ok(Domain.Models.BudgetType.Types));
     }
 }

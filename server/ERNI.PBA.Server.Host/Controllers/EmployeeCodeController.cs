@@ -13,10 +13,8 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly Lazy<IGetEmployeeCodeQuery> _getEmployeeCodeQuery;
 
-        public EmployeeCodeController(Lazy<IGetEmployeeCodeQuery> getEmployeeCodeQuery)
-        {
+        public EmployeeCodeController(Lazy<IGetEmployeeCodeQuery> getEmployeeCodeQuery) =>
             _getEmployeeCodeQuery = getEmployeeCodeQuery;
-        }
 
         [HttpGet]
         [Authorize]
