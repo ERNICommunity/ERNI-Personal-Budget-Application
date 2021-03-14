@@ -1,4 +1,4 @@
-﻿root = true
+root = true
 
 [*.{cs,vb}]
 dotnet_analyzer_diagnostic.category-Style.severity = warning
@@ -194,3 +194,4 @@ dotnet_diagnostic.IDE0058.severity = none
 #RCS1090: Use ConfigureAwait (VSCode Roslynator)
 dotnet_diagnostic.RCS1090.severity = none
 
+dotnet_diagnostic.IDE0050.severity = none
