@@ -18,10 +18,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
 
         private readonly IConfiguration _configuration;
 
-        public GetEmployeeCodeQuery(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public GetEmployeeCodeQuery(IConfiguration configuration) => _configuration = configuration;
 
         protected override async Task<AdUserOutputModel[]> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
@@ -40,7 +37,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
             var users = await f.GetUsers();
 
             var data = users
-                .Where(_ => _.UserPrincipalName.Contains("@"))
+                .Where(_ => _.UserPrincipalName.Contains("@", StringComparison.InvariantCulture))
                 .Select(_ => new AdUserOutputModel
                 {
                     LastName = _.Surname,

@@ -10,38 +10,23 @@ using Microsoft.Extensions.Hosting;
 
 namespace ERNI.PBA.Server.Host
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            // NLog: setup the logger first to catch all errors
-            // var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-            try
+            var host = CreateHostBuilder(args).Build();
+
+            using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
             {
-                // logger.Debug("init main");
-                var host = CreateHostBuilder(args).Build();
+                var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-                using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
-                {
-                    var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
-
-                    context.Database.Migrate();
-
-                    var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
-                    cmd.Execute().Wait();
-                }
-
-                host.Run();
+                context.Database.Migrate();
+                
+                var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
+                cmd.Execute().Wait();
             }
-            catch (Exception)
-            {
-                // logger.Error(ex, "Stopped program because of exception");
-            }
-            finally
-            {
-                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-                // NLog.LogManager.Shutdown();
-            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

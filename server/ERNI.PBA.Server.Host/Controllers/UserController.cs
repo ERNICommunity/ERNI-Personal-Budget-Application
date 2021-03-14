@@ -51,7 +51,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("create")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateUser([FromBody]CreateUserModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserModel payload, CancellationToken cancellationToken)
         {
             await _createUserCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
@@ -60,7 +60,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
         {
             await _updateUserCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 

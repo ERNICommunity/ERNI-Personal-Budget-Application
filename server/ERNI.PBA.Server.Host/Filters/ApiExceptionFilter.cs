@@ -6,14 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Host.Filters
 {
-    public class ApiExceptionFilter : ExceptionFilterAttribute
+    public sealed class ApiExceptionFilter : ExceptionFilterAttribute
     {
-        private readonly ILogger _logger;
-
-        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger)
-        {
-            _logger = logger;
-        }
+        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger) => Logger = logger;
 
         public override void OnException(ExceptionContext context)
         {
@@ -31,10 +26,12 @@ namespace ERNI.PBA.Server.Host.Filters
                     Detail = "Operation failed"
                 });
 
-                _logger.LogError($"Something went wrong: {context.Exception}");
+                Logger.LogError($"Something went wrong: {context.Exception}");
             }
 
             base.OnException(context);
         }
+
+        public ILogger<ApiExceptionFilter> Logger { get; }
     }
 }

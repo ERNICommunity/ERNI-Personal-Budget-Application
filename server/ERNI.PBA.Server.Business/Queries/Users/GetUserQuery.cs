@@ -12,10 +12,7 @@ namespace ERNI.PBA.Server.Business.Queries.Users
     {
         private readonly IUserRepository _userRepository;
 
-        public GetUserQuery(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        public GetUserQuery(IUserRepository userRepository) => _userRepository = userRepository;
 
         protected override async Task<UserModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {

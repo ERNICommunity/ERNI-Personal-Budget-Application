@@ -13,13 +13,13 @@ namespace ERNI.PBA.Server.Graph
 
         public GraphFacade(GraphConfiguration config)
         {
-            IConfidentialClientApplication confidentialClientApplication = ConfidentialClientApplicationBuilder
+            var confidentialClientApplication = ConfidentialClientApplicationBuilder
                 .Create(config.ClientId)
                 .WithTenantId(config.TenantId)
                 .WithClientSecret(config.ClientSecret)
                 .Build();
 
-            ClientCredentialProvider authProvider = new ClientCredentialProvider(confidentialClientApplication);
+            var authProvider = new ClientCredentialProvider(confidentialClientApplication);
 
             _graphClient = new GraphServiceClient(authProvider);
         }

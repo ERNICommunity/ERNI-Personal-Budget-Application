@@ -8,9 +8,9 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
     public interface IInvoiceImageRepository
     {
         Task<InvoiceImageProjection[]> GetInvoiceImages(int requestId, CancellationToken cancellationToken);
-        
+
         Task AddInvoiceImage(InvoiceImage invoiceImage, CancellationToken cancellationToken);
-        
+
         Task<InvoiceImage> GetInvoiceImage(int imageId, CancellationToken cancellationToken);
     }
 }

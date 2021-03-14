@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Reflection;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
@@ -25,10 +28,7 @@ namespace ERNI.PBA.Server.Host
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 

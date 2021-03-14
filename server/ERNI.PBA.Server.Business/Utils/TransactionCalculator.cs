@@ -33,9 +33,6 @@ namespace ERNI.PBA.Server.Business.Utils
             return transactions;
         }
 
-        private static decimal Round(this decimal payment)
-        {
-            return Math.Floor(payment * 100) / 100;
-        }
+        private static decimal Round(this decimal payment) => Math.Floor(payment * 100) / 100;
     }
 }

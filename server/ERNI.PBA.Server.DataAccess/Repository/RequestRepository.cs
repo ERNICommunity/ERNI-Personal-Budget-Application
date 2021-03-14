@@ -15,10 +15,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         private readonly DatabaseContext _context;
 
-        public RequestRepository(DatabaseContext context)
-        {
-            _context = context;
-        }
+        public RequestRepository(DatabaseContext context) => _context = context;
 
         public Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken)
         {
@@ -46,21 +43,17 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
         }
 
-        public async Task AddRequest(Request request)
-        {
-            await _context.Requests.AddAsync(request);
-        }
+        public async Task AddRequest(Request request) => await _context.Requests.AddAsync(request);
 
-        public async Task AddRequests(IEnumerable<Request> requests)
-        {
-            await _context.Requests.AddRangeAsync(requests);
-        }
+        public async Task AddRequests(IEnumerable<Request> requests) => await _context.Requests.AddRangeAsync(requests);
 
         public async Task DeleteRequest(Request request)
         {
             var transactions = await _context.Transactions.Where(_ => _.RequestId == request.Id).ToArrayAsync();
             if (transactions.Any())
+            {
                 _context.Transactions.RemoveRange(transactions);
+            }
 
             _context.Requests.Remove(request);
         }
@@ -69,7 +62,9 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             var request = await _context.Requests.Include(_ => _.Transactions).FirstOrDefaultAsync(_ => _.Id == requestId);
             if (request == null)
+            {
                 return;
+            }
 
             _context.Transactions.RemoveRange(request.Transactions);
 

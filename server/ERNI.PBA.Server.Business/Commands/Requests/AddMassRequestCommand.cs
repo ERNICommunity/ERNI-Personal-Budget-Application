@@ -36,7 +36,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal,
+            CancellationToken cancellationToken)
         {
             var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (!currentUser.IsAdmin)
@@ -50,11 +51,13 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             {
                 var userId = user.Id;
 
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear, cancellationToken);
+                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget,
+                    currentYear, cancellationToken);
 
                 if (budgets.Length > 1)
                 {
-                    throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
+                    throw new OperationErrorException(StatusCodes.Status400BadRequest,
+                        $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
                 }
 
                 var budget = budgets.Single();
@@ -83,9 +86,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             await _unitOfWork.SaveChanges(cancellationToken);
         }
 
-        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken)
-        {
-            return budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
-        }
+        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken) =>
+            budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
     }
 }

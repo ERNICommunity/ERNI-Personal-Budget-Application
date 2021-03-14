@@ -13,20 +13,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         private readonly DatabaseContext _context;
 
-        public BudgetRepository(DatabaseContext context)
-        {
-            _context = context;
-        }
+        public BudgetRepository(DatabaseContext context) => _context = context;
 
-        public void AddBudget(Budget budget)
-        {
-            _context.Budgets.Add(budget);
-        }
+        public void AddBudget(Budget budget) => _context.Budgets.Add(budget);
 
-        public async Task AddBudgetAsync(Budget budget)
-        {
-            await _context.Budgets.AddAsync(budget);
-        }
+        public async Task AddBudgetAsync(Budget budget) => await _context.Budgets.AddAsync(budget);
 
         public Task<Budget> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
@@ -110,13 +101,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                         .Sum(x => x.Amount)
                 })
                 .ToArrayAsync(cancellationToken))
-                .Select(_ => (BudgetId: _.BudgetId, TotalAmount: _.TotalAmount))
+                .Select(_ => (_.BudgetId, _.TotalAmount))
                 .ToArray();
         }
 
-        public Task<Budget[]> GetBudgetsByUser(int userId, CancellationToken cancellationToken)
-        {
-            return _context.Budgets.Where(_ => _.UserId == userId).ToArrayAsync(cancellationToken);
-        }
+        public Task<Budget[]> GetBudgetsByUser(int userId, CancellationToken cancellationToken) => _context.Budgets.Where(_ => _.UserId == userId).ToArrayAsync(cancellationToken);
     }
 }

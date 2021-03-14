@@ -8,7 +8,7 @@ namespace ERNI.PBA.Server.Business.Utils
     {
         public static Guid GetId(this ClaimsPrincipal principal)
         {
-            var claim = principal.FindFirst(c => c.Type == Claims.Id);
+            var claim = principal.FindFirst(c => c.Type == UserClaims.Id);
 
             if (claim == null)
             {
@@ -23,9 +23,7 @@ namespace ERNI.PBA.Server.Business.Utils
             return id;
         }
 
-        public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier)
-        {
-            return claimsPrincipal.FindFirstValue(identifier);
-        }
+        public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier) =>
+            claimsPrincipal.FindFirstValue(identifier);
     }
 }

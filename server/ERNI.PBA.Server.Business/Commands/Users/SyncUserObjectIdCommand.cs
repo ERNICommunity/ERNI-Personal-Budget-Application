@@ -38,11 +38,11 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
 
             var adUsers = await f.GetUsers();
 
-            var userDict = dbUsers.ToDictionary(_ => _.Username.ToLower());
+            var userDict = dbUsers.ToDictionary(_ => _.Username.ToUpperInvariant());
 
             foreach (var u in adUsers)
             {
-                if (userDict.TryGetValue(u.UserPrincipalName.ToLower(), out var dbUser) && dbUser.ObjectId != Guid.Parse(u.Id))
+                if (userDict.TryGetValue(u.UserPrincipalName.ToUpperInvariant(), out var dbUser) && dbUser.ObjectId != Guid.Parse(u.Id))
                 {
                     dbUser.ObjectId = Guid.Parse(u.Id);
                 }

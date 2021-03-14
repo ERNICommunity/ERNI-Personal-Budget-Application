@@ -15,20 +15,12 @@ namespace ERNI.PBA.Server.Business.Queries.Users
     {
         private readonly IUserRepository _userRepository;
 
-        public GetCurrentUserQuery(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        public GetCurrentUserQuery(IUserRepository userRepository) => _userRepository = userRepository;
 
         protected override async Task<UserModel> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            if (user == null)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
-
-            return user.ToModel();
+            return user != null ? user.ToModel() : throw AppExceptions.AuthorizationException();
         }
     }
 }

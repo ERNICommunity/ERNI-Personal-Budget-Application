@@ -58,7 +58,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{id}")]
+#pragma warning disable CA1721 // Property names should not match get methods
         public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
+#pragma warning restore CA1721 // Property names should not match get methods
         {
             var request = await _getRequestQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
@@ -85,7 +87,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddRequest([FromBody]PostRequestModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
         {
             await _addRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
@@ -190,9 +192,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("budget-left/{amount}/{year}")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<UserModel[]> BudgetLeft(BudgetLeftModel payload, CancellationToken cancellationToken)
-        {
-            return await _getBudgetLeftQuery.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
-        }
+        public async Task<UserModel[]> BudgetLeft(BudgetLeftModel payload, CancellationToken cancellationToken) =>
+            await _getBudgetLeftQuery.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
     }
 }

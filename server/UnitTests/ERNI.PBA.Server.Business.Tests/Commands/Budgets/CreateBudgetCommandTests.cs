@@ -26,7 +26,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Budgets
                 Id = 1,
                 State = UserState.Active
             }));
-            
+
             var budgetRepository = new Mock<IBudgetRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
 
@@ -43,8 +43,8 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Budgets
             budgetRepository.Verify(_ => _.AddBudget(It.Is<Budget>(b =>
                 b.UserId == 1 && b.Amount == 100 && b.BudgetType == BudgetTypeEnum.RecreationBudget &&
                 b.Title == "Budget")));
-            
+
             unitOfWork.Verify(_ => _.SaveChanges(token));
-        } 
+        }
     }
 }

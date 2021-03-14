@@ -8,14 +8,9 @@ namespace ERNI.PBA.Server.DataAccess
     {
         private readonly DatabaseContext _context;
 
-        public UnitOfWork(DatabaseContext context)
-        {
-            _context = context;
-        }
+        public UnitOfWork(DatabaseContext context) => _context = context;
 
-        public async Task SaveChanges(CancellationToken cancellationToken)
-        {
+        public async Task SaveChanges(CancellationToken cancellationToken) =>
             await _context.SaveChangesAsync(cancellationToken);
-        }
     }
 }

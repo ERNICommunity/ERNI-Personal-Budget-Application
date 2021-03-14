@@ -1,6 +1,6 @@
 namespace ERNI.PBA.Server.Domain.Security
 {
-    public static class Claims
+    public static class UserClaims
     {
         public const string FirstName = "given_name";
         public const string LastName = "family_name";

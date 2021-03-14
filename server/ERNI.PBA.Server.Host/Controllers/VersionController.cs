@@ -7,9 +7,6 @@ namespace ERNI.PBA.Server.Host.Controllers
     public class VersionController : Controller
     {
         [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok(GetType().Assembly.GetName().Version.ToString());
-        }
+        public IActionResult Get() => Ok(GetType().Assembly.GetName().Version.ToString());
     }
 }

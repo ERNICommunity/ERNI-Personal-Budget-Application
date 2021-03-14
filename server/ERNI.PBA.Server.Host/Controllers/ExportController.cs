@@ -34,15 +34,13 @@ namespace ERNI.PBA.Server.Host.Controllers
                 throw new InvalidOperationException("Invalid download token");
             }
 
-            using (var stream = new MemoryStream())
-            {
-                await _excelExport.Export(stream, year, month, cancellationToken);
+            await using var stream = new MemoryStream();
+            await _excelExport.Export(stream, year, month, cancellationToken);
 
-                return File(
-                    stream.ToArray(),
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    "users.xlsx");
-            }
+            return File(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "users.xlsx");
         }
     }
 }

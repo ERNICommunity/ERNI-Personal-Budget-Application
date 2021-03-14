@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Domain.Enums;
@@ -6,12 +7,9 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Host
 {
-    public class DbSeed
+    public static class DbSeed
     {
-        internal static void Seed(DatabaseContext context)
-        {
-            SeedUsers(context);
-        }
+        internal static void Seed(DatabaseContext context) => SeedUsers(context);
 
         private static void SeedUsers(DatabaseContext context)
         {
@@ -91,10 +89,10 @@ namespace ERNI.PBA.Server.Host
                 new Request
                 {
                     Budget = budget,
-                    Title = _.ToString(),
-                    Amount = ((_ * 1878) % 50) + 10,
+                    Title = _.ToString(CultureInfo.InvariantCulture),
+                    Amount = (_ * 1878 % 50) + 10,
                     Date = new DateTime(budget.Year, _, 5),
-                    Category = categories[_ % categories.Count()]
+                    Category = categories[_ % categories.Length]
                 }));
             }
 
