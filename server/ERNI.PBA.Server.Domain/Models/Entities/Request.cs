@@ -40,9 +40,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public ICollection<Transaction> Transactions { get; set; }
 
-        public override string ToString()
-        {
-            return $"{Title} ({Amount}) by {Budget?.User?.FirstName} {Budget?.User?.LastName}";
-        }
+        public override string ToString() =>
+            $"{Title} ({Amount}) by {Budget?.User?.FirstName} {Budget?.User?.LastName}";
     }
 }

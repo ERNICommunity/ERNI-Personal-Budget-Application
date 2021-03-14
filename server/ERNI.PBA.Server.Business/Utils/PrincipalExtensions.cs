@@ -15,17 +15,12 @@ namespace ERNI.PBA.Server.Business.Utils
                 throw new InvalidOperationException("No Id claim found");
             }
 
-            if (!int.TryParse(claim.Value, out var id))
-            {
-                throw new InvalidOperationException("Id claim value invalid");
-            }
-
-            return id;
+            return int.TryParse(claim.Value, out var id)
+                ? id
+                : throw new InvalidOperationException("Id claim value invalid");
         }
 
-        public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier)
-        {
-            return claimsPrincipal.FindFirstValue(identifier);
-        }
+        public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier) =>
+            claimsPrincipal.FindFirstValue(identifier);
     }
 }

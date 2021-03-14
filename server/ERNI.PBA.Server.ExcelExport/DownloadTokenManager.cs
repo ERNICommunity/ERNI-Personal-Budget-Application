@@ -6,7 +6,7 @@ namespace ERNI.PBA.Server.ExcelExport
 {
     public class DownloadTokenManager : IDownloadTokenManager
     {
-        private Dictionary<Guid, DateTime> _tokenDictionary = new Dictionary<Guid, DateTime>();
+        private readonly Dictionary<Guid, DateTime> _tokenDictionary = new();
 
         public Guid GenerateToken(DateTime validUntil)
         {

@@ -18,10 +18,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
 
         private readonly IConfiguration _configuration;
 
-        public GetEmployeeCodeQuery(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public GetEmployeeCodeQuery(IConfiguration configuration) => _configuration = configuration;
 
         protected override async Task<AdUserOutputModel[]> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
