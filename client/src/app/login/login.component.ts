@@ -31,10 +31,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (userInfo.isUser) {
-      this.router.navigate(['/my-budget']);
-    } else {
-      this.router.navigate(['/my-budget']);
-    }
+    this.router.navigate(['/my-budget']);
   }
 }
