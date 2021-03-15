@@ -1,8 +1,4 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Infrastructure;
+﻿using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
@@ -12,36 +8,40 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 {
-#pragma warning disable CS0162 // Unreachable code detected
     public class AddInvoiceImageCommand : Command<InvoiceImageModel>, IAddInvoiceImageCommand
     {
         private readonly IRequestRepository _requestRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public AddInvoiceImageCommand(
             IRequestRepository requestRepository,
+            IUserRepository userRepository,
             IInvoiceImageRepository invoiceImageRepository,
             IUnitOfWork unitOfWork)
         {
             _requestRepository = requestRepository;
+            _userRepository = userRepository;
             _invoiceImageRepository = invoiceImageRepository;
             _unitOfWork = unitOfWork;
         }
 
         protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
-
             var requestId = parameter.RequestId;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
-            //if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
-            //{
-            //    throw AppExceptions.AuthorizationException();
-            //}
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
+            {
+                throw AppExceptions.AuthorizationException();
+            }
 
             byte[] buffer;
             if (parameter.File == null)
@@ -73,5 +73,4 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
             await _unitOfWork.SaveChanges(cancellationToken);
         }
     }
-#pragma warning restore CS0162 // Unreachable code detected
 }
