@@ -16,8 +16,13 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
     public class GetBudgetQuery : Query<int, SingleBudgetOutputModel>, IGetBudgetQuery
     {
         private readonly IBudgetRepository _budgetRepository;
+        private readonly IUserRepository _userRepository;
 
-        public GetBudgetQuery(IBudgetRepository budgetRepository) => _budgetRepository = budgetRepository;
+        public GetBudgetQuery(IBudgetRepository budgetRepository, IUserRepository userRepository)
+        {
+            _budgetRepository = budgetRepository;
+            _userRepository = userRepository;
+        }
 
         protected override async Task<SingleBudgetOutputModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
@@ -27,10 +32,11 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Budget with id {parameter} not found");
             }
 
-            //if (!principal.IsInRole(Roles.Admin) && principal.GetId() != budget.UserId)
-            //{
-            //    throw AppExceptions.AuthorizationException();
-            //}
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            if (!principal.IsInRole(Roles.Admin) && user.Id != budget.UserId)
+            {
+                throw AppExceptions.AuthorizationException();
+            }
 
             return new SingleBudgetOutputModel
             {
