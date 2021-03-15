@@ -22,7 +22,8 @@ namespace ERNI.PBA.Server.Host
             builder.RegisterModule<DataAccessModule>();
         }
 
-        private static void RegisterServices(ContainerBuilder builder) =>
+        private static void RegisterServices(ContainerBuilder builder)
+        {
             builder.RegisterType<ApiExceptionFilter>().AsSelf().InstancePerDependency();
 
             builder.RegisterType<SyncUserObjectIdCommand>().AsSelf().InstancePerDependency();
