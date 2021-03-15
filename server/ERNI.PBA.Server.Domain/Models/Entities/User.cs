@@ -1,4 +1,5 @@
 ﻿using ERNI.PBA.Server.Domain.Enums;
+using System;
 
 namespace ERNI.PBA.Server.Domain.Models.Entities
 {
@@ -7,6 +8,8 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
         public int Id { get; set; }
 
         public string UniqueIdentifier { get; set; }
+
+        public Guid? ObjectId { get; set; }
 
         public bool IsAdmin { get; set; }
 

@@ -26,16 +26,24 @@ namespace ERNI.PBA.Server.Graph
 
         public async Task<IEnumerable<User>> GetUsers()
         {
-            try
+            var allUsers = new List<User>();
+
+            var users = await _graphClient.Users.Request().Filter("country eq 'Slovakia'").GetAsync();
+
+            while (users.Count > 0)
             {
-                var users = await _graphClient.Users.Request().Filter("country eq 'Slovakia'").GetAsync();
-                return users.CurrentPage;
+                allUsers.AddRange(users);
+                if (users.NextPageRequest != null)
+                {
+                    users = await users.NextPageRequest.GetAsync();
+                }
+                else
+                {
+                    break;
+                }
             }
-            catch (ServiceException ex)
-            {
-                Console.WriteLine($"Error getting signed-in user: {ex.Message}");
-                return null;
-            }
+
+            return allUsers;
         }
     }
 }

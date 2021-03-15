@@ -9,6 +9,7 @@ import { RequestState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportService } from '../../services/export.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'app-request-list',
@@ -21,8 +22,6 @@ export class RequestListComponent implements OnInit {
     approvedBySuperiorRoute: string = "/requests/approved-by-superior";
     rejectedRoute: string = "/requests/rejected";
 
-    isAdmin: boolean;
-    isViewer: boolean;
     requests: Request[];
     filteredRequests: Request[];
     requestFilter: RequestFilter;
@@ -50,18 +49,18 @@ export class RequestListComponent implements OnInit {
             request.user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString.toLowerCase()) !== -1);
     }
 
-    constructor(private requestService: RequestService,
-        private userService: UserService,
+    constructor(private authService: AuthenticationService,
+        private requestService: RequestService,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        private config: ConfigService,
         private exportService: ExportService
     ) {
 
         this.years = [];
         this.currentYear = (new Date()).getFullYear();
 
-        for (var year = this.currentYear; year >= config.getOldestYear; year--) {
+        // TODO: do not hardcode year
+        for (var year = this.currentYear; year >= 2018; year--) {
             this.years.push(year);
         }
     }
@@ -84,8 +83,6 @@ export class RequestListComponent implements OnInit {
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
             this.getRequests(this.requestFilter, this.selectedYear);
         });
-
-        this.userService.getCurrentUser().subscribe(u => {this.isAdmin = u.isAdmin; this.isViewer = u.isViewer});
     }
 
     getRequests(filter: RequestFilter, year: number): void {
@@ -120,11 +117,11 @@ export class RequestListComponent implements OnInit {
     }
 
     canRejectRequest(id: number): boolean {
-        return this.isAdmin && this.requestFilter != this.requestFilterType.Rejected;
+        return this.authService.userInfo.isAdmin && this.requestFilter != this.requestFilterType.Rejected;
     }
 
     showApprove(): boolean {
-        if (this.isAdmin) {
+        if (this.authService.userInfo.isAdmin) {
             return this.requestFilter != this.requestFilterType.Approved && this.requestFilter != this.requestFilterType.Rejected;
         }
 

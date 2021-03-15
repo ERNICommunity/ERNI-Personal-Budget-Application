@@ -66,11 +66,13 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
+            var user = await _userRepository.GetUser(userId, cancellationToken);
+
             var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
             var request = new Request
             {
                 BudgetId = budget.Id,
-                UserId = userId,
+                UserId = user.Id,
                 Year = currentYear,
                 Title = parameter.Title,
                 Amount = parameter.Amount,

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Extensions;
@@ -50,6 +51,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
             user.UniqueIdentifier = principal.GetIdentifier(UserClaims.UniqueIndetifier);
             user.FirstName = principal.GetIdentifier(UserClaims.FirstName);
             user.LastName = principal.GetIdentifier(UserClaims.LastName);
+            user.ObjectId = Guid.Parse(principal.GetIdentifier(UserClaims.Id));
 
             await _unitOfWork.SaveChanges(cancellationToken);
 

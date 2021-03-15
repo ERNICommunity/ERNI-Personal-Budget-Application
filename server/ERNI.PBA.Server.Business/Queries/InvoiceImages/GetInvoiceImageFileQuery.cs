@@ -1,8 +1,4 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Infrastructure;
+﻿using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
@@ -11,27 +7,30 @@ using ERNI.PBA.Server.Domain.Models.Responses.InvoiceImages;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
-#pragma warning disable CS0162 // Unreachable code detected
     public class GetInvoiceImageFileQuery : Query<int, ImageFileModel>, IGetInvoiceImageFileQuery
     {
+        private readonly IUserRepository _userRepository;
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IRequestRepository _requestRepository;
 
         public GetInvoiceImageFileQuery(
+            IUserRepository userRepository,
             IInvoiceImageRepository invoiceImageRepository,
             IRequestRepository requestRepository)
         {
+            _userRepository = userRepository;
             _invoiceImageRepository = invoiceImageRepository;
             _requestRepository = requestRepository;
         }
 
         protected override async Task<ImageFileModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
-
             var image = await _invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken);
             if (image == null)
             {
@@ -44,7 +43,9 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Viewer) && principal.GetId() != request.UserId)
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+
+            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId)
             {
                 throw AppExceptions.AuthorizationException();
             }
@@ -62,5 +63,4 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
             };
         }
     }
-#pragma warning restore CS0162 // Unreachable code detected
 }

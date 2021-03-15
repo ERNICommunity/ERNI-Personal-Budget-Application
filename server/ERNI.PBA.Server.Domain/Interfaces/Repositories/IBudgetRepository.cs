@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
@@ -13,9 +14,9 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 
         Task<Budget> GetBudget(int budgetId, CancellationToken cancellationToken);
 
-        Task<Budget[]> GetSingleBudgets(int userId, int year, CancellationToken cancellationToken);
+        Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken);
 
-        Task<Budget[]> GetTeamBudgets(int userId, int year, CancellationToken cancellationToken);
+        Task<Budget[]> GetTeamBudgets(Guid userId, int year, CancellationToken cancellationToken);
 
         Task<Budget[]> GetBudgets(int userId, int year, CancellationToken cancellationToken);
 

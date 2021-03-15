@@ -8,34 +8,33 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto" *ngIf="user">
+        <ul class="navbar-nav mr-auto"  *ngIf="(authService.userInfo$ | async)?.isUser">
             <li class="nav-item" [routerLinkActive]="['active']">
                 <a class="nav-link" routerLink="/my-budget">
                     My budget
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="user.isAdmin">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
                 <a class="nav-link" routerLink="/other-budgets">
                     Other Budgets
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']"
-                *ngIf="adalService.userInfo && (user.isAdmin || user.isViewer)">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin || (authService.userInfo$ | async)?.isFinance">
                 <a class="nav-link" routerLink="/requests">
                     Requests
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="adalService.userInfo && user.isAdmin">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
                 <a class="nav-link" routerLink="/mass-request">
                     Mass Request
                 </a>
             </li>
-            <li class="nav-item" *ngIf="user.isAdmin">
+            <li class="nav-item" *ngIf="(authService.userInfo$ | async)?.isAdmin">
                 <a class="nav-link" routerLink="/users">
                     Employees
                 </a>
             </li>
-            <li class="nav-item float-right" *ngIf="adalService.userInfo">
+            <li class="nav-item float-right">
                 <a href="https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx"
                     target="_blank" class="nav-link">
                     Conditions of use
@@ -43,9 +42,10 @@
             </li>
         </ul>
 
-        <ul class="navbar-nav float-right" *ngIf="adalService.userInfo">
+        <ul class="navbar-nav float-right" *ngIf="(authService.userInfo$ | async)">
+            <!-- *ngIf="adalService.userInfo"> -->
             <li class="nav-item float-right">
-                <a class="nav-link">{{adalService.userInfo.userName}}</a>
+                <a class="nav-link">{{(authService.userInfo$ | async)?.name}}</a>
             </li>
             <li class="nav-item float-right">
                 <a href="" class="nav-link" (click)="logout()">

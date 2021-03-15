@@ -6,7 +6,7 @@ namespace ERNI.PBA.Server.Business.Utils
 {
     public static class PrincipalExtensions
     {
-        public static int GetId(this ClaimsPrincipal principal)
+        public static Guid GetId(this ClaimsPrincipal principal)
         {
             var claim = principal.FindFirst(c => c.Type == UserClaims.Id);
 
@@ -15,9 +15,12 @@ namespace ERNI.PBA.Server.Business.Utils
                 throw new InvalidOperationException("No Id claim found");
             }
 
-            return int.TryParse(claim.Value, out var id)
-                ? id
-                : throw new InvalidOperationException("Id claim value invalid");
+            if (!Guid.TryParse(claim.Value, out var id))
+            {
+                throw new InvalidOperationException("Id claim value invalid");
+            }
+
+            return id;
         }
 
         public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier) =>

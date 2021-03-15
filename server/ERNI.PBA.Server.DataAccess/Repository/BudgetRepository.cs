@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
+using System;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -26,22 +27,22 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
         }
 
-        public async Task<Budget[]> GetSingleBudgets(int userId, int year, CancellationToken cancellationToken)
+        public async Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
                 .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
                 .Where(_ => _.BudgetType != BudgetTypeEnum.TeamBudget)
-                .Where(_ => _.UserId == userId && _.Year == year)
+                .Where(_ => _.User.ObjectId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task<Budget[]> GetTeamBudgets(int userId, int year, CancellationToken cancellationToken)
+        public async Task<Budget[]> GetTeamBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
                 .Include(_ => _.Transactions)
                 .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
                 .Where(_ => _.BudgetType == BudgetTypeEnum.TeamBudget)
-                .Where(_ => (_.UserId == userId || _.User.SuperiorId == userId) && _.Year == year)
+                .Where(_ => (_.User.ObjectId == userId || _.User.Superior.ObjectId == userId) && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
 

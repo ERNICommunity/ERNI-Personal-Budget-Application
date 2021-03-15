@@ -20,7 +20,6 @@ import { catchError, map } from 'rxjs/operators';
 export class MyBudgetComponent implements OnInit {
     budgets: Budget[];
     userState = UserState;
-    user: User;
     currentYear: number;
     selectedYear: number;
     years: number[];
@@ -29,7 +28,6 @@ export class MyBudgetComponent implements OnInit {
     constructor(
         private budgetService: BudgetService,
         private teamBudgetService: TeamBudgetService,
-        private userService: UserService,
         private route: ActivatedRoute,
         config: ConfigService,
         public busyIndicatorService: BusyIndicatorService,
@@ -43,9 +41,7 @@ export class MyBudgetComponent implements OnInit {
     }
 
     ngOnInit() {
-        combineLatest(this.getUser(), this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([user, params]) => {
-            this.user = user;
-
+        combineLatest(this.route.params, this.dataChangeNotificationService.notifications$).subscribe(([params]) => {
             // the following line forces routerLinkActive to update even if the route did nto change
             // see see https://github.com/angular/angular/issues/13865 for futher info
             this.rlao = { dummy: true };
@@ -59,10 +55,6 @@ export class MyBudgetComponent implements OnInit {
         });
     }
 
-    getUser(): Observable<any> {
-        return this.userService.getCurrentUser();
-    }
-
     getBudgets(year: number): void {
         this.budgets = [];
         this.busyIndicatorService.start();
@@ -70,10 +62,8 @@ export class MyBudgetComponent implements OnInit {
         let requests = [this.budgetService.getCurrentUserBudgets(year)
             .pipe(map(this.handleResponse), catchError(this.handleError))];
 
-        if (this.user.isSuperior) {
-            requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
-                .pipe(map(this.handleResponse), catchError(this.handleError)));
-        }
+        requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
+            .pipe(map(this.handleResponse), catchError(this.handleError)));
 
         forkJoin(requests).subscribe(
             data => {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Extensions;
+﻿using ERNI.PBA.Server.Business.Extensions;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
@@ -13,6 +8,11 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
@@ -50,7 +50,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Request with id {parameter.Id} not found.");
             }
 
-            if (userId != request.UserId)
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+
+            if (user.Id != request.UserId)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
             }

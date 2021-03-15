@@ -115,7 +115,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/pending")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
         public async Task<RequestModel[]> GetPendingRequests(int year, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel
@@ -128,7 +128,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/approved")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
         public async Task<RequestModel[]> GetApprovedRequests(int year, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel
@@ -141,7 +141,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/approvedBySuperior")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
         public async Task<RequestModel[]> GetApprovedBySuperiorRequests(int year, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel
@@ -154,7 +154,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{year}/rejected")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
         public async Task<RequestModel[]> GetRejectedRequests(int year, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel

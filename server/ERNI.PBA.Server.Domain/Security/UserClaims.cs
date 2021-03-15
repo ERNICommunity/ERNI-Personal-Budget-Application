@@ -7,6 +7,6 @@ namespace ERNI.PBA.Server.Domain.Security
         public const string UserName = "upn";
         public const string UniqueIndetifier = "sub";
         public const string Role = "Role";
-        public const string Id = "Id";
+        public const string Id = "http://schemas.microsoft.com/identity/claims/objectidentifier";
     }
 }

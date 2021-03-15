@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 
@@ -7,21 +8,7 @@ export class ConfigService {
     }
 
     public get apiUrlBase(): any {
-        return 'https://ernipbaserver.azurewebsites.net/api/';
-    }
-
-    public get conditionsOfUseUrl(): any {
-        return '';
-    }
-
-    public get getAdalConfig(): any {
-
-        return {
-            tenant: 'erni.ch',
-            clientId: '6e1fa5b9-f4fb-42da-a09a-51c5bacb7622',
-            redirectUri: window.location.origin + '/',
-            postLogoutRedirectUri: window.location.origin + '/'
-        };
+        return environment.apiBaseUrl;
     }
 
     public get getOldestYear(): number {

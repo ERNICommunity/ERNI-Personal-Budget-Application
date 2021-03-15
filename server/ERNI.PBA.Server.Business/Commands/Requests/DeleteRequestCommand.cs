@@ -15,13 +15,16 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
     public class DeleteRequestCommand : Command<int>, IDeleteRequestCommand
     {
         private readonly IRequestRepository _requestRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public DeleteRequestCommand(
             IRequestRepository requestRepository,
+            IUserRepository userRepository,
             IUnitOfWork unitOfWork)
         {
             _requestRepository = requestRepository;
+            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -33,7 +36,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!principal.IsInRole(Roles.Admin) && principal.GetId() != request.UserId)
+            var user = _userRepository.GetUser(principal.GetId(), cancellationToken);
+
+            if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Access denied");
             }

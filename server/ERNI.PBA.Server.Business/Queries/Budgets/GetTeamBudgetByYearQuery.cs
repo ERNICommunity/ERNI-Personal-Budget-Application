@@ -14,12 +14,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetBudgetByYearQuery : Query<int, BudgetOutputModel[]>, IGetBudgetByYearQuery
+    public class GetTeamBudgetByYearQuery : Query<int, BudgetOutputModel[]>, IGetTeamBudgetByYearQuery
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetBudgetByYearQuery(
+        public GetTeamBudgetByYearQuery(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository)
         {
@@ -30,12 +30,8 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
         protected override async Task<BudgetOutputModel[]> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            if (!user.IsSuperior)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
 
-            var budgets = await _budgetRepository.GetTeamBudgets(user.Id, parameter, cancellationToken);
+            var budgets = await _budgetRepository.GetTeamBudgets(principal.GetId(), parameter, cancellationToken);
             if (!budgets.Any())
             {
                 return Array.Empty<BudgetOutputModel>();

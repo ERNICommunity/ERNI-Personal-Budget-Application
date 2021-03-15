@@ -1,8 +1,5 @@
-import { Router } from '@angular/router';
-import { AdalService } from '../services/adal.service';
 import { Component, OnInit } from '@angular/core';
 import { UserCodeService } from '../services/user-code.service';
-import { Observable } from 'rxjs';
 import { UserCode } from '../model/userCode';
 
 @Component({
