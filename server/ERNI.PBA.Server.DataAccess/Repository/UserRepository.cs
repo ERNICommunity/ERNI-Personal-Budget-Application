@@ -74,7 +74,5 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public async Task<bool> ExistsAsync(string username) => await _context.Users.AnyAsync(x => x.Username == username);
 
         public void Update(User user) => _context.Entry(user).State = EntityState.Modified;
-
-        public Task<User[]> GetSubordinateUsers(Guid superiorId, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 }

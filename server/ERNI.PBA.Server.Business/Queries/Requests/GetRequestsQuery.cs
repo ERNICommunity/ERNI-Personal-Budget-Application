@@ -40,7 +40,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
             }
             else
             {
-                var subordinates = await _userRepository.GetSubordinateUsers(userId, cancellationToken);
+                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
                 var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
                 predicate = request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
             }
