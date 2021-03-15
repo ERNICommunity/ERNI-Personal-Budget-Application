@@ -73,6 +73,6 @@ export class AuthenticationService {
     const name = authResult.idTokenClaims['name'] as string;
     const roles = authResult.idTokenClaims['roles'] as string[];
 
-    return { isAdmin: roles.indexOf('PBA.Admin') >= 0, isUser: roles.indexOf('PBA.Employee') >= 0, name };
+    return { isAdmin: roles.indexOf('PBA.Admin') >= 0, isUser: roles.indexOf('PBA.Employee') >= 0, isFinance: roles.indexOf('PBA.Finance') >= 0, name };
   }
 }

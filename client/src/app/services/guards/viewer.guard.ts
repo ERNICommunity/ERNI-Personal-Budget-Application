@@ -17,6 +17,7 @@ export class ViewerGuard implements CanActivate {
         return false;
       }
   
-      return userInfo.isUser || userInfo.isAdmin;
+      return userInfo.isUser || userInfo.isAdmin || userInfo.isFinance;
     }
   }
+ 

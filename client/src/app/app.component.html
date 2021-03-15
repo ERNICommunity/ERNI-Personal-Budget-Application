@@ -19,7 +19,7 @@
                     Other Budgets
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin || (authService.userInfo$ | async)?.isFinance">
                 <a class="nav-link" routerLink="/requests">
                     Requests
                 </a>
