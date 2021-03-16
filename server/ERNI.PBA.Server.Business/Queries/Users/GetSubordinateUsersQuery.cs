@@ -7,7 +7,6 @@ using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Responses;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
@@ -20,10 +19,8 @@ namespace ERNI.PBA.Server.Business.Queries.Users
 
         protected override async Task<IEnumerable<UserModel>> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            User[] users;
-
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            users = user.IsAdmin
+            var users = user.IsAdmin
                 ? await _userRepository.GetAllUsers(cancellationToken)
                 : await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
 
@@ -36,14 +33,12 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                 FirstName = _.FirstName,
                 LastName = _.LastName,
                 State = _.State,
-                Superior = _.Superior != null ? new SuperiorModel
+                Superior = new SuperiorModel
                 {
                     Id = _.Superior.Id,
                     FirstName = _.Superior.FirstName,
                     LastName = _.Superior.LastName,
                 }
-                    :
-                    null
             }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
         }
     }

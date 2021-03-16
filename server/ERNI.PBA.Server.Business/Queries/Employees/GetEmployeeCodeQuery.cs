@@ -14,7 +14,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
     public class GetEmployeeCodeQuery : Query<AdUserOutputModel[]>, IGetEmployeeCodeQuery
     {
         private static DateTime _timestamp;
-        private static AdUserOutputModel[] _cache;
+        private static AdUserOutputModel[]? _cache;
 
         private readonly IConfiguration _configuration;
 
@@ -22,7 +22,7 @@ namespace ERNI.PBA.Server.Business.Queries.Employees
 
         protected override async Task<AdUserOutputModel[]> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            if (_cache != null && _timestamp.AddHours(4) > DateTime.Now)
+            if (_cache is not null && _timestamp.AddHours(4) > DateTime.Now)
             {
                 return _cache;
             }
