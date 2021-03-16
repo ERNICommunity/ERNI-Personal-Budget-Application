@@ -8,6 +8,6 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.PendingRequests
 
         public BudgetTypeEnum Type { get; init; }
 
-        public string Title { get; init; }
+        public string Title { get; init; } = null!;
     }
 }

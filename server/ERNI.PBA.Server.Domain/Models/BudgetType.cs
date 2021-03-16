@@ -37,12 +37,12 @@ namespace ERNI.PBA.Server.Domain.Models
             }
         };
 
-        public BudgetTypeEnum Id { get; private set; }
+        public BudgetTypeEnum Id { get; init; }
 
-        public string Name { get; private set; }
+        public string Name { get; init; } = null!;
 
-        public bool SinglePerUser { get; private set; }
+        public bool SinglePerUser { get; init; }
 
-        public bool IsTransferable { get; private set; }
+        public bool IsTransferable { get; init; }
     }
 }

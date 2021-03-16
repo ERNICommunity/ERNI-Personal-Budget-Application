@@ -7,19 +7,19 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.PendingRequests
     {
         public int Id { get; init; }
 
-        public BudgetModel Budget { get; init; }
+        public BudgetModel Budget { get; init; } = null!;
 
         public DateTime Date { get; init; }
 
         public DateTime CreateDate { get; init; }
 
-        public string Title { get; init; }
+        public string Title { get; init; } = null!;
 
         public decimal Amount { get; init; }
 
         public RequestState State { get; init; }
 
-        public UserOutputModel User { get; init; }
+        public UserOutputModel User { get; init; } = null!;
 
         public int Year { get; init; }
     }

@@ -12,10 +12,10 @@
 
         public decimal Amount { get; set; }
 
-        public Request Request { get; set; }
+        public Request Request { get; set; } = null!;
 
-        public Budget Budget { get; set; }
+        public Budget Budget { get; set; } = null!;
 
-        public User User { get; set; }
+        public User User { get; set; } = null!;
     }
 }

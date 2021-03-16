@@ -2,12 +2,12 @@
 {
     public class AdUserOutputModel
     {
-        public string LastName { get; init; }
+        public string LastName { get; init; } = null!;
 
-        public string FirstName { get; init; }
+        public string FirstName { get; init; } = null!;
 
-        public string DisplayName { get; init; }
+        public string DisplayName { get; init; } = null!;
 
-        public string Code { get; init; }
+        public string Code { get; init; } = null!;
     }
 }

@@ -4,8 +4,8 @@ namespace ERNI.PBA.Server.Domain.Models
 {
     public class GetRequestsModel
     {
-        public int Year { get; set; }
+        public int Year { get; init; }
 
-        public RequestState[] RequestStates { get; set; }
+        public RequestState[] RequestStates { get; init; } = null!;
     }
 }

@@ -7,7 +7,7 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.Budgets
     {
         public int Id { get; init; }
 
-        public string Title { get; init; }
+        public string Title { get; init; } = null!;
 
         public int Year { get; init; }
 
@@ -15,6 +15,6 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.Budgets
 
         public BudgetTypeEnum Type { get; init; }
 
-        public User User { get; init; }
+        public User User { get; init; } = null!;
     }
 }
