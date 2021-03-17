@@ -1,5 +1,4 @@
-﻿using Autofac.Extensions.DependencyInjection;
-using ERNI.PBA.Server.Business.Queries.Employees;
+using Autofac.Extensions.DependencyInjection;
 using ERNI.PBA.Server.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +13,7 @@ namespace ERNI.PBA.Server.Host
         {
             var host = CreateHostBuilder(args).Build();
 
-            using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
+            using (var serviceScope = host.Services.GetService<IServiceScopeFactory>()!.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
