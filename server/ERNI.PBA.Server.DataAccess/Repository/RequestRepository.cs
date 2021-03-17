@@ -1,13 +1,13 @@
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -17,31 +17,35 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public RequestRepository(DatabaseContext context) => _context = context;
 
-        public Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken)
-        {
-            return _context.Requests
+        public Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken) =>
+            _context.Requests
                 .Where(_ => _.BudgetId == budgetId)
                 .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
-        }
 
-        public Task<Request[]> GetRequests(Expression<Func<Request, bool>> filter, CancellationToken cancellationToken)
-        {
-            return _context.Requests
+        public Task<Request[]> GetRequests(Expression<Func<Request, bool>> filter, CancellationToken cancellationToken) =>
+            _context.Requests
                 .Where(filter)
                 .Include(_ => _.Budget)
                 .Include(_ => _.User.Superior)
                 .Include(_ => _.Category)
                 .ToArrayAsync(cancellationToken);
-        }
 
-        public Task<Request> GetRequest(int id, CancellationToken cancellationToken)
-        {
-            return _context.Requests
+        public Task<Transaction[]> GetRequests(int year, int month, BudgetTypeEnum budgetType) =>
+            _context
+                .Transactions
+                .Where(_ => _.Request.ApprovedDate!.Value.Year == year
+                            && _.Request.ApprovedDate.Value.Month == month
+                            && _.Budget.BudgetType == budgetType)
+                .Include(_ => _.User)
+                .Include(_ => _.Request)
+                .ToArrayAsync();
+
+        public Task<Request> GetRequest(int id, CancellationToken cancellationToken) =>
+            _context.Requests
                 .Include(_ => _.User)
                 .Include(_ => _.Category)
                 .SingleOrDefaultAsync(_ => _.Id == id, cancellationToken);
-        }
 
         public async Task AddRequest(Request request) => await _context.Requests.AddAsync(request);
 
@@ -73,18 +77,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             {
                 request.Transactions.Add(transaction);
             }
-        }
-
-        public Task<Transaction[]> GetRequests(int year, int month, BudgetTypeEnum budgetType)
-        {
-            return _context
-                .Transactions
-                .Where(_ => _.Request.ApprovedDate.Value.Year == year
-                    && _.Request.ApprovedDate.Value.Month == month
-                    && _.Budget.BudgetType == budgetType)
-                .Include(_ => _.User)
-                .Include(_ => _.Request)
-                .ToArrayAsync();
         }
     }
 }
