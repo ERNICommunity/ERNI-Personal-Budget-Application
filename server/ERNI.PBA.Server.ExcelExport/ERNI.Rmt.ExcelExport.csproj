@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-	</PropertyGroup>
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsAsErrors />
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsAsErrors />
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="ClosedXML" Version="0.95.4" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\ERNI.PBA.Server.Domain\ERNI.PBA.Server.Domain.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ERNI.PBA.Server.Domain\ERNI.PBA.Server.Domain.csproj" />
+  </ItemGroup>
 
 </Project>

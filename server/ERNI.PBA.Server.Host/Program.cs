@@ -1,4 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
+using ERNI.PBA.Server.Business.Queries.Employees;
 using ERNI.PBA.Server.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
