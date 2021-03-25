@@ -46,12 +46,14 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                     IsViewer = user.IsViewer,
                     LastName = user.LastName,
                     State = user.State,
-                    Superior = new SuperiorModel
-                    {
-                        FirstName = user.Superior.FirstName,
-                        Id = user.Superior.Id,
-                        LastName = user.Superior.LastName
-                    }
+                    Superior = user.Superior is not null
+                        ? new SuperiorModel
+                        {
+                            Id = user.Superior.Id,
+                            FirstName = user.Superior.FirstName,
+                            LastName = user.Superior.LastName,
+                        }
+                        : null
                 }).ToArray();
         }
     }

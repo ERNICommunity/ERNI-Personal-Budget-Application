@@ -23,10 +23,10 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public string Username { get; set; } = null!;
 
-        public int? SuperiorId { get; set; }
-
         public UserState State { get; set; }
 
-        public User Superior { get; set; } = null!;
+        public int? SuperiorId { get; set; }
+
+        public User? Superior { get; set; } = null!;
     }
 }

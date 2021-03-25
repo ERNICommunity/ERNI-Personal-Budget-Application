@@ -15,12 +15,14 @@ namespace ERNI.PBA.Server.Business.Extensions
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
-                Superior = new SuperiorModel
-                {
-                    Id = user.Superior.Id,
-                    FirstName = user.Superior.FirstName,
-                    LastName = user.Superior.LastName,
-                }
+                Superior = user.Superior is not null
+                    ? new SuperiorModel
+                    {
+                        Id = user.Superior.Id,
+                        FirstName = user.Superior.FirstName,
+                        LastName = user.Superior.LastName,
+                    }
+                    : null
             };
     }
 }

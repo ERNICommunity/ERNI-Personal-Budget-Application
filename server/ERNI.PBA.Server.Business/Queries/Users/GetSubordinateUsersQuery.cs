@@ -33,12 +33,14 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                 FirstName = _.FirstName,
                 LastName = _.LastName,
                 State = _.State,
-                Superior = new SuperiorModel
-                {
-                    Id = _.Superior.Id,
-                    FirstName = _.Superior.FirstName,
-                    LastName = _.Superior.LastName,
-                }
+                Superior = user.Superior is not null
+                    ? new SuperiorModel
+                    {
+                        Id = user.Superior.Id,
+                        FirstName = user.Superior.FirstName,
+                        LastName = user.Superior.LastName,
+                    }
+                    : null
             }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
         }
     }

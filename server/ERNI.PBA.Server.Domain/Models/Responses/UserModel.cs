@@ -16,7 +16,7 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 
         public string LastName { get; init; } = null!;
 
-        public SuperiorModel Superior { get; init; } = null!;
+        public SuperiorModel? Superior { get; init; }
 
         public UserState State { get; init; }
     }
