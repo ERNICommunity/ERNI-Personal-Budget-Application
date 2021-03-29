@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -63,6 +62,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 {
                     UserId = user.Id,
                     User = user,
+                    BudgetType = BudgetTypeEnum.PersonalBudget,
                     Amount = parameter.Amount,
                     Year = parameter.Year
                 };
