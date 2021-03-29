@@ -33,24 +33,24 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _logger = logger;
         }
 
-        protected override async Task Execute((int requestId, RequestState requestState) payload, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute((int requestId, RequestState requestState) parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(payload.requestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter.requestId, cancellationToken);
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!Validate(payload.requestState, request))
+            if (!Validate(parameter.requestState, request))
             {
                 _logger.LogWarning("Validation failed");
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Validation failed");
             }
 
-            request.State = payload.requestState;
+            request.State = parameter.requestState;
 
-            if (payload.requestState == RequestState.Completed)
+            if (parameter.requestState == RequestState.Completed)
             {
                 request.ApprovedDate = DateTime.Now;
             }
@@ -64,7 +64,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _mailService.SendMail(message, request.User.Username);
         }
 
-        private bool Validate(RequestState newState, Domain.Models.Entities.Request request) => newState switch
+        private static bool Validate(RequestState newState, Domain.Models.Entities.Request request) => newState switch
         {
             RequestState.Pending => throw new InvalidOperationException(),
             RequestState.Approved => request.State == RequestState.Pending,
@@ -73,14 +73,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _ => throw new NotImplementedException(),
         };
 
-        private bool CanComplete(Domain.Models.Entities.Request request)
-        {
-            if (request.State != RequestState.Approved)
-            {
-                return false;
-            }
-
-            return true;
-        }
+        private static bool CanComplete(Domain.Models.Entities.Request request) => request.State == RequestState.Approved;
     }
 }
