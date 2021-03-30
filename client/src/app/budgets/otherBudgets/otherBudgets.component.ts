@@ -47,7 +47,9 @@ export class OtherBudgetsComponent implements OnInit {
     filterBudgets(searchString: string) {
         searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 
-        return this.budgets.filter(budget => budget.user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
+        return this.budgets
+            .filter(b => b.type == this.selectedBudgetType)
+            .filter(budget => budget.user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
             budget.user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
     }
 
