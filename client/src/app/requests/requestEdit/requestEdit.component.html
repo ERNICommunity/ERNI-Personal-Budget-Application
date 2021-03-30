@@ -8,6 +8,14 @@
 <div class="modal-body">
     <app-alert id="addRequestError"></app-alert>
 
+    <div class="card"> 
+        <p-timeline [value]="events">
+        <ng-template pTemplate="content" let-event>
+            {{event.status}}
+        </ng-template>
+    </p-timeline></div>
+
+
     <form [formGroup]="requestForm">
         <div class="form-group">
             <label for="title">Title</label>
@@ -40,9 +48,9 @@
             class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
         </div>
-        <!-- <div class="form-group">
+        <div class="form-group">
             <app-file-upload [requestIdInput]=requestId></app-file-upload>
-        </div> -->
+        </div>
     </form>
 </div>
 

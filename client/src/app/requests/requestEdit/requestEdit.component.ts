@@ -9,6 +9,9 @@ import { Alert, AlertType } from '../../model/alert.model';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 import { InvoicedAmount } from '../../model/invoicedAmount';
+import { MenuItem } from 'primeng/api';
+import { PrimeIcons } from 'primeng/api';
+
 
 @Component({
     selector: 'app-request-edit',
@@ -21,7 +24,7 @@ export class RequestEditComponent {
     dirty: boolean;
 
     requestId: number;
-    budgetType: BudgetTypeEnum;
+    budgetType: BudgetTypeEnum; events: any[];
 
     constructor(private requestService: RequestService,
         public modal: NgbActiveModal,
@@ -31,6 +34,17 @@ export class RequestEditComponent {
         private dataChangeNotificationService: DataChangeNotificationService) {
         this.createForm();
     }
+
+    ngOnInit() {
+
+        this.events = [
+            {status: 'Ordered', date: '15/10/2020 10:30', color: '#9C27B0', image: 'game-controller.jpg'},
+            {status: 'Processing', date: '15/10/2020 14:00', color: '#673AB7'},
+            {status: 'Shipped', date: '15/10/2020 16:15', color: '#FF9800'},
+            {status: 'Delivered', date: '16/10/2020 10:00', color: '#607D8B'}
+        ];  
+    }
+ 
 
     createForm() {
         this.requestForm = this.fb.group({
