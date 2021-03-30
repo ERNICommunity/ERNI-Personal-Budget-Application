@@ -42,6 +42,8 @@ import { UserCodesComponent } from './userCodes/user-codes.component';
 import { UserCodeService } from './services/user-code.service';
 import { TeamBudgetService } from './services/team-budget.service';
 import { ExportService } from './services/export.service';
+import { WizardModule } from 'primeng-extensions-wizard/components/wizard.module';
+import { StepsModule } from 'primeng/steps';
 
 import {
     MsalModule,
@@ -143,7 +145,8 @@ import { AuthenticationService } from './services/authentication.service';
         HttpClientModule,
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig),
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        StepsModule
     ],
     entryComponents: [
         NewRequestModalComponent, RequestDetailComponent, RequestEditComponent
@@ -183,7 +186,8 @@ import { AuthenticationService } from './services/authentication.service';
           MsalGuard,
           MsalBroadcastService,
           UserRoleGuard,
-          AdminRoleGuard
+          AdminRoleGuard,
+          WizardModule 
     ],
     bootstrap: [AppComponent]
 })
