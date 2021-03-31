@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { RequestService } from '../../services/request.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { PatchRequest } from '../../model/PatchRequest';
 import { NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
@@ -10,39 +9,68 @@ import { DataChangeNotificationService } from '../../services/dataChangeNotifica
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 import { InvoicedAmount } from '../../model/invoicedAmount';
 import { MenuItem } from 'primeng/api';
-import { PrimeIcons } from 'primeng/api';
+import { InvoiceImageService } from '../../services/invoice-image.service';
+import { Request } from '../../model/request/request';
+import { PatchRequest } from '../../model/PatchRequest';
 
+export enum RequestState {
+    Request,
+    Pending,
+    Invoice,
+    Closed
+}
 
 @Component({
     selector: 'app-request-edit',
     templateUrl: 'requestEdit.component.html',
     styleUrls: ['requestEdit.component.css']
 })
-export class RequestEditComponent {
+export class RequestEditComponent implements OnInit {
     requestForm: FormGroup;
     httpResponseError: string;
     dirty: boolean;
 
+    items: MenuItem[];
+
     requestId: number;
     budgetType: BudgetTypeEnum; events: any[];
+
+    requestState: RequestState;
+    activeState: RequestState;
+    activeStateIndex: number;
+
+    RequestState = RequestState;
+
+    @ViewChild('downloadLink',{static : false}) downloadLink: ElementRef;
+    request: Request;
+    selectedDate : Date;
+    images: [number, string][];
+
+
 
     constructor(private requestService: RequestService,
         public modal: NgbActiveModal,
         private location: Location,
         private fb: FormBuilder,
         private alertService: AlertService,
-        private dataChangeNotificationService: DataChangeNotificationService) {
+        private dataChangeNotificationService: DataChangeNotificationService,
+        private invoiceImageService: InvoiceImageService) {
         this.createForm();
     }
 
     ngOnInit() {
+        this.items = [
+            { label: RequestState[RequestState.Request] },
+            { label: RequestState[RequestState.Pending] },
+            { label: RequestState[RequestState.Invoice] },
+            { label: RequestState[RequestState.Closed] }
+        ];
+        this.switchState(RequestState.Pending);
+    }
 
-        this.events = [
-            {status: 'Ordered', date: '15/10/2020 10:30', color: '#9C27B0', image: 'game-controller.jpg'},
-            {status: 'Processing', date: '15/10/2020 14:00', color: '#673AB7'},
-            {status: 'Shipped', date: '15/10/2020 16:15', color: '#FF9800'},
-            {status: 'Delivered', date: '16/10/2020 10:00', color: '#607D8B'}
-        ];  
+    switchState(newState: RequestState): void {
+        this.activeState = newState;
+        this.activeStateIndex = newState;
     }
  
 
@@ -57,21 +85,24 @@ export class RequestEditComponent {
     public showRequest(id: number): void {
         this.requestService.getRequest(id)
             .subscribe(request => {
+                this.request = request;
                 this.requestId = id;
+                this.selectedDate = new Date(request.date);
 
-                var date = new Date(request.date);
-
-                var ngbDate = new NgbDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+                var ngbDate = new NgbDate(this.selectedDate.getFullYear(), this.selectedDate.getMonth() + 1, this.selectedDate.getDate());
 
                 this.requestForm.setValue({
                     title: request.title,
                     amount: request.amount,
                     date: ngbDate
+                });                
+                this.invoiceImageService.getInvoiceImages(id).subscribe(names => {
+                    this.images = names;
                 });
             }, err => {
                 this.httpResponseError = err.error
-            });
-    }
+            });    
+        }
 
     setDirty(): void {
         this.dirty = true;
@@ -106,5 +137,17 @@ export class RequestEditComponent {
             err => {
                 this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
             });
-    }
+    }  download(imageId: number, imageName: string) {
+    this.invoiceImageService.getInvoiceImage(imageId).subscribe(blob => { this.processBlob(blob, imageName); })
+  }
+
+  processBlob(blob: Blob, name: string) {
+    let fileObject = new File([blob], name);
+    let url = window.URL.createObjectURL(fileObject);
+    let link = this.downloadLink.nativeElement;
+    link.setAttribute('download', name);
+    link.href = url;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
 }

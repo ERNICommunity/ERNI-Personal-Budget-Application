@@ -44,7 +44,6 @@ import { TeamBudgetService } from './services/team-budget.service';
 import { ExportService } from './services/export.service';
 import { WizardModule } from 'primeng-extensions-wizard/components/wizard.module';
 import { StepsModule } from 'primeng/steps';
-import { TimelineModule } from 'primeng/timeline';
 
 import {
     MsalModule,
@@ -147,8 +146,7 @@ import { AuthenticationService } from './services/authentication.service';
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig),
         ReactiveFormsModule,
-        StepsModule,
-        TimelineModule
+        StepsModule
     ],
     entryComponents: [
         NewRequestModalComponent, RequestDetailComponent, RequestEditComponent

@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title" id="modal-title">Edit request</h4>
+    <h4 class="modal-title" id="modal-title">Request</h4>
     <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -7,16 +7,28 @@
 
 <div class="modal-body">
     <app-alert id="addRequestError"></app-alert>
+    <!-- Current request state -->
+    <div>
+        <label for="state">Request state</label>
+        <div class="card">        
+            <p-steps id="state" [model]="items" [readonly]="true" [(activeIndex)]="activeStateIndex"></p-steps>
+            <div *ngIf="activeStateIndex == RequestState.Request">
+                <p class="hint" >Create request by filling out this form.</p>
+            </div>
+            <div *ngIf="activeStateIndex == RequestState.Pending">
+                <p class="hint" >Request is waiting for approval by budget administrator. You can edit it until it is approved.</p>
+            </div>
+            <div *ngIf="activeStateIndex == RequestState.Invoice">
+                <p class="hint" >Request was approved. Administarator is waiting for invoice and actual ammount spent.</p>
+            </div>
+            <div *ngIf="activeStateIndex == RequestState.Closed">
+                <p class="hint" >Request was closed as paid/rejected.</p>
+            </div>
+        </div>
+    </div>
 
-    <div class="card"> 
-        <p-timeline [value]="events">
-        <ng-template pTemplate="content" let-event>
-            {{event.status}}
-        </ng-template>
-    </p-timeline></div>
-
-
-    <form [formGroup]="requestForm">
+    <!-- Create/Edit request form -->
+    <form [formGroup]="requestForm" *ngIf="activeStateIndex == RequestState.Request || activeStateIndex == RequestState.Pending">
         <div class="form-group">
             <label for="title">Title</label>
             <textarea id="title" #requestTitle class="form-control" formControlName="title"
@@ -43,15 +55,56 @@
             <label for="amount">Amount</label>
             <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="0.00">
         </div>
+    </form>
 
+    <!-- Invoice -->
+    <div *ngIf="activeStateIndex == RequestState.Invoice">
         <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
-            class="alert alert-danger col-md-6">
+        class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
         </div>
-        <div class="form-group">
+        <div class="form-group" *ngIf="activeStateIndex == RequestState.Invoice">
             <app-file-upload [requestIdInput]=requestId></app-file-upload>
         </div>
-    </form>
+    </div>
+
+
+    <!-- Closed -->
+    <div *ngIf="activeStateIndex == RequestState.Closed">
+        <h5>Date</h5>
+        <p>{{ selectedDate | date : 'shortDate'}} </p>
+    
+        <h5>Amount</h5>
+        <p>{{request?.amount}}</p>
+    
+        <div *ngIf="httpResponseError">
+            <font color="red" size="4">
+                {{httpResponseError}}
+            </font>
+        </div>
+        <h5>Uploaded files</h5>
+        <div class="fileLists">
+            <div *ngIf="images?.length == 0">No files yet</div>
+            <ul class="pl-0">
+                <li *ngFor="let image of images">
+                    <div class="row mt-2">
+                        <div class="col-md-8">{{image.name}}</div>
+                        <button class="col-md-3 btn btn-outline-primary"
+                            (click)="download(image.id, image.name)">Download</button>
+                        <a #downloadLink></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <p>This wont be here in final solution</p>
+        <button type="button" class="btn btn-outline-secondary" (click)="switchState(0)">Create</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="switchState(1)">Pending</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="switchState(2)">Invoice</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="switchState(3)">Closed</button>
+    </div>
 </div>
 
 <div class="modal-footer">
