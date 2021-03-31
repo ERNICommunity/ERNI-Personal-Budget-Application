@@ -31,6 +31,10 @@ export class RequestListComponent implements OnInit {
     years: number[];
     rlao: object;
 
+    get isAdmin(): boolean {
+        return this.authService.userInfo.isAdmin;
+    }
+
     private _searchTerm: string;
 
     get searchTerm(): string {
