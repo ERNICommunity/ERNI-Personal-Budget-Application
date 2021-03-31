@@ -18,19 +18,15 @@ export class RequestService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
     public getPendingRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', this.serviceHelper.getHttpOptions())
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/pending', this.serviceHelper.getHttpOptions())
     }
 
     public getApprovedRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approved', this.serviceHelper.getHttpOptions())
-    }
-
-    public getApprovedBySuperiorRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approvedBySuperior', this.serviceHelper.getHttpOptions())
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/approved', this.serviceHelper.getHttpOptions())
     }
 
     public getRejectedRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/rejected', this.serviceHelper.getHttpOptions())
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/rejected', this.serviceHelper.getHttpOptions())
     }
 
     public getRequest(id): Observable<Request> {

@@ -122,7 +122,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("{year}/state/{requestState}")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
-        public async Task<RequestModel[]> GetApprovedRequests(int year, RequestState requestState, CancellationToken cancellationToken)
+        public async Task<RequestModel[]> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel
             {

@@ -1,7 +1,6 @@
 <div [ngSwitch]="requestFilter">
     <h2 *ngSwitchCase="requestFilterType.Pending">Pending requests</h2>
     <h2 *ngSwitchCase="requestFilterType.Approved">Approved requests</h2>
-    <h2 *ngSwitchCase="requestFilterType.ApprovedBySuperior">Approved By Superior requests</h2>
     <h2 *ngSwitchCase="requestFilterType.Rejected">Rejected requests</h2>
 </div>
 
@@ -22,13 +21,6 @@
             class="nav-link"
             [routerLinkActive]="['active']"
             [routerLink]="[approvedRoute, year]">
-            {{year}}
-        </a>
-        <a
-            *ngSwitchCase="requestFilterType.ApprovedBySuperior"
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[approvedBySuperiorRoute, year]">
             {{year}}
         </a>
         <a
@@ -89,15 +81,6 @@
             [routerLink]="[approvedRoute, selectedYear]"
             [routerLinkActiveOptions]="rlao">
             Approved
-        </a>
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[approvedBySuperiorRoute, selectedYear]"
-            [routerLinkActiveOptions]="rlao">
-            Approved By Superior
         </a>
     </li>
     <li class="nav-item">

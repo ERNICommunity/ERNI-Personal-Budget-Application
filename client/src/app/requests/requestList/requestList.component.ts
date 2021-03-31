@@ -96,9 +96,6 @@ export class RequestListComponent implements OnInit {
             case RequestFilter.Approved:
                 requests = this.requestService.getApprovedRequests(year);
                 break;
-            case RequestFilter.ApprovedBySuperior:
-                requests = this.requestService.getApprovedBySuperiorRequests(year);
-                break;
             case RequestFilter.Pending:
                 requests = this.requestService.getPendingRequests(year);
                 break;
