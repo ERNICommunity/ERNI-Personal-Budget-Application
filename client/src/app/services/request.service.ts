@@ -9,6 +9,7 @@ import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
 import { PatchRequest } from '../model/PatchRequest';
+import { InvoicedAmount } from '../model/invoicedAmount';
 
 @Injectable()
 export class RequestService {
@@ -59,6 +60,10 @@ export class RequestService {
 
     public updateTeamRequest(request: PatchRequest): Observable<any> {
         return this.http.put(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
+    }
+
+    public updateInvoicedAmount(id: number, request: InvoicedAmount): Observable<any> {
+        return this.http.put(this.configService.apiUrlBase + this.requestUrl +  id + "/setAmount", request, this.serviceHelper.getHttpOptions());
     }
 
     public deleteRequest(id: number): Observable<Request> {

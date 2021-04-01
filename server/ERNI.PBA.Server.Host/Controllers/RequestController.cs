@@ -11,6 +11,7 @@ using ERNI.PBA.Server.Domain.Models.Responses;
 using ERNI.PBA.Server.Domain.Models.Responses.PendingRequests;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -28,6 +29,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
         private readonly Lazy<IUpdateRequestCommand> _updateRequestCommand;
         private readonly Lazy<IUpdateTeamRequestCommand> _updateTeamRequestCommand;
+        private readonly Lazy<ISetInvoicedAmountCommand> _setInvoicedAmountCommand;
         private readonly Lazy<IDeleteRequestCommand> _deleteRequestCommand;
 
         public RequestController(
@@ -40,6 +42,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<IAddMassRequestCommand> addMassRequestCommand,
             Lazy<IUpdateRequestCommand> updateRequestCommand,
             Lazy<IUpdateTeamRequestCommand> updateTeamRequestCommand,
+            Lazy<ISetInvoicedAmountCommand> setInvoicedAmountCommand,
             Lazy<IDeleteRequestCommand> deleteRequestCommand)
         {
             _getRequestQuery = getRequestQuery;
@@ -51,6 +54,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             _addMassRequestCommand = addMassRequestCommand;
             _updateRequestCommand = updateRequestCommand;
             _updateTeamRequestCommand = updateTeamRequestCommand;
+            _setInvoicedAmountCommand = setInvoicedAmountCommand;
             _deleteRequestCommand = deleteRequestCommand;
         }
 
@@ -137,6 +141,14 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> UpdateRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
             await _updateRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/setAmount")]
+        public async Task<IActionResult> SetInvoicedAmount(int id, [FromBody] SetInvoicedAmountModel payload, CancellationToken cancellationToken)
+        {
+            await _setInvoicedAmountCommand.Value.ExecuteAsync((id, payload), HttpContext.User, cancellationToken);
 
             return Ok();
         }

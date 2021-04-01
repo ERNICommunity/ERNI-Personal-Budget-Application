@@ -8,6 +8,7 @@ import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
+import { InvoicedAmount } from '../../model/invoicedAmount';
 
 @Component({
     selector: 'app-request-edit',
@@ -81,7 +82,7 @@ export class RequestEditComponent {
         let requestData = { id, title, amount, date } as PatchRequest;
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
             ? this.requestService.updateTeamRequest(requestData)
-            : this.requestService.updateRequest(requestData);
+            : this.requestService.updateInvoicedAmount(1, new InvoicedAmount({ amount: 7.77 }));
 
         request.subscribe(() => {
             this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
