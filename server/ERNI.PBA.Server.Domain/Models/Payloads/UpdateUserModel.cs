@@ -7,7 +7,7 @@ namespace ERNI.PBA.Server.Domain.Models.Payloads
     {
         public int Id { get; set; }
 
-        public User Superior { get; set; }
+        public User? Superior { get; set; }
 
         public bool IsAdmin { get; set; }
 

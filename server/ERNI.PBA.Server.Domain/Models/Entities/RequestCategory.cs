@@ -4,7 +4,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
     {
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         public int? SpendLimit { get; set; }
 
@@ -12,6 +12,6 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public bool IsUrlNeeded { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; } = null!;
     }
 }

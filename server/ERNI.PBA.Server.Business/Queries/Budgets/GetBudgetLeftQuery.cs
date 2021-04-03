@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,36 +34,27 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
             var users = (await _userRepository.GetAllUsers(cancellationToken))
                 .ToDictionary(_ => _.Id);
 
-            var usersWithBudgetLeft = new List<UserModel>();
-
-            foreach (var budget in budgets)
-            {
-                if (budgetAmount[budget.Id] + parameter.Amount <= budget.Amount)
+            return budgets
+                .Where(budget => budgetAmount[budget.Id] + parameter.Amount <= budget.Amount)
+                .Select(budget => users[budget.UserId])
+                .Select(user => new UserModel
                 {
-                    var user = users[budget.UserId];
-
-                    usersWithBudgetLeft.Add(new UserModel
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        IsAdmin = user.IsAdmin,
-                        IsSuperior = user.IsSuperior,
-                        IsViewer = user.IsViewer,
-                        LastName = user.LastName,
-                        State = user.State,
-                        Superior = user.Superior != null ? new SuperiorModel
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    IsAdmin = user.IsAdmin,
+                    IsSuperior = user.IsSuperior,
+                    IsViewer = user.IsViewer,
+                    LastName = user.LastName,
+                    State = user.State,
+                    Superior = user.Superior is not null
+                        ? new SuperiorModel
                         {
-                            FirstName = user.Superior.FirstName,
                             Id = user.Superior.Id,
-                            LastName = user.Superior.LastName
+                            FirstName = user.Superior.FirstName,
+                            LastName = user.Superior.LastName,
                         }
-                            :
-                            null
-                    });
-                }
-            }
-
-            return usersWithBudgetLeft.ToArray();
+                        : null
+                }).ToArray();
         }
     }
 }

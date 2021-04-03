@@ -4,8 +4,8 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.InvoiceImages
 {
     public class ImageFileModel
     {
-        public InvoiceImage InvoiceImage { get; init; }
+        public InvoiceImage InvoiceImage { get; init; } = null!;
 
-        public string ContentType { get; init; }
+        public string ContentType { get; init; } = null!;
     }
 }

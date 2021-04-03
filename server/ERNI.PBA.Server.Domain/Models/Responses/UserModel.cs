@@ -12,11 +12,11 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 
         public bool IsViewer { get; init; }
 
-        public string FirstName { get; init; }
+        public string FirstName { get; init; } = null!;
 
-        public string LastName { get; init; }
+        public string LastName { get; init; } = null!;
 
-        public SuperiorModel Superior { get; init; }
+        public SuperiorModel? Superior { get; init; }
 
         public UserState State { get; init; }
     }
