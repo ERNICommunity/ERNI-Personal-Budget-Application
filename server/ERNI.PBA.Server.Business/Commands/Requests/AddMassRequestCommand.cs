@@ -13,6 +13,7 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
+using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
@@ -39,8 +40,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal,
             CancellationToken cancellationToken)
         {
-            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            if (!currentUser.IsAdmin)
+            if (!principal.IsInRole(Roles.Admin))
             {
                 throw AppExceptions.AuthorizationException();
             }
