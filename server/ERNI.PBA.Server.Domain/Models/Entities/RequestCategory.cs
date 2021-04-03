@@ -12,6 +12,6 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public bool IsUrlNeeded { get; set; }
 
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; } = null!;
     }
 }

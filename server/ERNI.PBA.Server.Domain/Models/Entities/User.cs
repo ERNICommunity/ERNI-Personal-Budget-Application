@@ -7,7 +7,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
     {
         public int Id { get; set; }
 
-        public string UniqueIdentifier { get; set; } = null!;
+        public string? UniqueIdentifier { get; set; } = null!;
 
         public Guid? ObjectId { get; set; }
 
