@@ -38,8 +38,6 @@ import { EditRequestModalComponent } from './requests/requestEdit/editRequestMod
 import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InvoiceImageService } from './services/invoice-image.service';
-import { UserCodesComponent } from './userCodes/user-codes.component';
-import { UserCodeService } from './services/user-code.service';
 import { TeamBudgetService } from './services/team-budget.service';
 import { ExportService } from './services/export.service';
 
@@ -133,8 +131,7 @@ import {
         AlertComponent,
         NewRequestModalComponent,
         RequestDetailModalComponent,
-        FileUploadComponent,
-        UserCodesComponent
+        FileUploadComponent
     ],
     imports: [
         NgbModule,
@@ -156,7 +153,6 @@ import {
         BudgetService,
         TeamBudgetService,
         BusyIndicatorService,
-        UserCodeService,
         DataChangeNotificationService,
         InvoiceImageService,
         ViewerGuard,

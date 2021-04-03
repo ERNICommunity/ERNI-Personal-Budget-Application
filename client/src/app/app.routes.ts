@@ -18,7 +18,6 @@ import { ViewerGuard } from './services/guards/viewer.guard';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
-import { UserCodesComponent } from './userCodes/user-codes.component';
 import { AdminRoleGuard } from './services/guards/admin-role.guard';
 import { MsalGuard } from '@azure/msal-angular';
 
@@ -95,7 +94,6 @@ export const rootRouterConfig: Routes = [
             { path: 'create', component: CreateUserComponent, canActivate: [MsalGuard] }
         ]
     },
-    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminRoleGuard] },
-    { path: 'usercodes', component: UserCodesComponent, canActivate: [MsalGuard] }
+    { path: 'mass-request', component: RequestMassComponent, canActivate: [AdminRoleGuard] }
 ];
 
