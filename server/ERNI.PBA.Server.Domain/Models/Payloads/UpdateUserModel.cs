@@ -9,12 +9,6 @@ namespace ERNI.PBA.Server.Domain.Models.Payloads
 
         public User? Superior { get; set; }
 
-        public bool IsAdmin { get; set; }
-
-        public bool IsSuperior { get; set; }
-
-        public bool IsViewer { get; set; }
-
         public UserState State { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -27,9 +27,6 @@ namespace ERNI.PBA.Server.Business.Queries.Users
             return users.Select(_ => new UserModel
             {
                 Id = _.Id,
-                IsAdmin = _.IsAdmin,
-                IsSuperior = _.IsSuperior,
-                IsViewer = _.IsViewer,
                 FirstName = _.FirstName,
                 LastName = _.LastName,
                 State = _.State,

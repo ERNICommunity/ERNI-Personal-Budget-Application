@@ -9,9 +9,6 @@ namespace ERNI.PBA.Server.Business.Extensions
             new()
             {
                 Id = user.Id,
-                IsAdmin = user.IsAdmin,
-                IsSuperior = user.IsSuperior,
-                IsViewer = user.IsViewer,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
