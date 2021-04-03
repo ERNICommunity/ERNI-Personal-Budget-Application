@@ -15,21 +15,17 @@ namespace ERNI.PBA.Server.Host.Utils
     public class DailyMailNotifications : IJob
     {
         private readonly IRequestRepository _requestRepository;
-        private readonly IUserRepository _userRepository;
         private readonly MailService _mailService;
-        /* private readonly ILogger _logger; */
+        private readonly string[] _notificationEmails;
 
-        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration) // , ILogger<DailyMailNotifications> logger)
+        public DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration)
         {
             _requestRepository = requestRepository;
-            _userRepository = userRepository;
             _mailService = new MailService(configuration);
-
-            // _logger = logger;
+            _notificationEmails = configuration["NotificationEmails"].Split(";");
         }
 
         public async Task Execute(IJobExecutionContext context) =>
-            // await SendNotificationsForPendingRequests(context.CancellationToken);
             await SendNotificationsToAdmins(context.CancellationToken);
 
         private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
@@ -43,10 +39,7 @@ namespace ERNI.PBA.Server.Host.Utils
                 return;
             }
 
-            var admins = await _userRepository.GetAdminUsers(cancellationToken);
-            var adminsMails = admins.Select(u => u.Username).ToArray();
-
-            foreach (var mail in adminsMails)
+            foreach (var mail in _notificationEmails)
             {
                 var msg = new StringBuilder("You have new requests to handle");
                 msg.AppendLine();
