@@ -15,7 +15,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
         public int BudgetId { get; set; }
 
 #pragma warning disable CA1056 // URI-like properties should not be strings
-        public string Url { get; set; } = null!;
+        public string? Url { get; set; }
 #pragma warning restore CA1056 // URI-like properties should not be strings
 
         public int UserId { get; set; }
@@ -34,7 +34,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public Budget Budget { get; set; } = null!;
 
-        public RequestCategory Category { get; set; } = null!;
+        public RequestCategory? Category { get; set; }
 
         public User User { get; set; } = null!;
 
