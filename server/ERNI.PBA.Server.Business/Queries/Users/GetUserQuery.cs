@@ -27,14 +27,14 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
-                Superior = user.Superior != null ? new SuperiorModel
-                {
-                    Id = user.Superior.Id,
-                    FirstName = user.Superior.FirstName,
-                    LastName = user.Superior.LastName,
-                }
-                    :
-                    null
+                Superior = user.Superior is not null
+                    ? new SuperiorModel
+                    {
+                        Id = user.Superior.Id,
+                        FirstName = user.Superior.FirstName,
+                        LastName = user.Superior.LastName,
+                    }
+                    : null
             };
         }
     }

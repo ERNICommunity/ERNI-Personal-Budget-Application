@@ -42,7 +42,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Include(_ => _.Transactions)
                 .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
                 .Where(_ => _.BudgetType == BudgetTypeEnum.TeamBudget)
-                .Where(_ => (_.User.ObjectId == userId || _.User.Superior.ObjectId == userId) && _.Year == year)
+                .Where(_ => (_.User.ObjectId == userId || _.User.Superior!.ObjectId == userId) && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
 

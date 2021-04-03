@@ -32,34 +32,6 @@ namespace ERNI.PBA.Server.Host.Utils
             // await SendNotificationsForPendingRequests(context.CancellationToken);
             await SendNotificationsToAdmins(context.CancellationToken);
 
-        // _logger.LogInformation("Scheduled Job for notifications executed");
-        private async Task SendNotificationsForPendingRequests(CancellationToken cancellationToken)
-        {
-            var pendingRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
-
-            if (pendingRequests.Any())
-            {
-                var requestBySuperior = pendingRequests
-                    .Where(_ => _.User.Superior != null)
-                    .GroupBy(_ => _.User.Superior);
-
-                foreach (var group in requestBySuperior)
-                {
-                    var msg = new StringBuilder("You have new requests to handle");
-                    msg.AppendLine();
-                    msg.AppendLine();
-
-                    foreach (var request in group)
-                    {
-                        msg.AppendLine($"   {request}");
-                    }
-
-                    _mailService.SendMail(msg.ToString(), group.Key.Username);
-                }
-            }
-        }
-
         private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
         {
             var pendingRequests = await _requestRepository.GetRequests(

@@ -1,5 +1,5 @@
-﻿using ERNI.PBA.Server.Domain.Enums;
-using System;
+﻿using System;
+using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.Domain.Models.Entities
 {
@@ -7,7 +7,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
     {
         public int Id { get; set; }
 
-        public string UniqueIdentifier { get; set; }
+        public string? UniqueIdentifier { get; set; } = null!;
 
         public Guid? ObjectId { get; set; }
 
@@ -17,16 +17,16 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public bool IsViewer { get; set; }
 
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
-        public string LastName { get; set; }
+        public string LastName { get; set; } = null!;
 
-        public string Username { get; set; }
-
-        public int? SuperiorId { get; set; }
+        public string Username { get; set; } = null!;
 
         public UserState State { get; set; }
 
-        public User Superior { get; set; }
+        public int? SuperiorId { get; set; }
+
+        public User? Superior { get; set; } = null!;
     }
 }

@@ -7,7 +7,7 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
     {
         public int Id { get; init; }
 
-        public string Title { get; init; }
+        public string Title { get; init; } = null!;
 
         public int Year { get; init; }
 
@@ -17,8 +17,8 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 
         public BudgetTypeEnum Type { get; init; }
 
-        public UserOutputModel User { get; init; }
+        public UserOutputModel User { get; init; } = null!;
 
-        public IEnumerable<RequestOutputModel> Requests { get; init; }
+        public IEnumerable<RequestOutputModel> Requests { get; init; } = null!;
     }
 }
