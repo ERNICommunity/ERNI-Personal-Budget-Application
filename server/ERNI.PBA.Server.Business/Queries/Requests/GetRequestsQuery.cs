@@ -29,9 +29,6 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
         protected override async Task<RequestModel[]> Execute(GetRequestsModel parameter, ClaimsPrincipal principal,
             CancellationToken cancellationToken)
         {
-            var userId = principal.GetId();
-            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
-
             var requests = await _requestRepository.GetRequests(
                 request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State),
                 cancellationToken);
@@ -42,7 +39,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
         }
 
         private static RequestModel GetModel(Request request) =>
-            new RequestModel
+            new()
             {
                 Id = request.Id,
                 Title = request.Title,
