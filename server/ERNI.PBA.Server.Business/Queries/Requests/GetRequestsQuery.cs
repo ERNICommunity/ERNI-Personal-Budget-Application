@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,33 +26,20 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
             _requestRepository = requestRepository;
         }
 
-        protected override async Task<RequestModel[]> Execute(GetRequestsModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task<RequestModel[]> Execute(GetRequestsModel parameter, ClaimsPrincipal principal,
+            CancellationToken cancellationToken)
         {
-            Expression<Func<Request, bool>> predicate;
-
-            var userId = principal.GetId();
-            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
-            if (currentUser.IsAdmin || currentUser.IsViewer)
-            {
-                predicate = request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State);
-            }
-            else
-            {
-                var subordinates = await _userRepository.GetSubordinateUsers(currentUser.Id, cancellationToken);
-                var subordinatesIds = subordinates.Select(u => u.Id).ToArray();
-                predicate = request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State) && subordinatesIds.Contains(request.UserId);
-            }
-
-            var requests = await _requestRepository.GetRequests(predicate, cancellationToken);
+            var requests = await _requestRepository.GetRequests(
+                request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State),
+                cancellationToken);
 
             var result = requests.Select(GetModel).ToArray();
 
             return result;
         }
 
-        private static RequestModel GetModel(Request request)
-        {
-            return new RequestModel
+        private static RequestModel GetModel(Request request) =>
+            new()
             {
                 Id = request.Id,
                 Title = request.Title,
@@ -71,11 +56,8 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 },
                 Budget = new BudgetModel
                 {
-                    Id = request.BudgetId,
-                    Title = request.Budget.Title,
-                    Type = request.Budget.BudgetType
+                    Id = request.BudgetId, Title = request.Budget.Title, Type = request.Budget.BudgetType
                 }
             };
-        }
     }
 }

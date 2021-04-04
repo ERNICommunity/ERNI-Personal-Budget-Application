@@ -25,8 +25,6 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
         /// </summary>
         Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken);
 
-        Task<User[]> GetAdminUsers(CancellationToken cancellationToken);
-
         Task AddUserAsync(User user);
 
         Task<bool> ExistsAsync(string username);

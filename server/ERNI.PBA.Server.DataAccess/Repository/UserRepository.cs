@@ -62,13 +62,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public Task<User[]> GetAdminUsers(CancellationToken cancellationToken)
-        {
-            return _context.Users
-                .Where(u => u.IsAdmin)
-                .ToArrayAsync(cancellationToken);
-        }
-
         public async Task AddUserAsync(User user) => await _context.Users.AddAsync(user);
 
         public async Task<bool> ExistsAsync(string username) => await _context.Users.AnyAsync(x => x.Username == username);

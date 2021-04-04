@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Policy = Constants.ClientPolicy, Roles = Roles.AnyRole)]
+    [Authorize(Policy = Constants.ClientPolicy)]
     public class BudgetController : Controller
     {
         private readonly Lazy<IGetBudgetQuery> _getBudgetQuery;
@@ -49,7 +49,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{budgetId}")]
-        [Authorize(Policy = Constants.ClientPolicy, Roles = Roles.AnyRole)]
+        [Authorize(Policy = Constants.ClientPolicy)]
         public async Task<IActionResult> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
             var outputModel = await _getBudgetQuery.Value.ExecuteAsync(budgetId, HttpContext.User, cancellationToken);
@@ -58,7 +58,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("user/current/year/{year}")]
-        [Authorize(Policy = Constants.ClientPolicy, Roles = Roles.AnyRole)]
+        [Authorize(Policy = Constants.ClientPolicy)]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
             var outputModels = await _getCurrentUserBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
