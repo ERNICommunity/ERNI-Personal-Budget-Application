@@ -19,15 +19,19 @@ namespace ERNI.PBA.Server.Business
             var assembly = Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly).Where(t => t.IsClosedTypeOf(typeof(ICommand<,>)))
                 .AsImplementedInterfaces()
+                .AsSelf()
                 .InstancePerDependency();
             builder.RegisterAssemblyTypes(assembly).Where(t => t.IsClosedTypeOf(typeof(ICommand<>)))
                 .AsImplementedInterfaces()
+                .AsSelf()
                 .InstancePerDependency();
             builder.RegisterAssemblyTypes(assembly).Where(t => t.IsClosedTypeOf(typeof(IQuery<,>)))
                 .AsImplementedInterfaces()
+                .AsSelf()
                 .InstancePerDependency();
             builder.RegisterAssemblyTypes(assembly).Where(t => t.IsClosedTypeOf(typeof(IQuery<>)))
                 .AsImplementedInterfaces()
+                .AsSelf()
                 .InstancePerDependency();
         }
     }

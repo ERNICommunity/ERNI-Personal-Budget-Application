@@ -22,6 +22,8 @@ namespace ERNI.PBA.Server.DataAccess
             builder.RegisterType<RequestRepository>().As<IRequestRepository>().InstancePerDependency();
             builder.RegisterType<RequestCategoryRepository>().As<IRequestCategoryRepository>().InstancePerDependency();
             builder.RegisterType<InvoiceImageRepository>().As<IInvoiceImageRepository>().InstancePerDependency();
+
+            builder.RegisterType<TeamBudgetFacade>().As<ITeamBudgetFacade>().InstancePerDependency();
         }
     }
 }
