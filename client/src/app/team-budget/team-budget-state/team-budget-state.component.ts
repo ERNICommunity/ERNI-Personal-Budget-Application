@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { TeamBudgetModel } from '../../model/teamBudget';
+import { TeamBudgetService } from '../../services/team-budget.service';
 
 @Component({
   selector: 'app-team-budget-state',
@@ -7,9 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TeamBudgetStateComponent implements OnInit {
 
-  constructor() { }
+  teamBudgets: TeamBudgetModel[];
 
-  ngOnInit(): void {
+  constructor(private teamBudgetService: TeamBudgetService) { }
+
+  async ngOnInit(): Promise<void> {
+    this.teamBudgets = await this.teamBudgetService.getDefaultTeamBudget((new Date()).getFullYear());
   }
-
 }
