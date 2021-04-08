@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -12,7 +12,8 @@ import { RequestEditComponent } from './requestEdit.component';
 })
 export class EditRequestModalComponent implements OnDestroy {
     destroy = new Subject<any>();
-    currentDialog = null;
+    currentDialog: NgbModalRef = null;
+    currentDialogInstance: RequestEditComponent = null;
 
     constructor(
         private modalService: NgbModal,
@@ -20,25 +21,37 @@ export class EditRequestModalComponent implements OnDestroy {
         router: Router
     ) {
         route.params.pipe(takeUntil(this.destroy)).subscribe(params => {
+
             let data = router.getCurrentNavigation();
-            if (data == null || data.extras.state === undefined) {
+            this.currentDialog = this.modalService.open(RequestEditComponent, { centered: true });
+            this.currentDialogInstance = this.currentDialog.componentInstance;
+
+            // Go back to home page after the modal is closed
+            this.currentDialog.result.then(_ => {
                 router.navigate(['.'], { relativeTo: route.parent });
+            }, _ => {
+                router.navigate(['.'], { relativeTo: route.parent });
+            });
+            
+            if (params.state == 'create') {
+                if (data == null || data.extras.state === undefined) {
+                    router.navigate(['.'], { relativeTo: route.parent });
+                    return;
+                }
+
+                this.currentDialogInstance.openRequest(Number(params.id), Number(data.extras.state.budget.type));
                 return;
             }
 
-            // When router navigates on this component is takes the params and opens up the photo detail modal
-            this.currentDialog = this.modalService.open(RequestEditComponent, { centered: true });
-            this.currentDialog.componentInstance.showRequest(Number(params.requestId));
-            this.currentDialog.componentInstance.budgetType = data.extras.state.budget.type;
+            if (params.state == 'pending') {
+                this.currentDialogInstance.openPending(Number(params.id));
+                return;
+            }
 
-            // Go back to home page after the modal is closed
-            this.currentDialog.result.then(result => {
-                //router.navigateByUrl('/');
-                router.navigate(['.'], { relativeTo: route.parent });
-            }, reason => {
-                //router.navigateByUrl('/');
-                router.navigate(['.'], { relativeTo: route.parent });
-            });
+            if (params.state == 'closed') {
+                this.currentDialogInstance.openClosed(Number(params.id));
+            }
+            
         });
     }
 

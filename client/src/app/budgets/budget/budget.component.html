@@ -7,7 +7,7 @@
                 <div *ngIf="!budget.title">{{budgetTypeName}}</div>
             </div>
             <div class="col">
-                <a *ngIf="budget.year == currentYear" class="float-right" [routerLink]="'create-request/' + budget.id"
+                <a *ngIf="budget.year == currentYear" class="float-right" routerLink="request/create/{{budget.id}}"
                     [state]="{ budget: budget }">
                     Create new request
                 </a></div>
@@ -45,7 +45,7 @@
                         </button>
 
                         <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                            routerLink="request/{{request.id}}/edit" [state]="{ budget: budget }">
+                            routerLink="request/pending/{{request.id}}" [state]="{ budget: budget }">
                             Edit
                         </a>
                     </td>
@@ -81,7 +81,7 @@
                             </button>
 
                             <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                                routerLink="request/{{request.id}}">
+                                routerLink="request/closed/{{request.id}}">
                                 Detail
                             </a>
                         </td>

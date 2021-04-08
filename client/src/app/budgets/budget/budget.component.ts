@@ -46,4 +46,8 @@ export class BudgetComponent implements OnInit {
   openDeleteConfirmationModal(content) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
+  openCreateModal(content) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 }
