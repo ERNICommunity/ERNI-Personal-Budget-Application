@@ -51,13 +51,9 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 User = new UserOutputModel
                 {
                     Id = request.UserId,
-                    FirstName = request.Budget.User.FirstName,
-                    LastName = request.Budget.User.LastName
+                    FirstName = request.User.FirstName,
+                    LastName = request.User.LastName
                 },
-                Budget = new BudgetModel
-                {
-                    Id = request.BudgetId, Title = request.Budget.Title, Type = request.Budget.BudgetType
-                }
             };
     }
 }

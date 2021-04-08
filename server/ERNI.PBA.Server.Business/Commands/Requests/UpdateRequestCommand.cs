@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -47,9 +48,11 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
             }
 
-            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(request.BudgetId, cancellationToken);
+            var budgetId = request.Transactions.First().BudgetId;
 
-            var budget = await _budgetRepository.GetBudget(request.BudgetId, cancellationToken);
+            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(budgetId, cancellationToken);
+
+            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
             if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
             {
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
@@ -70,7 +73,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 {
                     RequestId = request.Id,
                     BudgetId = budget.Id,
-                    UserId = currentUser.Id,
                     Amount = parameter.Amount
                 }
             };

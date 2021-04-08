@@ -7,8 +7,6 @@ namespace ERNI.PBA.Server.Domain.Models.Responses.PendingRequests
     {
         public int Id { get; init; }
 
-        public BudgetModel Budget { get; init; } = null!;
-
         public DateTime Date { get; init; }
 
         public DateTime CreateDate { get; init; }
