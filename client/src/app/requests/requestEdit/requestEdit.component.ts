@@ -195,7 +195,7 @@ export class RequestEditComponent implements OnInit {
         let requestData = { id, title, amount, date } as PatchRequest;
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
             ? this.requestService.updateTeamRequest(requestData)
-            : this.requestService.updateInvoicedAmount(1, new InvoicedAmount({ amount: 7.77 }));
+            : this.requestService.updateRequest(requestData);
 
         request.subscribe(() => {
             this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
