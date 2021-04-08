@@ -144,12 +144,12 @@ export class RequestEditComponent implements OnInit {
 
     private createNewRequest(): void {
         this.busyIndicatorService.start();
-        console.log('creating')
+        
         let budgetId = this.budgetId;
-        let title = this.title;
-        let amount = this.amount;
-
-        let date = new Date(this.date.year, this.date.month, this.date.day);
+        let title: string = this.requestForm.get("title").value;
+        let amount: number = this.requestForm.get("amount").value;
+        let rawDate = this.requestForm.get("date").value;
+        let date = new Date(rawDate.year, rawDate.month, rawDate.day);
 
         let requestData = { budgetId, title, amount, date } as NewRequest;
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
@@ -162,10 +162,10 @@ export class RequestEditComponent implements OnInit {
             this.dataChangeNotificationService.notify();
             this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
         },
-            err => {
-                this.busyIndicatorService.end();
-                this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
-            });
+        err => {
+            this.busyIndicatorService.end();
+            this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
+        });
     }
     
     trimTitle() : void {
