@@ -27,12 +27,12 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 Id = budget.Id,
                 Year = budget.Year,
                 Amount = budget.Amount,
-                AmountLeft = budget.Amount - budget.Requests
-                                 .Where(_ => _.State != RequestState.Rejected)
+                AmountLeft = budget.Amount - budget.Transactions
+                                 .Where(t => t.Request.State != RequestState.Rejected)
                                  .Sum(_ => _.Amount),
                 Title = budget.Title,
                 Type = budget.BudgetType,
-                Requests = budget.Requests.Select(_ => new RequestOutputModel
+                Requests = budget.Transactions.Select(_ => _.Request).Select(_ => new RequestOutputModel
                 {
                     Id = _.Id,
                     Title = _.Title,

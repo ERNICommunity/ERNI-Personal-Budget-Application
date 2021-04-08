@@ -67,7 +67,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
             var request = new Request
             {
-                BudgetId = budget.Id,
                 UserId = user.Id,
                 Year = currentYear,
                 Title = parameter.Title,

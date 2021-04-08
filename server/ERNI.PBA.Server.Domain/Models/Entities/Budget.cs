@@ -19,8 +19,6 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public decimal Amount { get; set; }
 
-        public ICollection<Request> Requests { get; set; } = null!;
-
         public ICollection<Transaction> Transactions { get; set; } = null!;
     }
 }

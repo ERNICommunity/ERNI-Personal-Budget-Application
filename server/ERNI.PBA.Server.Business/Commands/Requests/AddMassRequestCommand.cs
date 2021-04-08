@@ -20,18 +20,15 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 {
     public class AddMassRequestCommand : Command<RequestMassModel>, IAddMassRequestCommand
     {
-        private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public AddMassRequestCommand(
-            IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IRequestRepository requestRepository,
             IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
             _budgetRepository = budgetRepository;
             _requestRepository = requestRepository;
             _unitOfWork = unitOfWork;
@@ -75,8 +72,13 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
                     State = RequestState.Approved,
-                    BudgetId = budget.Id
                 };
+
+                request.Transactions = new [] { new Transaction()
+                {
+                    Amount =  parameter.Amount,
+                    BudgetId = budget.Id,
+                }};
 
                 requests.Add(request);
             }

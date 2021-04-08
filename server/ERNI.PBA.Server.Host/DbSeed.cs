@@ -85,7 +85,6 @@ namespace ERNI.PBA.Server.Host
                 context.Requests.AddRange(Enumerable.Range(1, 10).Select(_ =>
                 new Request
                 {
-                    Budget = budget,
                     Title = _.ToString(CultureInfo.InvariantCulture),
                     Amount = (_ * 1878 % 50) + 10,
                     Date = new DateTime(budget.Year, _, 5),

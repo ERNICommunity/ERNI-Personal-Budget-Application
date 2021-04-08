@@ -70,7 +70,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             var request = new Request
             {
-                BudgetId = budget.Id,
                 UserId = userId,
                 Year = currentYear,
                 Title = parameter.Title.Trim(),
@@ -83,7 +82,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     new Transaction
                     {
                         BudgetId = budget.Id,
-                        UserId = userId,
                         Amount = parameter.Amount
                     }
                 }

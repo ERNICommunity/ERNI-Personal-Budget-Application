@@ -23,7 +23,6 @@ namespace ERNI.PBA.Server.Business.Utils
                 transactions.Add(new Transaction
                 {
                     BudgetId = first.BudgetId,
-                    UserId = first.UserId,
                     Amount = amountToDeduct
                 });
 
