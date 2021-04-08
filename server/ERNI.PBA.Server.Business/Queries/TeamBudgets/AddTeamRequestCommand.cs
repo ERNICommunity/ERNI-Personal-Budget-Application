@@ -9,22 +9,20 @@ using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Http;
 
-namespace ERNI.PBA.Server.Business.Commands.Requests
+namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 {
-    public class AddTeamRequestCommand : Command<PostRequestModel>, IAddTeamRequestCommand
+    public class CreateTeamRequestCommand : Command<CreateTeamRequestCommand.NewTeamRequestModel>
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddTeamRequestCommand(
+        public CreateTeamRequestCommand(
             IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IRequestRepository requestRepository,
@@ -36,25 +34,15 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(NewTeamRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
             var currentYear = DateTime.Now.Year;
 
-            var budget = await _budgetRepository.GetBudget(parameter.BudgetId, cancellationToken);
-            if (budget == null || budget.UserId != (await _userRepository.GetUser(userId, cancellationToken)).Id)
-            {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest,
-                    $"Budget {parameter.BudgetId} was not found.");
-            }
+            var budgets =
+                await _budgetRepository.GetTeamBudgets(parameter.UserIds, DateTime.Now.Year, cancellationToken);
+            var teamBudgets = budgets.ToTeamBudgets();
 
-            if (budget.BudgetType != BudgetTypeEnum.TeamBudget)
-            {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
-            }
-
-            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, currentYear, cancellationToken);
-            var budgets = teamBudgets.ToTeamBudgets();
 
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < parameter.Amount)
@@ -64,7 +52,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             var user = await _userRepository.GetUser(userId, cancellationToken);
 
-            var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
+            var transactions = TransactionCalculator.Create(teamBudgets, parameter.Amount);
             var request = new Request
             {
                 UserId = user.Id,
@@ -79,6 +67,17 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             await _requestRepository.AddRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+        }
+
+        public class NewTeamRequestModel
+        {
+            public DateTime Date { get; set; }
+
+            public string Title { get; set; } = null!;
+
+            public decimal Amount { get; set; }
+
+            public int[] UserIds { get; set; } = null!;
         }
     }
 }

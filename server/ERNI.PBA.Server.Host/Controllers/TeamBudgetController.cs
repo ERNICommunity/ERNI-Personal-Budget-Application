@@ -34,5 +34,13 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             return Ok(outputModel);
         }
+
+        [HttpPost("requests")]
+        public async Task<IActionResult> CreateTeamBudgetRequest([FromBody] CreateTeamRequestCommand.NewTeamRequestModel payload, [FromServices] CreateTeamRequestCommand query, CancellationToken cancellationToken)
+        {
+            await query.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+
+            return Ok();
+        }
     }
 }
