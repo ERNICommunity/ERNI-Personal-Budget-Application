@@ -41,9 +41,6 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,
-                    IsAdmin = user.IsAdmin,
-                    IsSuperior = user.IsSuperior,
-                    IsViewer = user.IsViewer,
                     LastName = user.LastName,
                     State = user.State,
                     Superior = user.Superior is not null

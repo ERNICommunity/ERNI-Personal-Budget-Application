@@ -38,11 +38,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         protected override async Task Execute(UpdateRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
-            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
-            if (!currentUser.IsSuperior)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
 
             var request = await _requestRepository.GetRequest(parameter.Id, cancellationToken);
             if (request == null)

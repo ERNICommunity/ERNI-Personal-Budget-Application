@@ -21,9 +21,6 @@ namespace ERNI.PBA.Server.Business.Queries.Users
             return new UserModel
             {
                 Id = user.Id,
-                IsAdmin = user.IsAdmin,
-                IsSuperior = user.IsSuperior,
-                IsViewer = user.IsViewer,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,

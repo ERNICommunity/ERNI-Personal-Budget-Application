@@ -11,12 +11,6 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public Guid? ObjectId { get; set; }
 
-        public bool IsAdmin { get; set; }
-
-        public bool IsSuperior { get; set; }
-
-        public bool IsViewer { get; set; }
-
         public string FirstName { get; set; } = null!;
 
         public string LastName { get; set; } = null!;

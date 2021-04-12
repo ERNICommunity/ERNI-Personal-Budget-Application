@@ -7,6 +7,7 @@ using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
+using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -38,10 +39,8 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
             }
 
             var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            var isAdmin = currentUser.IsAdmin;
-            var isViewer = currentUser.IsViewer;
 
-            if (currentUser.Id != request.User.Id && !isAdmin && !isViewer)
+            if (currentUser.Id != request.User.Id && !principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance))
             {
                 _logger.LogWarning("No access for request!");
                 throw AppExceptions.AuthorizationException();

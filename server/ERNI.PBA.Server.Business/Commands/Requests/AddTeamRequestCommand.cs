@@ -40,16 +40,12 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         {
             var userId = principal.GetId();
             var currentYear = DateTime.Now.Year;
-            var currentUser = await _userRepository.GetUser(userId, cancellationToken);
-            if (!currentUser.IsSuperior)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
 
             var budget = await _budgetRepository.GetBudget(parameter.BudgetId, cancellationToken);
-            if (budget == null)
+            if (budget == null || budget.UserId != (await _userRepository.GetUser(userId, cancellationToken)).Id)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Budget {parameter.BudgetId} was not found.");
+                throw new OperationErrorException(StatusCodes.Status400BadRequest,
+                    $"Budget {parameter.BudgetId} was not found.");
             }
 
             if (budget.BudgetType != BudgetTypeEnum.TeamBudget)
@@ -71,7 +67,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
             var request = new Request
             {
-                BudgetId = budget.Id,
                 UserId = user.Id,
                 Year = currentYear,
                 Title = parameter.Title,

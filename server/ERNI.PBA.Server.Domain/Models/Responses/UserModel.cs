@@ -6,12 +6,6 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
     {
         public int Id { get; init; }
 
-        public bool IsAdmin { get; init; }
-
-        public bool IsSuperior { get; init; }
-
-        public bool IsViewer { get; init; }
-
         public string FirstName { get; init; } = null!;
 
         public string LastName { get; init; } = null!;

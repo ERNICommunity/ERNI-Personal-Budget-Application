@@ -6,16 +6,12 @@
 
         public int RequestId { get; set; }
 
-        public int BudgetId { get; set; }
-
-        public int UserId { get; set; }
-
-        public decimal Amount { get; set; }
-
         public Request Request { get; set; } = null!;
+
+        public int BudgetId { get; set; }
 
         public Budget Budget { get; set; } = null!;
 
-        public User User { get; set; } = null!;
+        public decimal Amount { get; set; }
     }
 }

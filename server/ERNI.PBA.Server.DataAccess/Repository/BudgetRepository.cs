@@ -23,14 +23,15 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Transactions)
+                .ThenInclude(_ => _.Request)
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
         }
 
         public async Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
-                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.BudgetType != BudgetTypeEnum.TeamBudget)
                 .Where(_ => _.User.ObjectId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
@@ -39,8 +40,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public async Task<Budget[]> GetTeamBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
-                .Include(_ => _.Transactions)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.BudgetType == BudgetTypeEnum.TeamBudget)
                 .Where(_ => (_.User.ObjectId == userId || _.User.Superior!.ObjectId == userId) && _.Year == year)
                 .ToArrayAsync(cancellationToken);
@@ -50,8 +50,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.UserId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
@@ -60,7 +59,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.BudgetType == budgetType && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
@@ -69,7 +68,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.UserId == userId && _.Year == year && _.BudgetType == budgetType)
                 .ToArrayAsync(cancellationToken);
         }
@@ -84,9 +83,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken)
         {
-            return _context.Budgets.Where(_ => _.Id == budgetId)
-                .Select(_ => _.Requests.Where(r => r.State != RequestState.Rejected).Sum(r => r.Amount))
-                .SingleOrDefaultAsync(cancellationToken);
+            return _context.Transactions.Where(r => r.BudgetId == budgetId && r.Request.State != RequestState.Rejected)
+                .SumAsync(r => r.Amount, cancellationToken);
         }
 
         public async Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken)

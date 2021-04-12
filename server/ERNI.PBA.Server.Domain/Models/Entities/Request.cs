@@ -12,13 +12,9 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public int? CategoryId { get; set; }
 
-        public int BudgetId { get; set; }
-
 #pragma warning disable CA1056 // URI-like properties should not be strings
         public string? Url { get; set; }
 #pragma warning restore CA1056 // URI-like properties should not be strings
-
-        public int UserId { get; set; }
 
         public string Title { get; set; } = null!;
 
@@ -36,15 +32,12 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public RequestState State { get; set; }
 
-        public Budget Budget { get; set; } = null!;
-
         public RequestCategory? Category { get; set; }
+
+        public int UserId { get; set; }
 
         public User User { get; set; } = null!;
 
         public ICollection<Transaction> Transactions { get; set; } = null!;
-
-        public override string ToString() =>
-            $"{Title} ({Amount}) by {Budget.User.FirstName} {Budget.User.LastName}";
     }
 }

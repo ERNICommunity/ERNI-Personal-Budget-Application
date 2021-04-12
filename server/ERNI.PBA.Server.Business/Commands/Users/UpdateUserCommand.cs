@@ -39,9 +39,6 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 throw new OperationErrorException(StatusCodes.Status404NotFound, "Not a valid id");
             }
 
-            user.IsAdmin = parameter.IsAdmin;
-            user.IsViewer = parameter.IsViewer;
-            user.IsSuperior = parameter.IsSuperior;
             user.SuperiorId = parameter.Superior?.Id;
             user.State = parameter.State;
 

@@ -54,14 +54,14 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 AmountLeft = amountLeft,
                 Title = masterBudget.Title,
                 Type = masterBudget.BudgetType,
-                Requests = masterBudget.Requests.Select(_ => new RequestOutputModel
+                Requests = masterBudget.Transactions.Select(_ => new RequestOutputModel
                 {
                     Id = _.Id,
-                    Title = _.Title,
+                    Title = _.Request.Title,
                     Amount = _.Amount,
-                    Date = _.Date,
-                    CreateDate = _.CreateDate,
-                    State = _.State
+                    Date = _.Request.Date,
+                    CreateDate = _.Request.CreateDate,
+                    State = _.Request.State
                 })
             };
 

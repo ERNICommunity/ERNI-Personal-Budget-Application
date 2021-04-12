@@ -8,7 +8,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto"  *ngIf="(authService.userInfo$ | async)?.isUser">
+        <ul class="navbar-nav mr-auto"  *ngIf="(authService.userInfo$ | async)">
             <li class="nav-item" [routerLinkActive]="['active']">
                 <a class="nav-link" routerLink="/my-budget">
                     My budget

@@ -32,8 +32,8 @@ namespace ERNI.Rmt.ExcelExport
                 row++;
 
                 worksheet.Cell($"A{row}").Value = transaction.Request.ApprovedDate;
-                worksheet.Cell($"B{row}").Value = transaction.User.LastName;
-                worksheet.Cell($"C{row}").Value = transaction.User.FirstName;
+                worksheet.Cell($"B{row}").Value = transaction.Request.User.LastName;
+                worksheet.Cell($"C{row}").Value = transaction.Request.User.FirstName;
                 worksheet.Cell($"D{row}").Value = transaction.Request.Title;
                 worksheet.Cell($"E{row}").Value = transaction.Amount;
 

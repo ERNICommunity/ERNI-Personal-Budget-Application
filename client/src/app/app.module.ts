@@ -38,8 +38,6 @@ import { EditRequestModalComponent } from './requests/requestEdit/editRequestMod
 import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InvoiceImageService } from './services/invoice-image.service';
-import { UserCodesComponent } from './userCodes/user-codes.component';
-import { UserCodeService } from './services/user-code.service';
 import { TeamBudgetService } from './services/team-budget.service';
 import { ExportService } from './services/export.service';
 import { WizardModule } from 'primeng-extensions-wizard/components/wizard.module';
@@ -57,7 +55,7 @@ import {
     MsalGuard,
     MsalBroadcastService,
   } from '@azure/msal-angular';
-  
+
   import {
     BrowserCacheLocation,
     InteractionType,
@@ -66,10 +64,9 @@ import {
     PublicClientApplication,
   } from '@azure/msal-browser';
   import { environment } from '../environments/environment';
-  import { UserRoleGuard } from './services/guards/user-role.guard';
   import { AdminRoleGuard } from './services/guards/admin-role.guard';
-import { AuthenticationService } from './services/authentication.service';
-  
+  import { AuthenticationService } from './services/authentication.service';
+
   export function MSALInstanceFactory(): IPublicClientApplication {
     return new PublicClientApplication({
       auth: {
@@ -95,21 +92,21 @@ import { AuthenticationService } from './services/authentication.service';
       }
     });
   }
-  
+
   export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     const protectedResourceMap = new Map<string, Array<string>>();
-  
+
     Object
       .keys(environment.protectedResourceMap)
       .forEach(key => protectedResourceMap
       .set(key, environment.protectedResourceMap[key]));
-  
+
     return {
       interactionType: InteractionType.Popup,
       protectedResourceMap,
     };
   }
-  
+
   export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     return { interactionType: InteractionType.Popup };
   }
@@ -136,8 +133,7 @@ import { AuthenticationService } from './services/authentication.service';
         AlertComponent,
         NewRequestModalComponent,
         RequestDetailModalComponent,
-        FileUploadComponent,
-        UserCodesComponent
+        FileUploadComponent
     ],
     imports: [
         NgbModule,
@@ -160,7 +156,6 @@ import { AuthenticationService } from './services/authentication.service';
         BudgetService,
         TeamBudgetService,
         BusyIndicatorService,
-        UserCodeService,
         DataChangeNotificationService,
         InvoiceImageService,
         ViewerGuard,

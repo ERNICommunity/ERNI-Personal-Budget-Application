@@ -47,9 +47,6 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 FirstName = parameter.FirstName.Trim(),
                 LastName = parameter.LastName.Trim(),
                 Username = parameter.Email,
-                IsAdmin = parameter.IsAdmin,
-                IsSuperior = parameter.IsSuperior,
-                IsViewer = parameter.IsViewer,
                 SuperiorId = parameter.Superior,
                 State = parameter.State
             };
