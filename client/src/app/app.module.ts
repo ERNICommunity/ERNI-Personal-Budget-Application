@@ -44,7 +44,6 @@ import { WizardModule } from 'primeng-extensions-wizard/components/wizard.module
 import { StepsModule } from 'primeng/steps';
 
 import {
-    MsalModule,
     MsalInterceptor,
     MsalInterceptorConfiguration,
     MsalGuardConfiguration,
@@ -180,7 +179,6 @@ import {
           MsalService,
           MsalGuard,
           MsalBroadcastService,
-          UserRoleGuard,
           AdminRoleGuard,
           WizardModule 
     ],

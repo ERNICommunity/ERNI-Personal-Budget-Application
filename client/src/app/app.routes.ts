@@ -41,7 +41,7 @@ export const rootRouterConfig: Routes = [
             {
                 path: ':year', component: MyBudgetComponent, canActivate: [MsalGuard],
                 children: [
-                    { path: 'request/:state/:id', component: EditRequestModalComponent, canActivate: [MsalGuard, UserRoleGuard] }
+                    { path: 'request/:state/:id', component: EditRequestModalComponent, canActivate: [MsalGuard] }
                 ]
             }
         ]
