@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
 import { RequestService } from '../../services/request.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,13 +6,13 @@ import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
-import { InvoicedAmount } from '../../model/invoicedAmount';
 import { MenuItem } from 'primeng/api';
 import { InvoiceImageService } from '../../services/invoice-image.service';
 import { Request } from '../../model/request/request';
 import { PatchRequest } from '../../model/PatchRequest';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NewRequest } from '../../model/newRequest';
+import { AuthenticationService } from '../../services/authentication.service';
 
 export enum RequestState {
     Request,
@@ -28,18 +27,14 @@ export enum RequestState {
     styleUrls: ['requestEdit.component.css']
 })
 export class RequestEditComponent implements OnInit {
+    @ViewChild('downloadLink',{static : false}) downloadLink: ElementRef;
     requestForm: FormGroup;
     httpResponseError: string;
-    dirty: boolean;
     items: MenuItem[];
     requestId: number;
-    budgetType: BudgetTypeEnum; 
-    events: any[];
-    requestState: RequestState;
-    activeState: RequestState;
-    activeStateIndex: number;
-    RequestState = RequestState;
-    @ViewChild('downloadLink',{static : false}) downloadLink: ElementRef;
+    
+    budgetId: number;
+    budgetType: BudgetTypeEnum;    
     request: Request;
     selectedDate : Date;
     images: [number, string][];
@@ -47,16 +42,18 @@ export class RequestEditComponent implements OnInit {
     title: string;
     amount: number;
     date: any;
-    budgetId: number;
+
+    public RequestState = RequestState; // this is required to be possible to use enum in view
+    public requestState: RequestState;
 
     constructor(private requestService: RequestService,
         public modal: NgbActiveModal,
-        private location: Location,
         private fb: FormBuilder,
         private alertService: AlertService,
         private dataChangeNotificationService: DataChangeNotificationService,
         private invoiceImageService: InvoiceImageService,
-        private busyIndicatorService: BusyIndicatorService) {
+        private busyIndicatorService: BusyIndicatorService,
+        private authService: AuthenticationService) {
         this.createForm();
     }
 
@@ -70,13 +67,13 @@ export class RequestEditComponent implements OnInit {
     }
 
     public openRequest(budgetId: number, budgetType: number): void {
-        this.switchState(RequestState.Request);
+        this.requestState = RequestState.Request;
         this.budgetId = budgetId;
         this.budgetType = budgetType;
     }
 
     public openPending(requestId: number): void {
-        this.switchState(RequestState.Pending);
+        this.requestState = RequestState.Pending;
         this.requestService
             .getRequest(requestId)
             .subscribe(request => {
@@ -99,8 +96,27 @@ export class RequestEditComponent implements OnInit {
             });
     }
 
+    public openInvoice(requestId: number): void {
+        console.log('invoice')
+        this.requestState = RequestState.Invoice;
+        this.requestService
+        .getRequest(requestId)
+        .subscribe(request => { 
+            this.request = request;
+            this.selectedDate = new Date(request.date);
+            this.invoiceImageService
+                .getInvoiceImages(requestId)
+                .subscribe(names => {
+                    this.images = names;
+                });
+        },
+        err => {
+            this.httpResponseError = err.error
+        });
+    }
+
     public openClosed(requestId: number): void {
-        this.switchState(RequestState.Closed);
+        this.requestState = RequestState.Closed;
         this.requestService
             .getRequest(requestId)
             .subscribe(request => { 
@@ -116,7 +132,61 @@ export class RequestEditComponent implements OnInit {
                 this.httpResponseError = err.error
             });
     }
- 
+
+    public save(): void {
+        console.log(this.date);
+        if (this.requestState == RequestState.Request) {
+            this.createNewRequest();
+        }
+
+        if (this.requestState == RequestState.Pending) {
+            this.editExistingRequest();
+        }
+    }
+        
+    public download(imageId: number, imageName: string): void {
+        this.invoiceImageService.getInvoiceImage(imageId).subscribe(blob => { this.processBlob(blob, imageName); })
+    }
+
+    public trimTitle() : void {
+        this.title = this.title.trim();
+    }
+
+    public canChangeState(): boolean {
+        return (this.requestState == RequestState.Pending || this.requestState == RequestState.Invoice) &&
+            (this.authService.userInfo.isAdmin || this.authService.userInfo.isFinance);
+    }
+
+    public approve(): void {
+        if (this.requestState == RequestState.Pending) {
+            this.requestState = RequestState.Invoice;
+            this.requestService.approveRequest(this.requestId)
+                .subscribe(_ => {},
+                err => {
+                    this.httpResponseError = err.error
+                });
+            return;
+        }
+
+        if (this.requestState == RequestState.Invoice) {
+            this.requestState = RequestState.Closed;
+            this.requestService.completeRequest(this.requestId)
+                .subscribe(_ => {},
+                err => {
+                    this.httpResponseError = err.error
+                });
+            return;
+        }
+    }
+
+    public reject(): void {
+        this.requestState = RequestState.Closed;
+        this.requestService.rejectRequest(this.requestId)
+            .subscribe(_ => {},
+            err => {
+                this.httpResponseError = err.error
+            });
+    }
 
     private createForm(): void {
         this.requestForm = this.fb.group({
@@ -126,30 +196,14 @@ export class RequestEditComponent implements OnInit {
         });
     }
 
-    switchState(newState: RequestState): void {
-        this.activeState = newState;
-        this.activeStateIndex = newState;
-    }
-
-    public save(): void {
-        console.log(this.date);
-        if (this.activeState == RequestState.Request) {
-            this.createNewRequest();
-        }
-
-        if (this.activeState == RequestState.Pending) {
-            this.editExistingRequest();
-        }
-    }
-
     private createNewRequest(): void {
         this.busyIndicatorService.start();
         
         let budgetId = this.budgetId;
         let title: string = this.requestForm.get("title").value;
         let amount: number = this.requestForm.get("amount").value;
-        let rawDate = this.requestForm.get("date").value;
-        let date = new Date(rawDate.year, rawDate.month, rawDate.day);
+        let ngbDate = this.requestForm.get("date").value;
+        let date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
 
         let requestData = { budgetId, title, amount, date } as NewRequest;
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
@@ -167,22 +221,6 @@ export class RequestEditComponent implements OnInit {
             this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
         });
     }
-    
-    trimTitle() : void {
-        this.title = this.title.trim();
-    }
-
-    setDirty(): void {
-        this.dirty = true;
-    }
-
-    isDirty(): boolean {
-        return this.dirty;
-    }
-
-    goBack(): void {
-        this.location.back();
-    }
 
     private editExistingRequest(): void {
         let title = this.requestForm.get("title").value;
@@ -190,7 +228,6 @@ export class RequestEditComponent implements OnInit {
         let ngbDate = this.requestForm.get("date").value;
         let date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
         let id = this.requestId;
-        // SAVE
 
         let requestData = { id, title, amount, date } as PatchRequest;
         let request = this.budgetType == BudgetTypeEnum.TeamBudget
@@ -205,17 +242,15 @@ export class RequestEditComponent implements OnInit {
             err => {
                 this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
             });
-    }  download(imageId: number, imageName: string) {
-    this.invoiceImageService.getInvoiceImage(imageId).subscribe(blob => { this.processBlob(blob, imageName); })
-  }
+    }
 
-  private processBlob(blob: Blob, name: string): void {
-    let fileObject = new File([blob], name);
-    let url = window.URL.createObjectURL(fileObject);
-    let link = this.downloadLink.nativeElement;
-    link.setAttribute('download', name);
-    link.href = url;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
+    private processBlob(blob: Blob, name: string): void {
+        let fileObject = new File([blob], name);
+        let url = window.URL.createObjectURL(fileObject);
+        let link = this.downloadLink.nativeElement;
+        link.setAttribute('download', name);
+        link.href = url;
+        link.click();
+        window.URL.revokeObjectURL(url);
+    }
 }

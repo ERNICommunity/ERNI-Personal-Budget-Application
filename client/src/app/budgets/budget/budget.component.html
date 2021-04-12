@@ -49,6 +49,27 @@
                             Edit
                         </a>
                     </td>
+                    <td *ngIf="request.state == requestStateType.ApprovedBySuperior">
+                        <button class="btn btn-danger float-right" disabled="true"
+                        title="Cannot delete {{requestStateType[request.state]}} request.">
+                            Delete
+                        </button>
+                        <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                        routerLink="request/invoice/{{request.id}}" [state]="{ budget: budget }">
+                            Edit
+                        </a>
+                    </td>
+                    <td *ngIf="request.state == requestStateType.Approved || request.state == requestStateType.Rejected">
+                        <button class="btn btn-danger float-right" disabled="true"
+                                title="Cannot delete {{requestStateType[request.state]}} request.">
+                                Delete
+                        </button>
+
+                        <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                            routerLink="request/closed/{{request.id}}">
+                            Detail
+                        </a>
+                    </td>
 
                     <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
                         <div class="modal-header">
@@ -71,20 +92,6 @@
                                 No
                             </button>
                         </div>
-                    </ng-template>
-
-                    <ng-template #cannotEditOrDelete>
-                        <td>
-                            <button class="btn btn-danger float-right" disabled="true"
-                                title="Cannot delete {{requestStateType[request.state]}} request.">
-                                Delete
-                            </button>
-
-                            <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                                routerLink="request/closed/{{request.id}}">
-                                Detail
-                            </a>
-                        </td>
                     </ng-template>
                 </tr>
             </tbody>

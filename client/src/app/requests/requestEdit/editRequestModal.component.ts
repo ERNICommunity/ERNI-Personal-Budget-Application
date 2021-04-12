@@ -48,6 +48,11 @@ export class EditRequestModalComponent implements OnDestroy {
                 return;
             }
 
+            if (params.state == 'invoice') {
+                this.currentDialogInstance.openInvoice(Number(params.id));
+                return;
+            }
+
             if (params.state == 'closed') {
                 this.currentDialogInstance.openClosed(Number(params.id));
             }

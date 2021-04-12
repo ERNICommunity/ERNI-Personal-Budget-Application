@@ -11,24 +11,24 @@
     <div>
         <label for="state">Request state</label>
         <div class="card">        
-            <p-steps id="state" [model]="items" [readonly]="true" [(activeIndex)]="activeStateIndex"></p-steps>
-            <div *ngIf="activeStateIndex == RequestState.Request">
+            <p-steps id="state" [model]="items" [readonly]="true" [(activeIndex)]="requestState"></p-steps>
+            <div *ngIf="requestState == RequestState.Request">
                 <p class="hint" >Create request by filling out this form.</p>
             </div>
-            <div *ngIf="activeStateIndex == RequestState.Pending">
+            <div *ngIf="requestState == RequestState.Pending">
                 <p class="hint" >Request is waiting for approval by budget administrator. You can edit it until it is approved.</p>
             </div>
-            <div *ngIf="activeStateIndex == RequestState.Invoice">
+            <div *ngIf="requestState == RequestState.Invoice">
                 <p class="hint" >Request was approved. Administarator is waiting for invoice and actual ammount spent.</p>
             </div>
-            <div *ngIf="activeStateIndex == RequestState.Closed">
+            <div *ngIf="requestState == RequestState.Closed">
                 <p class="hint" >Request was closed as paid/rejected.</p>
             </div>
         </div>
     </div>
 
     <!-- Create/Edit request form -->
-    <form [formGroup]="requestForm" *ngIf="activeStateIndex == RequestState.Request || activeStateIndex == RequestState.Pending">
+    <form [formGroup]="requestForm" *ngIf="requestState == RequestState.Request || requestState == RequestState.Pending">
         <div class="form-group">
             <label for="title">Title</label>
             <textarea id="title" #requestTitle class="form-control" formControlName="title"
@@ -58,19 +58,19 @@
     </form>
 
     <!-- Invoice -->
-    <div *ngIf="activeStateIndex == RequestState.Invoice">
+    <div *ngIf="requestState == RequestState.Invoice">
         <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
         class="alert alert-danger col-md-6">
             <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
         </div>
-        <div class="form-group" *ngIf="activeStateIndex == RequestState.Invoice">
+        <div class="form-group" *ngIf="requestState== RequestState.Invoice">
             <app-file-upload [requestIdInput]=requestId></app-file-upload>
         </div>
     </div>
 
 
     <!-- Closed -->
-    <div *ngIf="activeStateIndex == RequestState.Closed">
+    <div *ngIf="requestState == RequestState.Closed">
         <h5>Date</h5>
         <p>{{ selectedDate | date : 'shortDate'}} </p>
     
@@ -97,19 +97,21 @@
             </ul>
         </div>
     </div>
-
-    <div class="card">
-        <p>This wont be here in final solution</p>
-        <button type="button" class="btn btn-outline-secondary" (click)="switchState(0)">Create</button>
-        <button type="button" class="btn btn-outline-secondary" (click)="switchState(1)">Pending</button>
-        <button type="button" class="btn btn-outline-secondary" (click)="switchState(2)">Invoice</button>
-        <button type="button" class="btn btn-outline-secondary" (click)="switchState(3)">Closed</button>
+    <!-- Administrator actions -->
+    <div *ngIf="canChangeState()">
+        <button class="btn btn-success" (click)="approve()">Approve</button>
+        <button class="btn btn-danger float-right" (click)="reject()">Reject</button>
     </div>
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-success" [disabled]="(requestForm.pristine || requestForm.invalid)" (click)="save()">
-        Save
-    </button>
-    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Close</button>
+    <div *ngIf="requestState == RequestState.Request || requestState == RequestState.Pending">
+        <button class="btn btn-success" [disabled]="(requestForm.pristine || requestForm.invalid)" (click)="save()">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Close</button>
+    </div>
+    <div *ngIf="requestState == RequestState.Invoice || requestState == RequestState.Closed">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Close</button>
+    </div>
 </div>
