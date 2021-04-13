@@ -6,6 +6,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {
     public interface ITeamBudgetFacade
     {
+        Task<Request[]> GetTeamRequests(int superiorId, int year, CancellationToken cancellationToken);
+
         Task<(User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int superiorId, int year,
             CancellationToken cancellationToken);
     }
