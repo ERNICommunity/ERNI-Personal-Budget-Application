@@ -38,4 +38,8 @@ export class UserService {
     public addUser(user: User): Observable<User> {
         return this.http.post<User>(this.configService.apiUrlBase + this.url, user, this.serviceHelper.getHttpOptions());
     }
+
+    public synchronizeUsers(): Observable<any> {
+        return this.http.get(this.configService.apiUrlBase + this.url + '/synchronize', this.serviceHelper.getHttpOptions());
+    }
 }

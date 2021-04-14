@@ -13,6 +13,7 @@ export class UserListComponent implements OnInit {
     users: User[];
     filteredUsers: User[];
     userState: UserState;
+    lastUserState: UserState;
     userStateType = UserState;
 
     private _searchTerm: string;
@@ -42,6 +43,7 @@ export class UserListComponent implements OnInit {
     }
 
     getUsers(filter: UserState): void {
+        this.lastUserState = filter;
         this.userService.getSubordinateUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
     }
 
@@ -57,5 +59,9 @@ export class UserListComponent implements OnInit {
 
     create() {
         this.router.navigate(['/users/create']);
+    }
+
+    synchronize() {
+        this.userService.synchronizeUsers().subscribe(() => this.getUsers(this.lastUserState));
     }
 }
