@@ -22,6 +22,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IRegisterUserCommand> _registerUserCommand;
         private readonly Lazy<ICreateUserCommand> _createUserCommand;
         private readonly Lazy<IUpdateUserCommand> _updateUserCommand;
+        private readonly Lazy<ISynchronizeUsersCommand> _synchronizeUsersCommand;
 
         public UserController(
             Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
@@ -30,7 +31,8 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<IGetActiveUsersQuery> getActiveUsersQuery,
             Lazy<IRegisterUserCommand> registerUserCommand,
             Lazy<ICreateUserCommand> createUserCommand,
-            Lazy<IUpdateUserCommand> updateUserCommand)
+            Lazy<IUpdateUserCommand> updateUserCommand,
+            Lazy<ISynchronizeUsersCommand> synchronizeUsersCommand)
         {
             _getCurrentUserQuery = getCurrentUserQuery;
             _getUserQuery = getUserQuery;
@@ -39,6 +41,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             _registerUserCommand = registerUserCommand;
             _createUserCommand = createUserCommand;
             _updateUserCommand = updateUserCommand;
+            _synchronizeUsersCommand = synchronizeUsersCommand;
         }
 
         [HttpPost("register")]
@@ -100,6 +103,14 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userModels = await _getActiveUsersQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModels);
+        }
+
+        [HttpGet("synchronize")]
+        public async Task<IActionResult> SynchronizeUsers(CancellationToken cancellationToken)
+        {
+            await _synchronizeUsersCommand.Value.ExecuteAsync(HttpContext.User, cancellationToken);
+
+            return Ok();
         }
     }
 }
