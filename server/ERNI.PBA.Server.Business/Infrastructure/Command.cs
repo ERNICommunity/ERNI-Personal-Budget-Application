@@ -5,6 +5,14 @@ using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
 
 namespace ERNI.PBA.Server.Business.Infrastructure
 {
+    public abstract class Command : ICommand
+    {
+        protected abstract Task Execute(ClaimsPrincipal principal, CancellationToken cancellationToken);
+
+        public async Task ExecuteAsync(ClaimsPrincipal principal, CancellationToken cancellationToken) =>
+            await Execute(principal, cancellationToken);
+    }
+
     public abstract class Command<T, TResult> : ICommand<T, TResult>
     {
         protected abstract Task<TResult> Execute(T parameter, ClaimsPrincipal principal,
