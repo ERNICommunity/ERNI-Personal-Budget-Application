@@ -53,7 +53,8 @@ export class RequestEditComponent implements OnInit {
         private dataChangeNotificationService: DataChangeNotificationService,
         private invoiceImageService: InvoiceImageService,
         private busyIndicatorService: BusyIndicatorService,
-        private authService: AuthenticationService) {
+        private authService: AuthenticationService,
+        private dataNotificationService: DataChangeNotificationService) {
         this.createForm();
     }
 
@@ -99,6 +100,7 @@ export class RequestEditComponent implements OnInit {
     public openInvoice(requestId: number): void {
         console.log('invoice')
         this.requestState = RequestState.Invoice;
+        this.requestId = requestId;
         this.requestService
         .getRequest(requestId)
         .subscribe(request => { 
@@ -141,7 +143,9 @@ export class RequestEditComponent implements OnInit {
 
         if (this.requestState == RequestState.Pending) {
             this.editExistingRequest();
-        }
+        }        
+
+        this.dataChangeNotificationService.notify();
     }
         
     public download(imageId: number, imageName: string): void {
@@ -161,7 +165,9 @@ export class RequestEditComponent implements OnInit {
         if (this.requestState == RequestState.Pending) {
             this.requestState = RequestState.Invoice;
             this.requestService.approveRequest(this.requestId)
-                .subscribe(_ => {},
+                .subscribe(_ => {
+                    this.dataChangeNotificationService.notify();
+                },
                 err => {
                     this.httpResponseError = err.error
                 });
@@ -171,7 +177,9 @@ export class RequestEditComponent implements OnInit {
         if (this.requestState == RequestState.Invoice) {
             this.requestState = RequestState.Closed;
             this.requestService.completeRequest(this.requestId)
-                .subscribe(_ => {},
+                .subscribe(_ => {
+                    this.dataChangeNotificationService.notify();
+                },
                 err => {
                     this.httpResponseError = err.error
                 });
@@ -182,7 +190,9 @@ export class RequestEditComponent implements OnInit {
     public reject(): void {
         this.requestState = RequestState.Closed;
         this.requestService.rejectRequest(this.requestId)
-            .subscribe(_ => {},
+            .subscribe(_ => {
+                this.dataChangeNotificationService.notify();
+            },
             err => {
                 this.httpResponseError = err.error
             });
