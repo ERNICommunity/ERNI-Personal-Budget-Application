@@ -13,13 +13,9 @@ import { PatchRequest } from '../../model/PatchRequest';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NewRequest } from '../../model/newRequest';
 import { AuthenticationService } from '../../services/authentication.service';
-
-export enum RequestState {
-    Request,
-    Pending,
-    Invoice,
-    Closed
-}
+import { Store } from '@ngrx/store';
+import { RequestApprovalState } from '../../model/request/requestState';
+import * as RequestActions from '../state/request.actions';
 
 @Component({
     selector: 'app-request-edit',
@@ -43,8 +39,8 @@ export class RequestEditComponent implements OnInit {
     amount: number;
     date: any;
 
-    public RequestState = RequestState; // this is required to be possible to use enum in view
-    public requestState: RequestState;
+    public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
+    public requestState: RequestApprovalState;
 
     constructor(private requestService: RequestService,
         public modal: NgbActiveModal,
@@ -54,27 +50,28 @@ export class RequestEditComponent implements OnInit {
         private invoiceImageService: InvoiceImageService,
         private busyIndicatorService: BusyIndicatorService,
         private authService: AuthenticationService,
-        private dataNotificationService: DataChangeNotificationService) {
+        private store: Store<RequestApprovalState>) {
         this.createForm();
     }
 
     ngOnInit() {
         this.items = [
-            { label: RequestState[RequestState.Request] },
-            { label: RequestState[RequestState.Pending] },
-            { label: RequestState[RequestState.Invoice] },
-            { label: RequestState[RequestState.Closed] }
+            { label: RequestApprovalState[RequestApprovalState.Request] },
+            { label: RequestApprovalState[RequestApprovalState.Pending] },
+            { label: RequestApprovalState[RequestApprovalState.Invoice] },
+            { label: RequestApprovalState[RequestApprovalState.Closed] }
         ];
     }
 
     public openRequest(budgetId: number, budgetType: number): void {
-        this.requestState = RequestState.Request;
+        this.requestState = RequestApprovalState.Request;
         this.budgetId = budgetId;
         this.budgetType = budgetType;
     }
 
     public openPending(requestId: number): void {
-        this.requestState = RequestState.Pending;
+        this.stateChanged();
+        this.requestState = RequestApprovalState.Pending;
         this.requestService
             .getRequest(requestId)
             .subscribe(request => {
@@ -99,7 +96,7 @@ export class RequestEditComponent implements OnInit {
 
     public openInvoice(requestId: number): void {
         console.log('invoice')
-        this.requestState = RequestState.Invoice;
+        this.requestState = RequestApprovalState.Invoice;
         this.requestId = requestId;
         this.requestService
         .getRequest(requestId)
@@ -118,7 +115,7 @@ export class RequestEditComponent implements OnInit {
     }
 
     public openClosed(requestId: number): void {
-        this.requestState = RequestState.Closed;
+        this.requestState = RequestApprovalState.Closed;
         this.requestService
             .getRequest(requestId)
             .subscribe(request => { 
@@ -137,11 +134,11 @@ export class RequestEditComponent implements OnInit {
 
     public save(): void {
         console.log(this.date);
-        if (this.requestState == RequestState.Request) {
+        if (this.requestState == RequestApprovalState.Request) {
             this.createNewRequest();
         }
 
-        if (this.requestState == RequestState.Pending) {
+        if (this.requestState == RequestApprovalState.Pending) {
             this.editExistingRequest();
         }        
 
@@ -157,13 +154,13 @@ export class RequestEditComponent implements OnInit {
     }
 
     public canChangeState(): boolean {
-        return (this.requestState == RequestState.Pending || this.requestState == RequestState.Invoice) &&
+        return (this.requestState == RequestApprovalState.Pending || this.requestState == RequestApprovalState.Invoice) &&
             (this.authService.userInfo.isAdmin || this.authService.userInfo.isFinance);
     }
 
     public approve(): void {
-        if (this.requestState == RequestState.Pending) {
-            this.requestState = RequestState.Invoice;
+        if (this.requestState == RequestApprovalState.Pending) {
+            this.requestState = RequestApprovalState.Invoice;
             this.requestService.approveRequest(this.requestId)
                 .subscribe(_ => {
                     this.dataChangeNotificationService.notify();
@@ -174,11 +171,12 @@ export class RequestEditComponent implements OnInit {
             return;
         }
 
-        if (this.requestState == RequestState.Invoice) {
-            this.requestState = RequestState.Closed;
+        if (this.requestState == RequestApprovalState.Invoice) {
+            this.requestState = RequestApprovalState.Closed;
             this.requestService.completeRequest(this.requestId)
                 .subscribe(_ => {
                     this.dataChangeNotificationService.notify();
+                    this.store.dispatch(RequestActions.approve())
                 },
                 err => {
                     this.httpResponseError = err.error
@@ -188,10 +186,11 @@ export class RequestEditComponent implements OnInit {
     }
 
     public reject(): void {
-        this.requestState = RequestState.Closed;
+        this.requestState = RequestApprovalState.Closed;
         this.requestService.rejectRequest(this.requestId)
             .subscribe(_ => {
                 this.dataChangeNotificationService.notify();
+                this.store.dispatch(RequestActions.reject())
             },
             err => {
                 this.httpResponseError = err.error
@@ -220,10 +219,11 @@ export class RequestEditComponent implements OnInit {
             ? this.requestService.addTeamRequest(requestData)
             : this.requestService.addRequest(requestData);
 
-        request.subscribe(() => {
+        request.subscribe((_) => {
             this.busyIndicatorService.end();
             this.modal.close();
             this.dataChangeNotificationService.notify();
+            this.store.dispatch(RequestActions.pending({ id: 0 })); // server does not return id of created request (yet)
             this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
         },
         err => {
@@ -262,5 +262,11 @@ export class RequestEditComponent implements OnInit {
         link.href = url;
         link.click();
         window.URL.revokeObjectURL(url);
+    }
+
+    private stateChanged(): void {
+        this.store.dispatch({
+            type: '[Request] Change Request State'
+        });
     }
 }

@@ -1,4 +1,4 @@
-export enum RequestState {
+export enum RequestApprovalState {
     Pending = 0,
     ApprovedBySuperior = 1,
     Approved = 2,

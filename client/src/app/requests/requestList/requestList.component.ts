@@ -5,7 +5,7 @@ import { RequestFilter } from '../requestFilter';
 import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { RequestState } from '../../model/requestState';
+import { RequestApprovalState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportService } from '../../services/export.service';

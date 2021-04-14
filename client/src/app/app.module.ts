@@ -42,6 +42,10 @@ import { TeamBudgetService } from './services/team-budget.service';
 import { ExportService } from './services/export.service';
 import { WizardModule } from 'primeng-extensions-wizard/components/wizard.module';
 import { StepsModule } from 'primeng/steps';
+import { requestCreateReducer } from './requests/state/request.reducer'
+import { requestApproveReducer } from './requests/state/request.reducer'
+import { requestInvoiceReducer } from './requests/state/request.reducer'
+import { requestRejectReducer } from './requests/state/request.reducer'
 
 import {
     MsalInterceptor,
@@ -65,6 +69,7 @@ import {
   import { environment } from '../environments/environment';
   import { AdminRoleGuard } from './services/guards/admin-role.guard';
   import { AuthenticationService } from './services/authentication.service';
+  import { StoreModule } from '@ngrx/store';
 
   export function MSALInstanceFactory(): IPublicClientApplication {
     return new PublicClientApplication({
@@ -141,7 +146,12 @@ import {
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig),
         ReactiveFormsModule,
-        StepsModule
+        StepsModule,
+        StoreModule.forRoot({}, {}),
+        StoreModule.forFeature('request', { requestCreateReducer }),
+        StoreModule.forFeature('request', { requestApproveReducer }),
+        StoreModule.forFeature('request', { requestRejectReducer }),
+        StoreModule.forFeature('request', { requestInvoiceReducer })
     ],
     entryComponents: [
         NewRequestModalComponent, RequestDetailComponent, RequestEditComponent

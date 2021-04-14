@@ -1,5 +1,5 @@
 import { User } from "../user";
-import { RequestState } from "../requestState";
+import { RequestApprovalState } from "../requestState";
 import { Budget } from "./budget";
 
 export class Request {
@@ -10,5 +10,5 @@ export class Request {
     title: string;
     date: Date;
     createDate: Date;
-    state: RequestState;
+    state: RequestApprovalState;
 }
