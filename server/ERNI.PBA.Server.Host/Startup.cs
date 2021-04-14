@@ -1,7 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Reflection;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
@@ -97,6 +95,8 @@ namespace ERNI.PBA.Server.Host
         public void ConfigureProductionContainer(ContainerBuilder builder)
         {
             builder.RegisterType<MailService>().As<IMailService>().InstancePerDependency();
+            builder.Register(_ => new UserResourceService(new Uri(Configuration["ResourceManagementToolUri"])))
+                .As<IUserResourceService>().SingleInstance();
 
             ConfigureModules(builder);
         }
@@ -104,6 +104,8 @@ namespace ERNI.PBA.Server.Host
         public void ConfigureDevelopmentContainer(ContainerBuilder builder)
         {
             builder.RegisterType<MailServiceMock>().As<IMailService>().InstancePerDependency();
+            builder.Register(_ => new UserResourceService(new Uri(Configuration["ResourceManagementToolUri"])))
+                .As<IUserResourceService>().SingleInstance();
 
             ConfigureModules(builder);
         }
