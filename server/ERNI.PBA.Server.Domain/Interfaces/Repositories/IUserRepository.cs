@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
         Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken);
 
         Task AddUserAsync(User user);
+
+        Task AddUsersAsync(IEnumerable<User> users);
 
         Task<bool> ExistsAsync(string username);
 
