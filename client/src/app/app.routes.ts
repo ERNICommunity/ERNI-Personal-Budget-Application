@@ -3,7 +3,6 @@ import { LoginComponent } from './login/login.component';
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
-import { MyBudgetComponent } from './myBudget/myBudget.component';
 import { RequestsComponent } from './requests/requests.component';
 import { RequestListComponent } from './requests/requestList/requestList.component';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';
@@ -34,18 +33,7 @@ export const rootRouterConfig: Routes = [
             { path: ':year/:budgetType', component: OtherBudgetsComponent, canActivate: [AdminRoleGuard] }
         ]
     },
-    {
-        path: 'my-budget', canActivate: [MsalGuard],
-        children: [
-            { path: '', redirectTo: currentYear, pathMatch: 'full' },
-            {
-                path: ':year', component: MyBudgetComponent, canActivate: [MsalGuard],
-                children: [
-                    { path: 'request/:state/:id', component: EditRequestModalComponent, canActivate: [MsalGuard] }
-                ]
-            }
-        ]
-    },
+
     { path: 'create-request', component: RequestAddComponent, canActivate: [MsalGuard] },
     {
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
