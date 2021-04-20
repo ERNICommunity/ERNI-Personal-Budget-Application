@@ -6,8 +6,6 @@ import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { rootRouterConfig } from './app.routes';
 import { ConfigService } from './services/config.service';
-import { RequestsComponent } from './requests/requests.component';
-import { RequestListComponent } from './requests/requestList/requestList.component';
 import { RequestService } from './services/request.service';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersComponent } from './users/users.component';
@@ -31,8 +29,6 @@ import { ViewerGuard } from './services/guards/viewer.guard';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { AlertComponent } from './directives/alert/alert.component';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
-import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
-import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
 import { DataChangeNotificationService } from './services/dataChangeNotification.service';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { InvoiceImageService } from './services/invoice-image.service';
@@ -68,6 +64,8 @@ import {
   import { AdminRoleGuard } from './services/guards/admin-role.guard';
   import { AuthenticationService } from './services/authentication.service';
   import { StoreModule } from '@ngrx/store';
+import { MyBudgetModule } from './my-budget/my-budget.module';
+import { RequestsModule } from './requests/requests.module';
 
   export function MSALInstanceFactory(): IPublicClientApplication {
     return new PublicClientApplication({
@@ -117,22 +115,18 @@ import {
     declarations: [
         AppComponent,
         LoginComponent,
-        RequestsComponent,
-        RequestListComponent,
         UsersComponent,
         UserListComponent,
         UserDetailComponent,
         CreateUserComponent,
         RequestAddComponent,
         RequestDetailComponent,
-        EditRequestModalComponent,
         RequestEditComponent,
         RequestMassComponent,
         OtherBudgetsComponent,
         OtherBudgetsDetailComponent,
         AlertComponent,
         NewRequestModalComponent,
-        RequestDetailModalComponent,
         FileUploadComponent
     ],
     imports: [
@@ -142,6 +136,8 @@ import {
         BrowserModule,
         RouterModule.forRoot(rootRouterConfig),
         ReactiveFormsModule,
+        MyBudgetModule,
+        RequestsModule,
         StepsModule,
         StoreModule.forRoot({}, {}),
         StoreModule.forFeature('request', { requestCreateReducer }),
