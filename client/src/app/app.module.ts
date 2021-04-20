@@ -17,8 +17,6 @@ import { RequestAddComponent } from "./requests/requestAdd/requestAdd.component"
 import { RequestEditComponent } from "./requests/requestEdit/requestEdit.component";
 import { RequestDetailComponent } from "./requests/requestDetail/requestDetail.component";
 import { RequestMassComponent } from "./requests/requestMass/requestMass.component";
-import { OtherBudgetsComponent } from "./budgets/otherBudgets/otherBudgets.component";
-import { OtherBudgetsDetailComponent } from "./budgets/otherBudgetsDetail/otherBudgetsDetail.component";
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ReactiveFormsModule } from "@angular/forms";
 import { BusyIndicatorService } from "./services/busy-indicator.service";
@@ -57,6 +55,8 @@ import {
   MSALInstanceFactory,
   MSALInterceptorConfigFactory,
 } from "./utils/msal";
+import { UsersModule } from "./users/users.module";
+import { BudgetsModule } from "./budgets/budgets.module";
 
 @NgModule({
   declarations: [
@@ -66,8 +66,6 @@ import {
     RequestDetailComponent,
     RequestEditComponent,
     RequestMassComponent,
-    OtherBudgetsComponent,
-    OtherBudgetsDetailComponent,
     AlertComponent,
     NewRequestModalComponent,
     FileUploadComponent,
@@ -81,6 +79,8 @@ import {
     ReactiveFormsModule,
     MyBudgetModule,
     RequestsModule,
+    UsersModule,
+    BudgetsModule,
     StepsModule,
     StoreModule.forRoot({}, {}),
     StoreModule.forFeature("request", { requestCreateReducer }),
