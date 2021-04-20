@@ -6,6 +6,7 @@ import { EditRequestModalComponent } from '../requests/requestEdit/editRequestMo
 import { RouterModule } from '@angular/router';
 import { BudgetComponent } from './budget/budget.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from '../shared/shared.module';
 
 const currentYear = "2021"; // = (new Date()).getFullYear();
 
@@ -18,6 +19,7 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
   imports: [
     CommonModule,
     NgbModule,
+    SharedModule,
     RouterModule.forChild([
       {
         path: 'my-budget', canActivate: [MsalGuard],

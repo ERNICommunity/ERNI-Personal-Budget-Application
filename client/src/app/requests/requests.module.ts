@@ -10,6 +10,7 @@ import { RequestFilter } from './requestFilter';
 import { RequestListComponent } from './requestList/requestList.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from '../shared/shared.module';
 
 const currentYear = "2021"; // = (new Date()).getFullYear();
 
@@ -24,6 +25,7 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
     RouterModule,
     FormsModule,
     NgbModule,
+    SharedModule,
     RouterModule.forChild([
       {
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],

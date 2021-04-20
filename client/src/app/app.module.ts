@@ -21,10 +21,8 @@ import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ReactiveFormsModule } from "@angular/forms";
 import { BusyIndicatorService } from "./services/busy-indicator.service";
 import { ViewerGuard } from "./services/guards/viewer.guard";
-import { AlertComponent } from "./directives/alert/alert.component";
 import { NewRequestModalComponent } from "./requests/requestAdd/newRequestModal.component";
 import { DataChangeNotificationService } from "./services/dataChangeNotification.service";
-import { FileUploadComponent } from "./file-upload/file-upload.component";
 import { InvoiceImageService } from "./services/invoice-image.service";
 import { TeamBudgetService } from "./services/team-budget.service";
 import { ExportService } from "./services/export.service";
@@ -57,6 +55,7 @@ import {
 } from "./utils/msal";
 import { UsersModule } from "./users/users.module";
 import { BudgetsModule } from "./budgets/budgets.module";
+import { SharedModule } from "./shared/shared.module";
 
 @NgModule({
   declarations: [
@@ -66,15 +65,14 @@ import { BudgetsModule } from "./budgets/budgets.module";
     RequestDetailComponent,
     RequestEditComponent,
     RequestMassComponent,
-    AlertComponent,
     NewRequestModalComponent,
-    FileUploadComponent,
   ],
   imports: [
     NgbModule,
     FormsModule,
     HttpClientModule,
     BrowserModule,
+    SharedModule,
     RouterModule.forRoot(rootRouterConfig),
     ReactiveFormsModule,
     MyBudgetModule,
