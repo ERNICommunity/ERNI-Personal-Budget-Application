@@ -8,11 +8,8 @@ import { rootRouterConfig } from './app.routes';
 import { ConfigService } from './services/config.service';
 import { RequestService } from './services/request.service';
 import { HttpClientModule } from '@angular/common/http';
-import { UsersComponent } from './users/users.component';
 import { UserService } from './services/user.service';
 import { NgbModule, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
-import { UserListComponent } from './users/userList/userList.component';
-import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { BudgetService } from './services/budget.service';
 import { FormsModule } from '@angular/forms';
 import { ServiceHelper } from './services/service.helper';
@@ -26,7 +23,6 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
 import { ViewerGuard } from './services/guards/viewer.guard';
-import { CreateUserComponent } from './users/create-user/create-user.component';
 import { AlertComponent } from './directives/alert/alert.component';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { DataChangeNotificationService } from './services/dataChangeNotification.service';
@@ -64,8 +60,8 @@ import {
   import { AdminRoleGuard } from './services/guards/admin-role.guard';
   import { AuthenticationService } from './services/authentication.service';
   import { StoreModule } from '@ngrx/store';
-import { MyBudgetModule } from './my-budget/my-budget.module';
-import { RequestsModule } from './requests/requests.module';
+  import { MyBudgetModule } from './my-budget/my-budget.module';
+  import { RequestsModule } from './requests/requests.module';
 
   export function MSALInstanceFactory(): IPublicClientApplication {
     return new PublicClientApplication({
@@ -115,10 +111,6 @@ import { RequestsModule } from './requests/requests.module';
     declarations: [
         AppComponent,
         LoginComponent,
-        UsersComponent,
-        UserListComponent,
-        UserDetailComponent,
-        CreateUserComponent,
         RequestAddComponent,
         RequestDetailComponent,
         RequestEditComponent,
