@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BudgetService } from '../../services/budget.service';
-import { Budget } from '../../model/budget';
-import { User } from '../../model/user';
-import { UserState } from '../../model/userState';
-import { UserService } from '../../services/user.service';
+import { BudgetService } from '../services/budget.service';
+import { Budget } from '../model/budget';
+import { UserState } from '../model/userState';
 import { ActivatedRoute } from '@angular/router';
-import { ConfigService } from '../../services/config.service';
-import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { ConfigService } from '../services/config.service';
+import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { combineLatest, forkJoin, of, Observable } from 'rxjs';
-import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
-import { TeamBudgetService } from '../../services/team-budget.service';
+import { DataChangeNotificationService } from '../services/dataChangeNotification.service';
+import { TeamBudgetService } from '../services/team-budget.service';
 import { catchError, map } from 'rxjs/operators';
 
 @Component({

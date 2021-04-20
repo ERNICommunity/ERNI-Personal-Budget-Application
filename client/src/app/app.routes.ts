@@ -3,7 +3,7 @@ import { LoginComponent } from './login/login.component';
 import { UsersComponent } from './users/users.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
 import { UserListComponent } from './users/userList/userList.component';
-import { MyBudgetComponent } from './budgets/myBudget/myBudget.component';
+import { MyBudgetComponent } from './myBudget/myBudget.component';
 import { RequestsComponent } from './requests/requests.component';
 import { RequestListComponent } from './requests/requestList/requestList.component';
 import { RequestAddComponent } from './requests/requestAdd/requestAdd.component';

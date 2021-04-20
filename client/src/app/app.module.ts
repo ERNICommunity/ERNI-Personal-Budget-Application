@@ -15,7 +15,7 @@ import { UserService } from './services/user.service';
 import { NgbModule, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { UserListComponent } from './users/userList/userList.component';
 import { UserDetailComponent } from './users/userDetail/userDetail.component';
-import { MyBudgetComponent } from './budgets/myBudget/myBudget.component';
+import { MyBudgetComponent } from './myBudget/myBudget.component';
 import { BudgetService } from './services/budget.service';
 import { FormsModule } from '@angular/forms';
 import { ServiceHelper } from './services/service.helper';
@@ -31,7 +31,7 @@ import { BusyIndicatorService } from './services/busy-indicator.service';
 import { ViewerGuard } from './services/guards/viewer.guard';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { AlertComponent } from './directives/alert/alert.component';
-import { BudgetComponent } from './budgets/budget/budget.component';
+import { BudgetComponent } from './myBudget/budget/budget.component';
 import { NewRequestModalComponent } from './requests/requestAdd/newRequestModal.component';
 import { RequestDetailModalComponent } from './requests/requestDetail/requestDetailModal.component';
 import { EditRequestModalComponent } from './requests/requestEdit/editRequestModal.component';
@@ -190,7 +190,7 @@ import {
           MsalGuard,
           MsalBroadcastService,
           AdminRoleGuard,
-          WizardModule 
+          WizardModule
     ],
     bootstrap: [AppComponent]
 })
