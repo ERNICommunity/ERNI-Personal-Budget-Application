@@ -9,9 +9,10 @@ import { InputTextareaModule } from "primeng/inputtextarea";
 import { InputTextModule } from "primeng/inputtext";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { RequestFilesComponent } from "./request-files/request-files.component";
 
 @NgModule({
-  declarations: [AlertComponent, FileUploadComponent],
+  declarations: [AlertComponent, FileUploadComponent, RequestFilesComponent],
   imports: [CommonModule, FormsModule, DividerModule],
   exports: [
     CommonModule,
@@ -24,6 +25,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
     ProgressSpinnerModule,
     AlertComponent,
     FileUploadComponent,
+    RequestFilesComponent
   ],
 })
 export class SharedModule {}
