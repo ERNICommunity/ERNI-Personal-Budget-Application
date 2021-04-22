@@ -6,11 +6,12 @@ import { ViewerGuard } from '../services/guards/viewer.guard';
 import { RequestDetailModalComponent } from './requestDetail/requestDetailModal.component';
 import { RequestEditComponent } from './requestEdit/requestEdit.component';
 import { MsalGuard } from '@azure/msal-angular';
-import { RequestFilter } from './requestFilter';
 import { RequestListComponent } from './requestList/requestList.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
+import { BasicRequestInfoEditorComponent } from './requestEdit/basic-request-info-editor/basic-request-info-editor.component';
+import { RequestApprovalState } from '../model/requestState';
 
 const currentYear = "2021"; // = (new Date()).getFullYear();
 
@@ -19,6 +20,10 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
     RequestsComponent,
     RequestListComponent,
     RequestDetailModalComponent,
+    BasicRequestInfoEditorComponent
+  ],
+  exports: [
+    BasicRequestInfoEditorComponent
   ],
   imports: [
     CommonModule,

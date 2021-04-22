@@ -1,117 +1,48 @@
-<div class="modal-header">
-    <h4 class="modal-title" id="modal-title">Request</h4>
-    <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
+<p-dialog [(header)]="popupTitle" [(visible)]="isVisible" [style]="{width: '50vw'}" [draggable]="false" [modal]="true"
+  [resizable]="false" (onHide)="onHide()">
 
-<div class="modal-body">
+  <div class="modal-body">
     <app-alert id="addRequestError"></app-alert>
-    <!-- Current request state -->
-    <div>
-        <label for="state">Request state</label>
-        <div class="card">        
-            <p-steps id="state" [model]="items" [readonly]="true" [(activeIndex)]="requestState"></p-steps>
-            <div *ngIf="requestState == RequestState.Request">
-                <p class="hint" >Create request by filling out this form.</p>
-            </div>
-            <div *ngIf="requestState == RequestState.Pending">
-                <p class="hint" >Request is waiting for approval by budget administrator. You can edit it until it is approved.</p>
-            </div>
-            <div *ngIf="requestState == RequestState.Invoice">
-                <p class="hint" >Request was approved. Administarator is waiting for invoice and actual ammount spent.</p>
-            </div>
-            <div *ngIf="requestState == RequestState.Closed">
-                <p class="hint" >Request was closed as paid/rejected.</p>
-            </div>
-        </div>
+
+    <app-basic-request-info-editor [(request)]="request" [isReadonly]="!request || request.state != RequestState.Pending"></app-basic-request-info-editor>
+
+
+    <div *ngIf="request && !newRequest && request.state == RequestState.Pending">
+      <p-divider></p-divider>
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="2.5s"></p-progressSpinner>
+      <p>Request approval pending</p>
     </div>
 
-    <!-- Create/Edit request form -->
-    <form [formGroup]="requestForm" *ngIf="requestState == RequestState.Request || requestState == RequestState.Pending">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <textarea id="title" #requestTitle class="form-control" formControlName="title"
-                placeholder="title"></textarea>
-        </div>
-
-        <div *ngIf="requestForm.controls['title'].invalid && (requestForm.controls['title'].dirty || requestForm.controls['title'].touched)"
-            class="alert alert-danger col-md-6">
-            <div *ngIf="requestForm.controls['title'].errors.required">Title is required.</div>
-        </div>
-
-        <div class="form-group">
-            <label for="date">Date of occasion</label>
-            <div class="input-group">
-                <input class="form-control" placeholder="yyyy-mm-dd" formControlName="date" name="dp" ngbDatepicker
-                    id="date" #d="ngbDatepicker">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="amount">Amount</label>
-            <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="0.00">
-        </div>
-    </form>
-
-    <!-- Invoice -->
-    <div *ngIf="requestState == RequestState.Invoice">
-        <div *ngIf="requestForm.controls['amount'].invalid && (requestForm.controls['amount'].dirty || requestForm.controls['amount'].touched)"
-        class="alert alert-danger col-md-6">
-            <div *ngIf="requestForm.controls['amount'].errors.required">Amount is required.</div>
-        </div>
-        <div class="form-group" *ngIf="requestState== RequestState.Invoice">
-            <app-file-upload [requestIdInput]=requestId></app-file-upload>
-        </div>
-    </div>
-
+    <app-request-files *ngIf="request && request.state >= RequestState.Approved" [(requestId)]="request.id"
+      [uploadEnabled]="request && request.state == RequestState.Approved"></app-request-files>
 
     <!-- Closed -->
-    <div *ngIf="requestState == RequestState.Closed">
-        <h5>Date</h5>
-        <p>{{ selectedDate | date : 'shortDate'}} </p>
-    
-        <h5>Amount</h5>
-        <p>{{request?.amount}}</p>
-    
-        <div *ngIf="httpResponseError">
-            <font color="red" size="4">
-                {{httpResponseError}}
-            </font>
-        </div>
-        <h5>Uploaded files</h5>
-        <div class="fileLists">
-            <div *ngIf="images?.length == 0">No files yet</div>
-            <ul class="pl-0">
-                <li *ngFor="let image of images">
-                    <div class="row mt-2">
-                        <div class="col-md-8">{{image.name}}</div>
-                        <button class="col-md-3 btn btn-outline-primary"
-                            (click)="download(image.id, image.name)">Download</button>
-                        <a #downloadLink></a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <!-- Administrator actions -->
-    <div *ngIf="canChangeState()">
-        <button class="btn btn-success" (click)="approve()">Approve</button>
-        <button class="btn btn-danger float-right" (click)="reject()">Reject</button>
-    </div>
-</div>
+    <div *ngIf="request && request.state == RequestState.Completed">
+      <p-divider></p-divider>
+      <p>Request was approved</p>
+      <h5>Date</h5>
+      <p>{{ selectedDate | date : 'shortDate'}} </p>
 
-<div class="modal-footer">
-    <div *ngIf="requestState == RequestState.Request || requestState == RequestState.Pending">
-        <button class="btn btn-success" [disabled]="(requestForm.pristine || requestForm.invalid)" (click)="save()">
-            Save
-        </button>
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Close</button>
     </div>
-    <div *ngIf="requestState == RequestState.Invoice || requestState == RequestState.Closed">
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Close</button>
+  </div>
+
+
+  <ng-template pTemplate="footer">
+    <div  *ngIf="request && (newRequest || request.state == RequestState.Approved || request.state == RequestState.Pending)">
+      <p-button
+      icon="pi pi-save" (click)="save()" label="Save changes" styleClass="p-button-success p-button-text"></p-button>
+      <p-button icon="pi pi-trash" (click)="close()" label="Discard changes" styleClass="p-button-danger p-button-text"></p-button>
     </div>
-</div>
+
+    <div  *ngIf="request && (request.state == RequestState.Completed || request.state == RequestState.Rejected)">
+      <p-button icon="pi pi-times" (click)="close()" label="Close" styleClass="p-button-secondary  p-button-text"></p-button>
+    </div>
+
+
+
+    <!-- <p-button icon="pi pi-check" (click)="displayBasic=false" label="Yes" styleClass="p-button-text"></p-button>
+  <p-button icon="pi pi-times" (click)="displayBasic=false" label="No"></p-button> -->
+  </ng-template>
+
+
+</p-dialog>
