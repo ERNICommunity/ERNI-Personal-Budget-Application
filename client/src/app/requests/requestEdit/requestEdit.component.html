@@ -13,8 +13,11 @@
       <p>Request approval pending</p>
     </div>
 
-    <app-request-files *ngIf="request && request.state >= RequestState.Approved" [(requestId)]="request.id"
-      [uploadEnabled]="request && request.state == RequestState.Approved"></app-request-files>
+
+    <app-file-upload *ngIf="request && request.state >= RequestState.Approved" [(requestIdInput)]="request.id"
+      [uploadEnabled]="request && request.state == RequestState.Approved"></app-file-upload>
+    <!-- <app-request-files *ngIf="request && request.state >= RequestState.Approved" [(requestId)]="request.id"
+      [uploadEnabled]="request && request.state == RequestState.Approved"></app-request-files> -->
 
     <!-- Closed -->
     <div *ngIf="request && request.state == RequestState.Completed">

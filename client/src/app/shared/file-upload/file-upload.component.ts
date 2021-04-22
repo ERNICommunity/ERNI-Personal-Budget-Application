@@ -11,6 +11,7 @@ import { InvoiceImage } from '../../model/InvoiceImage';
 
 export class FileUploadComponent implements OnInit, OnChanges {
   @Input() requestIdInput: number;
+  @Input() uploadEnabled: boolean;
   @ViewChild('file',{static : false}) file;
   @ViewChild('downloadLink',{static : false}) downloadLink: ElementRef;
 
