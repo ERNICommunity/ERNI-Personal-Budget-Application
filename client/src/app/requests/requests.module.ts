@@ -32,28 +32,28 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
         children: [
             { path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
             {
-                path: 'pending/:year', component: RequestListComponent, data: { filter: RequestFilter.Pending }, canActivate: [ViewerGuard],
+                path: 'pending/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Pending }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
                 ]
             },
             {
-                path: 'approved/:year', component: RequestListComponent, data: { filter: RequestFilter.Approved }, canActivate: [ViewerGuard],
+                path: 'approved/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Approved }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
                 ]
             },
             {
-                path: 'approved-by-superior/:year', component: RequestListComponent, data: { filter: RequestFilter.ApprovedBySuperior }, canActivate: [ViewerGuard],
+                path: 'completed/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Completed }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
                 ]
             },
             {
-                path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestFilter.Rejected }, canActivate: [ViewerGuard],
+                path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Rejected }, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },

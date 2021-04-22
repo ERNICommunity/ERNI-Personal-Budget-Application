@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { RequestFilter } from '../requestFilter';
 import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
@@ -19,13 +18,13 @@ import { AuthenticationService } from '../../services/authentication.service';
 export class RequestListComponent implements OnInit {
     pendingRoute: string = "/requests/pending";
     approvedRoute: string = "/requests/approved";
-    approvedBySuperiorRoute: string = "/requests/approved-by-superior";
+    completedRoute: string = "/requests/completed";
     rejectedRoute: string = "/requests/rejected";
 
     requests: Request[];
     filteredRequests: Request[];
-    requestFilter: RequestFilter;
-    requestFilterType = RequestFilter;
+    requestFilter: RequestApprovalState;
+    requestFilterType = RequestApprovalState;
     selectedYear: number;
     currentYear: number;
     years: number[];
@@ -70,9 +69,9 @@ export class RequestListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.requestFilter = RequestFilter.Pending;
+        this.requestFilter = RequestApprovalState.Pending;
         this.route.data.subscribe((data: Data) => {
-            this.requestFilter = <RequestFilter>data['filter'];
+            this.requestFilter = <RequestApprovalState>data['filter'];
         });
 
         this.route.params.subscribe((params: Params) => {
@@ -89,19 +88,21 @@ export class RequestListComponent implements OnInit {
         });
     }
 
-    getRequests(filter: RequestFilter, year: number): void {
+    getRequests(filter: RequestApprovalState, year: number): void {
         var requests: Observable<Request[]>;
 
         switch (filter) {
-            case RequestFilter.Approved:
+            case RequestApprovalState.Approved:
                 requests = this.requestService.getApprovedRequests(year);
                 break;
-            case RequestFilter.Pending:
+            case RequestApprovalState.Pending:
                 requests = this.requestService.getPendingRequests(year);
                 break;
-            case RequestFilter.Rejected:
+            case RequestApprovalState.Rejected:
                 requests = this.requestService.getRejectedRequests(year);
                 break;
+            case RequestApprovalState.Completed:
+                requests = this.requestService.getCompletedRequests(year);
             default:
                 break;
         }
