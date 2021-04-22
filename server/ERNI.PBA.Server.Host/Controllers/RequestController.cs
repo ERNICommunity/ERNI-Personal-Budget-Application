@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Queries.Requests;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
@@ -126,7 +127,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("{year}/state/{requestState}")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
-        public async Task<RequestModel[]> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
+        public async Task<IGetRequestsQuery.RequestModel[]> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel
             {
