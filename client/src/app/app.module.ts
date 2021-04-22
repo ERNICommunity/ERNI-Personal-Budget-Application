@@ -26,8 +26,6 @@ import { DataChangeNotificationService } from "./services/dataChangeNotification
 import { InvoiceImageService } from "./services/invoice-image.service";
 import { TeamBudgetService } from "./services/team-budget.service";
 import { ExportService } from "./services/export.service";
-import { WizardModule } from "primeng-extensions-wizard/components/wizard.module";
-import { StepsModule } from "primeng/steps";
 
 import {
   MsalInterceptor,
@@ -43,7 +41,6 @@ import { AdminRoleGuard } from "./services/guards/admin-role.guard";
 import { AuthenticationService } from "./services/authentication.service";
 import { MyBudgetModule } from "./my-budget/my-budget.module";
 import { RequestsModule } from "./requests/requests.module";
-import {DialogModule} from 'primeng/dialog';
 import {
   MSALGuardConfigFactory,
   MSALInstanceFactory,
@@ -75,7 +72,6 @@ import { SharedModule } from "./shared/shared.module";
     RequestsModule,
     UsersModule,
     BudgetsModule,
-    StepsModule,
   ],
   entryComponents: [
     NewRequestModalComponent,
@@ -116,7 +112,6 @@ import { SharedModule } from "./shared/shared.module";
     MsalGuard,
     MsalBroadcastService,
     AdminRoleGuard,
-    WizardModule,
   ],
   bootstrap: [AppComponent],
 })

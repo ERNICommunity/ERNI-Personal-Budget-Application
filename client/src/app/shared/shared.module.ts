@@ -10,10 +10,15 @@ import { InputTextModule } from "primeng/inputtext";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { RequestFilesComponent } from "./request-files/request-files.component";
+import { StepsModule } from "primeng/steps";
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AlertComponent, FileUploadComponent, RequestFilesComponent],
-  imports: [CommonModule, FormsModule, DividerModule],
+  imports: [CommonModule, FormsModule, DividerModule, BrowserAnimationsModule,
+  ],
   exports: [
     CommonModule,
     FormsModule,
@@ -22,6 +27,9 @@ import { RequestFilesComponent } from "./request-files/request-files.component";
     InputTextModule,
     InputTextareaModule,
     InputNumberModule,
+    DialogModule,
+    StepsModule,
+    ButtonModule,
     ProgressSpinnerModule,
     AlertComponent,
     FileUploadComponent,
