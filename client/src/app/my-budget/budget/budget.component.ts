@@ -3,10 +3,10 @@ import { Budget } from '../../model/budget';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { RequestService } from '../../services/request.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RequestFilter } from '../../requests/requestFilter';
 import { RequestAddComponent } from '../../requests/requestAdd/requestAdd.component';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetService } from '../../services/budget.service';
+import { RequestApprovalState } from '../../model/requestState';
 
 @Component({
   selector: 'app-budget',
@@ -16,7 +16,7 @@ import { BudgetService } from '../../services/budget.service';
 export class BudgetComponent implements OnInit {
   @Input() budget: Budget;
   percentageLeft: number;
-  requestStateType = RequestFilter;
+  requestStateType = RequestApprovalState;
   public currentYear: number;
   budgetTypeName :  string;
 
@@ -44,10 +44,6 @@ export class BudgetComponent implements OnInit {
   }
 
   openDeleteConfirmationModal(content) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
-  }
-
-  openCreateModal(content) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 }
