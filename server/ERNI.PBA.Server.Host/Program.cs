@@ -21,7 +21,7 @@ namespace ERNI.PBA.Server.Host
                 context.Database.Migrate();
 
                 var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
-                //cmd.Execute().Wait();
+                cmd.Execute().Wait();
             }
 
             host.Run();
