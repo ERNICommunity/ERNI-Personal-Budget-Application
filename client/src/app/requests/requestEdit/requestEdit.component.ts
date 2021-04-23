@@ -4,8 +4,6 @@ import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
-import { MenuItem } from 'primeng/api';
-import { InvoiceImageService } from '../../services/invoice-image.service';
 import { Request } from '../../model/request/request';
 import { PatchRequest } from '../../model/PatchRequest';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
@@ -20,7 +18,6 @@ import { RequestApprovalState } from '../../model/requestState';
 })
 export class RequestEditComponent implements OnInit {
     httpResponseError: string;
-    items: MenuItem[];
     requestId: number;
 
     popupTitle: string;
