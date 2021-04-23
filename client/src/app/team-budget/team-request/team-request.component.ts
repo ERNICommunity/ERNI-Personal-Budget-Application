@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { TeamRequestModel } from '../../model/request/teamRequestModel';
+import { TeamBudgetService } from '../../services/team-budget.service';
 
 @Component({
   selector: 'app-team-request',
@@ -7,9 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TeamRequestComponent implements OnInit {
 
-  constructor() { }
+  requests: TeamRequestModel[];
 
-  ngOnInit(): void {
+  constructor(private teamBudgetService: TeamBudgetService) { }
+
+  async ngOnInit(): Promise<void> {
+    this.requests = await this.teamBudgetService.getTeamRequets((new Date()).getFullYear());
   }
-
 }

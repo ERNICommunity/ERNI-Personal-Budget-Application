@@ -5,13 +5,14 @@ import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "./config.service";
 import { Observable } from "rxjs";
 import { TeamBudgetModel } from "../model/teamBudget";
+import { TeamRequestModel } from "../model/request/teamRequestModel";
 
 @Injectable()
 export class TeamBudgetService {
-    url = "TeamBudget/";
+  url = "TeamBudget/";
 
-    constructor(
-        private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     private serviceHelper: ServiceHelper,
     private configService: ConfigService
   ) {}
@@ -31,5 +32,13 @@ export class TeamBudgetService {
       )
       .toPromise();
   }
-    }
+
+  public getTeamRequets(year: number): Promise<TeamRequestModel[]> {
+    return this.http
+      .get<TeamRequestModel[]>(
+        this.configService.apiUrlBase + this.url + "requests/" + year,
+        this.serviceHelper.getHttpOptions()
+      )
+      .toPromise();
+  }
 }
