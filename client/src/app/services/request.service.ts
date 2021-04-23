@@ -46,8 +46,8 @@ export class RequestService {
         return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
     }
 
-    public completeRequest(id: number): Observable<Request> {
-        return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/complete', this.serviceHelper.getHttpOptions())
+    public completeRequest(id: number): Promise<Request> {
+        return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/complete', this.serviceHelper.getHttpOptions()).toPromise();
     }
 
     public addRequest(request: NewRequest): Observable<any> {

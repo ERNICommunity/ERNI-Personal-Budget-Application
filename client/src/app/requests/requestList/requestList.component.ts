@@ -116,7 +116,7 @@ export class RequestListComponent implements OnInit {
         this.requestService.approveRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
     }
 
-    completeRequest(request: Request): void {
+    async completeRequest(request: Request) {
       if (!request.invoicedAmount) {
         console.log(request);
         console.log(request.invoicedAmount);
@@ -129,7 +129,15 @@ export class RequestListComponent implements OnInit {
         return;
       }
 
-      this.requestService.completeRequest(request.id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== request.id), this.filteredRequests = this.requests });
+      try {
+        await this.requestService.completeRequest(request.id);
+
+        this.requests = this.requests.filter(req => req.id !== request.id);
+        this.filteredRequests = this.requests;
+
+      } catch (error) {
+        this.alertService.error(JSON.stringify(error.error));
+      }
     }
 
     rejectRequest(id: number): void {

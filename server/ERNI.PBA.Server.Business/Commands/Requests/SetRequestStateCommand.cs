@@ -49,10 +49,11 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var invoiceCount = (await _invoiceRepository.GetInvoiceCounts(new[] {request.Id}, cancellationToken))
                 .SingleOrDefault().invoiceCount;
 
-            if (!Validate(parameter.requestState, request, invoiceCount))
+            var validationResult = Validate(parameter.requestState, request, invoiceCount);
+            if (!validationResult.isvalid)
             {
-                _logger.LogWarning("Validation failed");
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Validation failed");
+                _logger.LogWarning(validationResult.error);
+                throw new OperationErrorException(StatusCodes.Status400BadRequest, validationResult.error!);
             }
 
             request.State = parameter.requestState;
@@ -71,17 +72,34 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _mailService.SendMail(message, request.User.Username);
         }
 
-        private static bool Validate(RequestState newState, Domain.Models.Entities.Request request, int invoiceCount) => newState switch
+        private static (bool isvalid, string? error) Validate(RequestState newState, Domain.Models.Entities.Request request, int invoiceCount) => newState switch
         {
-            RequestState.Pending => throw new InvalidOperationException(),
-            RequestState.Approved => request.State == RequestState.Pending,
+            RequestState.Pending => (false, "Cannot change state to pending"),
+            RequestState.Approved => request.State == RequestState.Pending ? (true, null) : (false, "Only pending requests can be approved."),
             RequestState.Completed => CanComplete(request, invoiceCount),
-            RequestState.Rejected => true,
+            RequestState.Rejected => (true, null),
             _ => throw new NotImplementedException(),
         };
 
-        private static bool CanComplete(Domain.Models.Entities.Request request, int invoiceCount) =>
-            request.State == RequestState.Approved && request.InvoicedAmount.HasValue &&
-            request.InvoicedAmount.HasValue && request.InvoicedAmount > 0 && invoiceCount > 0;
+        private static (bool isValid, string? error) CanComplete(Domain.Models.Entities.Request request,
+            int invoiceCount)
+        {
+            if (request.State != RequestState.Approved)
+            {
+                return (false, "The request is not approved.");
+            }
+
+            if (!request.InvoicedAmount.HasValue || request.InvoicedAmount <= 0)
+            {
+                return (false, "Request without invoiced amount cannot be completed.");
+            }
+
+            if (invoiceCount <= 0)
+            {
+                return (false, "The request has no invoices attached.");
+            }
+
+            return (true, null);
+        }
     }
 }
