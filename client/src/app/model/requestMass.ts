@@ -1,5 +1,5 @@
 import { User } from "./user";
-import { RequestState } from "./requestState";
+import { RequestApprovalState } from "./requestState";
 
 export class RequestMass {
     id: number;
@@ -7,5 +7,5 @@ export class RequestMass {
     users: User[];
     title: string;
     date: Date;
-    state: RequestState;
+    state: RequestApprovalState;
 }

@@ -9,6 +9,7 @@ import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
 import { PatchRequest } from '../model/PatchRequest';
+import { InvoicedAmount } from '../model/invoicedAmount';
 
 @Injectable()
 export class RequestService {
@@ -18,19 +19,19 @@ export class RequestService {
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
     public getPendingRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/pending', this.serviceHelper.getHttpOptions())
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/pending', this.serviceHelper.getHttpOptions())
     }
 
     public getApprovedRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approved', this.serviceHelper.getHttpOptions())
-    }
-
-    public getApprovedBySuperiorRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/approvedBySuperior', this.serviceHelper.getHttpOptions())
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/approved', this.serviceHelper.getHttpOptions())
     }
 
     public getRejectedRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/rejected', this.serviceHelper.getHttpOptions())
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/rejected', this.serviceHelper.getHttpOptions())
+    }
+
+    public getCompletedRequests(year: number): Observable<Request[]> {
+      return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/completed', this.serviceHelper.getHttpOptions())
     }
 
     public getRequest(id): Observable<Request> {
@@ -43,6 +44,10 @@ export class RequestService {
 
     public rejectRequest(id: number): Observable<Request> {
         return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/reject', this.serviceHelper.getHttpOptions())
+    }
+
+    public completeRequest(id: number): Promise<Request> {
+        return this.http.post<Request>(this.configService.apiUrlBase + this.requestUrl + id + '/complete', this.serviceHelper.getHttpOptions()).toPromise();
     }
 
     public addRequest(request: NewRequest): Observable<any> {
@@ -63,6 +68,10 @@ export class RequestService {
 
     public updateTeamRequest(request: PatchRequest): Observable<any> {
         return this.http.put(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
+    }
+
+    public updateInvoicedAmount(id: number, amount: number): Promise<any> {
+        return this.http.put(this.configService.apiUrlBase + this.requestUrl +  id + "/setAmount", { amount: amount } as InvoicedAmount, this.serviceHelper.getHttpOptions()).toPromise();
     }
 
     public deleteRequest(id: number): Observable<Request> {

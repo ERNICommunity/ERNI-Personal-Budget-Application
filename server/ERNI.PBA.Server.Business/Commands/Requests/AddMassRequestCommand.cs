@@ -71,7 +71,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     Amount = parameter.Amount,
                     Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
-                    State = RequestState.Approved,
+                    State = RequestState.Completed
                 };
 
                 request.Transactions = new [] { new Transaction()

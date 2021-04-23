@@ -1,8 +1,8 @@
 <div [ngSwitch]="requestFilter">
     <h2 *ngSwitchCase="requestFilterType.Pending">Pending requests</h2>
     <h2 *ngSwitchCase="requestFilterType.Approved">Approved requests</h2>
-    <h2 *ngSwitchCase="requestFilterType.ApprovedBySuperior">Approved By Superior requests</h2>
     <h2 *ngSwitchCase="requestFilterType.Rejected">Rejected requests</h2>
+    <h2 *ngSwitchCase="requestFilterType.Completed">Completed requests</h2>
 </div>
 
 <ul class="nav nav-pills">
@@ -25,19 +25,19 @@
             {{year}}
         </a>
         <a
-            *ngSwitchCase="requestFilterType.ApprovedBySuperior"
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[approvedBySuperiorRoute, year]">
-            {{year}}
-        </a>
-        <a
             *ngSwitchCase="requestFilterType.Rejected"
             class="nav-link"
             [routerLinkActive]="['active']"
             [routerLink]="[rejectedRoute, year]">
             {{year}}
         </a>
+        <a
+          *ngSwitchCase="requestFilterType.Completed"
+          class="nav-link"
+          [routerLinkActive]="['active']"
+          [routerLink]="[completedRoute, year]">
+            {{year}}
+    </a>
     </li>
 </ul>
 
@@ -92,14 +92,14 @@
         </a>
     </li>
     <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[approvedBySuperiorRoute, selectedYear]"
-            [routerLinkActiveOptions]="rlao">
-            Approved By Superior
-        </a>
-    </li>
+      <a
+          class="nav-link"
+          [routerLinkActive]="['active']"
+          [routerLink]="[completedRoute, selectedYear]"
+          [routerLinkActiveOptions]="rlao">
+          Completed
+      </a>
+  </li>
     <li class="nav-item">
         <a
             class="nav-link"
@@ -136,7 +136,7 @@
 
             <td>
                 <div *ngIf="isAdmin">
-                    <div *ngIf="showApprove()">                
+                    <div *ngIf="request.state == requestFilterType.Pending">
                         <button
                             class="btn btn-success float-right"
                             title="approve request"
@@ -144,6 +144,14 @@
                             Approve
                         </button>
                     </div>
+                    <div *ngIf="request.state == requestFilterType.Approved">
+                      <button
+                          class="btn btn-success float-right"
+                          title="Complete request"
+                          (click)="completeRequest(request)">
+                          Complete
+                      </button>
+                  </div>
                 </div>
             </td>
 

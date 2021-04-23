@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { RequestFilter } from '../requestFilter';
 import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { RequestState } from '../../model/requestState';
+import { RequestApprovalState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportService } from '../../services/export.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-request-list',
@@ -19,17 +19,21 @@ import { AuthenticationService } from '../../services/authentication.service';
 export class RequestListComponent implements OnInit {
     pendingRoute: string = "/requests/pending";
     approvedRoute: string = "/requests/approved";
-    approvedBySuperiorRoute: string = "/requests/approved-by-superior";
+    completedRoute: string = "/requests/completed";
     rejectedRoute: string = "/requests/rejected";
 
     requests: Request[];
     filteredRequests: Request[];
-    requestFilter: RequestFilter;
-    requestFilterType = RequestFilter;
+    requestFilter: RequestApprovalState;
+    requestFilterType = RequestApprovalState;
     selectedYear: number;
     currentYear: number;
     years: number[];
     rlao: object;
+
+    get isAdmin(): boolean {
+        return this.authService.userInfo.isAdmin;
+    }
 
     private _searchTerm: string;
 
@@ -53,7 +57,8 @@ export class RequestListComponent implements OnInit {
         private requestService: RequestService,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        private exportService: ExportService
+        private exportService: ExportService,
+        private alertService: AlertService
     ) {
 
         this.years = [];
@@ -66,9 +71,9 @@ export class RequestListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.requestFilter = RequestFilter.Pending;
+        this.requestFilter = RequestApprovalState.Pending;
         this.route.data.subscribe((data: Data) => {
-            this.requestFilter = <RequestFilter>data['filter'];
+            this.requestFilter = <RequestApprovalState>data['filter'];
         });
 
         this.route.params.subscribe((params: Params) => {
@@ -85,22 +90,21 @@ export class RequestListComponent implements OnInit {
         });
     }
 
-    getRequests(filter: RequestFilter, year: number): void {
+    getRequests(filter: RequestApprovalState, year: number): void {
         var requests: Observable<Request[]>;
 
         switch (filter) {
-            case RequestFilter.Approved:
+            case RequestApprovalState.Approved:
                 requests = this.requestService.getApprovedRequests(year);
                 break;
-            case RequestFilter.ApprovedBySuperior:
-                requests = this.requestService.getApprovedBySuperiorRequests(year);
-                break;
-            case RequestFilter.Pending:
+            case RequestApprovalState.Pending:
                 requests = this.requestService.getPendingRequests(year);
                 break;
-            case RequestFilter.Rejected:
+            case RequestApprovalState.Rejected:
                 requests = this.requestService.getRejectedRequests(year);
                 break;
+            case RequestApprovalState.Completed:
+                requests = this.requestService.getCompletedRequests(year);
             default:
                 break;
         }
@@ -112,20 +116,36 @@ export class RequestListComponent implements OnInit {
         this.requestService.approveRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
     }
 
+    async completeRequest(request: Request) {
+      if (!request.invoicedAmount) {
+        console.log(request);
+        console.log(request.invoicedAmount);
+        this.alertService.error('Cannot complete request without invoiced amount entered');
+        return;
+      }
+
+      if (request.invoiceCount < 1) {
+        this.alertService.error('Cannot complete request without any invoice attached');
+        return;
+      }
+
+      try {
+        await this.requestService.completeRequest(request.id);
+
+        this.requests = this.requests.filter(req => req.id !== request.id);
+        this.filteredRequests = this.requests;
+
+      } catch (error) {
+        this.alertService.error(JSON.stringify(error.error));
+      }
+    }
+
     rejectRequest(id: number): void {
         this.requestService.rejectRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
     }
 
     canRejectRequest(id: number): boolean {
         return this.authService.userInfo.isAdmin && this.requestFilter != this.requestFilterType.Rejected;
-    }
-
-    showApprove(): boolean {
-        if (this.authService.userInfo.isAdmin) {
-            return this.requestFilter != this.requestFilterType.Approved && this.requestFilter != this.requestFilterType.Rejected;
-        }
-
-        return this.requestFilter == this.requestFilterType.Pending;
     }
 
     export(month: number, year: number) {

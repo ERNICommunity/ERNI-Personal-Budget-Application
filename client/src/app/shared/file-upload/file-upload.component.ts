@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
-import { InvoiceImageService } from '../services/invoice-image.service';
-import { InvoiceImage } from '../model/InvoiceImage';
+import { InvoiceImageService } from '../../services/invoice-image.service';
+import { InvoiceImage } from '../../model/InvoiceImage';
 
 @Component({
   selector: 'app-file-upload',
@@ -11,6 +11,7 @@ import { InvoiceImage } from '../model/InvoiceImage';
 
 export class FileUploadComponent implements OnInit, OnChanges {
   @Input() requestIdInput: number;
+  @Input() uploadEnabled: boolean;
   @ViewChild('file',{static : false}) file;
   @ViewChild('downloadLink',{static : false}) downloadLink: ElementRef;
 
@@ -55,7 +56,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
   }
 
   public onImageAdded(files: FileList) {
-    for (var i = 0; i < files.length; i++) 
+    for (var i = 0; i < files.length; i++)
     {
       let image = new InvoiceImage();
       image.file = files[i];
@@ -70,7 +71,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
       this.invoiceImageService.addInvoiceImage(image).subscribe(progress => {
         newItem.progress = progress;
       }, (error) => {
-        
+
         this.showError = true;
         this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
       },

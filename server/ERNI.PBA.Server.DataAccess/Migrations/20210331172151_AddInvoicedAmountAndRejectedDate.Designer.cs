@@ -4,14 +4,16 @@ using ERNI.PBA.Server.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210331172151_AddInvoicedAmountAndRejectedDate")]
+    partial class AddInvoicedAmountAndRejectedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +35,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
@@ -57,7 +58,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<byte[]>("Data")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Name")
@@ -87,6 +87,9 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("BudgetId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
@@ -106,7 +109,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Url")
@@ -119,6 +121,8 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BudgetId");
 
                     b.HasIndex("CategoryId");
 
@@ -147,7 +151,6 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -171,11 +174,16 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BudgetId");
 
                     b.HasIndex("RequestId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
                 });
@@ -188,11 +196,18 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSuperior")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsViewer")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ObjectId")
@@ -254,6 +269,12 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
             modelBuilder.Entity("ERNI.PBA.Server.Domain.Models.Entities.Request", b =>
                 {
+                    b.HasOne("ERNI.PBA.Server.Domain.Models.Entities.Budget", "Budget")
+                        .WithMany("Requests")
+                        .HasForeignKey("BudgetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ERNI.PBA.Server.Domain.Models.Entities.RequestCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
@@ -263,6 +284,8 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Budget");
 
                     b.Navigation("Category");
 
@@ -283,9 +306,17 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ERNI.PBA.Server.Domain.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Budget");
 
                     b.Navigation("Request");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ERNI.PBA.Server.Domain.Models.Entities.User", b =>
@@ -299,6 +330,8 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 
             modelBuilder.Entity("ERNI.PBA.Server.Domain.Models.Entities.Budget", b =>
                 {
+                    b.Navigation("Requests");
+
                     b.Navigation("Transactions");
                 });
 

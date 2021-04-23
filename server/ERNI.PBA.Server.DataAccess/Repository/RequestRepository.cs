@@ -28,6 +28,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Where(filter)
                 .Include(_ => _.User.Superior)
                 .Include(_ => _.Category)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Budget)
+                .OrderByDescending(_ => _.CreateDate)
                 .ToArrayAsync(cancellationToken);
 
         public Task<Transaction[]> GetRequests(int year, int month, BudgetTypeEnum budgetType) =>

@@ -20,11 +20,15 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public decimal Amount { get; set; }
 
+        public decimal? InvoicedAmount { get; set; }
+
         public DateTime Date { get; set; }
 
         public DateTime CreateDate { get; set; }
 
         public DateTime? ApprovedDate { get; set; }
+
+        public DateTime? RejectedDate { get; set; }
 
         public RequestState State { get; set; }
 

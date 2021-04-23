@@ -5,7 +5,7 @@
     <li *ngFor="let image of images">
       <div class="row mt-2">
         <div class="col-md-8">{{image.name}}</div>
-        <button class="col-md-3 btn btn-outline-primary" 
+        <button class="col-md-3 btn btn-outline-primary"
         (click)="download(image.id, image.name)">Download</button>
         <a #downloadLink></a>
       </div>
@@ -19,7 +19,7 @@
     </li>
   </ul>
 </div>
-<button class="btn btn-outline-primary" (click)="onButtonClick()">Add file</button>
+<button *ngIf="uploadEnabled" class="btn btn-outline-primary" (click)="onButtonClick()">Add file</button>
 <div class="alert alert-danger m-1" *ngIf=showError>
   Error ocured during file upload.
 </div>

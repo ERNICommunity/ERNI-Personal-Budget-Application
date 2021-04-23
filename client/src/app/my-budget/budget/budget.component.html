@@ -7,7 +7,7 @@
                 <div *ngIf="!budget.title">{{budgetTypeName}}</div>
             </div>
             <div class="col">
-                <a *ngIf="budget.year == currentYear" class="float-right" [routerLink]="'create-request/' + budget.id"
+                <a *ngIf="budget.year == currentYear" class="float-right" routerLink="new-request/{{budget.id}}"
                     [state]="{ budget: budget }">
                     Create new request
                 </a></div>
@@ -37,19 +37,19 @@
                     <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
                     <td>{{request.createDate | date: 'dd/MM/yyyy'}}</td>
                     <td>{{requestStateType[request.state]}}</td>
-                    <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"
-                        class="button-table-cell">
+                    <td class="button-table-cell">
+
                         <button class="btn btn-danger float-right" title="delete request"
-                            (click)="openDeleteConfirmationModal(deleteConfirmation)">
+                            (click)="openDeleteConfirmationModal(deleteConfirmation)"
+                            *ngIf="request.state == requestStateType.Pending">
                             Delete
                         </button>
 
-                        <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                            routerLink="request/{{request.id}}/edit" [state]="{ budget: budget }">
-                            Edit
+                        <a class="btn btn-success float-right mr-1" href="#" role="button"
+                            routerLink="request/{{request.id}}" [state]="{ budget: budget }">
+                            Open
                         </a>
                     </td>
-
                     <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
                         <div class="modal-header">
                             <h4 class="modal-title" id="modal-title">Delete request</h4>
@@ -71,20 +71,6 @@
                                 No
                             </button>
                         </div>
-                    </ng-template>
-
-                    <ng-template #cannotEditOrDelete>
-                        <td>
-                            <button class="btn btn-danger float-right" disabled="true"
-                                title="Cannot delete {{requestStateType[request.state]}} request.">
-                                Delete
-                            </button>
-
-                            <a class="btn btn-primary float-right mr-1" href="#" role="button"
-                                routerLink="request/{{request.id}}">
-                                Detail
-                            </a>
-                        </td>
                     </ng-template>
                 </tr>
             </tbody>

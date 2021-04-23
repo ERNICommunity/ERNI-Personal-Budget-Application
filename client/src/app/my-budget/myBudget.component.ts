@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BudgetService } from '../../services/budget.service';
-import { Budget } from '../../model/budget';
-import { User } from '../../model/user';
-import { UserState } from '../../model/userState';
-import { UserService } from '../../services/user.service';
+import { BudgetService } from '../services/budget.service';
+import { Budget } from '../model/budget';
+import { UserState } from '../model/userState';
 import { ActivatedRoute } from '@angular/router';
-import { ConfigService } from '../../services/config.service';
-import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { ConfigService } from '../services/config.service';
+import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { combineLatest, forkJoin, of, Observable } from 'rxjs';
-import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
-import { TeamBudgetService } from '../../services/team-budget.service';
+import { DataChangeNotificationService } from '../services/dataChangeNotification.service';
+import { TeamBudgetService } from '../services/team-budget.service';
 import { catchError, map } from 'rxjs/operators';
 
 @Component({
@@ -59,21 +57,16 @@ export class MyBudgetComponent implements OnInit {
         this.budgets = [];
         this.busyIndicatorService.start();
 
-        let requests = [this.budgetService.getCurrentUserBudgets(year)
-            .pipe(map(this.handleResponse), catchError(this.handleError))];
+        let request = this.budgetService.getCurrentUserBudgets(year)
+            .pipe(map(this.handleResponse), catchError(this.handleError));
 
-        requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
-            .pipe(map(this.handleResponse), catchError(this.handleError)));
-
-        forkJoin(requests).subscribe(
-            data => {
-                data.forEach(budgets => {
-                    if (budgets.length > 0) {
-                        this.budgets = this.budgets.concat(budgets)
-                    }
-                });
-            })
-            .add(() => this.busyIndicatorService.end());
+        request
+          .subscribe((budgets) => {
+            if (budgets.length > 0) {
+              this.budgets = this.budgets.concat(budgets);
+            }
+          })
+          .add(() => this.busyIndicatorService.end());
     }
 
     private handleResponse(data) {

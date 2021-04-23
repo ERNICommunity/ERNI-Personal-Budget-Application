@@ -40,7 +40,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                     Date = _.Date,
                     CreateDate = _.CreateDate,
                     State = _.State
-                })
+                }).OrderByDescending(r => r.CreateDate)
             });
         }
     }
