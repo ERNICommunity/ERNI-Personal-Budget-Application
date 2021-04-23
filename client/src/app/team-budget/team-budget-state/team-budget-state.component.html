@@ -1,0 +1,92 @@
+<div class="card text-center" style="margin-bottom:20px;">
+  <div class="card-header">
+      <div class="row">
+          <div class="col"></div>
+          <div class="col">
+              Team members budgets
+          </div>
+          <div class="col">
+              <a class="float-right" [routerLink]="'create-request'">
+                  Create new request
+              </a></div>
+      </div>
+  </div>
+  <div class="card-body">
+      <!-- <h5 class="card-title">{{budget.title}}</h5>
+  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+  <a href="#" class="btn btn-primary">Go somewhere</a> -->
+
+      <table class="table">
+          <thead>
+              <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Spent</th>
+                  <th scope="col">Total amount</th>
+              </tr>
+          </thead>
+          <tbody>
+
+              <!-- <tr *ngFor="let request of budget.requests">
+                  <td>{{request.title}}</td>
+                  <td>{{request.amount | number:'1.2-2'}}</td>
+                  <td>{{request.date | date: 'dd/MM/yyyy'}}</td>
+                  <td>{{request.createDate | date: 'dd/MM/yyyy'}}</td>
+                  <td>{{requestStateType[request.state]}}</td>
+                  <td *ngIf="request.state == requestStateType.Pending; else cannotEditOrDelete"
+                      class="button-table-cell">
+                      <button class="btn btn-danger float-right" title="delete request"
+                          (click)="openDeleteConfirmationModal(deleteConfirmation)">
+                          Delete
+                      </button>
+
+                      <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                          routerLink="request/{{request.id}}/edit" [state]="{ budget: budget }">
+                          Edit
+                      </a>
+                  </td>
+
+                  <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+                      <div class="modal-header">
+                          <h4 class="modal-title" id="modal-title">Delete request</h4>
+                          <button type="button" class="close" aria-describedby="modal-title" (click)="c()">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+
+                      <div class="modal-body float-centre">
+                          <label>
+                              Are you sure you want to delete {{request.title}} request?
+                          </label>
+                      </div>
+                      <div class="modal-footer">
+                          <button class="btn btn-danger mr-1" (click)="c(deleteRequest(request.id))">
+                              Yes
+                          </button>
+                          <button class="btn btn-primary" (click)="c()">
+                              No
+                          </button>
+                      </div>
+                  </ng-template>
+
+                  <ng-template #cannotEditOrDelete>
+                      <td>
+                          <button class="btn btn-danger float-right" disabled="true"
+                              title="Cannot delete {{requestStateType[request.state]}} request.">
+                              Delete
+                          </button>
+
+                          <a class="btn btn-primary float-right mr-1" href="#" role="button"
+                              routerLink="request/{{request.id}}">
+                              Detail
+                          </a>
+                      </td>
+                  </ng-template>
+              </tr> -->
+          </tbody>
+      </table>
+  </div>
+  <!-- <div class="card-footer text-muted">
+      <ngb-progressbar height="30px" type="primary" [value]="100 * budget.amountLeft / budget.amount">
+          {{budget.amountLeft}} € left out of {{budget.amount}}</ngb-progressbar>
+  </div> -->
+</div>

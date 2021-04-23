@@ -26,6 +26,7 @@ import { DataChangeNotificationService } from "./services/dataChangeNotification
 import { InvoiceImageService } from "./services/invoice-image.service";
 import { TeamBudgetService } from "./services/team-budget.service";
 import { ExportService } from "./services/export.service";
+import { TeamBudgetModule } from './team-budget/team-budget.module';
 
 import {
   MsalInterceptor,
@@ -72,6 +73,7 @@ import { SharedModule } from "./shared/shared.module";
     RequestsModule,
     UsersModule,
     BudgetsModule,
+    TeamBudgetModule
   ],
   entryComponents: [
     NewRequestModalComponent,

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using Microsoft.AspNetCore.Authorization;
@@ -11,14 +10,10 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class TeamBudgetController : Controller
     {
-        private readonly Lazy<IGetTeamBudgetByYearQuery> _getBudgetByYearQuery;
-
-        public TeamBudgetController(Lazy<IGetTeamBudgetByYearQuery> getBudgetByYearQuery) => _getBudgetByYearQuery = getBudgetByYearQuery;
-
         [HttpGet("user/current/year/{year}")]
-        public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, [FromServices] IGetTeamBudgetByYearQuery query, CancellationToken cancellationToken)
         {
-            var outputModel = await _getBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
+            var outputModel = await query.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModel);
         }

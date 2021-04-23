@@ -1,0 +1,16 @@
+
+
+<ul class="nav nav-pills">
+  <li class="nav-item" *ngFor="let year of years">
+      <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
+          [routerLink]="['/team-budget', year]">
+          {{year}}
+      </a>
+  </li>
+</ul>
+
+<app-team-budget-state></app-team-budget-state>
+
+<h1>Requests</h1>
+
+<app-team-request></app-team-request>
