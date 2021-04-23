@@ -31,6 +31,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Queries.Requests
 
             public decimal Amount { get; init; }
 
+            public decimal? InvoicedAmount { get; set; }
+
             public RequestState State { get; init; }
 
             public UserOutputModel User { get; init; } = null!;
