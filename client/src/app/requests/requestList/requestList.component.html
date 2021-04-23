@@ -136,7 +136,7 @@
 
             <td>
                 <div *ngIf="isAdmin">
-                    <div *ngIf="showApprove()">
+                    <div *ngIf="request.state == requestFilterType.Pending">
                         <button
                             class="btn btn-success float-right"
                             title="approve request"
@@ -144,6 +144,14 @@
                             Approve
                         </button>
                     </div>
+                    <div *ngIf="request.state == requestFilterType.Approved">
+                      <button
+                          class="btn btn-success float-right"
+                          title="Complete request"
+                          (click)="completeRequest(request)">
+                          Complete
+                      </button>
+                  </div>
                 </div>
             </td>
 

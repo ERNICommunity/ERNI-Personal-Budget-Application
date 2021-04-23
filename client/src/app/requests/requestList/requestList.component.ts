@@ -9,6 +9,7 @@ import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportService } from '../../services/export.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-request-list',
@@ -56,7 +57,8 @@ export class RequestListComponent implements OnInit {
         private requestService: RequestService,
         private route: ActivatedRoute,
         private modalService: NgbModal,
-        private exportService: ExportService
+        private exportService: ExportService,
+        private alertService: AlertService
     ) {
 
         this.years = [];
@@ -114,20 +116,28 @@ export class RequestListComponent implements OnInit {
         this.requestService.approveRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
     }
 
+    completeRequest(request: Request): void {
+      if (!request.invoicedAmount) {
+        console.log(request);
+        console.log(request.invoicedAmount);
+        this.alertService.error('Cannot complete request without invoiced amount entered');
+        return;
+      }
+
+      if (request.invoiceCount < 1) {
+        this.alertService.error('Cannot complete request without any invoice attached');
+        return;
+      }
+
+      this.requestService.completeRequest(request.id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== request.id), this.filteredRequests = this.requests });
+    }
+
     rejectRequest(id: number): void {
         this.requestService.rejectRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
     }
 
     canRejectRequest(id: number): boolean {
         return this.authService.userInfo.isAdmin && this.requestFilter != this.requestFilterType.Rejected;
-    }
-
-    showApprove(): boolean {
-        if (this.authService.userInfo.isAdmin) {
-            return this.requestFilter != this.requestFilterType.Approved && this.requestFilter != this.requestFilterType.Rejected;
-        }
-
-        return this.requestFilter == this.requestFilterType.Pending;
     }
 
     export(month: number, year: number) {

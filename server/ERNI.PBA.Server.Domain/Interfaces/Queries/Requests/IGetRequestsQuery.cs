@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
 using ERNI.PBA.Server.Domain.Models;
@@ -32,6 +32,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Queries.Requests
             public decimal Amount { get; init; }
 
             public decimal? InvoicedAmount { get; set; }
+
+            public int InvoiceCount { get; init; }
 
             public RequestState State { get; init; }
 
