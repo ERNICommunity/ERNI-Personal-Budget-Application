@@ -11,6 +11,7 @@ import { TeamRequestComponent } from './team-request/team-request.component';
 import { CreateRequestComponent } from './create-request/create-request.component';
 import { PickListModule } from 'primeng/picklist';
 import {InputNumberModule} from 'primeng/inputnumber';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -23,6 +24,7 @@ import {InputNumberModule} from 'primeng/inputnumber';
   ],
   imports: [
     NgbModule,
+    SharedModule,
     FormsModule,
     CommonModule,
     RouterModule,

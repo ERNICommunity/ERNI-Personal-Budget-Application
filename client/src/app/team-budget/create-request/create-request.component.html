@@ -1,55 +1,48 @@
-<button (click)="open()" *ngIf="!isVisible">Create new request</button>
+<p-button (onClick)="open()" *ngIf="!isVisible" label="Create new request"></p-button>
 
-<div class="card text-center" style="margin-bottom:20px;" *ngIf="isVisible">
-  <div class="card-header">
-    <div class="row">
-      <div class="col">
-        <b>Create new request</b>
-      </div>
-    </div>
+<p-panel header="Create new request" *ngIf="isVisible">
+
+  <div class="p-field">
+    <label for="title">Title</label>
+    <input type="text" id="title" #requestTitle="ngModel" pInputText [(ngModel)]="title" (blur)="trimTitle()"
+      required />
+    <small *ngIf="requestTitle.invalid && requestTitle.touched" id="title-help" class="p-error">Title is
+      required</small>
   </div>
-  <div class="card-body">
-    <div class="form-group">
-      <label for="title">Title</label>
-      <textarea id="title" #requestTitle="ngModel" class="form-control" type="textarea" [(ngModel)]="title"
-        (blur)="trimTitle()" required></textarea>
-    </div>
-    <div *ngIf="requestTitle.invalid && requestTitle.touched" class="alert alert-danger col-md-6">Title is required.
-    </div>
 
-    <div class="form-group">
-      <label for="date">Date of occasion</label>
-      <div class="input-group">
-        <input class="form-control" #requestDate="ngModel" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="date"
-          ngbDatepicker #d=ngbDatepicker id="date" required>
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
-        </div>
-      </div>
-    </div>
-    <div *ngIf="requestDate.invalid && requestDate.touched" class="alert alert-danger col-md-6">Date is required.
-    </div>
+  <div class="p-field">
+    <label for="requestDate">Date of occasion</label>
 
-    <div class="p-field p-col-12 p-md-3">
-      <label for="amount">Amount (max. {{maxAmount}})</label>
-      <p-inputNumber inputId="amount" [(ngModel)]="amount" mode="decimal" [maxFractionDigits]="2" mode="currency" currency="EUR" [max]="maxAmount"></p-inputNumber>
-      <!-- <div class="alert alert-danger col-md-6" *ngIf="requestAmount.invalid && requestAmount.touched">Positive
+    <p-calendar [(ngModel)]="date" inputId="requestDate" #requestDate="ngModel" [showIcon]="true"></p-calendar>
+    <div *ngIf="requestDate.invalid && requestDate.touched" class="alert alert-danger col-md-6">Date is required.</div>
+  </div>
+
+  <div class="p-field p-col-12 p-md-3">
+    <label for="amount">Amount (max. {{maxAmount}})</label>
+    <p-inputNumber inputId="amount" [(ngModel)]="amount" mode="decimal" [maxFractionDigits]="2" mode="currency"
+      currency="EUR" [max]="maxAmount"></p-inputNumber>
+    <!-- <div class="alert alert-danger col-md-6" *ngIf="requestAmount.invalid && requestAmount.touched">Positive
         amount is required.</div> -->
-    </div>
+  </div>
 
-    <div class="form-group">
-      <label for="amount">Attendees</label>
-      <p-pickList [source]="list1" [target]="list2" [dragdrop]="false" [showSourceControls]="false" [showTargetControls]="false" (onMoveToTarget)="onAttendeesChanges()" (onMoveToSource)="onAttendeesChanges()" sourceHeader="Employees" targetHeader="Attendees">
-        <ng-template let-car pTemplate="item">
-          <div style="font-size:14px;float:right;margin:0px 0px 0 0">{{car.employee.firstName}} - {{car.employee.lastName}}</div>
-        </ng-template>
+  <div class="form-group">
+    <label>Attendees</label>
+    <p-pickList [source]="list1" [target]="list2" [dragdrop]="false" [showSourceControls]="false"
+      [showTargetControls]="false" (onMoveToTarget)="onAttendeesChanges()" (onMoveToSource)="onAttendeesChanges()"
+      sourceHeader="Employees" targetHeader="Attendees">
+      <ng-template let-car pTemplate="item">
+        <div style="font-size:14px;float:right;margin:0px 0px 0 0">{{car.employee.firstName}} -
+          {{car.employee.lastName}}</div>
+      </ng-template>
     </p-pickList>
 
-    </div>
-
-    <hr>
-
-    <button (click)="close()">Close</button>
-    <button (click)="save()">Save</button>
   </div>
-</div>
+
+  <ng-template pTemplate="footer">
+    <span class="p-buttonset">
+      <button (click)="save()" pButton type="button" label="Save" icon="pi pi-check"></button>
+      <button (click)="close()" pButton type="button" label="Cancel" icon="pi pi-times"
+        class="p-button-danger"></button>
+    </span>
+  </ng-template>
+</p-panel>

@@ -13,6 +13,7 @@ import { StepsModule } from "primeng/steps";
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PanelModule } from 'primeng/panel';
 
 @NgModule({
   declarations: [AlertComponent, FileUploadComponent],
@@ -32,6 +33,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ProgressSpinnerModule,
     AlertComponent,
     FileUploadComponent,
+    PanelModule,
   ],
 })
 export class SharedModule {}

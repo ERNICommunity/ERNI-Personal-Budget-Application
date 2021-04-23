@@ -11,7 +11,7 @@ import { PickListModule } from 'primeng/picklist';
 export class CreateRequestComponent implements OnInit {
   isVisible: boolean;
   title: string;
-  date: any;
+  date: Date;
   amount: number;
 
   list1: TeamBudgetModel[];
@@ -57,7 +57,7 @@ export class CreateRequestComponent implements OnInit {
       employees: this.list2.map(_ => _.employee.id),
       title: this.title,
       amount: this.amount,
-      date: new Date(this.date.year, this.date.month, this.date.day)
+      date: this.date
     })
   }
 }
