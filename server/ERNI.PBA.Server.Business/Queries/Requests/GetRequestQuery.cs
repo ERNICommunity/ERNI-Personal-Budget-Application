@@ -52,7 +52,8 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 Title = request.Title,
                 Amount = request.Amount,
                 Date = request.Date,
-                State = request.State
+                State = request.State,
+                InvoicedAmount = request.InvoicedAmount
             };
         }
     }

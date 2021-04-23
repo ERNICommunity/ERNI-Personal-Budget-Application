@@ -13,11 +13,18 @@
       <p>Request approval pending</p>
     </div>
 
+    <div *ngIf="request && request.state >= RequestState.Approved">
+      <div class="p-field p-grid">
+        <label for="actualAmount" class="p-col-fixed" style="width:200px">Amount spent</label>
+        <div class="p-col">
+          <p-inputNumber [(ngModel)]="request.invoicedAmount" mode="currency" currency="EUR" [(disabled)]="request.state != RequestState.Approved">
+          </p-inputNumber>
+        </div>
+      </div>
 
-    <app-file-upload *ngIf="request && request.state >= RequestState.Approved" [(requestIdInput)]="request.id"
-      [uploadEnabled]="request && request.state == RequestState.Approved"></app-file-upload>
-    <!-- <app-request-files *ngIf="request && request.state >= RequestState.Approved" [(requestId)]="request.id"
-      [uploadEnabled]="request && request.state == RequestState.Approved"></app-request-files> -->
+      <app-file-upload [(requestIdInput)]="request.id" [uploadEnabled]="request && request.state == RequestState.Approved">
+      </app-file-upload>
+    </div>
 
     <!-- Closed -->
     <div *ngIf="request && request.state == RequestState.Completed">

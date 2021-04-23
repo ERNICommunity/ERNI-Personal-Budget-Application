@@ -95,6 +95,7 @@ export class RequestEditComponent implements OnInit {
               state: request.state,
               title: request.title,
               user: request.user,
+              invoicedAmount: request.invoicedAmount
             } as Request;
             console.log(request);
             console.log(this.request);
@@ -107,7 +108,7 @@ export class RequestEditComponent implements OnInit {
         );
     }
 
-    public save(): void {
+    public async save() {
       // this.busyIndicatorService.start();
 
       console.log('Saving');
@@ -116,8 +117,7 @@ export class RequestEditComponent implements OnInit {
         console.log("Saving basic info");
         this.saveBasicInfo();
       } else if (this.request.state == RequestApprovalState.Approved) {
-        console.log("Saving amount");
-        this.updateSpentAmount();
+        await this.updateSpentAmount();
       } else {
         console.log('Else');
       }
@@ -163,8 +163,19 @@ export class RequestEditComponent implements OnInit {
       });
   }
 
-  private updateSpentAmount() {
+  private async updateSpentAmount() {
+    console.log("Saving amount " + this.request.invoicedAmount);
 
+    if (this.request.invoicedAmount) {
+      try {
+      await this.requestService.updateInvoicedAmount(
+        this.request.id,
+        this.request.invoicedAmount
+      );
+      } catch (error){
+        this.alertService.error(JSON.stringify(error.error), "addRequestError");
+      }
+    }
   }
 
   private editExistingRequest(payload: PatchRequest): void {

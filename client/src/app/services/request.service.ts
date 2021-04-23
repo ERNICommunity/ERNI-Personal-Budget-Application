@@ -70,8 +70,8 @@ export class RequestService {
         return this.http.put(this.configService.apiUrlBase + this.requestUrl + 'team', request, this.serviceHelper.getHttpOptions());
     }
 
-    public updateInvoicedAmount(id: number, request: InvoicedAmount): Observable<any> {
-        return this.http.put(this.configService.apiUrlBase + this.requestUrl +  id + "/setAmount", request, this.serviceHelper.getHttpOptions());
+    public updateInvoicedAmount(id: number, amount: number): Promise<any> {
+        return this.http.put(this.configService.apiUrlBase + this.requestUrl +  id + "/setAmount", { amount: amount } as InvoicedAmount, this.serviceHelper.getHttpOptions()).toPromise();
     }
 
     public deleteRequest(id: number): Observable<Request> {
