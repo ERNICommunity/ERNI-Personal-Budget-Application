@@ -57,21 +57,16 @@ export class MyBudgetComponent implements OnInit {
         this.budgets = [];
         this.busyIndicatorService.start();
 
-        let requests = [this.budgetService.getCurrentUserBudgets(year)
-            .pipe(map(this.handleResponse), catchError(this.handleError))];
+        let request = this.budgetService.getCurrentUserBudgets(year)
+            .pipe(map(this.handleResponse), catchError(this.handleError));
 
-        requests.push(this.teamBudgetService.getCurrentUserBudgets(year)
-            .pipe(map(this.handleResponse), catchError(this.handleError)));
-
-        forkJoin(requests).subscribe(
-            data => {
-                data.forEach(budgets => {
-                    if (budgets.length > 0) {
-                        this.budgets = this.budgets.concat(budgets)
-                    }
-                });
-            })
-            .add(() => this.busyIndicatorService.end());
+        request
+          .subscribe((budgets) => {
+            if (budgets.length > 0) {
+              this.budgets = this.budgets.concat(budgets);
+            }
+          })
+          .add(() => this.busyIndicatorService.end());
     }
 
     private handleResponse(data) {
