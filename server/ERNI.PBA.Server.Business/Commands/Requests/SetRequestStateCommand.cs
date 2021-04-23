@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,17 +19,20 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
     {
         private readonly IMailService _mailService;
         private readonly IRequestRepository _requestRepository;
+        private readonly IInvoiceImageRepository _invoiceRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
         public SetRequestStateCommand(
             IMailService mailService,
             IRequestRepository requestRepository,
+            IInvoiceImageRepository invoiceRepository,
             IUnitOfWork unitOfWork,
             ILogger<SetRequestStateCommand> logger)
         {
             _mailService = mailService;
             _requestRepository = requestRepository;
+            _invoiceRepository = invoiceRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -42,7 +46,10 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
             }
 
-            if (!Validate(parameter.requestState, request))
+            var invoiceCount = (await _invoiceRepository.GetInvoiceCounts(new[] {request.Id}, cancellationToken))
+                .SingleOrDefault().invoiceCount;
+
+            if (!Validate(parameter.requestState, request, invoiceCount))
             {
                 _logger.LogWarning("Validation failed");
                 throw new OperationErrorException(StatusCodes.Status400BadRequest, "Validation failed");
@@ -64,15 +71,17 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _mailService.SendMail(message, request.User.Username);
         }
 
-        private static bool Validate(RequestState newState, Domain.Models.Entities.Request request) => newState switch
+        private static bool Validate(RequestState newState, Domain.Models.Entities.Request request, int invoiceCount) => newState switch
         {
             RequestState.Pending => throw new InvalidOperationException(),
             RequestState.Approved => request.State == RequestState.Pending,
-            RequestState.Completed => CanComplete(request),
+            RequestState.Completed => CanComplete(request, invoiceCount),
             RequestState.Rejected => true,
             _ => throw new NotImplementedException(),
         };
 
-        private static bool CanComplete(Domain.Models.Entities.Request request) => request.State == RequestState.Approved;
+        private static bool CanComplete(Domain.Models.Entities.Request request, int invoiceCount) =>
+            request.State == RequestState.Approved && request.InvoicedAmount.HasValue &&
+            request.InvoicedAmount.HasValue && request.InvoicedAmount > 0 && invoiceCount > 0;
     }
 }
