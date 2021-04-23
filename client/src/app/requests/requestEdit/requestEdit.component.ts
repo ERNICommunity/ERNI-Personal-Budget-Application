@@ -82,7 +82,6 @@ export class RequestEditComponent implements OnInit {
         this.requestService.getRequest(requestId).subscribe(
           (request) => {
 
-
             this.request = {
               amount: request.amount,
               budget: request.budget,
@@ -96,7 +95,6 @@ export class RequestEditComponent implements OnInit {
             } as Request;
             console.log(request);
             console.log(this.request);
-
 
           },
           (err) => {
@@ -115,8 +113,6 @@ export class RequestEditComponent implements OnInit {
         this.saveBasicInfo();
       } else if (this.request.state == RequestApprovalState.Approved) {
         await this.updateSpentAmount();
-      } else {
-        console.log('Else');
       }
     }
 
@@ -148,7 +144,7 @@ export class RequestEditComponent implements OnInit {
 
       request.subscribe((_) => {
           this.busyIndicatorService.end();
-          // this.modal.close();
+
           this.dataChangeNotificationService.notify();
           this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
 
@@ -184,7 +180,6 @@ export class RequestEditComponent implements OnInit {
       request.subscribe(() => {
           this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
           this.dataChangeNotificationService.notify();
-          // this.modal.close();
       },
           err => {
               this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
@@ -195,8 +190,6 @@ export class RequestEditComponent implements OnInit {
     public trimTitle() : void {
         this.title = this.title.trim();
     }
-
-
 
     public onHide(): void {
       this.router.navigate(['my-budget']);
