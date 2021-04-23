@@ -92,15 +92,6 @@
         </a>
     </li>
     <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[rejectedRoute, selectedYear]"
-            [routerLinkActiveOptions]="rlao">
-            Rejected
-        </a>
-    </li>
-    <li class="nav-item">
       <a
           class="nav-link"
           [routerLinkActive]="['active']"
@@ -109,6 +100,15 @@
           Completed
       </a>
   </li>
+    <li class="nav-item">
+        <a
+            class="nav-link"
+            [routerLinkActive]="['active']"
+            [routerLink]="[rejectedRoute, selectedYear]"
+            [routerLinkActiveOptions]="rlao">
+            Rejected
+        </a>
+    </li>
 </ul>
 
 <table class="table">
