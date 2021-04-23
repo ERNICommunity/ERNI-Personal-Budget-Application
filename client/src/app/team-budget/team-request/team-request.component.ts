@@ -14,6 +14,6 @@ export class TeamRequestComponent implements OnInit {
   constructor(private teamBudgetService: TeamBudgetService) { }
 
   async ngOnInit(): Promise<void> {
-    this.requests = await this.teamBudgetService.getTeamRequets((new Date()).getFullYear());
+    this.requests = await this.teamBudgetService.getTeamRequests((new Date()).getFullYear());
   }
 }

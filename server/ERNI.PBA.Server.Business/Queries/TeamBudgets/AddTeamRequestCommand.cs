@@ -40,7 +40,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             var currentYear = DateTime.Now.Year;
 
             var budgets =
-                await _budgetRepository.GetTeamBudgets(parameter.UserIds, DateTime.Now.Year, cancellationToken);
+                await _budgetRepository.GetTeamBudgets(parameter.Employees, DateTime.Now.Year, cancellationToken);
             var teamBudgets = budgets.ToTeamBudgets();
 
 
@@ -60,6 +60,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 Title = parameter.Title,
                 Amount = parameter.Amount,
                 Date = parameter.Date.ToLocalTime(),
+                CreateDate = DateTime.Now,
                 State = RequestState.Pending,
                 Transactions = transactions
             };
@@ -77,7 +78,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             public decimal Amount { get; set; }
 
-            public int[] UserIds { get; set; } = null!;
+            public int[] Employees { get; set; } = null!;
         }
     }
 }

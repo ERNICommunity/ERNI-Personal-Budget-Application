@@ -9,7 +9,7 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 {
-    public class GetDefaultTeamBudgetsQuery : Query<int, IEnumerable<GetDefaultTeamBudgetsQuery.TeamBudgetModel>>
+    public class GetDefaultTeamBudgetsQuery : Query<(int year, bool limitToOwnTeam), IEnumerable<GetDefaultTeamBudgetsQuery.TeamBudgetModel>>
     {
         private readonly ITeamBudgetFacade _teamBudgetFacade;
         private readonly IUserRepository _userRepository;
@@ -17,11 +17,13 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
         public GetDefaultTeamBudgetsQuery(ITeamBudgetFacade teamBudgetFacade, IUserRepository userRepository) =>
             (_teamBudgetFacade, _userRepository) = (teamBudgetFacade, userRepository);
 
-        protected override async Task<IEnumerable<TeamBudgetModel>> Execute(int parameter,
+        protected override async Task<IEnumerable<TeamBudgetModel>> Execute((int year, bool limitToOwnTeam) parameter,
             ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            var users = await _teamBudgetFacade.GetTeamBudgets(user.Id, parameter, cancellationToken);
+            var users = parameter.limitToOwnTeam
+                ? await _teamBudgetFacade.GetTeamBudgets(user.Id, parameter.year, cancellationToken)
+                : await _teamBudgetFacade.GetTeamBudgets(parameter.year, cancellationToken);
 
             return users.Select(_ => new TeamBudgetModel()
             {
@@ -29,7 +31,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 {
                     Id = _.Employee.Id,
                     FirstName = _.Employee.FirstName,
-                    LastName = _.Employee.LastName
+                    LastName = _.Employee.LastName,
+                    IsTeamMember = _.Employee.SuperiorId == user.Id || _.Employee.Id == user.Id,
                 },
                 BudgetTotal = _.TotalAmount,
                 BudgetLeft = _.TotalAmount - _.SpentAmount
@@ -45,6 +48,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 public string FirstName { get; init; } = null!;
 
                 public string LastName { get; init; } = null!;
+
+                public bool IsTeamMember { get; init; }
             }
 
             public EmployeeModel Employee { get; init; } = null!;

@@ -22,7 +22,15 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("default-team/{year}")]
         public async Task<IActionResult> GetDefaultTeamBudgetByYear(int year, [FromServices] GetDefaultTeamBudgetsQuery query, CancellationToken cancellationToken)
         {
-            var outputModel = await query.ExecuteAsync(year, HttpContext.User, cancellationToken);
+            var outputModel = await query.ExecuteAsync((year, limitToOwnTeam: true), HttpContext.User, cancellationToken);
+
+            return Ok(outputModel);
+        }
+
+        [HttpGet("all-employees/{year}")]
+        public async Task<IActionResult> GetAllTeamBudgetsByYear(int year, [FromServices] GetDefaultTeamBudgetsQuery query, CancellationToken cancellationToken)
+        {
+            var outputModel = await query.ExecuteAsync((year, limitToOwnTeam: false), HttpContext.User, cancellationToken);
 
             return Ok(outputModel);
         }

@@ -70,6 +70,7 @@ export class RequestEditComponent implements OnInit {
       });
     }
 
+
     private createNewRequest(): Request {
       var request = new Request();
       request.date = new Date();
@@ -91,7 +92,8 @@ export class RequestEditComponent implements OnInit {
               state: request.state,
               title: request.title,
               user: request.user,
-              invoicedAmount: request.invoicedAmount
+              invoicedAmount: request.invoicedAmount,
+              invoiceCount: request.invoiceCount
             } as Request;
             console.log(request);
             console.log(this.request);

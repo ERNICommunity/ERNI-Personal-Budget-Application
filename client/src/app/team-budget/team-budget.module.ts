@@ -8,6 +8,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { TeamBudgetStateComponent } from './team-budget-state/team-budget-state.component';
 import { TeamRequestComponent } from './team-request/team-request.component';
+import { CreateRequestComponent } from './create-request/create-request.component';
+import { PickListModule } from 'primeng/picklist';
+import {InputNumberModule} from 'primeng/inputnumber';
 
 
 
@@ -15,12 +18,16 @@ import { TeamRequestComponent } from './team-request/team-request.component';
   declarations: [
     TeamBudgetComponent,
     TeamBudgetStateComponent,
-    TeamRequestComponent
+    TeamRequestComponent,
+    CreateRequestComponent,
   ],
   imports: [
     NgbModule,
+    FormsModule,
     CommonModule,
-    RouterModule
+    RouterModule,
+    InputNumberModule,
+    PickListModule
   ],
   exports: [
     TeamBudgetComponent

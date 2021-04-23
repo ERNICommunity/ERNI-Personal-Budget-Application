@@ -6,6 +6,7 @@ import { ConfigService } from "./config.service";
 import { Observable } from "rxjs";
 import { TeamBudgetModel } from "../model/teamBudget";
 import { TeamRequestModel } from "../model/request/teamRequestModel";
+import { NewTeamRequestModel } from "../model/request/NewTeamRequestModel";
 
 @Injectable()
 export class TeamBudgetService {
@@ -33,12 +34,29 @@ export class TeamBudgetService {
       .toPromise();
   }
 
-  public getTeamRequets(year: number): Promise<TeamRequestModel[]> {
+  public getAllTeamBudgets(year: number): Promise<TeamBudgetModel[]> {
+    return this.http
+      .get<TeamBudgetModel[]>(
+        this.configService.apiUrlBase + this.url + "all-employees/" + year,
+        this.serviceHelper.getHttpOptions()
+      )
+      .toPromise();
+  }
+
+  public getTeamRequests(year: number): Promise<TeamRequestModel[]> {
     return this.http
       .get<TeamRequestModel[]>(
         this.configService.apiUrlBase + this.url + "requests/" + year,
         this.serviceHelper.getHttpOptions()
       )
+      .toPromise();
+  }
+
+  public createTeamRequest(model: NewTeamRequestModel): Promise<any> {
+    return this.http
+      .post(this.configService.apiUrlBase + this.url + "requests",
+      model,
+      this.serviceHelper.getHttpOptions())
       .toPromise();
   }
 }
