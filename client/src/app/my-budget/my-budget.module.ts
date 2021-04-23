@@ -8,8 +8,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
 import { RequestEditComponent } from '../requests/requestEdit/requestEdit.component';
 
-const currentYear = "2021"; // = (new Date()).getFullYear();
-
 @NgModule({
   declarations: [
     BudgetComponent,
@@ -23,7 +21,7 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
       {
         path: 'my-budget', canActivate: [MsalGuard],
         children: [
-            { path: '', redirectTo: currentYear, pathMatch: 'full' },
+            { path: '', redirectTo: (new Date()).getFullYear().toString(), pathMatch: 'full' },
             {
               path: ':year', component: MyBudgetComponent, canActivate: [MsalGuard],
               children: [

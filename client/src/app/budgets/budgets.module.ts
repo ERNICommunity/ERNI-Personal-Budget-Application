@@ -6,8 +6,6 @@ import { OtherBudgetsDetailComponent } from "./otherBudgetsDetail/otherBudgetsDe
 import { OtherBudgetsComponent } from "./otherBudgets/otherBudgets.component";
 import { FormsModule } from "@angular/forms";
 
-const currentYear = "2021"; // = (new Date()).getFullYear();
-
 @NgModule({
   declarations: [OtherBudgetsComponent, OtherBudgetsDetailComponent],
   imports: [
@@ -17,7 +15,7 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
       {
         path: "other-budgets", canActivate: [AdminRoleGuard],
         children: [
-          { path: "", redirectTo: currentYear + "/1", pathMatch: "full" },
+          { path: "", redirectTo: (new Date()).getFullYear().toString() + "/1", pathMatch: "full" },
           { path: "edit/:id", component: OtherBudgetsDetailComponent, canActivate: [AdminRoleGuard], },
           { path: ":year/:budgetType", component: OtherBudgetsComponent, canActivate: [AdminRoleGuard], },
         ],

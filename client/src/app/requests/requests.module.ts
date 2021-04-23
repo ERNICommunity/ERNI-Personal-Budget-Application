@@ -13,8 +13,6 @@ import { SharedModule } from '../shared/shared.module';
 import { BasicRequestInfoEditorComponent } from './requestEdit/basic-request-info-editor/basic-request-info-editor.component';
 import { RequestApprovalState } from '../model/requestState';
 
-const currentYear = "2021"; // = (new Date()).getFullYear();
-
 @NgModule({
   declarations: [
     RequestsComponent,
@@ -35,7 +33,7 @@ const currentYear = "2021"; // = (new Date()).getFullYear();
       {
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
         children: [
-            { path: '', redirectTo: 'pending/' + currentYear, pathMatch: 'full' },
+            { path: '', redirectTo: 'pending/' + (new Date()).getFullYear().toString(), pathMatch: 'full' },
             {
                 path: 'pending/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Pending }, canActivate: [ViewerGuard],
                 children: [
