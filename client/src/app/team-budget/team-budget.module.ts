@@ -12,6 +12,7 @@ import { CreateRequestComponent } from './create-request/create-request.componen
 import { PickListModule } from 'primeng/picklist';
 import {InputNumberModule} from 'primeng/inputnumber';
 import { SharedModule } from '../shared/shared.module';
+import { MsalGuard } from '@azure/msal-angular';
 
 
 
@@ -29,7 +30,23 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     RouterModule,
     InputNumberModule,
-    PickListModule
+    PickListModule,
+    RouterModule.forChild([
+      {
+        path: 'team-budget', canActivate: [MsalGuard],
+        children: [
+            { path: '', redirectTo: new Date().getFullYear().toString(), pathMatch: 'full' },
+            {
+                path: ':year', component: TeamBudgetComponent, canActivate: [MsalGuard],
+                children: [
+                    { path: 'create-request', component: CreateRequestComponent, canActivate: [MsalGuard] },
+                    // { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [MsalGuard] },
+                    // { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [MsalGuard] }
+                ]
+            }
+        ]
+      },
+    ]),
   ],
   exports: [
     TeamBudgetComponent
