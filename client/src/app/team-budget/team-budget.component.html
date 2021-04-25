@@ -1,18 +1,23 @@
 
 
-<ul class="nav nav-pills">
+
+<p-tabMenu [model]="years" [activeItem]="selectedYear"></p-tabMenu>
+
+<!-- <ul class="nav nav-pills">
   <li class="nav-item" *ngFor="let year of years">
       <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
           [routerLink]="['/team-budget', year]">
           {{year}}
       </a>
   </li>
-</ul>
+</ul> -->
+
+<a class="float-right" routerLink="create-request">Create new request</a>
 
 <app-team-budget-state></app-team-budget-state>
 
 <h1>Requests</h1>
 
-<app-create-request></app-create-request>
-
 <app-team-request></app-team-request>
+
+<router-outlet></router-outlet>
