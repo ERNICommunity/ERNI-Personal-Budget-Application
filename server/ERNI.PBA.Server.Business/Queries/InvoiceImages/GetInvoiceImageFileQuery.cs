@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
-    public class GetInvoiceImageFileQuery : Query<int, ImageFileModel>, IGetInvoiceImageFileQuery
+    public class GetInvoiceImageFileQuery : Query<int, GetInvoiceImageFileQuery.InvoiceModel>
     {
         private readonly IUserRepository _userRepository;
         private readonly IInvoiceImageRepository _invoiceImageRepository;

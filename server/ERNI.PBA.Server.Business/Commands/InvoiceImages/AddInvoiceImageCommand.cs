@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 {
-    public class AddInvoiceImageCommand : Command<InvoiceImageModel>, IAddInvoiceImageCommand
+    public class AddInvoiceImageCommand : Command<AddInvoiceImageCommand.InvoiceImageModel>
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
