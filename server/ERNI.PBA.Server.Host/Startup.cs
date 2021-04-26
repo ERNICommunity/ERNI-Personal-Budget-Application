@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
 using ERNI.PBA.Server.ExcelExport;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,6 +46,8 @@ namespace ERNI.PBA.Server.Host
                                         .AllowAnyHeader()));
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
+
+            services.AddAzureClients(o => o.AddBlobServiceClient(Configuration["Storage:ConnectionString"]));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
@@ -90,6 +94,8 @@ namespace ERNI.PBA.Server.Host
                 configuration.EnableEndpointRouting = false;
                 configuration.Filters.AddService<ApiExceptionFilter>();
             });
+
+            services.Configure<BlobStorageSettings>(Configuration.GetSection(BlobStorageSettings.SectionName));
 
             services.AddOptions();
         }
