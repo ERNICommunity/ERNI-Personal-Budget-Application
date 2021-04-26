@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
+                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
             var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);

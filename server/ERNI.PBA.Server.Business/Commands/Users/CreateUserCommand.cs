@@ -34,12 +34,12 @@ namespace ERNI.PBA.Server.Business.Commands.Users
             var userExists = await _userRepository.ExistsAsync(parameter.Email);
             if (userExists)
             {
-                throw new OperationErrorException(StatusCodes.Status409Conflict);
+                throw new OperationErrorException(ErrorCodes.UnknownError, $"User with email '{parameter.Email}' already exists");
             }
 
             if (string.IsNullOrWhiteSpace(parameter.FirstName) || string.IsNullOrWhiteSpace(parameter.LastName))
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest);
+                throw new OperationErrorException(ErrorCodes.ValidationError, "Invalid name");
             }
 
             var user = new User

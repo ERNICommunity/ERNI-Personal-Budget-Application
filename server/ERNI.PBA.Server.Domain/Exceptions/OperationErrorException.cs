@@ -1,34 +1,34 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace ERNI.PBA.Server.Domain.Exceptions
 {
-#pragma warning disable CA1032 // Implement standard exception constructors
+    [SuppressMessage("Design", "CA1032", Justification = "Standard constructors not required")]
     [Serializable]
     public class OperationErrorException : Exception
-#pragma warning restore CA1032 // Implement standard exception constructors
     {
-        public OperationErrorException(int httpStatusCode) => HttpStatusCode = httpStatusCode;
+        [NonSerialized]
+        private readonly object[] _parameters = Array.Empty<object>();
 
-        public OperationErrorException(int httpStatusCode, string message)
-            : base(message) =>
-            HttpStatusCode = httpStatusCode;
+        public OperationErrorException(string code, string message, params object[] parameters)
+            : base(message)
+        {
+            Code = code;
+            _parameters = parameters;
+        }
 
-        protected OperationErrorException(SerializationInfo info, StreamingContext context) : base(info, context) => 
-            HttpStatusCode = info.GetInt32(nameof(HttpStatusCode));
+        protected OperationErrorException(SerializationInfo info, StreamingContext context)
+            : base(info, context) => Code = info.GetString(nameof(Code)) ?? string.Empty;
 
-        public int HttpStatusCode { get; }
+        public string Code { get; }
+
+        public object[] GetParameters() => _parameters;
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info is null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            info.AddValue(nameof(HttpStatusCode), HttpStatusCode, typeof(int));
-
             base.GetObjectData(info, context);
+            info.AddValue(nameof(Code), Code);
         }
     }
 }

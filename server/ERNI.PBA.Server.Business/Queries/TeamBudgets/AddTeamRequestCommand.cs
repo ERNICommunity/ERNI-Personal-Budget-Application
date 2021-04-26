@@ -45,13 +45,13 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             if (parameter.Amount <= 0.0m)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"The requested amount ({parameter.Amount}) has to be positive.");
+                throw new OperationErrorException(ErrorCodes.InvalidAmount, $"The requested amount ({parameter.Amount}) has to be positive.");
             }
 
             var availableFunds = teamBudgets.Sum(_ => _.Amount);
             if (availableFunds < parameter.Amount)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"The requested amount {parameter.Amount} exceeds the limit.");
+                throw new OperationErrorException(ErrorCodes.InvalidAmount, $"The requested amount {parameter.Amount} exceeds the limit.");
             }
 
             var user = await _userRepository.GetUser(userId, cancellationToken);

@@ -1,4 +1,5 @@
-﻿using ERNI.PBA.Server.Domain.Exceptions;
+﻿using System.Net;
+using ERNI.PBA.Server.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -14,7 +15,7 @@ namespace ERNI.PBA.Server.Host.Filters
         {
             if (context.Exception is OperationErrorException ex)
             {
-                context.HttpContext.Response.StatusCode = ex.HttpStatusCode;
+                context.HttpContext.Response.StatusCode = 400;
                 context.Result = new JsonResult(ex.Message);
             }
             else

@@ -43,7 +43,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
+                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
             var invoiceCount = (await _invoiceRepository.GetInvoiceCounts(new[] {request.Id}, cancellationToken))
@@ -53,7 +53,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (!validationResult.isvalid)
             {
                 _logger.LogWarning(validationResult.error);
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, validationResult.error!);
+                throw new OperationErrorException(ErrorCodes.ValidationError, validationResult.error!);
             }
 
             request.State = parameter.requestState;
