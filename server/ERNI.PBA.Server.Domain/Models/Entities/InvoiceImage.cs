@@ -4,12 +4,14 @@
     {
         public int Id { get; set; }
 
-        public string Name { get; set; } = null!;
-
         public int RequestId { get; set; }
 
         public Request Request { get; set; } = null!;
 
-        public byte[] Data { get; set; } = null!;
+        public string Filename { get; set; } = null!;
+
+        public string MimeType { get; set; } = null!;
+
+        public string BlobPath { get; set; } = null!;
     }
 }
