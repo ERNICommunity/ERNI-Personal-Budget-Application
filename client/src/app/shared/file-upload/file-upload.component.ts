@@ -42,43 +42,46 @@ export class FileUploadComponent implements OnInit, OnChanges {
   }
 
   download(imageId: number, imageName: string) {
-    this.invoiceImageService.getInvoiceImage(imageId).subscribe(blob => { this.processBlob(blob, imageName); })
-  }
-
-  processBlob(blob: Blob, name: string) {
-    let fileObject = new File([blob], name);
-    let url = window.URL.createObjectURL(fileObject);
-    let link = this.downloadLink.nativeElement;
-    link.setAttribute('download', name);
-    link.href = url;
-    link.click();
-    window.URL.revokeObjectURL(url);
+    this.invoiceImageService.getInvoiceImage(imageId);
   }
 
   public onImageAdded(files: FileList) {
     for (var i = 0; i < files.length; i++)
     {
-      let image = new InvoiceImage();
-      image.file = files[i];
-      image.requestId = this.requestId;
+      const fileReader = new FileReader();
 
-      let newItem = new uploadingImage();
+      const selectedFile = files[i];
 
-      newItem.name = image.file.name;
-      newItem.progress = 0;
-      this.uploadingImages.push(newItem);
+      fileReader.readAsDataURL(selectedFile);
+      fileReader.onload = () => {
+        if (fileReader.result) {
 
-      this.invoiceImageService.addInvoiceImage(image).subscribe(progress => {
-        newItem.progress = progress;
-      }, (error) => {
+          const image: InvoiceImage = {
+            id: this.requestId,
+            data: fileReader.result.toString().replace('data:', '').replace(/^.+,/, ''),
+            filename: selectedFile.name,
+            mimeType: selectedFile.type
+          }
 
-        this.showError = true;
-        this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
-      },
-        () => {
-          this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
-          this.updateImagesList();
-        });
+          let newItem = new uploadingImage();
+
+          newItem.name = image.filename;
+          newItem.progress = 0;
+          this.uploadingImages.push(newItem);
+
+          this.invoiceImageService.addInvoiceImage(image).subscribe(progress => {
+            newItem.progress = progress;
+          }, (error) => {
+
+            this.showError = true;
+            this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
+          },
+            () => {
+              this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
+              this.updateImagesList();
+            });
+        }
+      };
     }
   }
   public onButtonClick() {

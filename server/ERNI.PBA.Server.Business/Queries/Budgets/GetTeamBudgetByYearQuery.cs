@@ -40,7 +40,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
             var masterBudget = budgets.SingleOrDefault(x => x.UserId == user.Id);
             if (masterBudget == null)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Cumulative budget does not exists");
+                throw new OperationErrorException(ErrorCodes.UnknownError, "Cumulative budget does not exists");
             }
 
             var amount = budgets.Sum(_ => _.Amount);

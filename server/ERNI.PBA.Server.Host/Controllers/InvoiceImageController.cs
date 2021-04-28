@@ -1,59 +1,49 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.InvoiceImages;
+using ERNI.PBA.Server.Business.Commands.InvoiceImages;
+using ERNI.PBA.Server.Business.Queries.InvoiceImages;
+using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
-using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     public class InvoiceImageController : Controller
     {
-        private readonly Lazy<IGetInvoiceImagesQuery> _getInvoiceImagesQuery;
-        private readonly Lazy<IGetInvoiceImageFileQuery> _getInvoiceImageFileQuery;
-        private readonly Lazy<IAddInvoiceImageCommand> _addInvoiceImageCommand;
+        private readonly IDownloadTokenManager _downloadTokenManager;
 
-        public InvoiceImageController(
-            Lazy<IGetInvoiceImagesQuery> getInvoiceImagesQuery,
-            Lazy<IGetInvoiceImageFileQuery> getInvoiceImageFileQuery,
-            Lazy<IAddInvoiceImageCommand> addInvoiceImageCommand)
-        {
-            _getInvoiceImagesQuery = getInvoiceImagesQuery;
-            _getInvoiceImageFileQuery = getInvoiceImageFileQuery;
-            _addInvoiceImageCommand = addInvoiceImageCommand;
-        }
+        public InvoiceImageController(IDownloadTokenManager downloadTokenManager) => _downloadTokenManager = downloadTokenManager;
 
         [HttpGet("images/{requestId}")]
         [Authorize]
-        public async Task<IActionResult> GetInvoiceImages(int requestId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetInvoiceImages(int requestId, [FromServices] IGetInvoiceImagesQuery query, CancellationToken cancellationToken)
         {
-            var outputModels = await _getInvoiceImagesQuery.Value.ExecuteAsync(requestId, HttpContext.User, cancellationToken);
+            var outputModels = await query.ExecuteAsync(requestId, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
 
-        [HttpGet("image/{imageId}")]
-        [Authorize]
-        public async Task<IActionResult> GetInvoiceImageFile(int imageId, CancellationToken cancellationToken)
+        [HttpGet("image/{token}/{imageId}")]
+        public async Task<IActionResult> GetInvoiceImageFile(Guid token, int imageId, [FromServices] GetInvoiceImageFileQuery query, CancellationToken cancellationToken)
         {
-            var imageFileModel = await _getInvoiceImageFileQuery.Value.ExecuteAsync(imageId, HttpContext.User, cancellationToken);
-
-            return new FileContentResult(imageFileModel.InvoiceImage.Data, imageFileModel.ContentType)
+            if (!_downloadTokenManager.ValidateToken(token))
             {
-                FileDownloadName = imageFileModel.InvoiceImage.Name
-            };
+                throw new InvalidOperationException("Invalid download token");
+            }
+
+            var imageFileModel = await query.ExecuteAsync(imageId, HttpContext.User, cancellationToken);
+
+            return File(imageFileModel.Data, imageFileModel.MimeType, imageFileModel.Filename);
         }
 
         [HttpPost]
-        [Consumes("multipart/form-data")]
         [Authorize]
-        public async Task<IActionResult> AddInvoiceImage([FromForm] InvoiceImageModel invoiceImageModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddInvoiceImage([FromBody] AddInvoiceImageCommand.InvoiceImageModel invoiceImageModel, [FromServices] AddInvoiceImageCommand command, CancellationToken cancellationToken)
         {
-            await _addInvoiceImageCommand.Value.ExecuteAsync(invoiceImageModel, HttpContext.User, cancellationToken);
+            await command.ExecuteAsync(invoiceImageModel, HttpContext.User, cancellationToken);
 
             return Ok();
         }

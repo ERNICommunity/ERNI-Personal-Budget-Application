@@ -7,7 +7,6 @@ using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
@@ -36,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
             {
                 _logger.LogWarning("Not a valid id");
 
-                throw new OperationErrorException(StatusCodes.Status404NotFound, "Not a valid id");
+                throw new OperationErrorException(ErrorCodes.UserNotFound, "Not a valid id");
             }
 
             user.SuperiorId = parameter.Superior?.Id;

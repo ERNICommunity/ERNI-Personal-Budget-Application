@@ -39,24 +39,24 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (request == null)
             {
                 _logger.LogWarning("Not a valid id");
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
+                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
             var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (currentUser.Id != request.User.Id)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
+                throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
             if (request.State != RequestState.Approved)
             {
                 _logger.LogWarning("Validation failed");
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Validation failed");
+                throw new OperationErrorException(ErrorCodes.UnknownError, "Validation failed");
             }
 
             if (parameter.model.Amount > request.Amount)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Invoiced amount {parameter.model.Amount} exceeds the approved amount of {request.Amount}.");
+                throw new OperationErrorException(ErrorCodes.InvalidAmount, $"Invoiced amount {parameter.model.Amount} exceeds the approved amount of {request.Amount}.");
             }
 
             request.InvoicedAmount = parameter.model.Amount;

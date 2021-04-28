@@ -26,6 +26,7 @@ import { DataChangeNotificationService } from "./services/dataChangeNotification
 import { InvoiceImageService } from "./services/invoice-image.service";
 import { TeamBudgetService } from "./services/team-budget.service";
 import { ExportService } from "./services/export.service";
+import { TeamBudgetModule } from './team-budget/team-budget.module';
 
 import {
   MsalInterceptor,
@@ -49,6 +50,7 @@ import {
 import { UsersModule } from "./users/users.module";
 import { BudgetsModule } from "./budgets/budgets.module";
 import { SharedModule } from "./shared/shared.module";
+import { DownloadTokenService } from "./services/download-token.service";
 
 @NgModule({
   declarations: [
@@ -72,6 +74,7 @@ import { SharedModule } from "./shared/shared.module";
     RequestsModule,
     UsersModule,
     BudgetsModule,
+    TeamBudgetModule
   ],
   entryComponents: [
     NewRequestModalComponent,
@@ -83,6 +86,7 @@ import { SharedModule } from "./shared/shared.module";
     ServiceHelper,
     ExportService,
     RequestService,
+    DownloadTokenService,
     UserService,
     BudgetService,
     TeamBudgetService,

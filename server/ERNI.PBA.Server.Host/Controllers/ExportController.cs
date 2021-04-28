@@ -3,8 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
-using ERNI.PBA.Server.Domain.Security;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -21,10 +19,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             _excelExport = excelExport;
             _downloadTokenManager = downloadTokenManager;
         }
-
-        [HttpGet("token")]
-        [Authorize(Roles = Roles.Admin)]
-        public IActionResult GetToken() => Ok(_downloadTokenManager.GenerateToken(DateTime.Now.AddSeconds(10)));
 
         [HttpGet("requests/{token}/{year}/{month}")]
         public async Task<IActionResult> Get(Guid token, int year, int month, CancellationToken cancellationToken)

@@ -5,6 +5,6 @@ namespace ERNI.PBA.Server.Domain.Exceptions
     public static class AppExceptions
     {
         public static OperationErrorException AuthorizationException(string text = "Access forbidden") =>
-            new(StatusCodes.Status403Forbidden, text);
+            new(ErrorCodes.AccessDenied, text);
     }
 }

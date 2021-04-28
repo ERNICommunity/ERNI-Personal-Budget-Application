@@ -29,7 +29,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
             var budget = await _budgetRepository.GetBudget(parameter, cancellationToken);
             if (budget == null)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Budget with id {parameter} not found");
+                throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter} not found");
             }
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);

@@ -24,7 +24,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IGetRequestQuery> _getRequestQuery;
         private readonly Lazy<IGetRequestsQuery> _getRequestsQuery;
         private readonly Lazy<IGetBudgetLeftQuery> _getBudgetLeftQuery;
-        private readonly Lazy<IAddTeamRequestCommand> _addTeamRequestCommand;
         private readonly Lazy<ISetRequestStateCommand> _setRequestStateCommand;
         private readonly Lazy<IAddRequestCommand> _addRequestCommand;
         private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
@@ -37,7 +36,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<IGetRequestQuery> getRequestQuery,
             Lazy<IGetRequestsQuery> getRequestsQuery,
             Lazy<IGetBudgetLeftQuery> getBudgetLeftQuery,
-            Lazy<IAddTeamRequestCommand> addTeamRequestCommand,
             Lazy<ISetRequestStateCommand> approveRequestCommand,
             Lazy<IAddRequestCommand> addRequestCommand,
             Lazy<IAddMassRequestCommand> addMassRequestCommand,
@@ -49,7 +47,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             _getRequestQuery = getRequestQuery;
             _getRequestsQuery = getRequestsQuery;
             _getBudgetLeftQuery = getBudgetLeftQuery;
-            _addTeamRequestCommand = addTeamRequestCommand;
             _setRequestStateCommand = approveRequestCommand;
             _addRequestCommand = addRequestCommand;
             _addMassRequestCommand = addMassRequestCommand;
@@ -101,14 +98,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
         {
             await _addRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
-
-            return Ok();
-        }
-
-        [HttpPost("team")]
-        public async Task<IActionResult> AddTeamRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
-        {
-            await _addTeamRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }

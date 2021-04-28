@@ -42,20 +42,20 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var request = await _requestRepository.GetRequest(parameter.Id, cancellationToken);
             if (request == null)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Request with id {parameter.Id} not found.");
+                throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
             }
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
 
             if (user.Id != request.UserId)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
+                throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
             var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
             if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
+                throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
             var budgets = teamBudgets.ToTeamBudgets(x => x.RequestId != parameter.Id);
@@ -63,7 +63,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var availableFunds = budgets.Sum(_ => _.Amount);
             if (availableFunds < parameter.Amount)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the limit.");
+                throw new OperationErrorException(ErrorCodes.InvalidAmount, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
             var transactions = TransactionCalculator.Create(budgets, parameter.Amount);

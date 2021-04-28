@@ -53,7 +53,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
                 if (budgets.Length > 1)
                 {
-                    throw new OperationErrorException(StatusCodes.Status400BadRequest,
+                    throw new OperationErrorException(ErrorCodes.UnknownError,
                         $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
                 }
 

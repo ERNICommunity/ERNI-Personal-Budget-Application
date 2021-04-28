@@ -43,11 +43,6 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 throw AppExceptions.AuthorizationException();
             }
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest);
-            }
-
             user.UniqueIdentifier = principal.GetIdentifier(UserClaims.UniqueIndetifier);
             user.FirstName = principal.GetIdentifier(UserClaims.FirstName);
             user.LastName = principal.GetIdentifier(UserClaims.LastName);

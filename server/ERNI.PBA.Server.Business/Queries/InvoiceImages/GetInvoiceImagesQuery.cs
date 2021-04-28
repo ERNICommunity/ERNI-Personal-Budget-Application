@@ -5,7 +5,6 @@ using ERNI.PBA.Server.Domain.Interfaces.Queries.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Responses.InvoiceImages;
 using ERNI.PBA.Server.Domain.Security;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -35,7 +34,7 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
             var request = await _requestRepository.GetRequest(parameter, cancellationToken);
             if (request == null)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "Not a valid id");
+                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);

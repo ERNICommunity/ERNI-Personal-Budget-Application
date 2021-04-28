@@ -16,5 +16,9 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
         Task<InvoiceImage> GetInvoiceImage(int imageId, CancellationToken cancellationToken);
 
         Task<(int requestId, int invoiceCount)[]> GetInvoiceCounts(int[] requestIds, CancellationToken cancellationToken);
+
+        Task<string> UploadImageDataBlob(byte[] data, int imageId, CancellationToken cancellationToken);
+
+        Task<byte[]?> DownloadImageDataBlob(string blobName, CancellationToken cancellationToken);
     }
 }

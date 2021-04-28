@@ -1,10 +1,13 @@
 using Autofac.Extensions.DependencyInjection;
+using Azure.Storage.Blobs;
 using ERNI.PBA.Server.Business.Queries.Employees;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -17,9 +20,16 @@ namespace ERNI.PBA.Server.Host
             using (var serviceScope = host.Services.GetService<IServiceScopeFactory>()!.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                var blobService = serviceScope.ServiceProvider.GetRequiredService<BlobServiceClient>();
+                var blobStorageSettings = serviceScope.ServiceProvider.GetRequiredService<IOptions<BlobStorageSettings>>();
 
                 context.Database.Migrate();
 
+                var exists = blobService.GetBlobContainerClient(blobStorageSettings.Value.AttachmentDataContainerName).Exists();
+                if (!exists)
+                {
+                    blobService.CreateBlobContainer(blobStorageSettings.Value.AttachmentDataContainerName);
+                }
                 var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
                 cmd.Execute().Wait();
             }

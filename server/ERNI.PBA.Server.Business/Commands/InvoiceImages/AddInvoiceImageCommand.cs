@@ -1,11 +1,11 @@
-﻿using ERNI.PBA.Server.Business.Infrastructure;
+﻿using System;
+using System.Globalization;
+using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 {
-    public class AddInvoiceImageCommand : Command<InvoiceImageModel>, IAddInvoiceImageCommand
+    public class AddInvoiceImageCommand : Command<AddInvoiceImageCommand.InvoiceImageModel>
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
         protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var requestId = parameter.RequestId;
+            var requestId = parameter.Id;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
@@ -43,34 +43,65 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                 throw AppExceptions.AuthorizationException();
             }
 
-            byte[] buffer;
-            if (parameter.File == null)
-            {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest);
-            }
-
-            var fullName = parameter.File.FileName;
-            if (parameter.File.Length > 1048576)
-            {
-                throw new OperationErrorException(StatusCodes.Status413PayloadTooLarge);
-            }
-
-            using (var openReadStream = parameter.File.OpenReadStream())
-            {
-                buffer = new byte[parameter.File.Length];
-                openReadStream.Read(buffer, 0, buffer.Length);
-            }
+            var blobPath = await _invoiceImageRepository.UploadImageDataBlob(parameter.Data, request.Id, cancellationToken);
 
             var image = new InvoiceImage
             {
-                Data = buffer,
-                Name = fullName,
+                Filename = parameter.Filename,
+                MimeType = parameter.MimeType, 
+                BlobPath = blobPath,
                 RequestId = requestId
             };
 
             await _invoiceImageRepository.AddInvoiceImage(image, cancellationToken);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+        }
+
+        public class InvoiceImageModel
+        {
+            public InvoiceImageModel(int id, string? filename, string? mimeType, byte[]? data)
+            {
+                if (data is null || data.Length == 0)
+                {
+                    // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.EmptyField, $"{nameof(Data)} cannot be empty.") })
+                    throw new InvalidOperationException();
+                }
+
+                if (data.Length > 5 * 1024 * 1024)
+                {
+                    // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.OutOfRange, $"{nameof(Data)} cannot exceed 5 MB.") })
+                    throw new InvalidOperationException();
+                }
+
+                if (string.IsNullOrWhiteSpace(filename))
+                {
+                    // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.EmptyField, $"{nameof(Filename)} cannot be empty.") })
+                    throw new InvalidOperationException();
+                }
+
+                if (string.IsNullOrWhiteSpace(mimeType))
+                {
+                    // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.EmptyField, $"{nameof(MimeType)} cannot be empty.") })
+                    throw new InvalidOperationException();
+                }
+
+                if (!mimeType.StartsWith("image/", true, CultureInfo.InvariantCulture) && mimeType != "application/pdf")
+                {
+                    // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.InvalidAttachmentType, "Attachments only support images.") })
+                    throw new InvalidOperationException();
+                }
+
+                Id = id;
+                Data = data;
+                Filename = filename;
+                MimeType = mimeType;
+            }
+
+            public int Id { get; }
+            public byte[] Data { get; }
+            public string Filename { get; }
+            public string MimeType { get; }
         }
     }
 }
