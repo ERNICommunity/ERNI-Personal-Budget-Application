@@ -50,6 +50,7 @@ import {
 import { UsersModule } from "./users/users.module";
 import { BudgetsModule } from "./budgets/budgets.module";
 import { SharedModule } from "./shared/shared.module";
+import { DownloadTokenService } from "./services/download-token.service";
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { SharedModule } from "./shared/shared.module";
     ServiceHelper,
     ExportService,
     RequestService,
+    DownloadTokenService,
     UserService,
     BudgetService,
     TeamBudgetService,
