@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
         protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var requestId = parameter.RequestId;
+            var requestId = parameter.Id;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
@@ -86,7 +86,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                     throw new InvalidOperationException();
                 }
 
-                if (!mimeType.StartsWith("image/", true, CultureInfo.InvariantCulture))
+                if (!mimeType.StartsWith("image/", true, CultureInfo.InvariantCulture) && mimeType != "application/pdf")
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.InvalidAttachmentType, "Attachments only support images.") })
                     throw new InvalidOperationException();
@@ -102,11 +102,6 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
             public byte[] Data { get; }
             public string Filename { get; }
             public string MimeType { get; }
-
-
-            public int RequestId { get; set; }
-
-            public IFormFile File { get; set; } = null!;
         }
     }
 }

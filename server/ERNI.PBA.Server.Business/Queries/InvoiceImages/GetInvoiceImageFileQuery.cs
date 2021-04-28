@@ -12,16 +12,13 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
     public class GetInvoiceImageFileQuery : Query<int, GetInvoiceImageFileQuery.InvoiceModel>
     {
-        private readonly IUserRepository _userRepository;
         private readonly IInvoiceImageRepository _invoiceImageRepository;
         private readonly IRequestRepository _requestRepository;
 
         public GetInvoiceImageFileQuery(
-            IUserRepository userRepository,
             IInvoiceImageRepository invoiceImageRepository,
             IRequestRepository requestRepository)
         {
-            _userRepository = userRepository;
             _invoiceImageRepository = invoiceImageRepository;
             _requestRepository = requestRepository;
         }
@@ -38,13 +35,6 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
             if (request == null)
             {
                 throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
-            }
-
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-
-            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId)
-            {
-                throw AppExceptions.AuthorizationException();
             }
 
             // var provider = new FileExtensionContentTypeProvider();

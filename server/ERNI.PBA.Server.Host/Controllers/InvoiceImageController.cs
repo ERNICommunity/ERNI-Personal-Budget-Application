@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     public class InvoiceImageController : Controller
     {
         private readonly IDownloadTokenManager _downloadTokenManager;
@@ -28,7 +27,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("image/{token}/{imageId}")]
-        [Authorize]
         public async Task<IActionResult> GetInvoiceImageFile(Guid token, int imageId, [FromServices] GetInvoiceImageFileQuery query, CancellationToken cancellationToken)
         {
             if (!_downloadTokenManager.ValidateToken(token))
@@ -42,9 +40,8 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost]
-        [Consumes("multipart/form-data")]
         [Authorize]
-        public async Task<IActionResult> AddInvoiceImage([FromForm] AddInvoiceImageCommand.InvoiceImageModel invoiceImageModel, [FromServices] AddInvoiceImageCommand command, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddInvoiceImage([FromBody] AddInvoiceImageCommand.InvoiceImageModel invoiceImageModel, [FromServices] AddInvoiceImageCommand command, CancellationToken cancellationToken)
         {
             await command.ExecuteAsync(invoiceImageModel, HttpContext.User, cancellationToken);
 

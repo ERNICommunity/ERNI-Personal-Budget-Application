@@ -19,7 +19,7 @@ export class RequestDetailComponent implements OnInit {
   requestForm: FormGroup;
   httpResponseError : string;
   images: [number, string][];
-  
+
   constructor(private requestService: RequestService,
               private route: ActivatedRoute,
               private location: Location,
@@ -31,23 +31,13 @@ export class RequestDetailComponent implements OnInit {
   }
 
   download(imageId: number, imageName: string) {
-    this.invoiceImageService.getInvoiceImage(imageId).subscribe(blob => { this.processBlob(blob, imageName); })
-  }
-
-  processBlob(blob: Blob, name: string) {
-    let fileObject = new File([blob], name);
-    let url = window.URL.createObjectURL(fileObject);
-    let link = this.downloadLink.nativeElement;
-    link.setAttribute('download', name);
-    link.href = url;
-    link.click();
-    window.URL.revokeObjectURL(url);
+    this.invoiceImageService.getInvoiceImage(imageId);
   }
 
   public getRequest(id: number): void {
     this.requestService.getRequest(id)
-      .subscribe(request => 
-        { 
+      .subscribe(request =>
+        {
           this.request = request;
           this.selectedDate = new Date(request.date);
           this.invoiceImageService.getInvoiceImages(id).subscribe(names => {
@@ -57,7 +47,7 @@ export class RequestDetailComponent implements OnInit {
           this.httpResponseError = err.error
         });
     }
- 
+
   goBack(): void {
     this.location.back();
   }

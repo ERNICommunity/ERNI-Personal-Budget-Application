@@ -4,6 +4,7 @@ import { ConfigService } from './config.service';
 import { Observable, Subject, throwError } from 'rxjs';
 import { ServiceHelper } from './service.helper';
 import { InvoiceImage } from '../model/InvoiceImage';
+import { DownloadTokenService } from './download-token.service';
 
 @Injectable()
 
@@ -11,6 +12,7 @@ export class InvoiceImageService {
   requestUrl = "InvoiceImage";
 
   constructor(private http: HttpClient,
+    private tokenService: DownloadTokenService,
     private configService: ConfigService,
     private serviceHelper: ServiceHelper) { }
 
@@ -18,33 +20,25 @@ export class InvoiceImageService {
     return this.http.get<[number,string][]>(this.configService.apiUrlBase + this.requestUrl + "/images/" + requestId, this.serviceHelper.getHttpOptions());
   }
 
-  public getInvoiceImage(imageId : number) : Observable<Blob>
-  { 
-    let headerDict = {
-      'Content-type' : 'application/octet-stream'
-    }
+  public async getInvoiceImage(imageId : number)
+  {
 
-    return this.http.get<Blob>(this.configService.apiUrlBase + this.requestUrl + "/image/" + imageId, 
-    {
-      headers : new HttpHeaders(headerDict),
-      responseType : 'blob' as 'json'
-    });
+    var token = await this.tokenService.getDownloadToken()
+    var downloadLink = this.configService.apiUrlBase + this.requestUrl + "/image/" + token + "/" + imageId;
+
+    window.open(downloadLink, "_blank");
   }
 
   public addInvoiceImage(invoiceImage: InvoiceImage): Observable<number> {
 
-    if(invoiceImage.file.size > 1048576)
-    {
-      return throwError("Payload is too large - 413");
-    }
-
-    let formData: FormData = new FormData();
-    formData.append('requestId', invoiceImage.requestId.toString());
-    formData.append('file', invoiceImage.file, invoiceImage.file.name);
+    // // if(invoiceImage.file.size > 1048576)
+    // // {
+    // //   return throwError("Payload is too large - 413");
+    // // }
 
     let request = new HttpRequest('POST',
       this.configService.apiUrlBase + this.requestUrl,
-      formData,
+      invoiceImage,
       {
         reportProgress: true
       });
