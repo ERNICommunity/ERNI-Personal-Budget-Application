@@ -5,5 +5,7 @@ namespace ERNI.PBA.Server.Domain.Security
         public const string Admin = "PBA.Admin";
 
         public const string Finance = "PBA.Finance";
+
+        public const string Superior = "PBA.Superior";
     }
 }
