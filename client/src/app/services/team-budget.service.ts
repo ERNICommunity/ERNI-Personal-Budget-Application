@@ -6,7 +6,7 @@ import { ConfigService } from "./config.service";
 import { Observable } from "rxjs";
 import { TeamBudgetModel } from "../model/teamBudget";
 import { TeamRequestModel } from "../model/request/teamRequestModel";
-import { NewTeamRequestModel } from "../model/request/NewTeamRequestModel";
+import { NewTeamRequestModel } from "../model/request/newTeamRequestModel";
 
 @Injectable()
 export class TeamBudgetService {
