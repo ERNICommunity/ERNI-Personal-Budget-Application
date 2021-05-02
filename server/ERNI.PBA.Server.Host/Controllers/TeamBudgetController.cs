@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Queries.TeamBudgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
+using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = Roles.Superior + "," + Roles.Admin)]
     public class TeamBudgetController : Controller
     {
         [HttpGet("user/current/year/{year}")]

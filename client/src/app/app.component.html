@@ -14,7 +14,7 @@
                     My budget
                 </a>
             </li>
-            <li class="nav-item" [routerLinkActive]="['active']">
+            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isSuperior || (authService.userInfo$ | async)?.isAdmin">
               <a class="nav-link" routerLink="/team-budget">
                   Team budget
               </a>
