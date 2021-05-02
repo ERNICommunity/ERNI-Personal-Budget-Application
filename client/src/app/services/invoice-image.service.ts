@@ -4,7 +4,6 @@ import { ConfigService } from './config.service';
 import { Observable, Subject, throwError } from 'rxjs';
 import { ServiceHelper } from './service.helper';
 import { InvoiceImage } from '../model/InvoiceImage';
-import { DownloadTokenService } from './download-token.service';
 
 @Injectable()
 
@@ -12,7 +11,6 @@ export class InvoiceImageService {
   requestUrl = "InvoiceImage";
 
   constructor(private http: HttpClient,
-    private tokenService: DownloadTokenService,
     private configService: ConfigService,
     private serviceHelper: ServiceHelper) { }
 
@@ -20,10 +18,14 @@ export class InvoiceImageService {
     return this.http.get<[number,string][]>(this.configService.apiUrlBase + this.requestUrl + "/images/" + requestId, this.serviceHelper.getHttpOptions());
   }
 
+  public getDownloadToken(imageId: number): Promise<any> {
+    return this.http.get<any>(`${this.configService.apiUrlBase}${this.requestUrl}/image/${imageId}/token`, this.serviceHelper.getHttpOptions()).toPromise();
+  }
+
   public async getInvoiceImage(imageId : number)
   {
 
-    var token = await this.tokenService.getDownloadToken()
+    var token = await this.getDownloadToken(imageId);
     var downloadLink = this.configService.apiUrlBase + this.requestUrl + "/image/" + token + "/" + imageId;
 
     window.open(downloadLink, "_blank");

@@ -1,8 +1,6 @@
 ﻿using ERNI.PBA.Server.Business.Infrastructure;
-using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Security;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
