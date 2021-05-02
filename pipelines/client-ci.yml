@@ -1,0 +1,28 @@
+trigger:
+- develop
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  displayName: 'Use Node 10.x'
+  inputs:
+    versionSpec: '10.x'
+
+- task: Npm@1
+  displayName: 'npm ci'
+  inputs:
+    command: 'ci'
+
+- task: Npm@1
+  displayName: 'npm lint'
+  inputs:
+    command: 'custom'
+    customCommand: 'run lint'
+
+- task: Npm@1
+  displayName: 'npm build'
+  inputs:
+    command: 'custom'
+    customCommand: 'run build -- --prod'
