@@ -16,12 +16,12 @@ steps:
     command: 'ci'
     workingDir: 'client/'
 
-- task: Npm@1
-  displayName: 'npm lint'
-  inputs:
-    command: 'custom'
-    workingDir: 'client/'
-    customCommand: 'run lint'
+# - task: Npm@1
+#   displayName: 'npm lint'
+#   inputs:
+#     command: 'custom'
+#     workingDir: 'client/'
+#     customCommand: 'run lint'
 
 - task: Npm@1
   displayName: 'npm build'
