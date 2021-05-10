@@ -90,7 +90,7 @@ export class CreateRequestComponent implements OnInit {
     this.request = {
       amount: request.totalAmount,
       createDate: request.createDate,
-      date: request.createDate,
+      date: new Date(request.createDate),
       id: request.id,
       state: request.state,
       title: request.title,
