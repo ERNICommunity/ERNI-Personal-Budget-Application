@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Extensions;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
@@ -43,6 +44,13 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             if (request.UserId != user.Id && !principal.IsInRole(Roles.Admin))
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
+            }
+
+            if (!principal.IsInRole(Roles.Admin) &&
+                (request.State == RequestState.Completed || request.State == RequestState.Rejected))
+            {
+                throw new OperationErrorException(ErrorCodes.ValidationError,
+                    $"Cannot update completed or rejected requests.");
             }
 
             var budgets =
