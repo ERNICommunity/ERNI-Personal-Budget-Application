@@ -52,9 +52,26 @@ export class TeamBudgetService {
       .toPromise();
   }
 
-  public createTeamRequest(model: NewTeamRequestModel): Promise<any> {
+  public getSingleTeamRequest(requestId: number): Promise<TeamRequestModel> {
     return this.http
-      .post(this.configService.apiUrlBase + this.url + "requests",
+      .get<TeamRequestModel>(
+        this.configService.apiUrlBase + this.url + "request/" + requestId,
+        this.serviceHelper.getHttpOptions()
+      )
+      .toPromise();
+  }
+
+  public createTeamRequest(model: NewTeamRequestModel): Promise<number> {
+    return this.http
+      .post<number>(this.configService.apiUrlBase + this.url + "requests",
+      model,
+      this.serviceHelper.getHttpOptions())
+      .toPromise();
+  }
+
+  public updateTeamRequest(requestId: number, model: NewTeamRequestModel): Promise<void> {
+    return this.http
+      .patch<void>(this.configService.apiUrlBase + this.url + "request/" + requestId,
       model,
       this.serviceHelper.getHttpOptions())
       .toPromise();
