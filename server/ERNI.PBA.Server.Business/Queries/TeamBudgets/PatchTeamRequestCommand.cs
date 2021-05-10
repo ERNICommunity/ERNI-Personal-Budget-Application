@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -64,6 +64,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             request.Title = parameter.Payload.Title;
             request.Amount = parameter.Payload.Amount;
+            request.InvoicedAmount = parameter.Payload.Amount;
             request.Date = parameter.Payload.Date.ToLocalTime();
 
             await _requestRepository.AddOrUpdateTransactions(parameter.RequestId, transactions);
