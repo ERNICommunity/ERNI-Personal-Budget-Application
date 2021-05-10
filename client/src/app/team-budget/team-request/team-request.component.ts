@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TeamRequestModel } from '../../model/request/teamRequestModel';
 import { TeamBudgetService } from '../../services/team-budget.service';
 
@@ -11,9 +12,12 @@ export class TeamRequestComponent implements OnInit {
 
   requests: TeamRequestModel[];
 
-  constructor(private teamBudgetService: TeamBudgetService) { }
+  constructor(private route: ActivatedRoute, private teamBudgetService: TeamBudgetService) { }
 
   async ngOnInit(): Promise<void> {
-    this.requests = await this.teamBudgetService.getTeamRequests((new Date()).getFullYear());
+
+    this.route.params.subscribe(async params => {
+      this.requests = await this.teamBudgetService.getTeamRequests(Number(params['year']));
+    });
   }
 }
