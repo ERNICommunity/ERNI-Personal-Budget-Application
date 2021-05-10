@@ -40,7 +40,7 @@ import { MsalGuard } from '@azure/msal-angular';
                 path: ':year', component: TeamBudgetComponent, canActivate: [MsalGuard],
                 children: [
                     { path: 'create-request', component: CreateRequestComponent, canActivate: [MsalGuard] },
-                    // { path: 'request/:requestId', component: RequestDetailModalComponent, canActivate: [MsalGuard] },
+                    { path: 'request/:requestId', component: CreateRequestComponent, canActivate: [MsalGuard] },
                     // { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [MsalGuard] }
                 ]
             }

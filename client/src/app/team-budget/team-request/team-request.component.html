@@ -1,5 +1,12 @@
 <p-panel header="{{request.title}}" *ngFor="let request of requests">
 
+  <ng-template pTemplate="icons">
+    <a class="btn btn-success float-right mr-1" href="#" role="button" routerLink="request/{{request.id}}"
+      [state]="{ budget: budget }">
+      Open
+    </a>
+  </ng-template>
+
   <!-- <a class="float-right" [routerLink]="'create-request'">
                   Remove request
               </a></div> -->
