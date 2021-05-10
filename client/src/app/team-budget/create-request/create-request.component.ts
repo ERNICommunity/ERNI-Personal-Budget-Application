@@ -78,10 +78,12 @@ export class CreateRequestComponent implements OnInit {
 
     var request = await this.teamBudgetService.getSingleTeamRequest(requestId);
 
-
-
-    this.list1 = this.teamBudgets.filter((_) => !request.transactions.find(t => t.employeeId == _.employee.id));
-    this.list2 = this.teamBudgets.filter((_) => request.transactions.find(t => t.employeeId == _.employee.id));
+    this.list1 = this.teamBudgets.filter(
+      (_) => !request.transactions.find((t) => t.employeeId == _.employee.id)
+    );
+    this.list2 = this.teamBudgets.filter((_) =>
+      request.transactions.find((t) => t.employeeId == _.employee.id)
+    );
     this.maxAmount = this.getMaxAmount();
 
 
