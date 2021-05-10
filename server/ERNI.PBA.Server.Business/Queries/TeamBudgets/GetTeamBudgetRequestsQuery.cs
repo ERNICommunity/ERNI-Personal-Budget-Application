@@ -36,6 +36,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                         Amount = t.Amount
                     }
                 ).OrderBy(u => u.LastName).ThenBy(u => u.FirstName).ToArray(),
+                Id = _.Id,
                 TotalAmount = _.Amount,
                 Title = _.Title,
                 State = _.State,
@@ -55,6 +56,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
                 public bool IsSubordinate { get; init; }
             }
+
+            public int Id { get; init; }
 
             public TransactionModel[] Transactions { get; init; } = null!;
 

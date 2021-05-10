@@ -8,6 +8,7 @@ export class TransactionModel {
 }
 
 export class TeamRequestModel {
+  id: number;
   transactions: TransactionModel[];
   title: string;
   state: RequestApprovalState;
