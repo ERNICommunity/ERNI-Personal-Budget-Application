@@ -33,7 +33,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                         FirstName = t.Budget.User.FirstName,
                         LastName = t.Budget.User.LastName,
                         IsSubordinate = t.Budget.User.SuperiorId == user.Id,
-                        Amount = t.Amount
+                        Amount = t.Amount,
+                        EmployeeId = t.Budget.UserId
                     }
                 ).OrderBy(u => u.LastName).ThenBy(u => u.FirstName).ToArray(),
                 Id = _.Id,
@@ -48,6 +49,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
         {
             public class TransactionModel
             {
+                public int EmployeeId { get; init; }
+
                 public string FirstName { get; init; } = null!;
 
                 public string LastName { get; init; } = null!;
