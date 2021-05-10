@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { TeamBudgetModel } from "../../model/teamBudget";
 import { TeamBudgetService } from "../../services/team-budget.service";
-import { PickListModule } from 'primeng/picklist';
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AlertService } from "../../services/alert.service";
 import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
@@ -12,6 +11,7 @@ export class RequestViewModel {
   date: Date;
   state?: RequestApprovalState;
   amount: number;
+  isReadonly: boolean;
 }
 
 @Component({
@@ -34,6 +34,8 @@ export class CreateRequestComponent implements OnInit {
   maxAmount: number;
 
   teamBudgets: TeamBudgetModel[];
+
+  public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
 
   constructor(
     private route: ActivatedRoute,
@@ -62,14 +64,13 @@ export class CreateRequestComponent implements OnInit {
         // this.request = this.createNewRequest();
         this.newRequest = true;
 
-        this.request = new RequestViewModel;
-
+        this.request = new RequestViewModel();
       } else {
         console.log("Loading request");
         this.popupTitle = "Request details";
         await this.loadRequest(this.requestId);
         this.newRequest = false;
-          }
+      }
     });
   }
 
@@ -86,7 +87,6 @@ export class CreateRequestComponent implements OnInit {
     );
     this.maxAmount = this.getMaxAmount();
 
-
     this.request = {
       amount: request.totalAmount,
       createDate: request.createDate,
@@ -94,6 +94,9 @@ export class CreateRequestComponent implements OnInit {
       id: request.id,
       state: request.state,
       title: request.title,
+      isReadonly:
+        request.state == RequestApprovalState.Completed ||
+        request.state == RequestApprovalState.Rejected
     } as RequestViewModel;
     console.log(request);
     console.log(this.request);
