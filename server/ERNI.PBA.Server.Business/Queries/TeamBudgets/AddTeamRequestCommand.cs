@@ -11,11 +11,10 @@ using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 {
-    public class CreateTeamRequestCommand : Command<CreateTeamRequestCommand.NewTeamRequestModel>
+    public class CreateTeamRequestCommand : Command<CreateTeamRequestCommand.NewTeamRequestModel, int>
     {
         private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
@@ -34,7 +33,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(NewTeamRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task<int> Execute(NewTeamRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
             var currentYear = DateTime.Now.Year;
@@ -72,6 +71,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             await _requestRepository.AddRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+
+            return request.Id;
         }
 
         public class NewTeamRequestModel

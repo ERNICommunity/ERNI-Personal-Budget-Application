@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Queries.TeamBudgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
@@ -47,9 +47,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost("requests")]
         public async Task<IActionResult> CreateTeamBudgetRequest([FromBody] CreateTeamRequestCommand.NewTeamRequestModel payload, [FromServices] CreateTeamRequestCommand query, CancellationToken cancellationToken)
         {
-            await query.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            var id = await query.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
-            return Ok();
+            return Ok(id);
         }
     }
 }
