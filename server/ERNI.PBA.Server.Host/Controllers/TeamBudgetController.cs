@@ -59,5 +59,13 @@ namespace ERNI.PBA.Server.Host.Controllers
 
             return Ok(id);
         }
+
+        [HttpPatch("request/{requestId}")]
+        public async Task<IActionResult> PatchTeamBudgetRequest(int requestId, [FromBody] PatchTeamRequestCommand.PatchTeamRequestModel payload, [FromServices] PatchTeamRequestCommand query, CancellationToken cancellationToken)
+        {
+            await query.ExecuteAsync((requestId, payload), HttpContext.User, cancellationToken);
+
+            return Ok();
+        }
     }
 }
