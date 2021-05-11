@@ -33,7 +33,7 @@ steps:
 - task: ArchiveFiles@2
   displayName: 'Zip build artifacts'
   inputs:
-    rootFolderOrFile: 'dist'
+    rootFolderOrFile: 'client/dist'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
