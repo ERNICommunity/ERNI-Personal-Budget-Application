@@ -12,13 +12,13 @@ steps:
   displayName: 'Install latest nuget'
   inputs:
     checkLatest: true
-    
+
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
   inputs:
     command: 'restore'
     feedsToUse: 'select'
-    restoreDirectory: 'server'
+    projects: 'server/*.sln'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
