@@ -74,11 +74,14 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     State = RequestState.Completed
                 };
 
-                request.Transactions = new [] { new Transaction()
+                request.Transactions = new[]
                 {
-                    Amount =  parameter.Amount,
-                    BudgetId = budget.Id,
-                }};
+                    new Transaction()
+                    {
+                        Amount =  parameter.Amount,
+                        BudgetId = budget.Id,
+                    }
+                };
 
                 requests.Add(request);
             }

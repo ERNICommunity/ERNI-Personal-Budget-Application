@@ -1,14 +1,10 @@
 using System.Collections.Generic;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Reflection;
 using Autofac;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
-using ERNI.PBA.Server.ExcelExport;
 using ERNI.PBA.Server.Host.Auth;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;

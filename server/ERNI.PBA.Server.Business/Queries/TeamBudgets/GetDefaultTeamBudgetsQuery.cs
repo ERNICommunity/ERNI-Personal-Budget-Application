@@ -27,7 +27,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             return users.Select(_ => new TeamBudgetModel()
             {
-                Employee = new ()
+                Employee = new()
                 {
                     Id = _.Employee.Id,
                     FirstName = _.Employee.FirstName,

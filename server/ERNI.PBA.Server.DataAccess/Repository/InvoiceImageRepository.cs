@@ -25,7 +25,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<InvoiceImageProjection[]> GetInvoiceImages(int requestId, CancellationToken cancellationToken) =>
             _context.InvoiceImages
                 .Where(image => image.RequestId == requestId)
-                .Select(image => new InvoiceImageProjection {Id = image.Id, Name = image.Filename})
+                .Select(image => new InvoiceImageProjection { Id = image.Id, Name = image.Filename })
                 .ToArrayAsync(cancellationToken);
 
         public async Task AddInvoiceImage(InvoiceImage invoiceImage, CancellationToken cancellationToken) =>
@@ -39,7 +39,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             var result = await _context.InvoiceImages.Where(_ => requestIds.Contains(_.RequestId))
                 .GroupBy(_ => _.RequestId)
-                .Select(_ => new {requestId = _.Key, count = _.Count()}).ToArrayAsync(cancellationToken);
+                .Select(_ => new { requestId = _.Key, count = _.Count() }).ToArrayAsync(cancellationToken);
 
             return result.Select(_ => (Key: _.requestId, _.count)).ToArray();
         }
