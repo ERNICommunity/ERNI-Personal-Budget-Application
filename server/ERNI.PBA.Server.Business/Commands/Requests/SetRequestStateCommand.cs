@@ -46,14 +46,14 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
-            var invoiceCount = (await _invoiceRepository.GetInvoiceCounts(new[] {request.Id}, cancellationToken))
+            var invoiceCount = (await _invoiceRepository.GetInvoiceCounts(new[] { request.Id }, cancellationToken))
                 .SingleOrDefault().invoiceCount;
 
-            var validationResult = Validate(parameter.requestState, request, invoiceCount);
-            if (!validationResult.isvalid)
+            var (isValid, error) = Validate(parameter.requestState, request, invoiceCount);
+            if (!isValid)
             {
-                _logger.LogWarning(validationResult.error);
-                throw new OperationErrorException(ErrorCodes.ValidationError, validationResult.error!);
+                _logger.LogWarning(error);
+                throw new OperationErrorException(ErrorCodes.ValidationError, error!);
             }
 
             request.State = parameter.requestState;
@@ -72,7 +72,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _mailService.SendMail(message, request.User.Username);
         }
 
-        private static (bool isvalid, string? error) Validate(RequestState newState, Domain.Models.Entities.Request request, int invoiceCount) => newState switch
+        private static (bool isValid, string? error) Validate(RequestState newState, Domain.Models.Entities.Request request, int invoiceCount) => newState switch
         {
             RequestState.Pending => (false, "Cannot change state to pending"),
             RequestState.Approved => request.State == RequestState.Pending ? (true, null) : (false, "Only pending requests can be approved."),

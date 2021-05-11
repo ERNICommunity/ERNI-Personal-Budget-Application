@@ -54,7 +54,9 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 State = request.State,
                 User = new UserOutputModel
                 {
-                    Id = request.UserId, FirstName = request.User.FirstName, LastName = request.User.LastName
+                    Id = request.UserId,
+                    FirstName = request.User.FirstName,
+                    LastName = request.User.LastName
                 },
                 Budget = new IGetRequestsQuery.RequestModel.BudgetModel
                 {

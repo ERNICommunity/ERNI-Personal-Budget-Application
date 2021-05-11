@@ -48,7 +48,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
             var image = new InvoiceImage
             {
                 Filename = parameter.Filename,
-                MimeType = parameter.MimeType, 
+                MimeType = parameter.MimeType,
                 BlobPath = blobPath,
                 RequestId = requestId
             };
