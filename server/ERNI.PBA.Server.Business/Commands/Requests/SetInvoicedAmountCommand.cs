@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using Microsoft.Extensions.Logging;
 
@@ -53,7 +51,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (request.State != RequestState.Approved)
             {
                 _logger.LogWarning("Validation failed");
-                throw new OperationErrorException(ErrorCodes.UnknownError, "Validation failed");
+                throw new OperationErrorException(ErrorCodes.RequestNotApproved, "Request is not in approved state.");
             }
 
             if (parameter.model.Amount > request.Amount)

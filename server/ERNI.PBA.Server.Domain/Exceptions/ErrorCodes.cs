@@ -17,6 +17,8 @@
         public static string RequestNotFound => nameof(RequestNotFound);
         public static string ValidationError => nameof(ValidationError);
 
+        public static string RequestNotApproved => nameof(RequestNotApproved);
+
         public static string UnknownError => nameof(UnknownError);
     }
 }
