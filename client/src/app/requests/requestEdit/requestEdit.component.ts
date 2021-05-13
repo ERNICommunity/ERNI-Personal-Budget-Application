@@ -163,11 +163,21 @@ export class RequestEditComponent implements OnInit {
 
     if (this.request.invoicedAmount) {
       try {
-      await this.requestService.updateInvoicedAmount(
-        this.request.id,
-        this.request.invoicedAmount
-      );
-      } catch (error){
+        await this.requestService.updateInvoicedAmount(
+          this.request.id,
+          this.request.invoicedAmount
+        );
+        this.dataChangeNotificationService.notify();
+        this.alertService.alert(
+          new Alert({
+            message: "Spent amount saved",
+            type: AlertType.Success,
+            keepAfterRouteChange: true,
+          })
+        );
+
+        this.router.navigate(["my-budget"]);
+      } catch (error) {
         this.alertService.error(JSON.stringify(error.error), "addRequestError");
       }
     }
