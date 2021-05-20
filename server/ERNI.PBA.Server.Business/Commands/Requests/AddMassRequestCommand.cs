@@ -72,7 +72,16 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
                     State = RequestState.Approved,
-                    BudgetId = budget.Id
+                    BudgetId = budget.Id,
+                    Transactions = new[]
+                    {
+                        new Transaction
+                        {
+                            BudgetId = budget.Id,
+                            UserId = userId,
+                            Amount = parameter.Amount
+                        }
+                    }
                 };
 
                 requests.Add(request);
