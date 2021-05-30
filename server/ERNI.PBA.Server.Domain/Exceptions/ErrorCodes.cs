@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Domain.Exceptions
+namespace ERNI.PBA.Server.Domain.Exceptions
 {
     public static class ErrorCodes
     {
@@ -20,5 +20,7 @@
         public static string RequestNotApproved => nameof(RequestNotApproved);
 
         public static string UnknownError => nameof(UnknownError);
+
+        public static string CannotUpdateRequest => nameof(CannotUpdateRequest);
     }
 }

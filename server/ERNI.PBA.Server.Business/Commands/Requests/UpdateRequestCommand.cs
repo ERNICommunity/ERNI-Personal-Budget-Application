@@ -48,6 +48,11 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
+            if (request.State != RequestState.Pending)
+            {
+                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Only pending requests can be updated.");
+            }
+
             var budgetId = request.Transactions.First().BudgetId;
 
             var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(budgetId, cancellationToken);
