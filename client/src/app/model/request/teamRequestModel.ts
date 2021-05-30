@@ -1,6 +1,7 @@
 import { RequestApprovalState } from "../requestState";
 
 export class TransactionModel {
+  employeeId: number;
   firstName: string;
   lastName: string;
   amount: number;
@@ -8,6 +9,7 @@ export class TransactionModel {
 }
 
 export class TeamRequestModel {
+  id: number;
   transactions: TransactionModel[];
   title: string;
   state: RequestApprovalState;

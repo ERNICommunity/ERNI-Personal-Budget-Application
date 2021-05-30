@@ -1,13 +1,13 @@
-<p-dialog header="Create team budget request" [(visible)]="isVisible" [style]="{width: '50vw'}" [draggable]="false"
+<p-dialog [(header)]="popupTitle" [(visible)]="isVisible" [style]="{width: '50vw'}" [draggable]="false"
   [modal]="true" [resizable]="false" (onHide)="onHide()">
 
   <app-alert id="addRequestError"></app-alert>
 
-  <p-panel header="Create new request">
+  <p-panel header="Create new request" *ngIf="request">
 
     <div class="p-field">
       <label for="title">Title</label>
-      <input type="text" id="title" #requestTitle="ngModel" pInputText [(ngModel)]="title" (blur)="trimTitle()"
+      <input type="text" id="title" #requestTitle="ngModel" pInputText [(ngModel)]="request.title" (blur)="trimTitle()" [disabled]="request.isReadonly"
         required />
       <small *ngIf="requestTitle.invalid && requestTitle.touched" id="title-help" class="p-error">Title is
         required</small>
@@ -16,35 +16,40 @@
     <div class="p-field">
       <label for="requestDate">Date of occasion</label>
 
-      <p-calendar [(ngModel)]="date" inputId="requestDate" #requestDate="ngModel" [showIcon]="true"></p-calendar>
+      <p-calendar [(ngModel)]="request.date" inputId="requestDate" #requestDate="ngModel" [showIcon]="true" [disabled]="request.isReadonly"></p-calendar>
       <div *ngIf="requestDate.invalid && requestDate.touched" class="alert alert-danger col-md-6">Date is required.
       </div>
     </div>
 
     <div class="p-field p-col-12 p-md-3">
       <label for="amount">Amount (max. {{maxAmount}})</label>
-      <p-inputNumber inputId="amount" [(ngModel)]="amount" mode="decimal" [maxFractionDigits]="2" mode="currency"
-        currency="EUR"></p-inputNumber>
+      <p-inputNumber inputId="amount" [(ngModel)]="request.amount" mode="decimal" [maxFractionDigits]="2" mode="currency"
+        currency="EUR" [disabled]="request.isReadonly"></p-inputNumber>
       <!-- <div class="alert alert-danger col-md-6" *ngIf="requestAmount.invalid && requestAmount.touched">Positive
         amount is required.</div> -->
     </div>
 
     <div class="form-group">
       <label>Attendees</label>
-      <p-pickList [source]="list1" [target]="list2" [dragdrop]="false" [showSourceControls]="false"
+      <p-pickList [disabled]="request.isReadonly" [source]="list1" [target]="list2" [dragdrop]="false" [showSourceControls]="false"
         [showTargetControls]="false" (onMoveToTarget)="onAttendeesChanges()" (onMoveToSource)="onAttendeesChanges()"
+        [sourceStyle]="{'height':'30rem'}" [targetStyle]="{'height':'30rem'}"
         sourceHeader="Employees" targetHeader="Attendees">
         <ng-template let-car pTemplate="item">
           <div style="font-size:14px;float:right;margin:0px 0px 0 0">{{car.employee.firstName}} -
             {{car.employee.lastName}}</div>
         </ng-template>
       </p-pickList>
+    </div>
 
+    <div *ngIf="request && request.state >= RequestState.Approved">
+      <app-file-upload [(requestIdInput)]="request.id" [uploadEnabled]="request && request.state == RequestState.Approved" [uploadEnabled]="!request.isReadonly">
+      </app-file-upload>
     </div>
 
     <ng-template pTemplate="footer">
       <span class="p-buttonset">
-        <button (click)="save()" pButton type="button" label="Save" icon="pi pi-check"></button>
+        <button  *ngIf="!request.isReadonly" (click)="save()" pButton type="button" label="Save" icon="pi pi-check"></button>
         <button (click)="close()" pButton type="button" label="Cancel" icon="pi pi-times"
           class="p-button-danger"></button>
       </span>

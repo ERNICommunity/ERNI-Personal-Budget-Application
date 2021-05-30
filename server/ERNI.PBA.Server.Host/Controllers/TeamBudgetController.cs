@@ -44,10 +44,26 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok(outputModel);
         }
 
+        [HttpGet("request/{requestId}")]
+        public async Task<IActionResult> GetTeamBudgetRequest(int requestId, [FromServices] GetSingleTeamRequestQuery query, CancellationToken cancellationToken)
+        {
+            var outputModel = await query.ExecuteAsync(requestId, HttpContext.User, cancellationToken);
+
+            return Ok(outputModel);
+        }
+
         [HttpPost("requests")]
         public async Task<IActionResult> CreateTeamBudgetRequest([FromBody] CreateTeamRequestCommand.NewTeamRequestModel payload, [FromServices] CreateTeamRequestCommand query, CancellationToken cancellationToken)
         {
-            await query.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            var id = await query.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+
+            return Ok(id);
+        }
+
+        [HttpPatch("request/{requestId}")]
+        public async Task<IActionResult> PatchTeamBudgetRequest(int requestId, [FromBody] PatchTeamRequestCommand.PatchTeamRequestModel payload, [FromServices] PatchTeamRequestCommand query, CancellationToken cancellationToken)
+        {
+            await query.ExecuteAsync((requestId, payload), HttpContext.User, cancellationToken);
 
             return Ok();
         }

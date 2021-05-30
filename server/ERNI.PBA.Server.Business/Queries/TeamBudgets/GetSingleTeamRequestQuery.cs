@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -11,21 +10,21 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 {
-    public class GetTeamBudgetRequestsQuery : Query<int, IEnumerable<GetTeamBudgetRequestsQuery.TeamRequestModel>>
+    public class GetSingleTeamRequestQuery : Query<int, GetSingleTeamRequestQuery.TeamRequestModel>
     {
         private readonly ITeamBudgetFacade _teamBudgetFacade;
         private readonly IUserRepository _userRepository;
 
-        public GetTeamBudgetRequestsQuery(ITeamBudgetFacade teamBudgetFacade, IUserRepository userRepository) =>
+        public GetSingleTeamRequestQuery(ITeamBudgetFacade teamBudgetFacade, IUserRepository userRepository) =>
             (_teamBudgetFacade, _userRepository) = (teamBudgetFacade, userRepository);
 
-        protected override async Task<IEnumerable<TeamRequestModel>> Execute(int parameter,
+        protected override async Task<TeamRequestModel> Execute(int parameter,
             ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            var requests = await _teamBudgetFacade.GetTeamRequests(user.Id, parameter, cancellationToken);
+            var _ = await _teamBudgetFacade.GetTeamRequest(parameter, cancellationToken);
 
-            return requests.Select(_ => new TeamRequestModel()
+            return new TeamRequestModel
             {
                 Transactions = _.Transactions.Select(t =>
                     new TeamRequestModel.TransactionModel
@@ -42,15 +41,13 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 Title = _.Title,
                 State = _.State,
                 CreateDate = _.CreateDate
-            }).OrderByDescending(_ => _.CreateDate);
+            };
         }
 
         public class TeamRequestModel
         {
             public class TransactionModel
             {
-                public int EmployeeId { get; init; }
-
                 public string FirstName { get; init; } = null!;
 
                 public string LastName { get; init; } = null!;
@@ -58,6 +55,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 public decimal Amount { get; init; }
 
                 public bool IsSubordinate { get; init; }
+
+                public int EmployeeId { get; init; }
             }
 
             public int Id { get; init; }
