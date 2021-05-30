@@ -39,9 +39,9 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             var user = await _userRepository.GetUser(userId, cancellationToken);
 
-            var request = await  _requestRepository.GetRequest(parameter.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter.RequestId, cancellationToken);
 
-            if (request.UserId != user.Id && !principal.IsInRole(Roles.Admin))
+            if (!principal.IsInRole(Roles.Admin))
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
             }
