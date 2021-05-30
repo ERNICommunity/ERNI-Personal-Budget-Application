@@ -7,7 +7,6 @@ using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -43,6 +42,11 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (request == null)
             {
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
+            }
+
+            if (request.State != RequestState.Pending)
+            {
+                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Only pending requests can be updated.");
             }
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);

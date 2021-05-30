@@ -19,6 +19,10 @@
 
         public static string RequestNotApproved => nameof(RequestNotApproved);
 
+        public static string CannotDeleteCompletedRequest => nameof(CannotDeleteCompletedRequest);
+
         public static string UnknownError => nameof(UnknownError);
+
+        public static string CannotUpdateRequest => nameof(CannotUpdateRequest);
     }
 }
