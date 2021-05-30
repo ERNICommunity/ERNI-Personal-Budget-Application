@@ -34,15 +34,6 @@ export class TeamBudgetService {
       .toPromise();
   }
 
-  public getAllTeamBudgets(year: number): Promise<TeamBudgetModel[]> {
-    return this.http
-      .get<TeamBudgetModel[]>(
-        this.configService.apiUrlBase + this.url + "all-employees/" + year,
-        this.serviceHelper.getHttpOptions()
-      )
-      .toPromise();
-  }
-
   public getTeamRequests(year: number): Promise<TeamRequestModel[]> {
     return this.http
       .get<TeamRequestModel[]>(

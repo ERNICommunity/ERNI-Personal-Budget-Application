@@ -48,7 +48,7 @@ export class CreateRequestComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.isVisible = true;
 
-    this.teamBudgets = await this.teamBudgetService.getAllTeamBudgets(
+    this.teamBudgets = await this.teamBudgetService.getDefaultTeamBudget(
       new Date().getFullYear()
     );
 
