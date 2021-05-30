@@ -1,4 +1,4 @@
-namespace ERNI.PBA.Server.Domain.Exceptions
+﻿namespace ERNI.PBA.Server.Domain.Exceptions
 {
     public static class ErrorCodes
     {
@@ -18,6 +18,8 @@ namespace ERNI.PBA.Server.Domain.Exceptions
         public static string ValidationError => nameof(ValidationError);
 
         public static string RequestNotApproved => nameof(RequestNotApproved);
+
+        public static string CannotDeleteCompletedRequest => nameof(CannotDeleteCompletedRequest);
 
         public static string UnknownError => nameof(UnknownError);
 

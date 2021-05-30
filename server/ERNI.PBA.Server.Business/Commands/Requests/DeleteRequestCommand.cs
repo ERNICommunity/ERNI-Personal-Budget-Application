@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
@@ -40,6 +41,11 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
+            }
+
+            if (request.State == RequestState.Completed)
+            {
+                throw new OperationErrorException(ErrorCodes.CannotDeleteCompletedRequest, "Cannot delete completed request");
             }
 
             await _requestRepository.DeleteRequest(request);
