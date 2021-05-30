@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 {
@@ -37,10 +38,16 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
         {
             var requestId = parameter.Id;
             var request = await _requestRepository.GetRequest(requestId, cancellationToken);
+
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
             if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
             {
                 throw AppExceptions.AuthorizationException();
+            }
+
+            if (request.State != RequestState.Approved)
+            {
+                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Invoices can be uploaded only to Approved requests.");
             }
 
             var blobPath = await _invoiceImageRepository.UploadImageDataBlob(parameter.Data, request.Id, cancellationToken);
