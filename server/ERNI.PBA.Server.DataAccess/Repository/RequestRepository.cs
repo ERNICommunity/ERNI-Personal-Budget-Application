@@ -17,12 +17,6 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public RequestRepository(DatabaseContext context) => _context = context;
 
-        public Task<Request[]> GetRequests(int budgetId, CancellationToken cancellationToken) =>
-            _context.Requests
-                .Where(_ => _.Transactions.Any(t => t.BudgetId == budgetId))
-                .Include(_ => _.Category)
-                .ToArrayAsync(cancellationToken);
-
         public Task<Request[]> GetRequests(Expression<Func<Request, bool>> filter, CancellationToken cancellationToken) =>
             _context.Requests
                 .Where(filter)
