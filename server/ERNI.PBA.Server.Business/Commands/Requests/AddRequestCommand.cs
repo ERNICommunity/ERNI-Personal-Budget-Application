@@ -76,7 +76,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 Amount = parameter.Amount,
                 Date = parameter.Date.ToLocalTime(),
                 CreateDate = DateTime.Now,
-                State = RequestState.Pending,
+                State = GetRequestState(budget.BudgetType),
                 Transactions = new[]
                 {
                     new Transaction
@@ -91,5 +91,16 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             await _unitOfWork.SaveChanges(cancellationToken);
         }
+
+
+        private static RequestState GetRequestState(BudgetTypeEnum budgetType) =>
+            budgetType switch
+            {
+                BudgetTypeEnum.CommunityBudget => RequestState.Completed,
+                BudgetTypeEnum.PersonalBudget => RequestState.Pending,
+                BudgetTypeEnum.RecreationBudget => RequestState.Pending,
+                BudgetTypeEnum.TeamBudget => RequestState.Completed,
+                _ => throw new InvalidOperationException($"Unexpected budget type: {budgetType}")
+            };
     }
 }
