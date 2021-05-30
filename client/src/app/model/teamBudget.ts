@@ -9,4 +9,5 @@ export class TeamBudgetModel {
   employee: EmployeeModel;
   budgetTotal: number;
   budgetLeft: number;
+  budgetSpent: number;
 }

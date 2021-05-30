@@ -7,8 +7,9 @@
       <table class="table">
           <thead>
               <tr>
-                  <th scope="col"  style="width: 70%">Name</th>
+                  <th scope="col"  style="width: 55%">Name</th>
                   <th scope="col" style="width: 15%">Spent</th>
+                  <th scope="col" style="width: 15%">Left</th>
                   <th scope="col" style="width: 15%">Total amount</th>
               </tr>
           </thead>
@@ -16,6 +17,7 @@
 
             <tr *ngFor="let budget of teamBudgets">
               <td>{{budget.employee.lastName}} {{budget.employee.firstName}}</td>
+              <td>{{budget.budgetSpent}}</td>
               <td>{{budget.budgetLeft}}</td>
               <td>{{budget.budgetTotal}}</td>
           </tr>
