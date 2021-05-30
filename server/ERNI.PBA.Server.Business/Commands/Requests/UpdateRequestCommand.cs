@@ -73,7 +73,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 {
                     RequestId = request.Id,
                     BudgetId = budget.Id,
-                    Amount = parameter.Amount
+                    Amount = request.InvoicedAmount ?? parameter.Amount
                 }
             };
             await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -9,7 +10,6 @@ using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
@@ -51,7 +51,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             if (request.State != RequestState.Approved)
             {
                 _logger.LogWarning("Validation failed");
-                throw new OperationErrorException(ErrorCodes.UnknownError, "Validation failed");
+                throw new OperationErrorException(ErrorCodes.RequestNotApproved, "Request is not in approved state.");
             }
 
             if (parameter.model.Amount > request.Amount)
@@ -60,6 +60,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             }
 
             request.InvoicedAmount = parameter.model.Amount;
+
+            request.Transactions.Single().Amount = parameter.model.Amount;
 
             await _unitOfWork.SaveChanges(cancellationToken);
         }
