@@ -57,7 +57,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             }
 
             var teamBudgets = parameter.Employees.Select(_ => dict[_])
-                .Select(_ => new TeamBudget() {BudgetId = _.BudgetId, Amount = _.SpentAmount, UserId = _.Employee.Id});
+                .Select(_ => new TeamBudget() {BudgetId = _.BudgetId, Amount = _.TotalAmount - _.SpentAmount, UserId = _.Employee.Id});
 
             if (parameter.Amount <= 0.0m)
             {
