@@ -3,13 +3,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Extensions;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
@@ -17,18 +17,18 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
     public class PatchTeamRequestCommand : Command<(int RequestId, PatchTeamRequestCommand.PatchTeamRequestModel Payload)>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBudgetRepository _budgetRepository;
+        private readonly ITeamBudgetFacade _teamBudgetFacade;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public PatchTeamRequestCommand(
             IUserRepository userRepository,
-            IBudgetRepository budgetRepository,
+            ITeamBudgetFacade teamBudgetFacade,
             IRequestRepository requestRepository,
             IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
-            _budgetRepository = budgetRepository;
+            _teamBudgetFacade = teamBudgetFacade;
             _requestRepository = requestRepository;
             _unitOfWork = unitOfWork;
         }
@@ -39,9 +39,9 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             var user = await _userRepository.GetUser(userId, cancellationToken);
 
-            var request = await  _requestRepository.GetRequest(parameter.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter.RequestId, cancellationToken);
 
-            if (request.UserId != user.Id && !principal.IsInRole(Roles.Admin))
+            if (!principal.IsInRole(Roles.Admin))
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
             }
@@ -53,9 +53,18 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                     $"Cannot update completed or rejected requests.");
             }
 
-            var budgets =
-                await _budgetRepository.GetTeamBudgets(parameter.Payload.Employees, DateTime.Now.Year, cancellationToken);
-            var teamBudgets = budgets.ToTeamBudgets();
+            var allBudgets =
+                await _teamBudgetFacade.GetTeamBudgets(user.Id, DateTime.Now.Year, cancellationToken);
+            var dict = allBudgets.ToDictionary(_ => _.Employee.Id);
+            var unknownUsers = parameter.Payload.Employees.Where(id => !dict.ContainsKey(id)).ToList();
+
+            if (unknownUsers.Any())
+            {
+                throw new OperationErrorException(ErrorCodes.ValidationError, $"Employees not found: {string.Join(",", unknownUsers)}");
+            }
+
+            var teamBudgets = parameter.Payload.Employees.Select(_ => dict[_])
+                .Select(_ => new TeamBudget() { BudgetId = _.BudgetId, Amount = _.SpentAmount, UserId = _.Employee.Id });
 
             if (parameter.Payload.Amount <= 0.0m)
             {

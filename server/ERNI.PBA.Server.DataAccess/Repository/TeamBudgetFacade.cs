@@ -20,35 +20,38 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Include(r => r.Transactions).ThenInclude(t => t.Budget).ThenInclude(r => r.User)
                 .SingleOrDefaultAsync(cancellationToken);
 
-        public async Task<(User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int superiorId, int year, CancellationToken cancellationToken)
+        public async Task<(int BudgetId, User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int superiorId, int year, CancellationToken cancellationToken)
         {
             var data = await _context.Budgets
                 .Where(b => b.Year == year && b.BudgetType == BudgetTypeEnum.TeamBudget)
                 .Where(b => b.UserId == superiorId || b.User.SuperiorId == superiorId)
                 .Select(b => new
                 {
+                    b.Id,
                     b.User,
                     TotalAmount = b.Amount,
+                    // Add condition to transactions
                     SpentAmount = b.Transactions.Sum(r => r.Amount)
                 })
                 .ToArrayAsync(cancellationToken);
 
-            return data.Select(d => (d.User, d.TotalAmount, d.SpentAmount)).ToArray();
+            return data.Select(d => (d.Id, d.User, d.TotalAmount, d.SpentAmount)).ToArray();
         }
 
-        public async Task<(User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int year, CancellationToken cancellationToken)
+        public async Task<(int BudgetId, User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int year, CancellationToken cancellationToken)
         {
             var data = await _context.Budgets
                 .Where(b => b.Year == year && b.BudgetType == BudgetTypeEnum.TeamBudget)
                 .Select(b => new
                 {
+                    b.Id,
                     b.User,
                     TotalAmount = b.Amount,
                     SpentAmount = b.Transactions.Sum(r => r.Amount)
                 })
                 .ToArrayAsync(cancellationToken);
 
-            return data.Select(d => (d.User, d.TotalAmount, d.SpentAmount)).ToArray();
+            return data.Select(d => (d.Id, d.User, d.TotalAmount, d.SpentAmount)).ToArray();
         }
 
 

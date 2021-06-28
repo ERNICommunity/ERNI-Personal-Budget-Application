@@ -10,10 +10,10 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 
         Task<Request> GetTeamRequest(int requestId, CancellationToken cancellationToken);
 
-        Task<(User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int superiorId, int year,
+        Task<(int BudgetId, User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int superiorId, int year,
             CancellationToken cancellationToken);
 
-        Task<(User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int year,
+        Task<(int BudgetId, User Employee, decimal TotalAmount, decimal SpentAmount)[]> GetTeamBudgets(int year,
             CancellationToken cancellationToken);
     }
 }

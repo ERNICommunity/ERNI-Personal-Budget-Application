@@ -35,6 +35,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                     IsTeamMember = _.Employee.SuperiorId == user.Id || _.Employee.Id == user.Id,
                 },
                 BudgetTotal = _.TotalAmount,
+                BudgetSpent = _.SpentAmount,
                 BudgetLeft = _.TotalAmount - _.SpentAmount
             }).OrderBy(_ => _.Employee.LastName).ThenBy(_ => _.Employee.FirstName);
         }
@@ -55,6 +56,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             public EmployeeModel Employee { get; init; } = null!;
 
             public decimal BudgetTotal { get; init; }
+
+            public decimal BudgetSpent { get; init; }
 
             public decimal BudgetLeft { get; init; }
         }

@@ -48,7 +48,7 @@ export class CreateRequestComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.isVisible = true;
 
-    this.teamBudgets = await this.teamBudgetService.getAllTeamBudgets(
+    this.teamBudgets = await this.teamBudgetService.getDefaultTeamBudget(
       new Date().getFullYear()
     );
 
@@ -94,9 +94,7 @@ export class CreateRequestComponent implements OnInit {
       id: request.id,
       state: request.state,
       title: request.title,
-      isReadonly:
-        request.state == RequestApprovalState.Completed ||
-        request.state == RequestApprovalState.Rejected
+      isReadonly: true
     } as RequestViewModel;
     console.log(request);
     console.log(this.request);

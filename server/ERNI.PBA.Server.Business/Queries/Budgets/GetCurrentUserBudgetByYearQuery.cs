@@ -32,14 +32,14 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                                  .Sum(_ => _.Amount),
                 Title = budget.Title,
                 Type = budget.BudgetType,
-                Requests = budget.Transactions.Select(_ => _.Request).Select(_ => new RequestOutputModel
+                Requests = budget.Transactions.Select(_ => new RequestOutputModel
                 {
-                    Id = _.Id,
-                    Title = _.Title,
+                    Id = _.Request.Id,
+                    Title = _.Request.Title,
                     Amount = _.Amount,
-                    Date = _.Date,
-                    CreateDate = _.CreateDate,
-                    State = _.State
+                    Date = _.Request.Date,
+                    CreateDate = _.Request.CreateDate,
+                    State = _.Request.State
                 }).OrderByDescending(r => r.CreateDate)
             });
         }

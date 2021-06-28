@@ -42,11 +42,6 @@
       </p-pickList>
     </div>
 
-    <div *ngIf="request && request.state >= RequestState.Approved">
-      <app-file-upload [(requestIdInput)]="request.id" [uploadEnabled]="request && request.state == RequestState.Approved" [uploadEnabled]="!request.isReadonly">
-      </app-file-upload>
-    </div>
-
     <ng-template pTemplate="footer">
       <span class="p-buttonset">
         <button  *ngIf="!request.isReadonly" (click)="save()" pButton type="button" label="Save" icon="pi pi-check"></button>

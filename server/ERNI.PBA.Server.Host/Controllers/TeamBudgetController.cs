@@ -28,14 +28,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok(outputModel);
         }
 
-        [HttpGet("all-employees/{year}")]
-        public async Task<IActionResult> GetAllTeamBudgetsByYear(int year, [FromServices] GetDefaultTeamBudgetsQuery query, CancellationToken cancellationToken)
-        {
-            var outputModel = await query.ExecuteAsync((year, limitToOwnTeam: false), HttpContext.User, cancellationToken);
-
-            return Ok(outputModel);
-        }
-
         [HttpGet("requests/{year}")]
         public async Task<IActionResult> GetTeamBudgetRequests(int year, [FromServices] GetTeamBudgetRequestsQuery query, CancellationToken cancellationToken)
         {
