@@ -18,20 +18,20 @@ export class RequestService {
 
     constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) { }
 
-    public getPendingRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/pending', this.serviceHelper.getHttpOptions())
+    public getPendingRequests(year: number, budgetTypeId: number): Observable<Request[]> {
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/pending/type/' + budgetTypeId, this.serviceHelper.getHttpOptions())
     }
 
-    public getApprovedRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/approved', this.serviceHelper.getHttpOptions())
+    public getApprovedRequests(year: number, budgetTypeId: number): Observable<Request[]> {
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/approved/type/' + budgetTypeId, this.serviceHelper.getHttpOptions())
     }
 
-    public getRejectedRequests(year: number): Observable<Request[]> {
-        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/rejected', this.serviceHelper.getHttpOptions())
+    public getRejectedRequests(year: number, budgetTypeId: number): Observable<Request[]> {
+        return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/rejected/type/' + budgetTypeId, this.serviceHelper.getHttpOptions())
     }
 
-    public getCompletedRequests(year: number): Observable<Request[]> {
-      return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/completed', this.serviceHelper.getHttpOptions())
+    public getCompletedRequests(year: number, budgetTypeId: number): Observable<Request[]> {
+      return this.http.get<Request[]>(this.configService.apiUrlBase + this.requestUrl + year + '/state/completed/type/' + budgetTypeId, this.serviceHelper.getHttpOptions())
     }
 
     public getRequest(id): Observable<Request> {

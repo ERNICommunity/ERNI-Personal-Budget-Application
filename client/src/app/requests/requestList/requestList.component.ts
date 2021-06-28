@@ -10,6 +10,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportService } from '../../services/export.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { AlertService } from '../../services/alert.service';
+import { BudgetType } from '../../model/budgetType';
+import { BudgetService } from '../../services/budget.service';
+import { ApprovalStateModel } from '../../shared/model/ApprovalStateModel';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
     selector: 'app-request-list',
@@ -22,14 +26,20 @@ export class RequestListComponent implements OnInit {
     completedRoute: string = "/requests/completed";
     rejectedRoute: string = "/requests/rejected";
 
+    budgetTypes: BudgetType[];
+
     requests: Request[];
     filteredRequests: Request[];
-    requestFilter: RequestApprovalState;
+
+    approvalStates: ApprovalStateModel[];
+    requestFilter: ApprovalStateModel;
     requestFilterType = RequestApprovalState;
+
     selectedYear: number;
     currentYear: number;
     years: number[];
     rlao: object;
+    selectedBudgetType: BudgetType;
 
     get isAdmin(): boolean {
         return this.authService.userInfo.isAdmin;
@@ -46,6 +56,15 @@ export class RequestListComponent implements OnInit {
         this.filteredRequests = this.filterRequests(value);
     }
 
+    getFilter(): ApprovalStateModel[] {
+        return [
+            { state: RequestApprovalState.Pending, key: "pending", name: "Pending" },
+            { state: RequestApprovalState.Approved, key: "approved", name: "Approved" },
+            { state: RequestApprovalState.Completed, key: "completed", name: "Completed" },
+            { state: RequestApprovalState.Rejected, key: "rejected", name: "Rejected" },
+        ]
+    }
+
     filterRequests(searchString: string) {
         searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 
@@ -54,6 +73,7 @@ export class RequestListComponent implements OnInit {
     }
 
     constructor(private authService: AuthenticationService,
+        private budgetService: BudgetService,
         private requestService: RequestService,
         private route: ActivatedRoute,
         private modalService: NgbModal,
@@ -68,43 +88,45 @@ export class RequestListComponent implements OnInit {
         for (var year = this.currentYear; year >= 2018; year--) {
             this.years.push(year);
         }
+        this.approvalStates = this.getFilter();
+        this.requestFilter = this.approvalStates[0];
+        console.log(this.requestFilter);
     }
 
-    ngOnInit() {
-        this.requestFilter = RequestApprovalState.Pending;
-        this.route.data.subscribe((data: Data) => {
-            this.requestFilter = <RequestApprovalState>data['filter'];
-        });
+    async ngOnInit() {
+        var types = await this.budgetService.getBudgetsTypes().toPromise();
+        this.budgetTypes = types;
+        this.selectedBudgetType = this.budgetTypes[0];
 
         this.route.params.subscribe((params: Params) => {
-
-            // the following line forces routerLinkActive to update even if the route did nto change
-            // see see https://github.com/angular/angular/issues/13865 for futher info
-            this.rlao = { dummy: true };
-
-            //var yearParam = this.route.snapshot.paramMap.get('year');
             var yearParam = params['year'];
 
+            this.selectedBudgetType = this.budgetTypes.find(b => b.key == params['budgetType']) ?? this.budgetTypes[0];
+
             this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
-            this.getRequests(this.requestFilter, this.selectedYear);
+
+            this.requestFilter = 
+                this.approvalStates.find(f => f.key == params['requestState']) ?? this.approvalStates[0];
+
+            this.getRequests(this.requestFilter.state, this.selectedYear, this.selectedBudgetType.id);
         });
     }
 
-    getRequests(filter: RequestApprovalState, year: number): void {
+    getRequests(filter: RequestApprovalState, year: number, budgetTypeId: number): void {
         var requests: Observable<Request[]>;
 
         switch (filter) {
             case RequestApprovalState.Approved:
-                requests = this.requestService.getApprovedRequests(year);
+                requests = this.requestService.getApprovedRequests(year, budgetTypeId);
                 break;
             case RequestApprovalState.Pending:
-                requests = this.requestService.getPendingRequests(year);
+                requests = this.requestService.getPendingRequests(year, budgetTypeId);
                 break;
             case RequestApprovalState.Rejected:
-                requests = this.requestService.getRejectedRequests(year);
+                requests = this.requestService.getRejectedRequests(year, budgetTypeId);
                 break;
             case RequestApprovalState.Completed:
-                requests = this.requestService.getCompletedRequests(year);
+                requests = this.requestService.getCompletedRequests(year, budgetTypeId);
             default:
                 break;
         }
@@ -145,7 +167,7 @@ export class RequestListComponent implements OnInit {
     }
 
     canRejectRequest(id: number): boolean {
-        return this.authService.userInfo.isAdmin && this.requestFilter != this.requestFilterType.Rejected;
+        return this.authService.userInfo.isAdmin && this.requestFilter.state != RequestApprovalState.Rejected;
     }
 
     export(month: number, year: number) {

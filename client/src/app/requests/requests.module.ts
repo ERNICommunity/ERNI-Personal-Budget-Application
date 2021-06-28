@@ -33,35 +33,14 @@ import { RequestApprovalState } from '../model/requestState';
       {
         path: 'requests', component: RequestsComponent, canActivate: [ViewerGuard],
         children: [
-            { path: '', redirectTo: 'pending/' + (new Date()).getFullYear().toString(), pathMatch: 'full' },
+            { path: '', redirectTo: 'personal/pending/' + (new Date()).getFullYear().toString(), pathMatch: 'full' },
             {
-                path: 'pending/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Pending }, canActivate: [ViewerGuard],
+                path: ':budgetType/:requestState/:year', component: RequestListComponent, canActivate: [ViewerGuard],
                 children: [
                     { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
                     { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
                 ]
             },
-            {
-                path: 'approved/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Approved }, canActivate: [ViewerGuard],
-                children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
-                ]
-            },
-            {
-                path: 'completed/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Completed }, canActivate: [ViewerGuard],
-                children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
-                ]
-            },
-            {
-                path: 'rejected/:year', component: RequestListComponent, data: { filter: RequestApprovalState.Rejected }, canActivate: [ViewerGuard],
-                children: [
-                    { path: 'detail/:requestId', component: RequestDetailModalComponent, canActivate: [ViewerGuard] },
-                    { path: 'edit/:id', component: RequestEditComponent, canActivate: [MsalGuard] },
-                ]
-            }
         ]
     },
     ])

@@ -114,14 +114,15 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
-        [HttpGet("{year}/state/{requestState}")]
+        [HttpGet("{year}/state/{requestState}/type/{budgetTypeId}")]
         [Authorize(Roles = Roles.Admin + "," + Roles.Finance)]
-        public async Task<IGetRequestsQuery.RequestModel[]> GetRequests(int year, RequestState requestState, CancellationToken cancellationToken)
+        public async Task<IGetRequestsQuery.RequestModel[]> GetRequests(int year, RequestState requestState, int budgetTypeId, CancellationToken cancellationToken)
         {
             var getRequestsModel = new GetRequestsModel
             {
                 Year = year,
-                RequestStates = new[] { requestState }
+                RequestStates = new[] { requestState },
+                BudgetTypeId = budgetTypeId
             };
 
             return await _getRequestsQuery.Value.ExecuteAsync(getRequestsModel, HttpContext.User, cancellationToken);

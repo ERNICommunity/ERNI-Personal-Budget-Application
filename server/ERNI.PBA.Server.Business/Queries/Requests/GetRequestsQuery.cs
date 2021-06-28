@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +24,8 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
         {
 
             var requests = await _requestRepository.GetRequests(
-                request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State),
+                request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State) &&
+                           (int)request.Transactions.First().Budget.BudgetType == parameter.BudgetTypeId,
                 cancellationToken);
 
             var invoiceCounts =
