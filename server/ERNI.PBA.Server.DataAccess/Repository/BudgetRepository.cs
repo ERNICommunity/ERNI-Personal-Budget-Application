@@ -97,6 +97,11 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
+        public void DeleteBudget(Budget budget)
+        {
+            _context.Budgets.Remove(budget);
+        }
+
         public async Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken)
         {
             return (await _context.Budgets

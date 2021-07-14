@@ -35,7 +35,7 @@ export class BudgetService {
     }
 
     public createBudget(title: string, amount: number, userId: number, budgetType: number): Observable<any> {
-        return this.http.post(this.configService.apiUrlBase + this.url , { userId, title, amount, budgetType }, this.serviceHelper.getHttpOptions());
+        return this.http.post(this.configService.apiUrlBase + this.url, { userId, title, amount, budgetType }, this.serviceHelper.getHttpOptions());
     }
 
     public createBudgetsForAllActiveUsers(title: string, amount: number, budgetType: number): Observable<any> {
@@ -48,5 +48,14 @@ export class BudgetService {
 
     public getUsersAvailableForBudgetType(budgetType: number): Observable<any> {
         return this.http.get<User>(this.configService.apiUrlBase + this.url + 'usersAvailableForBudgetType/' + budgetType, this.serviceHelper.getHttpOptions());
+    }
+
+    public deleteBudget(id: number): Observable<any> {
+        return this.http.delete(this.configService.apiUrlBase + this.url + id, this.serviceHelper.getHttpOptions());
+    }
+
+    public getBudgetRequestsCount(id: number): Observable<number> {
+        return this.http.get<number>(this.configService.apiUrlBase + this.url + id + "/requestsCount"
+            , this.serviceHelper.getHttpOptions());
     }
 }

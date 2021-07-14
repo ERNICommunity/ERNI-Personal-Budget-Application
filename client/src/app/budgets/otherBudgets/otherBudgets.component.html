@@ -88,16 +88,16 @@
     </thead>
     <tbody>
 
-        <tr *ngFor="let budget of filteredBudgets">
-            <td>{{budget.user.lastName}}</td>
-            <td>{{budget.user.firstName}}</td>
-            <td>{{budget.title}}</td>
-            <td>{{budget.amount}}</td>
-            <td>{{budget.amountLeft}}</td>
+        <tr *ngFor="let perspective of budgetPerspectives">
+            <td>{{perspective.budget.user.lastName}}</td>
+            <td>{{perspective.budget.user.firstName}}</td>
+            <td>{{perspective.budget.title}}</td>
+            <td>{{perspective.budget.amount}}</td>
+            <td>{{perspective.budget.amountLeft}}</td>
 
             <td>
                 <a *ngIf="!disableSetOrEditBudgets" class="btn btn-primary float-right" href="#" role="button"
-                    routerLink="/other-budgets/edit/{{budget.id}}">
+                    routerLink="/other-budgets/edit/{{perspective.budget.id}}">
                     Edit
                 </a>
             </td>
@@ -108,6 +108,25 @@
                         Edit
                     </button>
                 </td>
+            </ng-template>
+            <td>
+                <button class="btn btn-danger" (click)="openModal(deleteBudgetModalTemplate)"
+                    [disabled]="!perspective.isDeletable">
+                    Delete
+                </button>
+            </td>
+            <ng-template #deleteBudgetModalTemplate let-c="close">
+                <div class="modal-body float-centre">
+                    Are you sure you want to delete {{perspective.budget.title}} budget ?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger mr-1" (click)="c(deleteBudget(perspective.budget.id))">
+                        Yes
+                    </button>
+                    <button class="btn btn-primary" (click)="c()">
+                        No
+                    </button>
+                </div>
             </ng-template>
         </tr>
     </tbody>

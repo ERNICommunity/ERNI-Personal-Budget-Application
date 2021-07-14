@@ -38,6 +38,12 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
+        public async Task<int> GetRequestsCount(int budgetId, CancellationToken cancellationToken)
+        {
+            return await _context.Requests.CountAsync(_ => _.BudgetId == budgetId,
+                cancellationToken: cancellationToken);
+        }
+
         public Task<Request> GetRequest(int id, CancellationToken cancellationToken)
         {
             return _context.Requests

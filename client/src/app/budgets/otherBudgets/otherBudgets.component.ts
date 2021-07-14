@@ -17,21 +17,20 @@ import { AlertService } from '../../services/alert.service';
 export class OtherBudgetsComponent implements OnInit {
     budgetTypes: BudgetType[];
     budgets: Budget[];
-    filteredBudgets: Budget[];
+    budgetPerspectives: BudgetPerspective[];
     amount: number;
     year: number;
     currentYear: number;
     selectedYear: number;
     selectedUserId: number;
     budgetTitle: string;
-
     selectedBudgetType: number;
-
     availableUsers: User[];
 
     years: number[];
     rlao: object;
     disableSetOrEditBudgets: boolean;
+
     private _searchTerm: string;
     private _modal: any;
 
@@ -41,7 +40,7 @@ export class OtherBudgetsComponent implements OnInit {
 
     set searchTerm(value: string) {
         this._searchTerm = value;
-        this.filteredBudgets = this.filterBudgets(value);
+        this.setBudgetPrespectives(this.filterBudgets(value));
     }
 
     filterBudgets(searchString: string) {
@@ -54,7 +53,7 @@ export class OtherBudgetsComponent implements OnInit {
     constructor(private budgetService: BudgetService,
         private modalService: NgbModal,
         private route: ActivatedRoute,
-        private alertService:AlertService,
+        private alertService: AlertService,
         private config: ConfigService) {
         this.years = [];
         this.currentYear = (new Date()).getFullYear();
@@ -96,51 +95,87 @@ export class OtherBudgetsComponent implements OnInit {
         });
     }
 
-
     getActiveUsersBudgets(year: number): void {
         this.year = year;
         this.budgetService.getCurrentUsersBudgets(year).subscribe(budgets => {
             this.budgets = budgets;
-            this.filteredBudgets = budgets.filter(b => {
+            this.setBudgetPrespectives(budgets.filter(b => {
                 return b.type == this.selectedBudgetType;
-            })
+            }));
         });
+    }
+
+    setBudgetPrespectives(budgets: Budget[]) {
+        this.budgetPerspectives = [];
+        budgets.forEach(budget => {
+            this.budgetService.getBudgetRequestsCount(budget.id).subscribe(
+                c => {
+                    let isDeletable: boolean;
+                    if (c > 0) {
+                        isDeletable = false;
+                    }
+                    else {
+                        isDeletable = true;    
+                    }
+                    this.budgetPerspectives.push(new BudgetPerspective(budget, isDeletable));
+                }
+            )
+        })
     }
 
     setBudgetsForYear(): void {
         if (this.selectedUserId == 0) {
             this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType)
-            .subscribe(() =>
-            {
-                this.getActiveUsersBudgets(this.selectedYear);
-                this._modal.close();
-            }, 
-            err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
-            });
+                .subscribe(() => {
+                    this.getActiveUsersBudgets(this.selectedYear);
+                    this._modal.close();
+                },
+                    err => {
+                        this.alertService.error("Error while creating budget: " + JSON.stringify(err.error), "addOtherBudget");
+                    });
         } else {
             this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType)
-            .subscribe(() => this.getActiveUsersBudgets(this.selectedYear),
-            err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
-            });
+                .subscribe(() => this.getActiveUsersBudgets(this.selectedYear),
+                    err => {
+                        this.alertService.error("Error while creating budget: " + JSON.stringify(err.error), "addOtherBudget");
+                    });
         }
+    }
+
+    deleteBudget(budgetId: number) {
+        this.budgetService.deleteBudget(budgetId).subscribe(() => this.getActiveUsersBudgets(this.selectedYear)
+            , err => {
+                this.alertService.error("Error while deleting budget: " + JSON.stringify(err.error));
+            });
+        this.getActiveUsersBudgets(this.selectedYear);
     }
 
     openAmountModal(content) {
         this.setBudgetToDefault();
+        this.openModal(content);
+    }
+
+    openModal(content) {
         this._modal = this.modalService.open(content, { centered: true, backdrop: 'static' });
     }
-    
-    close()
-    {
+
+    close() {
         this._modal.close();
     }
 
-    setBudgetToDefault()
-    {
+    setBudgetToDefault() {
         this.budgetTitle = "";
         this.amount = 0;
         this.selectedUserId = undefined;
+    }
+}
+
+class BudgetPerspective {
+    budget: Budget;
+    isDeletable: boolean;
+
+    constructor(budget: Budget, isDeletable: boolean) {
+        this.budget = budget;
+        this.isDeletable = isDeletable;
     }
 }
