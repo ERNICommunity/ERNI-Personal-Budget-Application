@@ -72,25 +72,25 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                 if (data is null || data.Length == 0)
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.EmptyField, $"{nameof(Data)} cannot be empty.") })
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Data must not be null");
                 }
 
                 if (data.Length > 5 * 1024 * 1024)
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.OutOfRange, $"{nameof(Data)} cannot exceed 5 MB.") })
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Data size too high");
                 }
 
                 if (string.IsNullOrWhiteSpace(filename))
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.EmptyField, $"{nameof(Filename)} cannot be empty.") })
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Filename must not be null");
                 }
 
                 if (string.IsNullOrWhiteSpace(mimeType))
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.EmptyField, $"{nameof(MimeType)} cannot be empty.") })
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("MimeType must not be null");
                 }
 
                 if (!mimeType.StartsWith("image/", true, CultureInfo.InvariantCulture) && mimeType != "application/pdf")
