@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Entities;
 
@@ -23,7 +24,8 @@ namespace ERNI.PBA.Server.Business.Utils
                 transactions.Add(new Transaction
                 {
                     BudgetId = first.BudgetId,
-                    Amount = amountToDeduct
+                    Amount = amountToDeduct,
+                    RequestType = BudgetTypeEnum.TeamBudget
                 });
 
                 amount -= amountToDeduct;

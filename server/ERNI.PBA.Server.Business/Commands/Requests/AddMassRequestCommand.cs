@@ -71,7 +71,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     Amount = parameter.Amount,
                     Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
-                    State = RequestState.Completed
+                    State = RequestState.Completed,
+                    RequestType = budget.BudgetType,
                 };
 
                 request.Transactions = new[]
@@ -80,6 +81,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     {
                         Amount =  parameter.Amount,
                         BudgetId = budget.Id,
+                        RequestType = budget.BudgetType,
                     }
                 };
 

@@ -11,7 +11,6 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
@@ -78,7 +77,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 {
                     RequestId = request.Id,
                     BudgetId = budget.Id,
-                    Amount = request.InvoicedAmount ?? parameter.Amount
+                    Amount = request.InvoicedAmount ?? parameter.Amount,
+                    RequestType = budget.BudgetType,
                 }
             };
             await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);

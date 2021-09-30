@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Commands.Requests;
 using ERNI.PBA.Server.Business.Queries.Requests;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
@@ -25,7 +26,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IGetRequestsQuery> _getRequestsQuery;
         private readonly Lazy<IGetBudgetLeftQuery> _getBudgetLeftQuery;
         private readonly Lazy<ISetRequestStateCommand> _setRequestStateCommand;
-        private readonly Lazy<IAddRequestCommand> _addRequestCommand;
         private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
         private readonly Lazy<IUpdateRequestCommand> _updateRequestCommand;
         private readonly Lazy<IUpdateTeamRequestCommand> _updateTeamRequestCommand;
@@ -37,7 +37,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<IGetRequestsQuery> getRequestsQuery,
             Lazy<IGetBudgetLeftQuery> getBudgetLeftQuery,
             Lazy<ISetRequestStateCommand> approveRequestCommand,
-            Lazy<IAddRequestCommand> addRequestCommand,
             Lazy<IAddMassRequestCommand> addMassRequestCommand,
             Lazy<IUpdateRequestCommand> updateRequestCommand,
             Lazy<IUpdateTeamRequestCommand> updateTeamRequestCommand,
@@ -48,7 +47,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             _getRequestsQuery = getRequestsQuery;
             _getBudgetLeftQuery = getBudgetLeftQuery;
             _setRequestStateCommand = approveRequestCommand;
-            _addRequestCommand = addRequestCommand;
             _addMassRequestCommand = addMassRequestCommand;
             _updateRequestCommand = updateRequestCommand;
             _updateTeamRequestCommand = updateTeamRequestCommand;
@@ -95,9 +93,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddRequest([FromBody] PostRequestModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddRequest([FromBody] AddRequestCommand.PostRequestModel payload,
+            CancellationToken cancellationToken, [FromServices] AddRequestCommand addRequestCommand)
         {
-            await _addRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await addRequestCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }

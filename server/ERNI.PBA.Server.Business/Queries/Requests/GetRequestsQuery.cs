@@ -25,7 +25,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
 
             var requests = await _requestRepository.GetRequests(
                 request => request.Year == parameter.Year && parameter.RequestStates.Contains(request.State) &&
-                           (int)request.Transactions.First().Budget.BudgetType == parameter.BudgetTypeId,
+                           (int)request.RequestType == parameter.BudgetTypeId,
                 cancellationToken);
 
             var invoiceCounts =
