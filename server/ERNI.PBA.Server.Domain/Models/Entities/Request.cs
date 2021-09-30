@@ -34,6 +34,8 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public RequestCategory? Category { get; set; }
 
+        public BudgetTypeEnum RequestType { get; set; }
+
         public int UserId { get; set; }
 
         public User User { get; set; } = null!;

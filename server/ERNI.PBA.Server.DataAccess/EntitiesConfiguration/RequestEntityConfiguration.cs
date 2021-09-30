@@ -15,8 +15,8 @@ namespace ERNI.PBA.Server.DataAccess.EntitiesConfiguration
             builder.HasOne(_ => _.Category).WithMany();
             builder.HasMany(x => x.Transactions)
                 .WithOne(x => x.Request)
-                .HasForeignKey(x => new { x.RequestId })
-                .HasPrincipalKey(x => new { x.Id })
+                .HasForeignKey(x => new { x.RequestId, x.RequestType })
+                .HasPrincipalKey(x => new { x.Id, x.RequestType })
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
