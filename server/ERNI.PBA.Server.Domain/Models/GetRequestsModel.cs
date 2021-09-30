@@ -7,5 +7,7 @@ namespace ERNI.PBA.Server.Domain.Models
         public int Year { get; init; }
 
         public RequestState[] RequestStates { get; init; } = null!;
+
+        public int BudgetTypeId { get; init; }
     }
 }

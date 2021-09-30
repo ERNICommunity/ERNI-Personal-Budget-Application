@@ -1,4 +1,6 @@
-﻿namespace ERNI.PBA.Server.Domain.Models.Entities
+﻿using ERNI.PBA.Server.Domain.Enums;
+
+namespace ERNI.PBA.Server.Domain.Models.Entities
 {
     public class Transaction
     {
@@ -13,5 +15,7 @@
         public Budget Budget { get; set; } = null!;
 
         public decimal Amount { get; set; }
+
+        public BudgetTypeEnum RequestType { get; set; }
     }
 }

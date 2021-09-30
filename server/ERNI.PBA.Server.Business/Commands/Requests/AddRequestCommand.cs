@@ -7,15 +7,12 @@ using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class AddRequestCommand : Command<PostRequestModel>, IAddRequestCommand
+    public class AddRequestCommand : Command<AddRequestCommand.PostRequestModel>
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
@@ -77,12 +74,14 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 Date = parameter.Date.ToLocalTime(),
                 CreateDate = DateTime.Now,
                 State = GetRequestState(budget.BudgetType),
+                RequestType = budget.BudgetType,
                 Transactions = new[]
                 {
                     new Transaction
                     {
                         BudgetId = budget.Id,
-                        Amount = parameter.Amount
+                        Amount = parameter.Amount,
+                        RequestType = budget.BudgetType,
                     }
                 }
             };
@@ -102,5 +101,16 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 BudgetTypeEnum.TeamBudget => RequestState.Completed,
                 _ => throw new InvalidOperationException($"Unexpected budget type: {budgetType}")
             };
+
+        public class PostRequestModel
+        {
+            public DateTime Date { get; set; }
+
+            public string Title { get; set; } = null!;
+
+            public decimal Amount { get; set; }
+
+            public int BudgetId { get; set; }
+        }
     }
 }

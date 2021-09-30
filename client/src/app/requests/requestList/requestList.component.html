@@ -1,43 +1,15 @@
-<div [ngSwitch]="requestFilter">
-    <h2 *ngSwitchCase="requestFilterType.Pending">Pending requests</h2>
-    <h2 *ngSwitchCase="requestFilterType.Approved">Approved requests</h2>
-    <h2 *ngSwitchCase="requestFilterType.Rejected">Rejected requests</h2>
-    <h2 *ngSwitchCase="requestFilterType.Completed">Completed requests</h2>
-</div>
+<h2>{{requestFilter?.name}} requests</h2>
 
 <ul class="nav nav-pills">
     <li
         class="nav-item"
-        *ngFor="let year of years"
-        [ngSwitch]="requestFilter">
+        *ngFor="let year of years">
         <a
-            *ngSwitchCase="requestFilterType.Pending"
             class="nav-link"
             [routerLinkActive]="['active']"
-            [routerLink]="[pendingRoute, year]">
+            [routerLink]="['/requests', selectedBudgetType?.key, requestFilter.key, year]">
             {{year}}
         </a>
-        <a
-            *ngSwitchCase="requestFilterType.Approved"
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[approvedRoute, year]">
-            {{year}}
-        </a>
-        <a
-            *ngSwitchCase="requestFilterType.Rejected"
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[rejectedRoute, year]">
-            {{year}}
-        </a>
-        <a
-          *ngSwitchCase="requestFilterType.Completed"
-          class="nav-link"
-          [routerLinkActive]="['active']"
-          [routerLink]="[completedRoute, year]">
-            {{year}}
-    </a>
     </li>
 </ul>
 
@@ -63,6 +35,15 @@
     </div>
 </div>
 
+<ul class="nav nav-pills">
+    <li class="nav-item" *ngFor="let budgetType of budgetTypes">
+        <a class="nav-link" [routerLinkActive]="['active']" 
+            [routerLink]="['/requests', budgetType.key, requestFilter.key, selectedYear]">
+            {{budgetType.name}}
+        </a>
+    </li>
+</ul>
+
 <br>
 <input
     class="form-control col-md-6"
@@ -73,40 +54,12 @@
 <br>
 
 <ul class="nav nav-tabs">
-    <li class="nav-item">
+    <li class="nav-item" *ngFor="let approvalState of approvalStates">
         <a
             class="nav-link"
             [routerLinkActive]="['active']"
-            [routerLink]="[pendingRoute, selectedYear]"
-            [routerLinkActiveOptions]="rlao">
-            Pending
-        </a>
-    </li>
-    <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[approvedRoute, selectedYear]"
-            [routerLinkActiveOptions]="rlao">
-            Approved
-        </a>
-    </li>
-    <li class="nav-item">
-      <a
-          class="nav-link"
-          [routerLinkActive]="['active']"
-          [routerLink]="[completedRoute, selectedYear]"
-          [routerLinkActiveOptions]="rlao">
-          Completed
-      </a>
-  </li>
-    <li class="nav-item">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="[rejectedRoute, selectedYear]"
-            [routerLinkActiveOptions]="rlao">
-            Rejected
+            [routerLink]="['/requests', selectedBudgetType?.key, approvalState.key, selectedYear]">
+            {{approvalState.name}}
         </a>
     </li>
 </ul>
