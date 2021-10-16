@@ -37,7 +37,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Budgets
                 BudgetType = Domain.Enums.BudgetTypeEnum.PersonalBudget
             }, PrincipalBuilder.New().Build(), CancellationToken.None);
 
-            budgetRepositoryMock.Verify(_ => _.AddBudget(It.IsAny<Budget>()), Times.Once);
+            budgetRepositoryMock.Verify(_ => _.AddBudgetAsync(It.IsAny<Budget>()), Times.Once);
             unitOfWorkMock.Verify(_ => _.SaveChanges(CancellationToken.None));
         }
     }
