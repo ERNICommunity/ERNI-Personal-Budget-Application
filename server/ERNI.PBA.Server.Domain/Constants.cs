@@ -1,4 +1,4 @@
-﻿namespace ERNI.PBA.Server.Host.Auth
+﻿namespace ERNI.PBA.Server.Domain
 {
     public static class Constants
     {

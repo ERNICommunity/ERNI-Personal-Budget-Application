@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Commands.Requests;
-using ERNI.PBA.Server.Business.Queries.Requests;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
@@ -10,10 +9,8 @@ using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Models.Responses;
-using ERNI.PBA.Server.Domain.Models.Responses.PendingRequests;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
@@ -94,7 +91,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> AddRequest([FromBody] AddRequestCommand.PostRequestModel payload,
-            CancellationToken cancellationToken, [FromServices] AddRequestCommand addRequestCommand)
+            [FromServices] AddRequestCommand addRequestCommand, CancellationToken cancellationToken)
         {
             await addRequestCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 

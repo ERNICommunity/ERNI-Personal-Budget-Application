@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;

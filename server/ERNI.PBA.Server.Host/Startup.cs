@@ -21,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using Constants = ERNI.PBA.Server.Domain.Constants;
 
 namespace ERNI.PBA.Server.Host
 {
@@ -49,7 +50,7 @@ namespace ERNI.PBA.Server.Host
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
 
             services.AddAuthorization(options =>
-                options.AddPolicy(Auth.Constants.ClientPolicy, builder => builder.RequireScope("pba_client")));
+                options.AddPolicy(Constants.ClientPolicy, builder => builder.RequireScope("pba_client")));
 
             services.AddAuthorization();
 

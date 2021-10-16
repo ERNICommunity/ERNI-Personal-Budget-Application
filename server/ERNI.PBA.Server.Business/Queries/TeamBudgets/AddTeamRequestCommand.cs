@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Business.Extensions;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
@@ -40,7 +39,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             var user = await _userRepository.GetUser(userId, cancellationToken);
 
             var currentYear = DateTime.Now.Year;
-            
+
             if (parameter.Employees.Distinct().Count() != parameter.Employees.Length)
             {
                 throw new OperationErrorException(ErrorCodes.ValidationError, "User list has to be unique.");
@@ -57,7 +56,12 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             }
 
             var teamBudgets = parameter.Employees.Select(_ => dict[_])
-                .Select(_ => new TeamBudget() {BudgetId = _.BudgetId, Amount = _.TotalAmount - _.SpentAmount, UserId = _.Employee.Id});
+                .Select(_ => new TeamBudget()
+                {
+                    BudgetId = _.BudgetId,
+                    Amount = _.TotalAmount - _.SpentAmount,
+                    UserId = _.Employee.Id
+                });
 
             if (parameter.Amount <= 0.0m)
             {
