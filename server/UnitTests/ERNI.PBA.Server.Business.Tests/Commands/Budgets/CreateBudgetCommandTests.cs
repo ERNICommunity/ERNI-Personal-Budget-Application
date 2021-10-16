@@ -40,7 +40,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Budgets
                 UserId = 1
             }, new ClaimsPrincipal(), token);
 
-            budgetRepository.Verify(_ => _.AddBudget(It.Is<Budget>(b =>
+            budgetRepository.Verify(_ => _.AddBudgetAsync(It.Is<Budget>(b =>
                 b.UserId == 1 && b.Amount == 100 && b.BudgetType == BudgetTypeEnum.RecreationBudget &&
                 b.Title == "Budget")));
 

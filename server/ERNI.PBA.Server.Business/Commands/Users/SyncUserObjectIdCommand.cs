@@ -7,7 +7,7 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Graph;
 using Microsoft.Extensions.Configuration;
 
-namespace ERNI.PBA.Server.Business.Queries.Employees
+namespace ERNI.PBA.Server.Business.Commands.Users
 {
     public class SyncUserObjectIdCommand
     {

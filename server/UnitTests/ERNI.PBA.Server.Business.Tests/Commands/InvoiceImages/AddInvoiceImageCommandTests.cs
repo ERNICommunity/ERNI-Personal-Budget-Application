@@ -62,7 +62,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.InvoiceImages
             var unitOwWork = new Mock<IUnitOfWork>();
 
             var cmd = new AddInvoiceImageCommand(requestRepositoryMock.Object, userRepositoryMock.Object, invoiceImageRepositoryMock.Object, unitOwWork.Object);
-            
+
             await Assert.ThrowsExceptionAsync<OperationErrorException>(() => cmd.ExecuteAsync(
                 new AddInvoiceImageCommand.InvoiceImageModel(1, "a.pdf", "application/pdf",
                     Enumerable.Range(1, 20).Select(_ => (byte)_).ToArray()), PrincipalBuilder.New().WithId(userGuid).Build(),
@@ -78,7 +78,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.InvoiceImages
             requestRepositoryMock.Setup(_ => _.GetRequest(1, CancellationToken.None))
                 .Returns((int a, CancellationToken b) => Task.FromResult(new Request()
                 {
-                    State =Domain.Enums.RequestState.Approved
+                    State = Domain.Enums.RequestState.Approved
                 }));
 
             var userRepositoryMock = new Mock<IUserRepository>();

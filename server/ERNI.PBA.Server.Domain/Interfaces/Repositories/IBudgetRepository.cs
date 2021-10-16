@@ -8,8 +8,6 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {
     public interface IBudgetRepository
     {
-        void AddBudget(Budget budget);
-
         Task AddBudgetAsync(Budget budget);
 
         Task<Budget> GetBudget(int budgetId, CancellationToken cancellationToken);
