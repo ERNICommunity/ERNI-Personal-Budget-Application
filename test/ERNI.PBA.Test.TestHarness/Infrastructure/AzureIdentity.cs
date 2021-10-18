@@ -31,31 +31,31 @@ namespace ERNI.PBA.Test.TestHarness.Infrastructure
 
         public ClaimsIdentity ToIdentity()
         {
-            var claims = new List<Claim> { new Claim(Claims.Id, Id.ToString()) };
+            var claims = new List<Claim> { new Claim(UserClaims.Id, Id.ToString()) };
 
             if (!string.IsNullOrWhiteSpace(FirstName))
             {
-                claims.Add(new Claim(Claims.FirstName, FirstName));
+                claims.Add(new Claim(UserClaims.FirstName, FirstName));
             }
 
             if (!string.IsNullOrWhiteSpace(LastName))
             {
-                claims.Add(new Claim(Claims.LastName, LastName));
+                claims.Add(new Claim(UserClaims.LastName, LastName));
             }
 
             if (!string.IsNullOrWhiteSpace(UserName))
             {
-                claims.Add(new Claim(Claims.UserName, UserName));
+                claims.Add(new Claim(UserClaims.UserName, UserName));
             }
 
             if (!string.IsNullOrWhiteSpace(UniqueIndetifier))
             {
-                claims.Add(new Claim(Claims.UniqueIndetifier, UniqueIndetifier));
+                claims.Add(new Claim(UserClaims.UniqueIndetifier, UniqueIndetifier));
             }
 
             if (!string.IsNullOrWhiteSpace(Role))
             {
-                claims.Add(new Claim(Claims.Role, Role));
+                claims.Add(new Claim(UserClaims.Role, Role));
                 claims.Add(new Claim(ClaimTypes.Role, Role));
             }
 

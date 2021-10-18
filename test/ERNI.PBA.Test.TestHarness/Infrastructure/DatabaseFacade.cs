@@ -31,8 +31,8 @@ namespace ERNI.PBA.Test.TestHarness.Infrastructure
                 {
 #pragma warning disable EF1000 // Possible SQL injection vulnerability.
 #pragma warning disable 618
-                    c.Database.ExecuteSqlCommand(singleuserSql);
-                    c.Database.ExecuteSqlCommand(dropDatabaseSql);
+                    c.Database.ExecuteSqlRaw(singleuserSql);
+                    c.Database.ExecuteSqlRaw(dropDatabaseSql);
 #pragma warning restore 618
 #pragma warning restore EF1000 // Possible SQL injection vulnerability.
                 });
