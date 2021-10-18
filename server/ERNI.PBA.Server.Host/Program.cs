@@ -1,6 +1,6 @@
 using Autofac.Extensions.DependencyInjection;
 using Azure.Storage.Blobs;
-using ERNI.PBA.Server.Business.Queries.Employees;
+using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using Microsoft.AspNetCore.Hosting;

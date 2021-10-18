@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using ERNI.PBA.Server.Business;
-using ERNI.PBA.Server.Business.Queries.Employees;
+using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Host.Filters;
 
