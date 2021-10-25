@@ -12,7 +12,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { AlertService } from '../../services/alert.service';
 import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
-import { ApprovalStateModel } from '../../shared/model/ApprovalStateModel';
+import { ApprovalStateModel } from '../../shared/model/approvalStateModel';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
