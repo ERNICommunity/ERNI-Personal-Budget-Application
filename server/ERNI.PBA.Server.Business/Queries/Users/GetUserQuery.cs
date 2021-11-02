@@ -2,13 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
-using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Responses;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetUserQuery : Query<int, UserModel>, IGetUserQuery
+    public class GetUserQuery : Query<int, GetUserQuery.UserModel>
     {
         private readonly IUserRepository _userRepository;
 
@@ -24,6 +23,7 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 State = user.State,
+                Email = user.Username,
                 Superior = user.Superior is not null
                     ? new SuperiorModel
                     {
@@ -33,6 +33,30 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                     }
                     : null
             };
+        }
+
+        public class UserModel
+        {
+            public int Id { get; init; }
+
+            public string FirstName { get; init; } = null!;
+
+            public string LastName { get; init; } = null!;
+
+            public string Email { get; init; } = null!;
+
+            public SuperiorModel? Superior { get; init; }
+
+            public UserState State { get; init; }
+        }
+
+        public class SuperiorModel
+        {
+            public int Id { get; init; }
+
+            public string FirstName { get; init; } = null!;
+
+            public string LastName { get; init; } = null!;
         }
     }
 }

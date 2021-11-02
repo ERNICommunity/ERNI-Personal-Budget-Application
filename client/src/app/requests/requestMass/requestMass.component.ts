@@ -109,7 +109,7 @@ export class RequestMassComponent implements OnInit {
     }
 
     getUsers(filter: UserState): void {
-        this.userService.getSubordinateUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
+        this.userService.getAllUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
     }
 
     addUser(user: User, ammount: number): void {

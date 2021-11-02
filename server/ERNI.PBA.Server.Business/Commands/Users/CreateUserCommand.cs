@@ -5,27 +5,21 @@ using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
-using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class CreateUserCommand : Command<CreateUserModel>, ICreateUserCommand
+    public class CreateUserCommand : Command<CreateUserCommand.CreateUserModel>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBudgetRepository _budgetRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateUserCommand(
             IUserRepository userRepository,
-            IBudgetRepository budgetRepository,
             IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
-            _budgetRepository = budgetRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -53,20 +47,22 @@ namespace ERNI.PBA.Server.Business.Commands.Users
 
             await _userRepository.AddUserAsync(user);
 
-            if (parameter.State == UserState.Active)
-            {
-                var budget = new Budget
-                {
-                    UserId = user.Id,
-                    User = user,
-                    BudgetType = BudgetTypeEnum.PersonalBudget,
-                    Amount = parameter.Amount,
-                    Year = parameter.Year
-                };
-                await _budgetRepository.AddBudgetAsync(budget);
-            }
-
             await _unitOfWork.SaveChanges(cancellationToken);
+        }
+
+        public class CreateUserModel
+        {
+            public string FirstName { get; set; } = null!;
+
+            public string LastName { get; set; } = null!;
+
+            public string Email { get; set; } = null!;
+
+            public int Year { get; set; }
+
+            public int? Superior { get; set; }
+
+            public UserState State { get; set; }
         }
     }
 }

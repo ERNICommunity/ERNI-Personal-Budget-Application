@@ -5,14 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
-using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Responses;
 using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetSubordinateUsersQuery : Query<IEnumerable<UserModel>>, IGetSubordinateUsersQuery
+    public class GetSubordinateUsersQuery : Query<IEnumerable<GetSubordinateUsersQuery.UserModel>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -31,6 +30,7 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                 FirstName = _.FirstName,
                 LastName = _.LastName,
                 State = _.State,
+                Email = _.Username,
                 Superior = user.Superior is not null
                     ? new SuperiorModel
                     {
@@ -40,6 +40,30 @@ namespace ERNI.PBA.Server.Business.Queries.Users
                     }
                     : null
             }).OrderBy(_ => _.LastName).ThenBy(_ => _.FirstName);
+        }
+
+        public class UserModel
+        {
+            public int Id { get; init; }
+
+            public string FirstName { get; init; } = null!;
+
+            public string LastName { get; init; } = null!;
+
+            public string Email { get; init; } = null!;
+
+            public SuperiorModel? Superior { get; init; }
+
+            public UserState State { get; init; }
+        }
+
+        public class SuperiorModel
+        {
+            public int Id { get; init; }
+
+            public string FirstName { get; init; } = null!;
+
+            public string LastName { get; init; } = null!;
         }
     }
 }

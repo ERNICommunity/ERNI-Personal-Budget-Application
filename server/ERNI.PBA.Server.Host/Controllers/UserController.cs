@@ -1,11 +1,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
+using ERNI.PBA.Server.Business.Queries.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,28 +18,19 @@ namespace ERNI.PBA.Server.Host.Controllers
     public class UserController : Controller
     {
         private readonly Lazy<IGetCurrentUserQuery> _getCurrentUserQuery;
-        private readonly Lazy<IGetUserQuery> _getUserQuery;
-        private readonly Lazy<IGetSubordinateUsersQuery> _getSubordinateUsersQuery;
         private readonly Lazy<IGetActiveUsersQuery> _getActiveUsersQuery;
         private readonly Lazy<IRegisterUserCommand> _registerUserCommand;
-        private readonly Lazy<ICreateUserCommand> _createUserCommand;
         private readonly Lazy<IUpdateUserCommand> _updateUserCommand;
 
         public UserController(
             Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
-            Lazy<IGetUserQuery> getUserQuery,
-            Lazy<IGetSubordinateUsersQuery> getSubordinateUsersQuery,
             Lazy<IGetActiveUsersQuery> getActiveUsersQuery,
             Lazy<IRegisterUserCommand> registerUserCommand,
-            Lazy<ICreateUserCommand> createUserCommand,
             Lazy<IUpdateUserCommand> updateUserCommand)
         {
             _getCurrentUserQuery = getCurrentUserQuery;
-            _getUserQuery = getUserQuery;
-            _getSubordinateUsersQuery = getSubordinateUsersQuery;
             _getActiveUsersQuery = getActiveUsersQuery;
             _registerUserCommand = registerUserCommand;
-            _createUserCommand = createUserCommand;
             _updateUserCommand = updateUserCommand;
         }
 
@@ -51,9 +44,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("create")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand.CreateUserModel payload,
+            [FromServices] CreateUserCommand createUserCommand, CancellationToken cancellationToken)
         {
-            await _createUserCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await createUserCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -78,17 +72,17 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(int id, [FromServices] GetUserQuery query, CancellationToken cancellationToken)
         {
-            var userModel = await _getUserQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
+            var userModel = await query.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
             return Ok(userModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSubordinateUsers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetSubordinateUsers([FromServices] GetSubordinateUsersQuery query, CancellationToken cancellationToken)
         {
-            var userModels = await _getSubordinateUsersQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
+            var userModels = await query.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModels);
         }

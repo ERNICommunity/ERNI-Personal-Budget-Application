@@ -44,8 +44,6 @@ export class CreateUserComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             amount: [''],
             year: [this.currentYear],
-            isAdmin: [false],
-            isSuperior: [false],
             superior: [''],
             state: ['', [Validators.required]]
         });
@@ -63,9 +61,9 @@ export class CreateUserComponent implements OnInit {
             this.controls.year.updateValueAndValidity();
         });
 
-        this.userService.getSubordinateUsers().subscribe(
+        this.userService.getAllUsers().subscribe(
             users => {
-                this.superiors = users.filter(u => u.isSuperior).sort((first, second) => first.lastName.localeCompare(second.lastName));
+                this.superiors = users.sort((first, second) => first.lastName.localeCompare(second.lastName));
             });
     }
 
@@ -93,9 +91,6 @@ export class CreateUserComponent implements OnInit {
             email: this.controls.email.value,
             amount: this.controls.amount.value ? this.controls.amount.value : 0,
             year: this.controls.year.value ? this.controls.year.value : 0,
-            isAdmin: this.controls.isAdmin.value,
-            isSuperior: this.controls.isSuperior.value,
-            isViewer: false,
             superior: Number(this.controls.superior.value),
             state: Number(this.controls.state.value)
         };
