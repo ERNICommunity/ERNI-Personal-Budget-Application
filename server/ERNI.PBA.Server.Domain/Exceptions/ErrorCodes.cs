@@ -24,5 +24,8 @@
         public static string UnknownError => nameof(UnknownError);
 
         public static string CannotUpdateRequest => nameof(CannotUpdateRequest);
+
+        public static string InvalidAttachmentType => nameof(InvalidAttachmentType);
+        public static string MaxSizeExceeded => nameof(MaxSizeExceeded);
     }
 }

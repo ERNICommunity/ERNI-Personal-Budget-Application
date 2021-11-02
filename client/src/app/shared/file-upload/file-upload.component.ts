@@ -19,6 +19,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
   uploadingImages: uploadingImage[] = [];
   requestId: number;
   showError : boolean = false;
+  error: string;
 
   constructor(private invoiceImageService: InvoiceImageService) { }
 
@@ -74,6 +75,7 @@ export class FileUploadComponent implements OnInit, OnChanges {
           }, (error) => {
 
             this.showError = true;
+            this.error = JSON.stringify(error.error);
             this.uploadingImages.splice(this.uploadingImages.indexOf(newItem), 1);
           },
             () => {

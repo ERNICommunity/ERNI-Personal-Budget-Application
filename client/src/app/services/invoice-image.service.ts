@@ -56,6 +56,8 @@ export class InvoiceImageService {
       else if (event instanceof HttpResponse) {
         progress.complete();
       }
+    }, (error) => {
+      progress.error(error);
     });
     return progress;
   }

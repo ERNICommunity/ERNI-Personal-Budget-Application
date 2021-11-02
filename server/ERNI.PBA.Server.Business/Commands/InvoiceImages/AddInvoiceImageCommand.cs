@@ -74,10 +74,12 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                     throw new InvalidOperationException("Data must not be null");
                 }
 
-                if (data.Length > 5 * 1024 * 1024)
+                var maxSize = 5 * 1024 * 1024;
+
+                if (data.Length > maxSize)
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.OutOfRange, $"{nameof(Data)} cannot exceed 5 MB.") })
-                    throw new InvalidOperationException("Data size too high");
+                    throw new OperationErrorException(ErrorCodes.MaxSizeExceeded, $"{nameof(Data)} cannot exceed {maxSize} B.");
                 }
 
                 if (string.IsNullOrWhiteSpace(filename))
@@ -95,7 +97,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                 if (!mimeType.StartsWith("image/", true, CultureInfo.InvariantCulture) && mimeType != "application/pdf")
                 {
                     // throw new ValidationErrorException(new[] { new ValidationError(ValidationErrorCodes.InvalidAttachmentType, "Attachments only support images.") })
-                    throw new InvalidOperationException();
+                    throw new OperationErrorException(ErrorCodes.InvalidAttachmentType, "Attachments only support images.");
                 }
 
                 Id = id;
