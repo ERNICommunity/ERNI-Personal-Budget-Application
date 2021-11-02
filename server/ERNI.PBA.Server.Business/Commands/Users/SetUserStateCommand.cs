@@ -10,13 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class UpdateUserCommand : Command<UpdateUserCommand.UpdateUserModel>
+    public class SetUserStateCommand : Command<(int Id, UserState State)>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public UpdateUserCommand(
+        public SetUserStateCommand(
             IUserRepository userRepository,
             IUnitOfWork unitOfWork,
             ILogger<UpdateUserCommand> logger)
@@ -26,7 +26,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
             _logger = logger;
         }
 
-        protected override async Task Execute(UpdateUserModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute((int Id, UserState State) parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUser(parameter.Id, cancellationToken);
 
@@ -37,25 +37,9 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 throw new OperationErrorException(ErrorCodes.UserNotFound, "Not a valid id");
             }
 
-            user.SuperiorId = parameter.Superior;
-            user.FirstName = parameter.FirstName;
-            user.LastName = parameter.LastName;
-            user.Username = parameter.Email;
+            user.State = parameter.State;
 
             await _unitOfWork.SaveChanges(cancellationToken);
-        }
-
-        public class UpdateUserModel
-        {
-            public int Id { get; set; }
-
-            public int? Superior { get; set; }
-
-            public string FirstName { get; set; } = null!;
-
-            public string LastName { get; set; } = null!;
-
-            public string Email { get; set; } = null!;
         }
     }
 }

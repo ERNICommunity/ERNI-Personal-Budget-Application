@@ -50,12 +50,12 @@ export class UserListComponent implements OnInit {
 
     activateEmployee(user: User): void {
         user.state = UserState.Active;
-        this.userService.updateUser(user).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
+        this.userService.activateUser(user.id).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
     }
 
     deactivateEmployee(user: User): void {
         user.state = UserState.Inactive;
-        this.userService.updateUser(user).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
+        this.userService.deactivateUser(user.id).subscribe(() => { this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users });
     }
 
     create() {

@@ -5,6 +5,7 @@ import { User } from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { switchMap } from 'rxjs/operators';
+import { UserUpdateModel } from '../model/UserUpdateModel';
 
 @Injectable()
 export class UserService {
@@ -31,8 +32,16 @@ export class UserService {
         return this.http.get<User>(this.configService.apiUrlBase + this.url + "/" + id, this.serviceHelper.getHttpOptions())
     }
 
-    public updateUser(user: User): Observable<any> {
+    public updateUser(user: UserUpdateModel): Observable<any> {
         return this.http.put(this.configService.apiUrlBase + this.url, user, this.serviceHelper.getHttpOptions());
+    }
+
+    public activateUser(id: number): Observable<any> {
+        return this.http.post(`${this.configService.apiUrlBase}${this.url}/${id}/activate`, this.serviceHelper.getHttpOptions());
+    }
+
+    public deactivateUser(id: number): Observable<any> {
+        return this.http.post(`${this.configService.apiUrlBase}${this.url}/${id}/deactivate`, this.serviceHelper.getHttpOptions());
     }
 
     public addUser(user: User): Observable<User> {

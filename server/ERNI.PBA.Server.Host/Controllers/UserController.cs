@@ -2,12 +2,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Commands.Users;
+using ERNI.PBA.Server.Business.Queries.Users;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
 using ERNI.PBA.Server.Domain.Models;
-using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using ERNI.PBA.Server.Business.Queries.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,18 +20,15 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IGetCurrentUserQuery> _getCurrentUserQuery;
         private readonly Lazy<IGetActiveUsersQuery> _getActiveUsersQuery;
         private readonly Lazy<IRegisterUserCommand> _registerUserCommand;
-        private readonly Lazy<IUpdateUserCommand> _updateUserCommand;
 
         public UserController(
             Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
             Lazy<IGetActiveUsersQuery> getActiveUsersQuery,
-            Lazy<IRegisterUserCommand> registerUserCommand,
-            Lazy<IUpdateUserCommand> updateUserCommand)
+            Lazy<IRegisterUserCommand> registerUserCommand)
         {
             _getCurrentUserQuery = getCurrentUserQuery;
             _getActiveUsersQuery = getActiveUsersQuery;
             _registerUserCommand = registerUserCommand;
-            _updateUserCommand = updateUserCommand;
         }
 
         [HttpPost("register")]
@@ -54,9 +51,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand.UpdateUserModel payload,
+            [FromServices] UpdateUserCommand updateUserCommand, CancellationToken cancellationToken)
         {
-            await _updateUserCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await updateUserCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -77,6 +75,24 @@ namespace ERNI.PBA.Server.Host.Controllers
             var userModel = await query.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
             return Ok(userModel);
+        }
+
+        [HttpPost("{id}/activate")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Activate(int id, [FromServices] SetUserStateCommand query, CancellationToken cancellationToken)
+        {
+            await query.ExecuteAsync((id, UserState.Active), HttpContext.User, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/deactivate")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Deactivate(int id, [FromServices] SetUserStateCommand query, CancellationToken cancellationToken)
+        {
+            await query.ExecuteAsync((id, UserState.Inactive), HttpContext.User, cancellationToken);
+
+            return Ok();
         }
 
         [HttpGet]
