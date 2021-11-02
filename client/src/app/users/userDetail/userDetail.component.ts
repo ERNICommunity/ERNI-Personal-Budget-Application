@@ -3,6 +3,7 @@ import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
@@ -13,13 +14,54 @@ import { Location } from '@angular/common';
 export class UserDetailComponent implements OnInit {
   user: User;
   users: User[];
+  form: FormGroup;
 
-  constructor(private userService: UserService, private location: Location, private route: ActivatedRoute) { }
+
+  constructor(private userService: UserService, private location: Location, private route: ActivatedRoute, private formBuilder: FormBuilder) {
+
+    this.form = this.formBuilder.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      superior: [''],
+      state: ['', [Validators.required]]
+  });
+    // this.form = this.formBuilder.group({
+    //   firstName: ['', Validators.required],
+    //   lastName: ['', Validators.required],
+    //   email: ['', [Validators.required, Validators.email]],
+    //   superior: [''],
+    //   state: ['', [Validators.required]]
+    // });
+    
+
+  }
 
   ngOnInit() {
+
     const id = this.route.snapshot.paramMap.get('id');
 
-    this.userService.getUser(Number(id)).subscribe(user => this.user = user);
+this.form = this.formBuilder.group({
+  firstName: ['', Validators.required],
+  lastName: ['', Validators.required],
+  email: ['', [Validators.required, Validators.email]],
+  superior: [''],
+  state: ['', [Validators.required]]
+});
+
+    // this.userService.getUser(Number(id)).subscribe(user => {
+    //   c.form = this.formBuilder.group({
+    //     firstName: [user.firstName, Validators.required],
+    //     lastName: [user.lastName, Validators.required],
+    //     email: [user.email, [Validators.required, Validators.email]],
+    //     superior: [user.superior.id],
+    //     state: [user.state, [Validators.required]]
+    //   });
+    // });
+
+
+
+
     this.userService.getAllUsers().subscribe(users => this.users = users.sort((first, second) => first.lastName.localeCompare(second.lastName)));
   }
 
