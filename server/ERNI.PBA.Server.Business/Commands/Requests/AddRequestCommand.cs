@@ -97,7 +97,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             {
                 BudgetTypeEnum.CommunityBudget => RequestState.Completed,
                 BudgetTypeEnum.PersonalBudget => RequestState.Pending,
-                BudgetTypeEnum.RecreationBudget => RequestState.Pending,
+                BudgetTypeEnum.RecreationBudget => RequestState.Approved,
                 BudgetTypeEnum.TeamBudget => RequestState.Completed,
                 _ => throw new InvalidOperationException($"Unexpected budget type: {budgetType}")
             };
