@@ -110,23 +110,32 @@ export class OtherBudgetsComponent implements OnInit {
     }
 
     setBudgetsForYear(): void {
-        if (this.selectedUserId == 0) {
-            this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType)
-            .subscribe(() =>
-            {
-                this.getActiveUsersBudgets(this.selectedYear);
-                this._modal.close();
-            }, 
-            err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
-            });
-        } else {
-            this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType)
-            .subscribe(() => this.getActiveUsersBudgets(this.selectedYear),
-            err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
-            });
-        }
+    var task =
+      this.selectedUserId == 0
+        ? this.budgetService.createBudgetsForAllActiveUsers(
+            this.budgetTitle,
+            this.amount,
+            this.selectedBudgetType
+          )
+        : this.budgetService.createBudget(
+            this.budgetTitle,
+            this.amount,
+            this.selectedUserId,
+            this.selectedBudgetType
+          );
+
+    task.subscribe(
+      () => {
+        this.getActiveUsersBudgets(this.selectedYear);
+        this.alertService.success("Budget created", "addOtherBudget");
+      },
+      (err) => {
+        this.alertService.error(
+          "Error while creating budget: " + JSON.stringify(err.error),
+          "addOtherBudget"
+        );
+      }
+    );
     }
 
     openAmountModal(content) {

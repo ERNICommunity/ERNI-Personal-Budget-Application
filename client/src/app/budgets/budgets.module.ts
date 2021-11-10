@@ -5,12 +5,14 @@ import { AdminRoleGuard } from "../services/guards/admin-role.guard";
 import { OtherBudgetsDetailComponent } from "./otherBudgetsDetail/otherBudgetsDetail.component";
 import { OtherBudgetsComponent } from "./otherBudgets/otherBudgets.component";
 import { FormsModule } from "@angular/forms";
+import { SharedModule } from "../shared/shared.module";
 
 @NgModule({
   declarations: [OtherBudgetsComponent, OtherBudgetsDetailComponent],
   imports: [
     CommonModule,
     FormsModule,
+    SharedModule,
     RouterModule.forChild([
       {
         path: "other-budgets", canActivate: [AdminRoleGuard],
