@@ -13,6 +13,11 @@ steps:
   inputs:
     checkLatest: true
 
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK'
+  inputs:
+    useGlobalJson: false
+
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
   inputs:
