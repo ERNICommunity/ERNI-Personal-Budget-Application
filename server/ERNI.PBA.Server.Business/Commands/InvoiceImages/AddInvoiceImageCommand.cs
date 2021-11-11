@@ -36,10 +36,12 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
         protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var requestId = parameter.Id;
-            var request = await _requestRepository.GetRequest(requestId, cancellationToken);
+
+            var request = await _requestRepository.GetRequest(requestId, cancellationToken)
+                          ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
+            if (!principal.IsInRole(Roles.Admin) && (user is null || user.Id != request.UserId))
             {
                 throw AppExceptions.AuthorizationException();
             }

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
@@ -15,7 +16,8 @@ namespace ERNI.PBA.Server.Business.Queries.Users
 
         protected override async Task<UserModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(parameter, CancellationToken.None);
+            var user = await _userRepository.GetUser(parameter, CancellationToken.None)
+                       ?? throw AppExceptions.AuthorizationException();
 
             return new UserModel
             {

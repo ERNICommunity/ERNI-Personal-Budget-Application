@@ -15,27 +15,17 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public UserRepository(DatabaseContext context) => _context = context;
 
-        public Task<User> GetUser(int id, CancellationToken cancellationToken)
-        {
-            return _context.Users.Where(_ => _.Id == id)
+        public Task<User?> GetUser(int id, CancellationToken cancellationToken) =>
+            _context.Users.Where(_ => _.Id == id)
                 .Include(u => u.Superior)
                 .FirstOrDefaultAsync(cancellationToken);
-        }
 
-        public Task<User> GetUser(Guid id, CancellationToken cancellationToken)
-        {
-            return _context.Users.Where(_ => _.ObjectId == id)
+        public Task<User?> GetUser(Guid id, CancellationToken cancellationToken) =>
+            _context.Users.Where(_ => _.ObjectId == id)
                 .Include(u => u.Superior)
                 .FirstOrDefaultAsync(cancellationToken);
-        }
 
-        public Task<User> GetUser(string sub, CancellationToken cancellationToken)
-        {
-            return _context.Users.Where(_ => _.UniqueIdentifier == sub)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
-
-        public Task<User> GetAsync(string username) => _context.Users.SingleOrDefaultAsync(x => x.Username == username);
+        public Task<User?> GetAsync(string username) => _context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
         public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {

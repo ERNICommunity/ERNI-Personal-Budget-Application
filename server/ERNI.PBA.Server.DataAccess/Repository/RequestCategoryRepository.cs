@@ -19,7 +19,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<RequestCategory[]> GetRequestCategories(CancellationToken cancellationToken) =>
             _context.RequestCategories.ToArrayAsync(cancellationToken);
 
-        public Task<RequestCategory> GetRequestCategory(int id, CancellationToken cancellationToken) => _context
+        public Task<RequestCategory?> GetRequestCategory(int id, CancellationToken cancellationToken) => _context
             .RequestCategories.Where(rc => rc.Id == id).FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         public void DeleteRequestCategory(RequestCategory requestCategory) =>

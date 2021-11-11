@@ -1,5 +1,3 @@
-using System;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Models.Entities;
@@ -13,7 +11,7 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 
         Task AddInvoiceImage(InvoiceImage invoiceImage, CancellationToken cancellationToken);
 
-        Task<InvoiceImage> GetInvoiceImage(int imageId, CancellationToken cancellationToken);
+        Task<InvoiceImage?> GetInvoiceImage(int imageId, CancellationToken cancellationToken);
 
         Task<(int requestId, int invoiceCount)[]> GetInvoiceCounts(int[] requestIds, CancellationToken cancellationToken);
 

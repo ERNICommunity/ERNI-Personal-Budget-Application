@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
@@ -21,8 +22,11 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
         protected override async Task<TeamRequestModel> Execute(int parameter,
             ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            var _ = await _teamBudgetFacade.GetTeamRequest(parameter, cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
+            var _ = await _teamBudgetFacade.GetTeamRequest(parameter, cancellationToken)
+                          ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
+
 
             return new TeamRequestModel
             {

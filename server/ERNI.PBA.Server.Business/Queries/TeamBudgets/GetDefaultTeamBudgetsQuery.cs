@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
@@ -20,7 +21,9 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
         protected override async Task<IEnumerable<TeamBudgetModel>> Execute((int year, bool limitToOwnTeam) parameter,
             ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
+
             var users = parameter.limitToOwnTeam
                 ? await _teamBudgetFacade.GetTeamBudgets(user.Id, parameter.year, cancellationToken)
                 : await _teamBudgetFacade.GetTeamBudgets(parameter.year, cancellationToken);

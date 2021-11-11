@@ -10,7 +10,7 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
     {
         Task AddBudgetAsync(Budget budget);
 
-        Task<Budget> GetBudget(int budgetId, CancellationToken cancellationToken);
+        Task<Budget?> GetBudget(int budgetId, CancellationToken cancellationToken);
 
         Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken);
 

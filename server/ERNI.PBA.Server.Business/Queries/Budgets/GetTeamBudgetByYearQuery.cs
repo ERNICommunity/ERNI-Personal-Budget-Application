@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -28,7 +28,8 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
 
         protected override async Task<BudgetOutputModel[]> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
 
             var budgets = await _budgetRepository.GetTeamBudgets(principal.GetId(), parameter, cancellationToken);
             if (!budgets.Any())

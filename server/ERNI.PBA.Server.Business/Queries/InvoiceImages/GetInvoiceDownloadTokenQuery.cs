@@ -35,9 +35,11 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                             ??
                             throw new OperationErrorException(ErrorCodes.InvalidId, "Invoice not found");
 
-                var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken);
+                var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken)
+                              ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
 
-                var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+                var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                    ?? throw AppExceptions.AuthorizationException();
 
                 if (request.UserId != currentUser.Id)
                 {

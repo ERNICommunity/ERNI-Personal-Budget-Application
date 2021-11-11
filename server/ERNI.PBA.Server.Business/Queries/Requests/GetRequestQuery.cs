@@ -37,7 +37,8 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
-            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                              ?? throw AppExceptions.AuthorizationException();
 
             if (currentUser.Id != request.User.Id && !principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance))
             {

@@ -63,11 +63,16 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.InvalidAmount, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
-            var userId = (await _userRepository.GetUser(principal.GetId(), cancellationToken)).Id;
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+
+            if (user is null)
+            {
+                throw AppExceptions.AuthorizationException();
+            }
 
             var request = new Request
             {
-                UserId = userId,
+                UserId = user.Id,
                 Year = currentYear,
                 Title = parameter.Title.Trim(),
                 Amount = parameter.Amount,

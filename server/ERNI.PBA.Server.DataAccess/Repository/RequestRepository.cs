@@ -36,7 +36,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ThenInclude(_ => _.User)
                 .ToArrayAsync();
 
-        public Task<Request> GetRequest(int id, CancellationToken cancellationToken) =>
+        public Task<Request?> GetRequest(int id, CancellationToken cancellationToken) =>
             _context.Requests
                 .Include(_ => _.User)
                 .Include(_ => _.Transactions)

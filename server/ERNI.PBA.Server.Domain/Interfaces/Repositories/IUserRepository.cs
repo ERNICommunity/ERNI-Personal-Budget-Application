@@ -8,13 +8,11 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task<User> GetUser(int id, CancellationToken cancellationToken);
+        Task<User?> GetUser(int id, CancellationToken cancellationToken);
 
-        Task<User> GetUser(Guid id, CancellationToken cancellationToken);
+        Task<User?> GetUser(Guid id, CancellationToken cancellationToken);
 
-        Task<User> GetUser(string sub, CancellationToken cancellationToken);
-
-        Task<User> GetAsync(string username);
+        Task<User?> GetAsync(string username);
 
         Task<User[]> GetAllUsers(CancellationToken cancellationToken);
 

@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -31,7 +31,8 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter} not found");
             }
 
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
             if (!principal.IsInRole(Roles.Admin) && user.Id != budget.UserId)
             {
                 throw AppExceptions.AuthorizationException();

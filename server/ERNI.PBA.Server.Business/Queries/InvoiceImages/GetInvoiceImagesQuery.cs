@@ -37,7 +37,8 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
 
             if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId)
             {

@@ -41,7 +41,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
             }
 
-            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                ?? throw AppExceptions.AuthorizationException();
+
             if (currentUser.Id != request.User.Id)
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
@@ -57,7 +59,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(budgetId, cancellationToken);
 
             var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
-            if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
+            if (budget == null || budget.BudgetType == BudgetTypeEnum.TeamBudget)
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }

@@ -14,7 +14,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public TeamBudgetFacade(DatabaseContext context) => _context = context;
 
-        public Task<Request> GetTeamRequest(int requestId, CancellationToken cancellationToken) =>
+        public Task<Request?> GetTeamRequest(int requestId, CancellationToken cancellationToken) =>
             _context.Requests.Where(_ =>
                     _.Transactions.Any(t => t.Budget.BudgetType == BudgetTypeEnum.TeamBudget) && _.Id == requestId)
                 .Include(r => r.Transactions).ThenInclude(t => t.Budget).ThenInclude(r => r.User)

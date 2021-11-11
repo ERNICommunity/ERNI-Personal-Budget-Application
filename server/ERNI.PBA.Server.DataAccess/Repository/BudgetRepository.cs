@@ -17,14 +17,12 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public async Task AddBudgetAsync(Budget budget) => await _context.Budgets.AddAsync(budget);
 
-        public Task<Budget> GetBudget(int budgetId, CancellationToken cancellationToken)
-        {
-            return _context.Budgets
+        public Task<Budget?> GetBudget(int budgetId, CancellationToken cancellationToken) =>
+            _context.Budgets
                 .Include(_ => _.User)
                 .Include(_ => _.Transactions)
                 .ThenInclude(_ => _.Request)
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
-        }
 
         public async Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {

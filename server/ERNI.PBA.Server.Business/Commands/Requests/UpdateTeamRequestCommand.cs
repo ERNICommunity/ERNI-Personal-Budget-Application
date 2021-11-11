@@ -49,7 +49,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Only pending requests can be updated.");
             }
 
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
 
             if (user.Id != request.UserId)
             {

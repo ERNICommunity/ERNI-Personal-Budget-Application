@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Security;
 
@@ -19,7 +20,8 @@ namespace ERNI.PBA.Server.Business.Queries.Users
 
         protected override async Task<IEnumerable<UserModel>> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
             var users = principal.IsInRole(Roles.Admin)
                 ? await _userRepository.GetAllUsers(cancellationToken)
                 : await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);

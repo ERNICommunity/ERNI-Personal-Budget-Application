@@ -36,7 +36,8 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
         protected override async Task<int> Execute(NewTeamRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
-            var user = await _userRepository.GetUser(userId, cancellationToken);
+            var user = await _userRepository.GetUser(userId, cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
 
             var currentYear = DateTime.Now.Year;
 

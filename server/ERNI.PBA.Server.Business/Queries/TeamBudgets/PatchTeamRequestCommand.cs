@@ -37,9 +37,11 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
         {
             var userId = principal.GetId();
 
-            var user = await _userRepository.GetUser(userId, cancellationToken);
+            var user = await _userRepository.GetUser(userId, cancellationToken)
+                       ?? throw AppExceptions.AuthorizationException();
 
-            var request = await _requestRepository.GetRequest(parameter.RequestId, cancellationToken);
+            var request = await _requestRepository.GetRequest(parameter.RequestId, cancellationToken)
+                          ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
 
             if (!principal.IsInRole(Roles.Admin))
             {

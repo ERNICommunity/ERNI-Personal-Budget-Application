@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,7 +43,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
-            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                              ?? throw new UnauthorizedAccessException();
             if (currentUser.Id != request.User.Id)
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");

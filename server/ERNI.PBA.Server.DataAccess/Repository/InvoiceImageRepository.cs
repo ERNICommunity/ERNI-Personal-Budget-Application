@@ -31,7 +31,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public async Task AddInvoiceImage(InvoiceImage invoiceImage, CancellationToken cancellationToken) =>
             await _context.InvoiceImages.AddAsync(invoiceImage, cancellationToken);
 
-        public async Task<InvoiceImage> GetInvoiceImage(int imageId, CancellationToken cancellationToken) =>
+        public async Task<InvoiceImage?> GetInvoiceImage(int imageId, CancellationToken cancellationToken) =>
             await _context.InvoiceImages.FirstOrDefaultAsync(image => image.Id == imageId, cancellationToken);
 
         public async Task<(int requestId, int invoiceCount)[]> GetInvoiceCounts(int[] requestIds,
