@@ -12,6 +12,11 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK'
+  inputs:
+    useGlobalJson: true
+
 steps:
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
