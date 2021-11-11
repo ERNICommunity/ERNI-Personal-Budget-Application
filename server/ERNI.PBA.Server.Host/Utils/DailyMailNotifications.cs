@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -47,7 +48,7 @@ namespace ERNI.PBA.Server.Host.Utils
 
                 foreach (var request in pendingRequests)
                 {
-                    msg.AppendLine($"   {request}");
+                    msg.AppendLine(CultureInfo.InvariantCulture, $"   {request}");
                 }
 
                 _mailService.SendMail(msg.ToString(), mail);
