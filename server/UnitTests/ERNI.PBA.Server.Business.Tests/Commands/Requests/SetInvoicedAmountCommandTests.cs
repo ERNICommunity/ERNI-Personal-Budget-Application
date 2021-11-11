@@ -25,7 +25,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Requests
         {
             var userId = "F8CF50DB-16C3-4545-B868-A7410020B01D";
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new [] {new Claim(UserClaims.Id, userId) }));
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(UserClaims.Id, userId) }));
 
             var token = CancellationToken.None;
             var userRepository = new Mock<IUserRepository>();
@@ -41,8 +41,8 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Requests
                 Id = 42,
                 State = RequestState.Approved,
                 Amount = 100,
-                User = new User {Id = 56},
-                Transactions = new[] {new Transaction()}
+                User = new User { Id = 56 },
+                Transactions = new[] { new Transaction() }
             };
 
             var requestRepository = new Mock<IRequestRepository>();

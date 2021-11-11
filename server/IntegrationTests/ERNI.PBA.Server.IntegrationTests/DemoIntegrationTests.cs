@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Host;
@@ -13,14 +12,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ERNI.PBA.Server.IntegrationTests
 {
     [TestClass]
-    public class IntegrationTests
+    public class DemoIntegrationTests
     {
         private readonly CustomWebApplicationFactory<Startup> _factory;
 
-        public IntegrationTests()
-        {
-            _factory = new CustomWebApplicationFactory<Startup>();
-        }
+        public DemoIntegrationTests() => _factory = new CustomWebApplicationFactory<Startup>();
 
         [TestMethod]
         public async Task GetBudgetTypes()

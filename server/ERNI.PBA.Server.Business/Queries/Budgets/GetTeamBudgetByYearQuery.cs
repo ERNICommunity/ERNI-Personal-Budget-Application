@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -10,7 +10,6 @@ using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Responses;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
