@@ -9,6 +9,7 @@ import { combineLatest, forkJoin, of, Observable } from 'rxjs';
 import { DataChangeNotificationService } from '../services/dataChangeNotification.service';
 import { TeamBudgetService } from '../services/team-budget.service';
 import { catchError, map } from 'rxjs/operators';
+import { MenuItem } from 'primeng/api/menuitem';
 
 @Component({
     selector: 'app-my-Budget',
@@ -18,9 +19,11 @@ import { catchError, map } from 'rxjs/operators';
 export class MyBudgetComponent implements OnInit {
     budgets: Budget[];
     userState = UserState;
+
+    years: MenuItem[];
+    selectedYear: MenuItem;  
+
     currentYear: number;
-    selectedYear: number;
-    years: number[];
     rlao: object;
 
     constructor(
@@ -34,7 +37,10 @@ export class MyBudgetComponent implements OnInit {
         this.currentYear = (new Date()).getFullYear();
 
         for (var year = this.currentYear; year >= config.getOldestYear; year--) {
-            this.years.push(year);
+            this.years.push({
+                label: year.toString(),
+                routerLink: ["/my-budget", year],
+            });
         }
     }
 
@@ -47,9 +53,9 @@ export class MyBudgetComponent implements OnInit {
             //var yearParam = this.route.snapshot.paramMap.get('year');
             var yearParam = params['year'];
 
-            this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
+            this.selectedYear = this.years.find(_ => _.label == (yearParam != null ? parseInt(yearParam) : this.currentYear).toString());
 
-            this.getBudgets(this.selectedYear);
+            this.getBudgets((yearParam != null ? parseInt(yearParam) : this.currentYear));
         });
     }
 

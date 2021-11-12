@@ -11,8 +11,9 @@ import { DataChangeNotificationService } from "../services/dataChangeNotificatio
 })
 export class TeamBudgetComponent implements OnInit {
   years: MenuItem[];
+  selectedYear: MenuItem;
+
   currentYear: number;
-  selectedYear: number;
 
   rlao: object;
 
@@ -44,8 +45,8 @@ export class TeamBudgetComponent implements OnInit {
       //var yearParam = this.route.snapshot.paramMap.get('year');
       var yearParam = params["year"];
 
-      this.selectedYear =
-        yearParam != null ? parseInt(yearParam) : this.currentYear;
+      this.selectedYear = this.years.find(_ => _.label == (yearParam != null ? parseInt(yearParam) : this.currentYear).toString());
+        
     });
   }
 }

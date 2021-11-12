@@ -7,6 +7,7 @@ import { ConfigService } from "../../services/config.service";
 import { BudgetType } from "../../model/budgetType";
 import { User } from "../../model/user";
 import { AlertService } from "../../services/alert.service";
+import { MenuItem } from "primeng/api/menuitem";
 
 @Component({
   selector: "app-other-budgets",
@@ -18,9 +19,6 @@ export class OtherBudgetsComponent implements OnInit {
   budgets: Budget[];
   filteredBudgets: Budget[];
   amount: number;
-  year: number;
-  currentYear: number;
-  selectedYear: number;
   selectedUserId: number;
   budgetTitle: string;
 
@@ -28,7 +26,10 @@ export class OtherBudgetsComponent implements OnInit {
 
   availableUsers: User[];
 
-  years: number[];
+  years: MenuItem[];
+  selectedYearItem: MenuItem;
+  selectedYear: number;
+
   rlao: object;
   disableSetOrEditBudgets: boolean;
   private _searchTerm: string;
@@ -74,34 +75,29 @@ export class OtherBudgetsComponent implements OnInit {
     private config: ConfigService
   ) {
     this.years = [];
-    this.currentYear = new Date().getFullYear();
-
-    for (
-      var year = this.currentYear + 1;
-      year >= config.getOldestYear;
-      year--
-    ) {
-      this.years.push(year);
-    }
+    
   }
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
-      // the following line forces routerLinkActive to update even if the route did nto change
-      // see see https://github.com/angular/angular/issues/13865 for futher info
-      this.rlao = { dummy: true };
+      var currentYear = new Date().getFullYear();
 
-      //var yearParam = this.route.snapshot.paramMap.get('year');
-      var yearParam = params["year"];
-
-      this.selectedYear =
-        yearParam != null ? parseInt(yearParam) : this.currentYear;
+      this.selectedYear = params["year"] != null ? parseInt(params["year"]) : currentYear;
 
       this.selectedBudgetType = Number(params["budgetType"]);
 
-      if (
-        this.selectedYear == this.currentYear ||
-        this.selectedYear == this.currentYear + 1
+      this.years = [];
+      for (var year = new Date().getFullYear() + 1; year >= this.config.getOldestYear; year--) {
+        this.years.push({
+          label: year.toString(),
+          routerLink: ["/other-budgets/", year, this.selectedBudgetType],
+        });
+      }
+
+      this.selectedYearItem = this.years.find(_ => _.label == this.selectedYear.toString());
+
+      if (this.selectedYear == currentYear ||
+        this.selectedYear == currentYear + 1
       ) {
         this.disableSetOrEditBudgets = false;
       } else {
@@ -121,7 +117,6 @@ export class OtherBudgetsComponent implements OnInit {
   }
 
   getActiveUsersBudgets(year: number): void {
-    this.year = year;
     this.budgetService.getCurrentUsersBudgets(year).subscribe((budgets) => {
       this.budgets = budgets;
       this.filteredBudgets = budgets.filter((b) => {

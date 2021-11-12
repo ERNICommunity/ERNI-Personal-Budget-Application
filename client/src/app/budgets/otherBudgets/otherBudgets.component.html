@@ -1,13 +1,7 @@
-<h2>Other Budgets - {{year}}</h2>
+<h2>Other Budgets - {{selectedYear}}</h2>
 
-<ul class="nav nav-pills">
-    <li class="nav-item" *ngFor="let year of years">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
-            [routerLink]="['/other-budgets', year, selectedBudgetType]">
-            {{year}}
-        </a>
-    </li>
-</ul>
+<p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
+<hr>
 
 <ul class="nav nav-pills">
     <li class="nav-item" *ngFor="let budgetType of budgetTypes">

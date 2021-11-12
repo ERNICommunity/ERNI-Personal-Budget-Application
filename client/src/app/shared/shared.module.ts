@@ -15,10 +15,11 @@ import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PanelModule } from 'primeng/panel';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { BrowserModule } from "@angular/platform-browser";
 
 @NgModule({
   declarations: [AlertComponent, FileUploadComponent],
-  imports: [CommonModule, FormsModule, DividerModule, BrowserAnimationsModule,
+  imports: [CommonModule, FormsModule, DividerModule, BrowserModule, BrowserAnimationsModule,
   ],
   exports: [
     CommonModule,
@@ -28,7 +29,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
     InputTextModule,
     InputTextareaModule,
     InputNumberModule,
-    DialogModule,
+    DialogModule,    
     StepsModule,
     ButtonModule,
     ProgressSpinnerModule,
