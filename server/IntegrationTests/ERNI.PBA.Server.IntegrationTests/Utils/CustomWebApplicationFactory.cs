@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Autofac.Extensions.DependencyInjection;
 using ERNI.PBA.Server.DataAccess;
@@ -39,17 +39,17 @@ namespace ERNI.PBA.Server.IntegrationTests.Utils
                 var logger = scopedServices
                     .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 
-                    db.Database.EnsureCreated();
+                db.Database.EnsureCreated();
 
-                    try
-                    {
-                        //Utilities.InitializeDbForTests(db);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                                            "database with test messages. Error: {Message}", ex.Message);
-                    }
+                try
+                {
+                    //Utilities.InitializeDbForTests(db);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred seeding the " +
+                                        "database with test messages. Error: {Message}", ex.Message);
+                    throw;
                 }
             });
         }
