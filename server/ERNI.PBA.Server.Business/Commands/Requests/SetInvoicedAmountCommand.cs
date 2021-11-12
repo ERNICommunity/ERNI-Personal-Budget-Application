@@ -39,7 +39,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var request = await _requestRepository.GetRequest(parameter.requestId, cancellationToken);
             if (request == null)
             {
-                _logger.LogWarning("Not a valid id");
+                _logger.RequestNotFound(parameter.requestId);
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
@@ -52,7 +52,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             if (request.State != RequestState.Approved)
             {
-                _logger.LogWarning("Validation failed");
                 throw new OperationErrorException(ErrorCodes.RequestNotApproved, "Request is not in approved state.");
             }
 

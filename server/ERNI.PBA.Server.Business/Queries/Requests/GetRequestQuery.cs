@@ -1,6 +1,8 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
@@ -14,6 +16,11 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
 {
     public class GetRequestQuery : Query<int, Request>, IGetRequestQuery
     {
+        private static readonly Action<ILogger, int, int, Exception?> _userNotFound = LoggerMessage.Define<int, int>(
+            LogLevel.Information,
+            new EventId(1, nameof(UpdateUserCommand)),
+            "Unauthorized access for {UserId} to request {RequestId}");
+
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILogger _logger;
@@ -33,7 +40,8 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
             var request = await _requestRepository.GetRequest(parameter, cancellationToken);
             if (request == null)
             {
-                _logger.LogWarning("Not a valid id");
+                _logger.RequestNotFound(parameter);
+
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
@@ -42,7 +50,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
 
             if (currentUser.Id != request.User.Id && !principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance))
             {
-                _logger.LogWarning("No access for request!");
+                _userNotFound(_logger, currentUser.Id, parameter, null);
                 throw AppExceptions.AuthorizationException();
             }
 

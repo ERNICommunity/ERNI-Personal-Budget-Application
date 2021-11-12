@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
@@ -32,7 +33,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
 
             if (user == null)
             {
-                _logger.LogWarning("Not a valid id");
+                _logger.UserNotFound(parameter.Id);
 
                 throw new OperationErrorException(ErrorCodes.UserNotFound, "Not a valid id");
             }
