@@ -5,7 +5,7 @@ import { User } from '../model/user';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { switchMap } from 'rxjs/operators';
-import { UserUpdateModel } from '../model/UserUpdateModel';
+import { UserUpdateModel } from '../model/userUpdateModel';
 
 @Injectable()
 export class UserService {
