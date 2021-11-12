@@ -1,10 +1,13 @@
-﻿using ClosedXML.Excel;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using ClosedXML.Excel;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.Rmt.ExcelExport
 {
@@ -16,10 +19,20 @@ namespace ERNI.Rmt.ExcelExport
 
         public async Task Export(Stream stream, int year, int month, CancellationToken cancellationToken)
         {
-            var transactions = await _requestRepository.GetRequests(year, month, BudgetTypeEnum.PersonalBudget);
+            var transactions = (await _requestRepository.GetRequests(year, month, BudgetTypeEnum.PersonalBudget))
+                .ToLookup(_ => _.Request.State);
 
             using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add($"PBA export {month}-{year}");
+
+            AddSheet(workbook, $"Approved {month}-{year}", transactions[RequestState.Approved]);
+            AddSheet(workbook, $"Completed {month}-{year}", transactions[RequestState.Completed]);
+
+            workbook.SaveAs(stream);
+        }
+
+        private static void AddSheet(XLWorkbook workbook, string title, IEnumerable<Transaction> transactions)
+        {
+            var worksheet = workbook.Worksheets.Add(title);
             worksheet.Cell("A1").Value = "Approved";
             worksheet.Cell("B1").Value = "Last name";
             worksheet.Cell("C1").Value = "First name";
@@ -42,8 +55,6 @@ namespace ERNI.Rmt.ExcelExport
                     worksheet.Column(i).AdjustToContents();
                 }
             }
-
-            workbook.SaveAs(stream);
         }
     }
 }
