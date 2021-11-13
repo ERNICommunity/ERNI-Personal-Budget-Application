@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { AdminRoleGuard } from '../services/guards/admin-role.guard';
 import { UserState } from '../model/userState';
 import { MsalGuard } from '@azure/msal-angular';
+import { SharedModule } from '../shared/shared.module'
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { MsalGuard } from '@azure/msal-angular';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    SharedModule,
     RouterModule.forChild([
       {
         path: 'users', component: UsersComponent, canActivate: [AdminRoleGuard],

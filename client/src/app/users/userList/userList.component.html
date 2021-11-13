@@ -26,18 +26,17 @@
     </li>
 </ul>
 
-<table class="table">
-    <thead>
+<p-table [value]="filteredUsers" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
         <tr>
             <th scope="col">#</th>
             <th scope="col">Last</th>
             <th scope="col">First</th>
             <th scope="col"></th>
         </tr>
-    </thead>
-    <tbody>
-
-        <tr *ngFor="let user of filteredUsers">
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+        <tr>
             <th>{{user.id}}</th>
             <td>{{user.lastName}}</td>
             <td>{{user.firstName}}</td>
@@ -61,5 +60,5 @@
                 </a>
             </td>
         </tr>
-    </tbody>
-</table>
+    </ng-template>
+</p-table>

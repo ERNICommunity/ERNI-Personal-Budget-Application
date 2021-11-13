@@ -7,28 +7,21 @@
     </a>
   </ng-template>
 
-  <!-- <a class="float-right" [routerLink]="'create-request'">
-                  Remove request
-              </a></div> -->
-  <!-- <h5 class="card-title">{{budget.title}}</h5>
-  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-  <a href="#" class="btn btn-primary">Go somewhere</a> -->
   <p><b>Amount:</b> {{request.totalAmount}}</p>
   <p><b>Date:</b> {{request.createDate}}</p>
 
-  <table class="table">
-    <thead>
+  <p-table [value]="request.transactions" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Spent</th>
       </tr>
-    </thead>
-    <tbody>
-      <tr [ngClass]="transaction.isTeamMember ? 'table-success' : 'table-primary'"
-        *ngFor="let transaction of request.transactions">
+    </ng-template>
+    <ng-template pTemplate="body" let-transaction>
+      <tr [ngClass]="transaction.isTeamMember ? 'table-success' : 'table-primary'">
         <td>{{transaction.lastName}} {{transaction.firstName}}</td>
         <td>{{transaction.amount}}</td>
       </tr>
-    </tbody>
-  </table>
+    </ng-template>
+    </p-table>
 </p-panel>

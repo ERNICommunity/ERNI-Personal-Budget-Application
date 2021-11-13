@@ -15,13 +15,14 @@ import { MenuItem } from "primeng/api/menuitem";
   styleUrls: ["./otherBudgets.component.css"],
 })
 export class OtherBudgetsComponent implements OnInit {
-  budgetTypes: BudgetType[];
   budgets: Budget[];
   filteredBudgets: Budget[];
   amount: number;
   selectedUserId: number;
   budgetTitle: string;
 
+  budgetTypes: MenuItem[];
+  selectedBudgetTypeItem: MenuItem;
   selectedBudgetType: number;
 
   availableUsers: User[];
@@ -112,7 +113,20 @@ export class OtherBudgetsComponent implements OnInit {
     });
 
     this.budgetService.getBudgetsTypes().subscribe((types) => {
-      this.budgetTypes = types;
+      this.budgetTypes = [];
+      var dict = [];
+
+      types.forEach((type) => {
+        var item = {
+          label: type.name,
+          routerLink: [ "/other-budgets/", this.selectedYear.toString(), type.id, ],
+        };
+        this.budgetTypes.push(item);
+
+        dict[type.id] = item;
+      });
+
+      this.selectedBudgetTypeItem = dict[this.selectedBudgetType];
     });
   }
 

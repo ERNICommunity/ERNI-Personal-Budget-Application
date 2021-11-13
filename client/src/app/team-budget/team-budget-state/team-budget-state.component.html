@@ -1,30 +1,20 @@
-
 <p-panel header="Team members budgets">
-      <!-- <h5 class="card-title">{{budget.title}}</h5>
-  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-  <a href="#" class="btn btn-primary">Go somewhere</a> -->
-
-      <table class="table">
-          <thead>
-              <tr>
-                  <th scope="col"  style="width: 55%">Name</th>
-                  <th scope="col" style="width: 15%">Spent</th>
-                  <th scope="col" style="width: 15%">Left</th>
-                  <th scope="col" style="width: 15%">Total amount</th>
-              </tr>
-          </thead>
-          <tbody>
-
-            <tr *ngFor="let budget of teamBudgets">
-              <td>{{budget.employee.lastName}} {{budget.employee.firstName}}</td>
-              <td>{{budget.budgetSpent}}</td>
-              <td>{{budget.budgetLeft}}</td>
-              <td>{{budget.budgetTotal}}</td>
-          </tr>
-          </tbody>
-      </table>
-  <!-- <div class="card-footer text-muted">
-      <ngb-progressbar height="30px" type="primary" [value]="100 * budget.amountLeft / budget.amount">
-          {{budget.amountLeft}} € left out of {{budget.amount}}</ngb-progressbar>
-  </div> -->
+    <p-table [value]="teamBudgets">
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col" style="width: 55%">Name</th>
+                <th scope="col" style="width: 15%">Spent</th>
+                <th scope="col" style="width: 15%">Left</th>
+                <th scope="col" style="width: 15%">Total amount</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-budget>
+            <tr>
+                <td>{{budget.employee.lastName}} {{budget.employee.firstName}}</td>
+                <td>{{budget.budgetSpent}}</td>
+                <td>{{budget.budgetLeft}}</td>
+                <td>{{budget.budgetTotal}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
 </p-panel>

@@ -18,6 +18,10 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { BrowserModule } from "@angular/platform-browser";
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from "primeng/api";
+import {TableModule} from 'primeng/table';
+import {ToolbarModule} from 'primeng/toolbar';
+import {ProgressBarModule} from 'primeng/progressbar';
+
 
 @NgModule({
   declarations: [AlertComponent, FileUploadComponent],
@@ -32,10 +36,13 @@ import { MessageService } from "primeng/api";
     InputTextareaModule,
     InputNumberModule,
     DialogModule,
-    ToastModule,    
+    ToastModule,
+    ToolbarModule,
+    TableModule,       
     StepsModule,
     ButtonModule,
     ProgressSpinnerModule,
+    ProgressBarModule,
     AlertComponent,
     FileUploadComponent,
     PanelModule,
