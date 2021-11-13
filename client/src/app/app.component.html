@@ -1,72 +1,70 @@
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark">
-    <a class="navbar-brand" href="#">
-        PBA
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav>
+    <ul class="home">
+        <li>
+            <a routerLink="/">
+                PBA
+            </a>
+        </li>
+    </ul>
+    <ul class="menu" *ngIf="(authService.userInfo$ | async)">
+        <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link" routerLink="/my-budget">
+                My budget
+            </a>
+        </li>
+        <li [routerLinkActive]="['active']"
+            *ngIf="(authService.userInfo$ | async)?.isSuperior || (authService.userInfo$ | async)?.isAdmin">
+            <a routerLink="/team-budget">
+                Team budget
+            </a>
+        </li>
+        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
+            <a routerLink="/other-budgets">
+                Other Budgets
+            </a>
+        </li>
+        <li [routerLinkActive]="['active']"
+            *ngIf="(authService.userInfo$ | async)?.isAdmin || (authService.userInfo$ | async)?.isFinance">
+            <a routerLink="/requests">
+                Requests
+            </a>
+        </li>
+        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
+            <a routerLink="/mass-request">
+                Mass Request
+            </a>
+        </li>
+        <li *ngIf="(authService.userInfo$ | async)?.isAdmin">
+            <a routerLink="/users">
+                Employees
+            </a>
+        </li>
+        <li>
+            <a href="https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx" target="_blank"
+                class="nav-link">
+                Conditions of use
+            </a>
+        </li>
+    </ul>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto"  *ngIf="(authService.userInfo$ | async)">
-            <li class="nav-item" [routerLinkActive]="['active']">
-                <a class="nav-link" routerLink="/my-budget">
-                    My budget
-                </a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isSuperior || (authService.userInfo$ | async)?.isAdmin">
-              <a class="nav-link" routerLink="/team-budget">
-                  Team budget
-              </a>
-          </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-                <a class="nav-link" routerLink="/other-budgets">
-                    Other Budgets
-                </a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin || (authService.userInfo$ | async)?.isFinance">
-                <a class="nav-link" routerLink="/requests">
-                    Requests
-                </a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-                <a class="nav-link" routerLink="/mass-request">
-                    Mass Request
-                </a>
-            </li>
-            <li class="nav-item" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-                <a class="nav-link" routerLink="/users">
-                    Employees
-                </a>
-            </li>
-            <li class="nav-item float-right">
-                <a href="https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx"
-                    target="_blank" class="nav-link">
-                    Conditions of use
-                </a>
-            </li>
-        </ul>
-
-        <ul class="navbar-nav float-right" *ngIf="(authService.userInfo$ | async)">
-            <!-- *ngIf="adalService.userInfo"> -->
-            <li class="nav-item float-right">
-                <a class="nav-link">{{(authService.userInfo$ | async)?.name}}</a>
-            </li>
-            <li class="nav-item float-right">
-                <a href="" class="nav-link" (click)="logout()">
-                    Logout
-                </a>
-            </li>
-        </ul>
-    </div>
+    <ul class="user" *ngIf="(authService.userInfo$ | async)">
+        <li>
+            <a><i class="pi pi-user"></i>{{(authService.userInfo$ | async)?.name}}</a>
+        </li>
+        <li>
+            <a href="#" (click)="logout()">
+                <i class="pi pi-sign-out"></i> Logout
+            </a>
+        </li>
+    </ul>
 </nav>
 
-<div class="container">
-    <main>
-        <app-alert></app-alert>
-        <router-outlet></router-outlet>
-    </main>
-</div>
+<main>
+    <router-outlet></router-outlet>
+</main>
+
+<p-toast position="bottom-center"></p-toast>
+
 
 <div class="modal" tabindex="-1" role="dialog" [style.display]="busyIndicatorService.isBusy ? 'block' : 'none'">
     <div class="modal-dialog" role="document">

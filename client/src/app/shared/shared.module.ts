@@ -16,6 +16,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PanelModule } from 'primeng/panel';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { BrowserModule } from "@angular/platform-browser";
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from "primeng/api";
 
 @NgModule({
   declarations: [AlertComponent, FileUploadComponent],
@@ -29,7 +31,8 @@ import { BrowserModule } from "@angular/platform-browser";
     InputTextModule,
     InputTextareaModule,
     InputNumberModule,
-    DialogModule,    
+    DialogModule,
+    ToastModule,    
     StepsModule,
     ButtonModule,
     ProgressSpinnerModule,
@@ -38,5 +41,6 @@ import { BrowserModule } from "@angular/platform-browser";
     PanelModule,
     TabMenuModule,
   ],
+  providers: [MessageService]
 })
 export class SharedModule {}
