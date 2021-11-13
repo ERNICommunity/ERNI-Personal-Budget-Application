@@ -10,17 +10,17 @@
     nav {
       display: flex;
       align-items: center;
-      background-color: #ddeaee;
+      background-color: rgb(52, 58, 64);
       border-bottom: 2px solid #033778;
       font-weight: 400;
       a {
-        color: #3c3c3c;
+        color: rgba(255,255,255,.5);
         text-decoration: none;
         white-space: nowrap;
         display: inline-block;
         font-size: 1rem;
         &:hover {
-          color: #033778;
+          color: #ffffff;
         }
       }
       ul {
@@ -41,7 +41,7 @@
           display: flex;
           margin-left: auto;
           i.pi {
-            color: #033778;
+            color: rgba(255,255,255,.5);
             margin-right: 0.5rem;
           }
         }
@@ -49,7 +49,7 @@
           display: block;
           margin: 0 0.5rem 0 0.5rem;
           &.active a {
-            color: #033778;
+            color: #ffffff;
             font-weight: 700;
           }
           a {
