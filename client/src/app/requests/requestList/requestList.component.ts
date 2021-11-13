@@ -14,6 +14,7 @@ import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
 import { ApprovalStateModel } from '../../shared/model/approvalStateModel';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { MenuItem } from 'primeng/api/menuitem';
 
 @Component({
     selector: 'app-request-list',
@@ -35,9 +36,10 @@ export class RequestListComponent implements OnInit {
     requestFilter: ApprovalStateModel;
     requestFilterType = RequestApprovalState;
 
+    years: MenuItem[];
+    selectedYearItem: MenuItem;
     selectedYear: number;
-    currentYear: number;
-    years: number[];
+
     rlao: object;
     selectedBudgetType: BudgetType;
 
@@ -78,22 +80,18 @@ export class RequestListComponent implements OnInit {
         private route: ActivatedRoute,
         private modalService: NgbModal,
         private exportService: ExportService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private config: ConfigService
     ) {
-
-        this.years = [];
-        this.currentYear = (new Date()).getFullYear();
-
-        // TODO: do not hardcode year
-        for (var year = this.currentYear; year >= 2018; year--) {
-            this.years.push(year);
-        }
         this.approvalStates = this.getFilter();
         this.requestFilter = this.approvalStates[0];
         console.log(this.requestFilter);
     }
 
     async ngOnInit() {
+        var currentYear = (new Date()).getFullYear();
+
+
         var types = await this.budgetService.getBudgetsTypes().toPromise();
         this.budgetTypes = types;
         this.selectedBudgetType = this.budgetTypes[0];
@@ -103,7 +101,16 @@ export class RequestListComponent implements OnInit {
 
             this.selectedBudgetType = this.budgetTypes.find(b => b.key == params['budgetType']) ?? this.budgetTypes[0];
 
-            this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
+            this.years = [];
+            for (var year = new Date().getFullYear() + 1; year >= this.config.getOldestYear; year--) {
+                this.years.push({
+                    label: year.toString(),
+                    routerLink: ["/requests/", this.selectedBudgetType.key, this.requestFilter.key, year],
+                });
+            }
+
+            this.selectedYear = yearParam != null ? parseInt(yearParam) : currentYear;
+            this.selectedYearItem = this.years.find(_ => _.label == this.selectedYear.toString());
 
             this.requestFilter = 
                 this.approvalStates.find(f => f.key == params['requestState']) ?? this.approvalStates[0];

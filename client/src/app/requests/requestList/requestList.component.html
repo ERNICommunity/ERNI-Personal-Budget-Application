@@ -1,17 +1,7 @@
 <h2>{{requestFilter?.name}} requests</h2>
 
-<ul class="nav nav-pills">
-    <li
-        class="nav-item"
-        *ngFor="let year of years">
-        <a
-            class="nav-link"
-            [routerLinkActive]="['active']"
-            [routerLink]="['/requests', selectedBudgetType?.key, requestFilter.key, year]">
-            {{year}}
-        </a>
-    </li>
-</ul>
+<p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
+<hr>
 
 <div class="row">
     <div class="col">
