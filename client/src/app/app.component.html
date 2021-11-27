@@ -34,9 +34,14 @@
                 Mass Request
             </a>
         </li>
-        <li *ngIf="(authService.userInfo$ | async)?.isAdmin">
+        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
             <a routerLink="/users">
                 Employees
+            </a>
+        </li>
+        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
+            <a routerLink="/statistics">
+                Statistics
             </a>
         </li>
         <li>

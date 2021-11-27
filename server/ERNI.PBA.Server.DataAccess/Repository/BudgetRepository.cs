@@ -98,5 +98,14 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .Select(_ => (_.BudgetId, _.TotalAmount))
                 .ToArray();
         }
+
+        public async Task<(BudgetTypeEnum type, int count, decimal total, decimal totalSpent)[]> GetBudgetStats(int year)
+        {
+            return (await _context.Budgets.Where(_ => _.Year == year).GroupBy(_ => _.BudgetType)
+                .Select(x => new { type = x.Key, count = x.Count(), total = x.Sum(b => b.Amount), spent = x.SelectMany(b => b.Transactions.Select(t => t.Amount)).Sum() })
+                .ToArrayAsync())
+                .Select(x => (x.type, x.count, x.total, x.spent))
+                .ToArray();
+        }
     }
 }

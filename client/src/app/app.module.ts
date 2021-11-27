@@ -48,6 +48,8 @@ import {
 import { UsersModule } from "./users/users.module";
 import { BudgetsModule } from "./budgets/budgets.module";
 import { SharedModule } from "./shared/shared.module";
+import { StatisticsModule } from "./statistics/statistics.module";
+import { StatisticsService } from "./services/statistics.service";
 
 @NgModule({
   declarations: [
@@ -69,7 +71,8 @@ import { SharedModule } from "./shared/shared.module";
     RequestsModule,
     UsersModule,
     BudgetsModule,
-    TeamBudgetModule
+    TeamBudgetModule,
+    StatisticsModule
   ],
   entryComponents: [
     RequestDetailComponent,
@@ -86,6 +89,7 @@ import { SharedModule } from "./shared/shared.module";
     BusyIndicatorService,
     DataChangeNotificationService,
     InvoiceImageService,
+    StatisticsService,
     ViewerGuard,
     AuthenticationService,
     {
