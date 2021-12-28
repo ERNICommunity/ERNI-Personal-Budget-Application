@@ -15,8 +15,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class CreateUserComponent implements OnInit {
     superiors: User[];
-    years: number[];
-    currentYear: number;
     createForm: FormGroup;
     submitted: boolean = false;
     errorMessage: string;
@@ -25,46 +23,24 @@ export class CreateUserComponent implements OnInit {
         private router: Router,
         private formBuilder: FormBuilder,
         private userService: UserService,
-        private configService: ConfigService,
         private alertService: AlertService,
-        public busyIndicatorService: BusyIndicatorService) {
-    }
+        public busyIndicatorService: BusyIndicatorService
+    ) {}
 
     ngOnInit() {
-        this.years = [];
-        this.currentYear = (new Date()).getFullYear();
-
-        for (var year = this.currentYear; year >= this.configService.getOldestYear; year--) {
-            this.years.push(year);
-        }
-
         this.createForm = this.formBuilder.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            amount: [''],
-            year: [this.currentYear],
             superior: [''],
             state: ['', [Validators.required]]
         });
 
-        this.createForm.get('state').valueChanges.subscribe(state => {
-            this.controls.amount.setValidators(null);
-            this.controls.year.setValidators(null);
-
-            if (state == 1) {
-                this.controls.amount.setValidators([Validators.required]);
-                this.controls.year.setValidators([Validators.required]);
-            }
-
-            this.controls.amount.updateValueAndValidity();
-            this.controls.year.updateValueAndValidity();
+        this.userService.getAllUsers().subscribe((users) => {
+            this.superiors = users.sort((first, second) =>
+                first.lastName.localeCompare(second.lastName)
+            );
         });
-
-        this.userService.getAllUsers().subscribe(
-            users => {
-                this.superiors = users.sort((first, second) => first.lastName.localeCompare(second.lastName));
-            });
     }
 
     get controls() {
@@ -89,26 +65,26 @@ export class CreateUserComponent implements OnInit {
             firstName: this.controls.firstName.value,
             lastName: this.controls.lastName.value,
             email: this.controls.email.value,
-            amount: this.controls.amount.value ? this.controls.amount.value : 0,
-            year: this.controls.year.value ? this.controls.year.value : 0,
             superior: Number(this.controls.superior.value),
             state: Number(this.controls.state.value)
         };
 
-        this.userService.createUser(userData).subscribe(
-            () => {
-                this.alertService.success("User successfully was created.");
-                this.router.navigate(['/users']);
-            },
-            (err: HttpErrorResponse) => {
-                let error = "User was not created.";
-                if (err.status === 409)
-                    error = "User is already exists.";
+        this.userService
+            .createUser(userData)
+            .subscribe(
+                () => {
+                    this.alertService.success('User successfully was created.');
+                    this.router.navigate(['/users']);
+                },
+                (err: HttpErrorResponse) => {
+                    let error = 'User was not created.';
+                    if (err.status === 409) error = 'User is already exists.';
 
-                this.alertService.error(error);
-            }
-        ).add(() => {
-            this.busyIndicatorService.end()
-        });
+                    this.alertService.error(error);
+                }
+            )
+            .add(() => {
+                this.busyIndicatorService.end();
+            });
     }
 }
