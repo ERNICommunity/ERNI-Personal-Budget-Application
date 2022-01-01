@@ -57,9 +57,16 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             request.State = parameter.requestState;
 
-            if (parameter.requestState == RequestState.Completed)
+#pragma warning disable IDE0010 // Add missing cases
+            switch (parameter.requestState)
+#pragma warning restore IDE0010 // Add missing cases
             {
-                request.ApprovedDate = DateTime.Now;
+                case RequestState.Approved:
+                    request.ApprovedDate = DateTime.Now;
+                    break;
+                case RequestState.Completed:
+                    request.CompletedDate = DateTime.Now;
+                    break;
             }
 
             await _unitOfWork.SaveChanges(cancellationToken);

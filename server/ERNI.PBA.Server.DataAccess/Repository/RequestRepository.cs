@@ -29,9 +29,10 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<Transaction[]> GetRequests(int year, int month, BudgetTypeEnum budgetType) =>
             _context
                 .Transactions
-                .Where(_ => _.Request.ApprovedDate!.Value.Year == year
-                            && _.Request.ApprovedDate.Value.Month == month
-                            && _.Budget.BudgetType == budgetType)
+                .Where(_ => ((_.Request.ApprovedDate!.Value.Year == year && _.Request.ApprovedDate.Value.Month == month)
+                    ||
+                    (_.Request.CompletedDate!.Value.Year == year && _.Request.CompletedDate.Value.Month == month))
+                    && _.Budget.BudgetType == budgetType)
                 .Include(_ => _.Request)
                 .ThenInclude(_ => _.User)
                 .ToArrayAsync();

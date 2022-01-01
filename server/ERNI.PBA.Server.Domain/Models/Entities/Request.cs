@@ -28,6 +28,8 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public DateTime? ApprovedDate { get; set; }
 
+        public DateTime? CompletedDate { get; set; }
+
         public DateTime? RejectedDate { get; set; }
 
         public RequestState State { get; set; }
