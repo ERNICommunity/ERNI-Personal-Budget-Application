@@ -86,6 +86,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 Date = parameter.Date.ToLocalTime(),
                 CreateDate = DateTime.Now,
                 State = RequestState.Approved,
+                RequestType = BudgetTypeEnum.TeamBudget,
                 Transactions = transactions
             };
 
