@@ -1,10 +1,5 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- develop
+- master
 
 pool:
   vmImage: ubuntu-latest
@@ -12,12 +7,24 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Install latest nuget'
+  inputs:
+    checkLatest: true
+
 - task: UseDotNet@2
   displayName: 'Use .NET SDK'
   inputs:
     useGlobalJson: true
 
-steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    projects: 'server/*.sln'
+
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
   inputs:
@@ -32,7 +39,17 @@ steps:
   inputs:
     command: 'test'
     projects: 'server/**/*UnitTest*.csproj'
+    publishWebProjects: false
+    arguments: '--collect:"XPlat Code Coverage"'
+    zipAfterPublish: false
+    modifyOutputPath: false
 
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    failIfCoverageEmpty: true
+    
 - task: ArchiveFiles@2
   displayName: 'Zip build artifacts'
   inputs:
