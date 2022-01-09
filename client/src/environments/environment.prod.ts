@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
-    apiBaseUrl: 'https://ernipbaserver.azurewebsites.net/api/',
+    apiBaseUrl: 'https://ernipbaserver-prod.azurewebsites.net/api/',
     protectedResourceMap: {
-        'https://ernipbaserver.azurewebsites.net/**': [
+        'https://ernipbaserver-prod.azurewebsites.net/**': [
             'api://536ddfb7-294a-4065-9be5-1c580d86fd42/pba_client'
         ]
     },
