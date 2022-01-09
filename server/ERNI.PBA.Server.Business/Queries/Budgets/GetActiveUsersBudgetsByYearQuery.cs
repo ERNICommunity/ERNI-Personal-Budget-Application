@@ -14,10 +14,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
     {
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetActiveUsersBudgetsByYearQuery(IBudgetRepository budgetRepository)
-        {
-            _budgetRepository = budgetRepository;
-        }
+        public GetActiveUsersBudgetsByYearQuery(IBudgetRepository budgetRepository) => _budgetRepository = budgetRepository;
 
         protected override async Task<IEnumerable<BudgetOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {

@@ -1,0 +1,67 @@
+trigger:
+- develop
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Install latest nuget'
+  inputs:
+    checkLatest: true
+
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK'
+  inputs:
+    useGlobalJson: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    projects: 'server/*.sln'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build $(buildConfiguration)'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'server/ERNI.PBA.Server.Host/ERNI.PBA.Server.Host.csproj'
+    arguments: '-c Release -r linux-x64 -o publish'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'server/**/*UnitTest*.csproj'
+    publishWebProjects: false
+    arguments: '--collect:"XPlat Code Coverage"'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    failIfCoverageEmpty: true
+    
+- task: ArchiveFiles@2
+  displayName: 'Zip build artifacts'
+  inputs:
+    rootFolderOrFile: 'publish'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

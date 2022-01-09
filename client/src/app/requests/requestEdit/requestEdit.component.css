@@ -1,0 +1,11 @@
+.hint {
+    color: grey;
+    margin-left: 20px;
+}
+div.fileLists{
+    display: block;
+    height: 150px;
+    overflow-y: auto;
+    list-style: none;
+    overflow-x: hidden;
+}

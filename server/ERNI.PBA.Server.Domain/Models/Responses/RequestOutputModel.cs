@@ -5,16 +5,16 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 {
     public class RequestOutputModel
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public string Title { get; set; }
+        public string Title { get; init; } = null!;
 
-        public decimal Amount { get; set; }
+        public decimal Amount { get; init; }
 
-        public DateTime Date { get; set; }
+        public DateTime Date { get; init; }
 
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; init; }
 
-        public RequestState State { get; set; }
+        public RequestState State { get; init; }
     }
 }

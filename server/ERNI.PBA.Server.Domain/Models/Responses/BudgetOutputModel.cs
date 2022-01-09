@@ -5,20 +5,20 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 {
     public class BudgetOutputModel
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public string Title { get; set; }
+        public string Title { get; init; } = null!;
 
-        public int Year { get; set; }
+        public int Year { get; init; }
 
-        public decimal Amount { get; set; }
+        public decimal Amount { get; init; }
 
-        public decimal AmountLeft { get; set; }
+        public decimal AmountLeft { get; init; }
 
-        public BudgetTypeEnum Type { get; set; }
+        public BudgetTypeEnum Type { get; init; }
 
-        public UserOutputModel User { get; set; }
+        public UserOutputModel User { get; init; } = null!;
 
-        public IEnumerable<RequestOutputModel> Requests { get; set; }
+        public IEnumerable<RequestOutputModel> Requests { get; init; } = null!;
     }
 }

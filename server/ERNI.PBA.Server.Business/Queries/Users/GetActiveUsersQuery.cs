@@ -15,10 +15,7 @@ namespace ERNI.PBA.Server.Business.Queries.Users
     {
         private readonly IUserRepository _userRepository;
 
-        public GetActiveUsersQuery(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        public GetActiveUsersQuery(IUserRepository userRepository) => _userRepository = userRepository;
 
         protected override async Task<IEnumerable<UserModel>> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {

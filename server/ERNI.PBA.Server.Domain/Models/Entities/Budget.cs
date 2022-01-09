@@ -11,16 +11,14 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public int UserId { get; set; }
 
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public BudgetTypeEnum BudgetType { get; set; }
 
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         public decimal Amount { get; set; }
 
-        public ICollection<Request> Requests { get; set; }
-
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; } = null!;
     }
 }

@@ -1,146 +1,188 @@
-import { Component, OnInit } from '@angular/core';
-import { BudgetService } from '../../services/budget.service';
-import { Budget } from '../../model/budget';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, Params } from '@angular/router';
-import { ConfigService } from '../../services/config.service';
-import { BudgetType } from '../../model/budgetType';
-import { User } from '../../model/user';
-import { AlertService } from '../../services/alert.service';
+import { Component, OnInit } from "@angular/core";
+import { BudgetService } from "../../services/budget.service";
+import { Budget } from "../../model/budget";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ActivatedRoute, Params } from "@angular/router";
+import { ConfigService } from "../../services/config.service";
+import { BudgetType } from "../../model/budgetType";
+import { User } from "../../model/user";
+import { AlertService } from "../../services/alert.service";
+import { MenuItem } from "primeng/api/menuitem";
 
 @Component({
-    selector: 'app-other-budgets',
-    templateUrl: './otherBudgets.component.html',
-    styleUrls: ['./otherBudgets.component.css']
+  selector: "app-other-budgets",
+  templateUrl: "./otherBudgets.component.html",
+  styleUrls: ["./otherBudgets.component.css"],
 })
-
 export class OtherBudgetsComponent implements OnInit {
-    budgetTypes: BudgetType[];
-    budgets: Budget[];
-    filteredBudgets: Budget[];
-    amount: number;
-    year: number;
-    currentYear: number;
-    selectedYear: number;
-    selectedUserId: number;
-    budgetTitle: string;
+  budgets: Budget[];
+  filteredBudgets: Budget[];
+  amount: number;
+  selectedUserId: number;
+  budgetTitle: string;
 
-    selectedBudgetType: number;
+  budgetTypes: MenuItem[];
+  selectedBudgetTypeItem: MenuItem;
+  selectedBudgetType: number;
 
-    availableUsers: User[];
+  availableUsers: User[];
 
-    years: number[];
-    rlao: object;
-    disableSetOrEditBudgets: boolean;
-    private _searchTerm: string;
-    private _modal: any;
+  years: MenuItem[];
+  selectedYearItem: MenuItem;
+  selectedYear: number;
 
-    get searchTerm(): string {
-        return this._searchTerm;
-    }
+  rlao: object;
+  disableSetOrEditBudgets: boolean;
+  private _searchTerm: string;
+  private _modal: any;
 
-    set searchTerm(value: string) {
-        this._searchTerm = value;
-        this.filteredBudgets = this.filterBudgets(value);
-    }
+  get searchTerm(): string {
+    return this._searchTerm;
+  }
 
-    filterBudgets(searchString: string) {
-        searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+  set searchTerm(value: string) {
+    this._searchTerm = value;
+    this.filteredBudgets = this.filterBudgets(value);
+  }
 
-        return this.budgets.filter(budget => budget.user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
-            budget.user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
-    }
+  filterBudgets(searchString: string) {
+    searchString = searchString
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
 
-    constructor(private budgetService: BudgetService,
-        private modalService: NgbModal,
-        private route: ActivatedRoute,
-        private alertService:AlertService,
-        private config: ConfigService) {
-        this.years = [];
-        this.currentYear = (new Date()).getFullYear();
+    return this.budgets
+      .filter((b) => b.type == this.selectedBudgetType)
+      .filter(
+        (budget) =>
+          budget.user.firstName
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .indexOf(searchString) !== -1 ||
+          budget.user.lastName
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .indexOf(searchString) !== -1
+      );
+  }
 
-        for (var year = this.currentYear + 1; year >= config.getOldestYear; year--) {
-            this.years.push(year);
-        }
-    }
-
-    ngOnInit() {
-
-        this.route.params.subscribe((params: Params) => {
-
-            // the following line forces routerLinkActive to update even if the route did nto change
-            // see see https://github.com/angular/angular/issues/13865 for futher info
-            this.rlao = { dummy: true };
-
-            //var yearParam = this.route.snapshot.paramMap.get('year');
-            var yearParam = params['year'];
-
-            this.selectedYear = yearParam != null ? parseInt(yearParam) : this.currentYear;
-
-            this.selectedBudgetType = Number(params['budgetType']);
-
-            if (this.selectedYear == this.currentYear || this.selectedYear == this.currentYear + 1) {
-                this.disableSetOrEditBudgets = false;
-            }
-            else {
-                this.disableSetOrEditBudgets = true;
-            }
-
-            this.budgetService.getUsersAvailableForBudgetType(this.selectedBudgetType).subscribe(users => this.availableUsers = users);
-
-            this.getActiveUsersBudgets(this.selectedYear);
-        });
-
-        this.budgetService.getBudgetsTypes().subscribe(types => {
-            this.budgetTypes = types
-        });
-    }
-
-
-    getActiveUsersBudgets(year: number): void {
-        this.year = year;
-        this.budgetService.getCurrentUsersBudgets(year).subscribe(budgets => {
-            this.budgets = budgets;
-            this.filteredBudgets = budgets.filter(b => {
-                return b.type == this.selectedBudgetType;
-            })
-        });
-    }
-
-    setBudgetsForYear(): void {
-        if (this.selectedUserId == 0) {
-            this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.selectedBudgetType)
-            .subscribe(() =>
-            {
-                this.getActiveUsersBudgets(this.selectedYear);
-                this._modal.close();
-            }, 
-            err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
-            });
-        } else {
-            this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedUserId, this.selectedBudgetType)
-            .subscribe(() => this.getActiveUsersBudgets(this.selectedYear),
-            err => {
-                this.alertService.error("Error while creating budget: " + JSON.stringify(err.error),"addOtherBudget");
-            });
-        }
-    }
-
-    openAmountModal(content) {
-        this.setBudgetToDefault();
-        this._modal = this.modalService.open(content, { centered: true, backdrop: 'static' });
-    }
+  constructor(
+    private budgetService: BudgetService,
+    private modalService: NgbModal,
+    private route: ActivatedRoute,
+    private alertService: AlertService,
+    private config: ConfigService
+  ) {
+    this.years = [];
     
-    close()
-    {
-        this._modal.close();
-    }
+  }
 
-    setBudgetToDefault()
-    {
-        this.budgetTitle = "";
-        this.amount = 0;
-        this.selectedUserId = undefined;
-    }
+  ngOnInit() {
+    this.route.params.subscribe((params: Params) => {
+      var currentYear = new Date().getFullYear();
+
+      this.selectedYear = params["year"] != null ? parseInt(params["year"]) : currentYear;
+
+      this.selectedBudgetType = Number(params["budgetType"]);
+
+      this.years = [];
+      for (var year = new Date().getFullYear() + 1; year >= this.config.getOldestYear; year--) {
+        this.years.push({
+          label: year.toString(),
+          routerLink: ["/other-budgets/", year, this.selectedBudgetType],
+        });
+      }
+
+      this.selectedYearItem = this.years.find(_ => _.label == this.selectedYear.toString());
+
+      if (this.selectedYear == currentYear ||
+        this.selectedYear == currentYear + 1
+      ) {
+        this.disableSetOrEditBudgets = false;
+      } else {
+        this.disableSetOrEditBudgets = true;
+      }
+
+      this.budgetService
+        .getUsersAvailableForBudgetType(this.selectedBudgetType)
+        .subscribe((users) => (this.availableUsers = users));
+
+      this.getActiveUsersBudgets(this.selectedYear);
+    });
+
+    this.budgetService.getBudgetsTypes().subscribe((types) => {
+      this.budgetTypes = [];
+      var dict = [];
+
+      types.forEach((type) => {
+        var item = {
+          label: type.name,
+          routerLink: [ "/other-budgets/", this.selectedYear.toString(), type.id, ],
+        };
+        this.budgetTypes.push(item);
+
+        dict[type.id] = item;
+      });
+
+      this.selectedBudgetTypeItem = dict[this.selectedBudgetType];
+    });
+  }
+
+  getActiveUsersBudgets(year: number): void {
+    this.budgetService.getCurrentUsersBudgets(year).subscribe((budgets) => {
+      this.budgets = budgets;
+      this.filteredBudgets = budgets.filter((b) => {
+        return b.type == this.selectedBudgetType;
+      });
+    });
+  }
+
+  setBudgetsForYear(): void {
+    var task =
+      this.selectedUserId == 0
+        ? this.budgetService.createBudgetsForAllActiveUsers(
+            this.budgetTitle,
+            this.amount,
+            this.selectedBudgetType
+          )
+        : this.budgetService.createBudget(
+            this.budgetTitle,
+            this.amount,
+            this.selectedUserId,
+            this.selectedBudgetType
+          );
+
+    task.subscribe(
+      () => {
+        this.getActiveUsersBudgets(this.selectedYear);
+        this.alertService.success("Budget created", "addOtherBudget");
+      },
+      (err) => {
+        this.alertService.error(
+          "Error while creating budget: " + JSON.stringify(err.error),
+          "addOtherBudget"
+        );
+      }
+    );
+  }
+
+  openAmountModal(content) {
+    this.setBudgetToDefault();
+    this._modal = this.modalService.open(content, {
+      centered: true,
+      backdrop: "static",
+    });
+  }
+
+  close() {
+    this._modal.close();
+  }
+
+  setBudgetToDefault() {
+    this.budgetTitle = "";
+    this.amount = 0;
+    this.selectedUserId = undefined;
+  }
 }

@@ -1,42 +1,40 @@
-﻿using System;
 using Autofac.Extensions.DependencyInjection;
+using Azure.Storage.Blobs;
+using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.DataAccess;
+using ERNI.PBA.Server.DataAccess.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace ERNI.PBA.Server.Host
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            // NLog: setup the logger first to catch all errors
-            // var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-            try
-            {
-                // logger.Debug("init main");
-                var host = CreateHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
 
-                using (var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope())
+            using (var serviceScope = host.Services.GetService<IServiceScopeFactory>()!.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                var blobService = serviceScope.ServiceProvider.GetRequiredService<BlobServiceClient>();
+                var blobStorageSettings = serviceScope.ServiceProvider.GetRequiredService<IOptions<BlobStorageSettings>>();
+
+                context.Database.Migrate();
+
+                var exists = blobService.GetBlobContainerClient(blobStorageSettings.Value.AttachmentDataContainerName).Exists();
+                if (!exists)
                 {
-                    var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
-
-                    context.Database.Migrate();
+                    blobService.CreateBlobContainer(blobStorageSettings.Value.AttachmentDataContainerName);
                 }
+                var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
+                cmd.Execute().Wait();
+            }
 
-                host.Run();
-            }
-            catch (Exception)
-            {
-                // logger.Error(ex, "Stopped program because of exception");
-            }
-            finally
-            {
-                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-                // NLog.LogManager.Shutdown();
-            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

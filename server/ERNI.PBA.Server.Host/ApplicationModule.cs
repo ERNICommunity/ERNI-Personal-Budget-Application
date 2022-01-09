@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using ERNI.PBA.Server.Business;
+using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.Host.Filters;
 
@@ -15,15 +16,17 @@ namespace ERNI.PBA.Server.Host
             RegisterServices(builder);
         }
 
-        private void RegisterModules(ContainerBuilder builder)
+        private static void RegisterModules(ContainerBuilder builder)
         {
             builder.RegisterModule<BusinessModule>();
             builder.RegisterModule<DataAccessModule>();
         }
 
-        private void RegisterServices(ContainerBuilder builder)
+        private static void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<ApiExceptionFilter>().AsSelf().InstancePerDependency();
+
+            builder.RegisterType<SyncUserObjectIdCommand>().AsSelf().InstancePerDependency();
         }
     }
 }

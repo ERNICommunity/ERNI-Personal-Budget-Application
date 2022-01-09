@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -10,7 +11,6 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
@@ -38,26 +38,35 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var request = await _requestRepository.GetRequest(parameter.Id, cancellationToken);
             if (request == null)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Request with id {parameter.Id} not found.");
+                throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
             }
 
-            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                ?? throw AppExceptions.AuthorizationException();
+
             if (currentUser.Id != request.User.Id)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
+                throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
-            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(request.BudgetId, cancellationToken);
-
-            var budget = await _budgetRepository.GetBudget(request.BudgetId, cancellationToken);
-            if (budget.BudgetType == BudgetTypeEnum.TeamBudget)
+            if (request.State != RequestState.Pending)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, "No Access for request!");
+                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Only pending requests can be updated.");
+            }
+
+            var budgetId = request.Transactions.First().BudgetId;
+
+            var requestedAmount = await _budgetRepository.GetTotalRequestedAmount(budgetId, cancellationToken);
+
+            var budget = await _budgetRepository.GetBudget(budgetId, cancellationToken);
+            if (budget == null || budget.BudgetType == BudgetTypeEnum.TeamBudget)
+            {
+                throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
             if (parameter.Amount > budget.Amount + request.Amount - requestedAmount)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"Requested amount {parameter.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
+                throw new OperationErrorException(ErrorCodes.InvalidAmount, $"Requested amount {parameter.Amount} exceeds the amount left ({requestedAmount} of {budget.Amount}).");
             }
 
             request.Title = parameter.Title;
@@ -70,8 +79,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 {
                     RequestId = request.Id,
                     BudgetId = budget.Id,
-                    UserId = currentUser.Id,
-                    Amount = parameter.Amount
+                    Amount = request.InvoicedAmount ?? parameter.Amount,
+                    RequestType = budget.BudgetType,
                 }
             };
             await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);

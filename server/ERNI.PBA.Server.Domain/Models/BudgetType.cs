@@ -11,6 +11,7 @@ namespace ERNI.PBA.Server.Domain.Models
             {
                 Id = BudgetTypeEnum.PersonalBudget,
                 Name = "Personal budget",
+                Key = "personal",
                 SinglePerUser = true,
                 IsTransferable = false
             },
@@ -18,6 +19,7 @@ namespace ERNI.PBA.Server.Domain.Models
             {
                 Id = BudgetTypeEnum.CommunityBudget,
                 Name = "Community budget",
+                Key = "community",
                 SinglePerUser = false,
                 IsTransferable = true
             },
@@ -25,6 +27,7 @@ namespace ERNI.PBA.Server.Domain.Models
             {
                 Id = BudgetTypeEnum.TeamBudget,
                 Name = "Team budget",
+                Key = "team",
                 SinglePerUser = true,
                 IsTransferable = false
             },
@@ -32,17 +35,20 @@ namespace ERNI.PBA.Server.Domain.Models
             {
                 Id = BudgetTypeEnum.RecreationBudget,
                 Name = "Recreation budget",
+                Key = "recreation",
                 SinglePerUser = true,
                 IsTransferable = false
             }
         };
 
-        public BudgetTypeEnum Id { get; private set; }
+        public BudgetTypeEnum Id { get; init; }
 
-        public string Name { get; private set; }
+        public string Name { get; init; } = null!;
 
-        public bool SinglePerUser { get; private set; }
+        public string Key { get; init; } = null!;
 
-        public bool IsTransferable { get; private set; }
+        public bool SinglePerUser { get; init; }
+
+        public bool IsTransferable { get; init; }
     }
 }

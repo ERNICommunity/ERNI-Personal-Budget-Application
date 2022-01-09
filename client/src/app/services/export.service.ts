@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { isError } from 'util';
 import { ServiceHelper } from './service.helper';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class ExportService {
@@ -13,7 +12,7 @@ export class ExportService {
   constructor(private http: HttpClient, private serviceHelper: ServiceHelper, private configService: ConfigService) {
   }
 
-  private getDownloadToken(): Promise<any> {
+  public getDownloadToken(): Promise<any> {
     return this.http.get<any>(`${this.configService.apiUrlBase}${this.serviceUrl}/token`, this.serviceHelper.getHttpOptions()).toPromise();
   }
 

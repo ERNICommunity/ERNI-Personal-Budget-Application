@@ -1,51 +1,53 @@
 <div *ngIf="user">
     <h2>{{user.firstName}} {{user.lastName}}</h2>
-    <br>
-    <div class="form-check">
-        <label class="form-check-label">
-            <input
-                type="checkbox"
-                [(ngModel)]="user.isAdmin"
-                class="form-check-input">
-            Admin
-        </label>
-    </div>
-    <br>
-    <div class="form-check">
-        <label class="form-check-label">
-            <input
-                type="checkbox"
-                [(ngModel)]="user.isSuperior"
-                class="form-check-input">
-            Superior
-        </label>
-    </div>
-    <br>
-    <div class="form-group">
-        <label for>Superior</label>
-        <select
-            class="form-control form-control-sm"
-            [(ngModel)]="user.superior"
-            [compareWith]="compareUsers">
-            <option
-                [ngValue]="null"
-                disabled></option>
-            <option
-                *ngFor="let userItem of users"
-                [ngValue]="userItem">
-                {{userItem.lastName}} {{userItem.firstName}}
-            </option>
-        </select>
-    </div>
-
-    <button
-        class="btn btn-primary mr-1"
-        (click)="goBack()">
-        back
-    </button>
-    <button
-        class="btn btn-success"
-        (click)="save()">
-        Save
-    </button>
 </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group">
+            <label for="firstName">First name</label>
+            <input type="text" formControlName="firstName" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form.controls.firstName.errors }"
+                (blur)="trimControlValue(form.controls.firstName)" />
+            <div *ngIf="submitted && form.controls.firstName.errors" class="invalid-feedback">
+                <div *ngIf="form.controls.firstName.errors.required">First name is required</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Last name</label>
+            <input type="text" formControlName="lastName" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form.controls.lastName.errors }"
+                (blur)="trimControlValue(form.controls.lastName)" />
+            <div *ngIf="submitted && form.controls.lastName.errors" class="invalid-feedback">
+                <div *ngIf="form.controls.lastName.errors.required">Last name is required</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" formControlName="email" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form.controls.email.errors }" />
+            <div *ngIf="submitted && form.controls.email.errors" class="invalid-feedback">
+                <div *ngIf="form.controls.email.errors.required">Email is required</div>
+                <div *ngIf="form.controls.email.errors.email">Wrong email address format</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="superior">Superior</label>
+            <select formControlName="superior" class="custom-select browser-default">
+                <option value="">--Select--</option>
+                <option *ngFor="let superiorItem of users" [value]="superiorItem.id">
+                    {{superiorItem.lastName}} {{superiorItem.firstName}}
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary mr-1" (click)="goBack()">
+                back
+            </button>
+            <button class="btn btn-success mr-2">Save</button>
+            <!-- [disabled]="busyIndicatorService.isBusy"  -->
+        </div>
+    </form>
+

@@ -4,8 +4,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Export
 {
     public interface IDownloadTokenManager
     {
-        Guid GenerateToken(DateTime validUntil);
+        Guid GenerateToken(DateTime validUntil, string category);
 
-        bool ValidateToken(Guid token);
+        bool ValidateToken(Guid token, string category);
     }
 }

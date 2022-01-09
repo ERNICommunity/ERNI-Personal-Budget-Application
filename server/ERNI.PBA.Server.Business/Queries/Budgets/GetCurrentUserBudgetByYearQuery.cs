@@ -16,10 +16,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
     {
         private readonly IBudgetRepository _budgetRepository;
 
-        public GetCurrentUserBudgetByYearQuery(IBudgetRepository budgetRepository)
-        {
-            _budgetRepository = budgetRepository;
-        }
+        public GetCurrentUserBudgetByYearQuery(IBudgetRepository budgetRepository) => _budgetRepository = budgetRepository;
 
         protected override async Task<IEnumerable<BudgetOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
@@ -30,20 +27,20 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 Id = budget.Id,
                 Year = budget.Year,
                 Amount = budget.Amount,
-                AmountLeft = budget.Amount - budget.Requests
-                                 .Where(_ => _.State != RequestState.Rejected)
+                AmountLeft = budget.Amount - budget.Transactions
+                                 .Where(t => t.Request.State != RequestState.Rejected)
                                  .Sum(_ => _.Amount),
                 Title = budget.Title,
                 Type = budget.BudgetType,
-                Requests = budget.Requests.Select(_ => new RequestOutputModel
+                Requests = budget.Transactions.Select(_ => new RequestOutputModel
                 {
-                    Id = _.Id,
-                    Title = _.Title,
+                    Id = _.Request.Id,
+                    Title = _.Request.Title,
                     Amount = _.Amount,
-                    Date = _.Date,
-                    CreateDate = _.CreateDate,
-                    State = _.State
-                })
+                    Date = _.Request.Date,
+                    CreateDate = _.Request.CreateDate,
+                    State = _.Request.State
+                }).OrderByDescending(r => r.CreateDate)
             });
         }
     }

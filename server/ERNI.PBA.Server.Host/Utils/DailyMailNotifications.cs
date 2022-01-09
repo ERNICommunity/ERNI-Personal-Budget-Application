@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,58 +16,23 @@ namespace ERNI.PBA.Server.Host.Utils
     public class DailyMailNotifications : IJob
     {
         private readonly IRequestRepository _requestRepository;
-        private readonly IUserRepository _userRepository;
         private readonly MailService _mailService;
-        /* private readonly ILogger _logger; */
+        private readonly string[] _notificationEmails;
 
-        public DailyMailNotifications(IRequestRepository requestRepository, IUserRepository userRepository, IConfiguration configuration) // , ILogger<DailyMailNotifications> logger)
+        public DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration)
         {
             _requestRepository = requestRepository;
-            _userRepository = userRepository;
             _mailService = new MailService(configuration);
-
-            // _logger = logger;
+            _notificationEmails = configuration["NotificationEmails"].Split(";");
         }
 
-        public async Task Execute(IJobExecutionContext context)
-        {
-            // await SendNotificationsForPendingRequests(context.CancellationToken);
+        public async Task Execute(IJobExecutionContext context) =>
             await SendNotificationsToAdmins(context.CancellationToken);
-
-            // _logger.LogInformation("Scheduled Job for notifications executed");
-        }
-
-        private async Task SendNotificationsForPendingRequests(CancellationToken cancellationToken)
-        {
-            var pendingRequests = await _requestRepository.GetRequests(
-            _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
-
-            if (pendingRequests.Any())
-            {
-                var requestBySuperior = pendingRequests
-                    .Where(_ => _.User.Superior != null)
-                    .GroupBy(_ => _.User.Superior);
-
-                foreach (var group in requestBySuperior)
-                {
-                    var msg = new StringBuilder("You have new requests to handle");
-                    msg.AppendLine();
-                    msg.AppendLine();
-
-                    foreach (var request in group)
-                    {
-                        msg.AppendLine($"   {request}");
-                    }
-
-                    _mailService.SendMail(msg.ToString(), group.Key.Username);
-                }
-            }
-        }
 
         private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
         {
             var pendingRequests = await _requestRepository.GetRequests(
-                _ => _.Year == DateTime.Now.Year && (_.State == RequestState.ApprovedBySuperior
+                _ => _.Year == DateTime.Now.Year && (_.State == RequestState.Approved
                 || _.State == RequestState.Pending), cancellationToken);
 
             if (!pendingRequests.Any())
@@ -74,10 +40,7 @@ namespace ERNI.PBA.Server.Host.Utils
                 return;
             }
 
-            var admins = await _userRepository.GetAdminUsers(cancellationToken);
-            var adminsMails = admins.Select(u => u.Username).ToArray();
-
-            foreach (var mail in adminsMails)
+            foreach (var mail in _notificationEmails)
             {
                 var msg = new StringBuilder("You have new requests to handle");
                 msg.AppendLine();
@@ -85,7 +48,7 @@ namespace ERNI.PBA.Server.Host.Utils
 
                 foreach (var request in pendingRequests)
                 {
-                    msg.AppendLine($"   {request}");
+                    msg.AppendLine(CultureInfo.InvariantCulture, $"   {request}");
                 }
 
                 _mailService.SendMail(msg.ToString(), mail);

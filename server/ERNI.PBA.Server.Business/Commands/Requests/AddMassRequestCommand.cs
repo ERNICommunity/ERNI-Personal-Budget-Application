@@ -13,33 +13,31 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
+using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
     public class AddMassRequestCommand : Command<RequestMassModel>, IAddMassRequestCommand
     {
-        private readonly IUserRepository _userRepository;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public AddMassRequestCommand(
-            IUserRepository userRepository,
             IBudgetRepository budgetRepository,
             IRequestRepository requestRepository,
             IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
             _budgetRepository = budgetRepository;
             _requestRepository = requestRepository;
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal,
+            CancellationToken cancellationToken)
         {
-            var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-            if (!currentUser.IsAdmin)
+            if (!principal.IsInRole(Roles.Admin))
             {
                 throw AppExceptions.AuthorizationException();
             }
@@ -50,11 +48,13 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             {
                 var userId = user.Id;
 
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget, currentYear, cancellationToken);
+                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget,
+                    currentYear, cancellationToken);
 
                 if (budgets.Length > 1)
                 {
-                    throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
+                    throw new OperationErrorException(ErrorCodes.UnknownError,
+                        $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
                 }
 
                 var budget = budgets.Single();
@@ -71,16 +71,17 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     Amount = parameter.Amount,
                     Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
-                    State = RequestState.Approved,
-                    BudgetId = budget.Id,
-                    Transactions = new[]
+                    State = RequestState.Completed,
+                    RequestType = budget.BudgetType,
+                };
+
+                request.Transactions = new[]
+                {
+                    new Transaction()
                     {
-                        new Transaction
-                        {
-                            BudgetId = budget.Id,
-                            UserId = userId,
-                            Amount = parameter.Amount
-                        }
+                        Amount =  parameter.Amount,
+                        BudgetId = budget.Id,
+                        RequestType = budget.BudgetType,
                     }
                 };
 
@@ -92,9 +93,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             await _unitOfWork.SaveChanges(cancellationToken);
         }
 
-        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken)
-        {
-            return budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
-        }
+        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken) =>
+            budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
     }
 }

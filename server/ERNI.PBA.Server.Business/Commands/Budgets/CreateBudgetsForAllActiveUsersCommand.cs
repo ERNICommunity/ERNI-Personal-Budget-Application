@@ -57,7 +57,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
                     Title = parameter.Title
                 };
 
-                _budgetRepository.AddBudget(budget);
+                await _budgetRepository.AddBudgetAsync(budget);
             }
 
             await _unitOfWork.SaveChanges(cancellationToken);

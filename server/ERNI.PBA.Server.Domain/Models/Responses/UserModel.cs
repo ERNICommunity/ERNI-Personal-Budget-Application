@@ -4,20 +4,14 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 {
     public class UserModel
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public bool IsAdmin { get; set; }
+        public string FirstName { get; init; } = null!;
 
-        public bool IsSuperior { get; set; }
+        public string LastName { get; init; } = null!;
 
-        public bool IsViewer { get; set; }
+        public SuperiorModel? Superior { get; init; }
 
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
-        public SuperiorModel Superior { get; set; }
-
-        public UserState State { get; set; }
+        public UserState State { get; init; }
     }
 }

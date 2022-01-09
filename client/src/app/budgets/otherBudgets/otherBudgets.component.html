@@ -1,22 +1,9 @@
-<h2>Other Budgets - {{year}}</h2>
+<h2>Other Budgets - {{selectedYear}}</h2>
 
-<ul class="nav nav-pills">
-    <li class="nav-item" *ngFor="let year of years">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
-            [routerLink]="['/other-budgets', year, selectedBudgetType]">
-            {{year}}
-        </a>
-    </li>
-</ul>
+<p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
+<hr>
 
-<ul class="nav nav-pills">
-    <li class="nav-item" *ngFor="let budgetType of budgetTypes">
-        <a class="nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="rlao"
-            [routerLink]="['/other-budgets', selectedYear, budgetType.id]">
-            {{budgetType.name}}
-        </a>
-    </li>
-</ul>
+<p-tabMenu [model]="budgetTypes" [activeItem]="selectedBudgetTypeItem"></p-tabMenu>
 
 <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
@@ -75,8 +62,8 @@
 <input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm">
 <br>
 
-<table class="table">
-    <thead>
+<p-table [value]="filteredBudgets" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
         <tr>
             <th scope="col">Last</th>
             <th scope="col">First</th>
@@ -85,10 +72,9 @@
             <th scope="col">Amount left</th>
             <th scope="col"></th>
         </tr>
-    </thead>
-    <tbody>
-
-        <tr *ngFor="let budget of filteredBudgets">
+    </ng-template>
+    <ng-template pTemplate="body" let-budget>
+        <tr>
             <td>{{budget.user.lastName}}</td>
             <td>{{budget.user.firstName}}</td>
             <td>{{budget.title}}</td>
@@ -110,5 +96,5 @@
                 </td>
             </ng-template>
         </tr>
-    </tbody>
-</table>
+    </ng-template>
+</p-table>

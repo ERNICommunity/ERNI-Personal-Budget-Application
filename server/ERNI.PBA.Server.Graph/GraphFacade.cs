@@ -1,7 +1,6 @@
 ﻿using Microsoft.Graph;
 using Microsoft.Graph.Auth;
 using Microsoft.Identity.Client;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,29 +12,37 @@ namespace ERNI.PBA.Server.Graph
 
         public GraphFacade(GraphConfiguration config)
         {
-            IConfidentialClientApplication confidentialClientApplication = ConfidentialClientApplicationBuilder
+            var confidentialClientApplication = ConfidentialClientApplicationBuilder
                 .Create(config.ClientId)
                 .WithTenantId(config.TenantId)
                 .WithClientSecret(config.ClientSecret)
                 .Build();
 
-            ClientCredentialProvider authProvider = new ClientCredentialProvider(confidentialClientApplication);
+            var authProvider = new ClientCredentialProvider(confidentialClientApplication);
 
             _graphClient = new GraphServiceClient(authProvider);
         }
 
         public async Task<IEnumerable<User>> GetUsers()
         {
-            try
+            var allUsers = new List<User>();
+
+            var users = await _graphClient.Users.Request().Filter("country eq 'Slovakia'").GetAsync();
+
+            while (users.Count > 0)
             {
-                var users = await _graphClient.Users.Request().Filter("country eq 'Slovakia'").GetAsync();
-                return users.CurrentPage;
+                allUsers.AddRange(users);
+                if (users.NextPageRequest != null)
+                {
+                    users = await users.NextPageRequest.GetAsync();
+                }
+                else
+                {
+                    break;
+                }
             }
-            catch (ServiceException ex)
-            {
-                Console.WriteLine($"Error getting signed-in user: {ex.Message}");
-                return null;
-            }
+
+            return allUsers;
         }
     }
 }

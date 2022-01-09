@@ -40,14 +40,14 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             var user = await _userRepository.GetUser(userId, cancellationToken);
             if (user == null || user.State != UserState.Active)
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"No active user with id {userId} found");
+                throw new OperationErrorException(ErrorCodes.UserNotFound, $"No active user with id {userId} found");
             }
 
             var budgets = await _budgetRepository.GetBudgets(userId, currentYear, cancellationToken);
             var budgetType = BudgetType.Types.Single(_ => _.Id == parameter.BudgetType);
             if (budgetType.SinglePerUser && budgets.Any(b => b.BudgetType == parameter.BudgetType))
             {
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, $"User {user.LastName} {user.FirstName}  already has a budget of type {budgetType.Name} assigned for this year");
+                throw new OperationErrorException(ErrorCodes.UnknownError, $"User {user.LastName} {user.FirstName}  already has a budget of type {budgetType.Name} assigned for this year");
             }
 
             var budget = new Budget
@@ -59,7 +59,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
                 Title = parameter.Title
             };
 
-            _budgetRepository.AddBudget(budget);
+            await _budgetRepository.AddBudgetAsync(budget);
 
             await _unitOfWork.SaveChanges(cancellationToken);
         }

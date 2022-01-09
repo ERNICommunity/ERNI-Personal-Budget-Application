@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
+using System;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -12,45 +13,32 @@ namespace ERNI.PBA.Server.DataAccess.Repository
     {
         private readonly DatabaseContext _context;
 
-        public BudgetRepository(DatabaseContext context)
-        {
-            _context = context;
-        }
+        public BudgetRepository(DatabaseContext context) => _context = context;
 
-        public void AddBudget(Budget budget)
-        {
-            _context.Budgets.Add(budget);
-        }
+        public async Task AddBudgetAsync(Budget budget) => await _context.Budgets.AddAsync(budget);
 
-        public async Task AddBudgetAsync(Budget budget)
-        {
-            await _context.Budgets.AddAsync(budget);
-        }
-
-        public Task<Budget> GetBudget(int budgetId, CancellationToken cancellationToken)
-        {
-            return _context.Budgets
+        public Task<Budget?> GetBudget(int budgetId, CancellationToken cancellationToken) =>
+            _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Transactions)
+                .ThenInclude(_ => _.Request)
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
-        }
 
-        public async Task<Budget[]> GetSingleBudgets(int userId, int year, CancellationToken cancellationToken)
+        public async Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
-                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.BudgetType != BudgetTypeEnum.TeamBudget)
-                .Where(_ => _.UserId == userId && _.Year == year)
+                .Where(_ => _.User.ObjectId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task<Budget[]> GetTeamBudgets(int userId, int year, CancellationToken cancellationToken)
+        public async Task<Budget[]> GetTeamBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
             return await _context.Budgets
-                .Include(_ => _.Transactions)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.BudgetType == BudgetTypeEnum.TeamBudget)
-                .Where(_ => (_.UserId == userId || _.User.SuperiorId == userId) && _.Year == year)
+                .Where(_ => (_.User.ObjectId == userId || _.User.Superior!.ObjectId == userId) && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
 
@@ -58,8 +46,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Transactions)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.UserId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
@@ -68,7 +55,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.BudgetType == budgetType && _.Year == year)
                 .ToArrayAsync(cancellationToken);
         }
@@ -77,7 +64,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         {
             return _context.Budgets
                 .Include(_ => _.User)
-                .Include(_ => _.Requests).ThenInclude(_ => _.Category)
+                .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
                 .Where(_ => _.UserId == userId && _.Year == year && _.BudgetType == budgetType)
                 .ToArrayAsync(cancellationToken);
         }
@@ -92,9 +79,8 @@ namespace ERNI.PBA.Server.DataAccess.Repository
 
         public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken)
         {
-            return _context.Budgets.Where(_ => _.Id == budgetId)
-                .Select(_ => _.Requests.Where(r => r.State != RequestState.Rejected).Sum(r => r.Amount))
-                .SingleOrDefaultAsync(cancellationToken);
+            return _context.Transactions.Where(r => r.BudgetId == budgetId && r.Request.State != RequestState.Rejected)
+                .SumAsync(r => r.Amount, cancellationToken);
         }
 
         public async Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken)
@@ -109,13 +95,17 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                         .Sum(x => x.Amount)
                 })
                 .ToArrayAsync(cancellationToken))
-                .Select(_ => (BudgetId: _.BudgetId, TotalAmount: _.TotalAmount))
+                .Select(_ => (_.BudgetId, _.TotalAmount))
                 .ToArray();
         }
 
-        public Task<Budget[]> GetBudgetsByUser(int userId, CancellationToken cancellationToken)
+        public async Task<(BudgetTypeEnum type, int count, decimal total, decimal totalSpent)[]> GetBudgetStats(int year)
         {
-            return _context.Budgets.Where(_ => _.UserId == userId).ToArrayAsync(cancellationToken);
+            return (await _context.Budgets.Where(_ => _.Year == year).GroupBy(_ => _.BudgetType)
+                .Select(x => new { type = x.Key, count = x.Count(), total = x.Sum(b => b.Amount), spent = x.SelectMany(b => b.Transactions.Select(t => t.Amount)).Sum() })
+                .ToArrayAsync())
+                .Select(x => (x.type, x.count, x.total, x.spent))
+                .ToArray();
         }
     }
 }

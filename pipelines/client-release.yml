@@ -1,0 +1,47 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  displayName: 'Use Node 10.x'
+  inputs:
+    versionSpec: '10.x'
+
+- task: Npm@1
+  displayName: 'npm ci'
+  inputs:
+    command: 'ci'
+    workingDir: 'client/'
+
+# - task: Npm@1
+#   displayName: 'npm lint'
+#   inputs:
+#     command: 'custom'
+#     workingDir: 'client/'
+#     customCommand: 'run lint'
+
+- task: Npm@1
+  displayName: 'npm build'
+  inputs:
+    command: 'custom'
+    workingDir: 'client/'
+    customCommand: 'run build -- --prod'
+
+- task: ArchiveFiles@2
+  displayName: 'Zip build artifacts'
+  inputs:
+    rootFolderOrFile: 'client/dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    ArtifactName: 'angularBuildArtifactProd'
+    publishLocation: 'Container'

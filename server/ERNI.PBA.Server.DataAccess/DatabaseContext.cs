@@ -10,17 +10,17 @@ namespace ERNI.PBA.Server.DataAccess
         {
         }
 
-        public DbSet<Budget> Budgets { get; set; }
+        public DbSet<Budget> Budgets => Set<Budget>();
 
-        public DbSet<RequestCategory> RequestCategories { get; set; }
+        public DbSet<RequestCategory> RequestCategories => Set<RequestCategory>();
 
-        public DbSet<Request> Requests { get; set; }
+        public DbSet<Request> Requests => Set<Request>();
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users => Set<User>();
 
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Transaction> Transactions => Set<Transaction>();
 
-        public DbSet<InvoiceImage> InvoiceImages { get; set; }
+        public DbSet<InvoiceImage> InvoiceImages => Set<InvoiceImage>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

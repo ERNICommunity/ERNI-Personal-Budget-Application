@@ -1,19 +1,20 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
-using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
+using ERNI.PBA.Server.Host.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Policy = Constants.ClientPolicy)]
     public class BudgetController : Controller
     {
         private readonly Lazy<IGetBudgetQuery> _getBudgetQuery;
@@ -49,7 +50,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("{budgetId}")]
-        [Authorize]
+        [Authorize(Policy = Constants.ClientPolicy)]
         public async Task<IActionResult> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
             var outputModel = await _getBudgetQuery.Value.ExecuteAsync(budgetId, HttpContext.User, cancellationToken);
@@ -58,6 +59,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("user/current/year/{year}")]
+        [Authorize(Policy = Constants.ClientPolicy)]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
             var outputModels = await _getCurrentUserBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
@@ -66,7 +68,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("users/active/year/{year}")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        [Authorize(Roles = Roles.Admin + ", " + Roles.Finance)]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var outputModels = await _getActiveUsersBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
@@ -75,7 +77,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("year/{year}")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Viewer)]
+        [Authorize(Roles = Roles.Admin + ", " + Roles.Finance)]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
             var outputModels = await _getBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
@@ -94,7 +96,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpPost("users/all")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody]CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody] CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
         {
             await _createBudgetsForAllActiveUsersCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
@@ -129,9 +131,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("types")]
-        public async Task<IActionResult> GetBudgetTypes()
-        {
-            return await Task.FromResult(Ok(BudgetType.Types));
-        }
+        public async Task<IActionResult> GetBudgetTypes() => await Task.FromResult(Ok(Domain.Models.BudgetType.Types));
     }
 }

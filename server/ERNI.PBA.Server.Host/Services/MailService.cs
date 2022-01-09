@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
@@ -24,21 +25,21 @@ namespace ERNI.PBA.Server.Host.Services
 
         public void SendMail(string body, string emails)
         {
-            using (var client = new SmtpClient(_smtpServer, int.Parse(_port)))
+            using var client = new SmtpClient(_smtpServer, int.Parse(_port, CultureInfo.InvariantCulture))
             {
-                client.EnableSsl = bool.Parse(_enableSsl);
-                client.Credentials = new NetworkCredential(_userName, _password);
+                EnableSsl = bool.Parse(_enableSsl),
+                Credentials = new NetworkCredential(_userName, _password)
+            };
 
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(_userName),
-                    Body = body,
-                    Subject = "PBA Notification",
-                    To = { emails }
-                };
+            using var mailMessage = new MailMessage
+            {
+                From = new MailAddress(_userName),
+                Body = body,
+                Subject = "PBA Notification",
+                To = { emails }
+            };
 
-                client.Send(mailMessage);
-            }
+            client.Send(mailMessage);
         }
     }
 }

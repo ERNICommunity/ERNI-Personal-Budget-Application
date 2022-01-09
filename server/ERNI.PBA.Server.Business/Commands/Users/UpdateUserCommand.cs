@@ -1,18 +1,17 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
+using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class UpdateUserCommand : Command<UpdateUserModel>, IUpdateUserCommand
+    public class UpdateUserCommand : Command<UpdateUserCommand.UpdateUserModel>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -34,18 +33,29 @@ namespace ERNI.PBA.Server.Business.Commands.Users
 
             if (user == null)
             {
-                _logger.LogWarning("Not a valid id");
-
-                throw new OperationErrorException(StatusCodes.Status404NotFound, "Not a valid id");
+                _logger.UserNotFound(parameter.Id);
+                throw new OperationErrorException(ErrorCodes.UserNotFound, "Not a valid id");
             }
 
-            user.IsAdmin = parameter.IsAdmin;
-            user.IsViewer = parameter.IsViewer;
-            user.IsSuperior = parameter.IsSuperior;
-            user.SuperiorId = parameter.Superior?.Id;
-            user.State = parameter.State;
+            user.SuperiorId = parameter.Superior;
+            user.FirstName = parameter.FirstName;
+            user.LastName = parameter.LastName;
+            user.Username = parameter.Email;
 
             await _unitOfWork.SaveChanges(cancellationToken);
+        }
+
+        public class UpdateUserModel
+        {
+            public int Id { get; set; }
+
+            public int? Superior { get; set; }
+
+            public string FirstName { get; set; } = null!;
+
+            public string LastName { get; set; } = null!;
+
+            public string Email { get; set; } = null!;
         }
     }
 }

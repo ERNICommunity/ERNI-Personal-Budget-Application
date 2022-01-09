@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Entities;
 
@@ -23,8 +24,8 @@ namespace ERNI.PBA.Server.Business.Utils
                 transactions.Add(new Transaction
                 {
                     BudgetId = first.BudgetId,
-                    UserId = first.UserId,
-                    Amount = amountToDeduct
+                    Amount = amountToDeduct,
+                    RequestType = BudgetTypeEnum.TeamBudget
                 });
 
                 amount -= amountToDeduct;
@@ -33,9 +34,6 @@ namespace ERNI.PBA.Server.Business.Utils
             return transactions;
         }
 
-        private static decimal Round(this decimal payment)
-        {
-            return Math.Floor(payment * 100) / 100;
-        }
+        private static decimal Round(this decimal payment) => Math.Floor(payment * 100) / 100;
     }
 }

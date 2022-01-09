@@ -1,26 +1,36 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdalService } from '../services/adal.service';
-import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { UserInfo } from '../model/userInfo';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
-    templateUrl: './login.component.html'
+  selector: 'rmt-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+  private subscription: Subscription;
 
-    constructor(private router: Router, private adalService: AdalService) { }
+  constructor(private readonly auth: AuthenticationService, private readonly router: Router) { }
 
-    ngOnInit() {
+  ngOnInit(): void {
+    this.subscription = this.auth.userInfo$.subscribe(_ => this.handleUser(_));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  async login(): Promise<void> {
+    this.auth.login();
+  }
+
+  private handleUser(userInfo: UserInfo | undefined): void {
+    if (userInfo === undefined) {
+      return;
     }
 
-    login() {
-        this.adalService.login();
-    }
-
-    logout() {
-        this.adalService.logout();
-    }
-
-    public get isLoggedIn() {
-        return this.adalService.isAuthenticated;
-    }
+    this.router.navigate(['/my-budget']);
+  }
 }

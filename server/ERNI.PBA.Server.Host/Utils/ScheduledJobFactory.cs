@@ -8,15 +8,10 @@ namespace ERNI.PBA.Server.Host.Utils
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public ScheduledJobFactory(IServiceProvider serviceProvider)
-        {
-            this._serviceProvider = serviceProvider;
-        }
+        public ScheduledJobFactory(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-        public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
-        {
-            return _serviceProvider.GetService(typeof(IJob)) as IJob;
-        }
+        public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler) =>
+            (_serviceProvider.GetService(typeof(IJob)) as IJob)!;
 
         public void ReturnJob(IJob job)
         {

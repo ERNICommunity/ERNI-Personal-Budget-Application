@@ -18,33 +18,29 @@ export class InvoiceImageService {
     return this.http.get<[number,string][]>(this.configService.apiUrlBase + this.requestUrl + "/images/" + requestId, this.serviceHelper.getHttpOptions());
   }
 
-  public getInvoiceImage(imageId : number) : Observable<Blob>
-  { 
-    let headerDict = {
-      'Content-type' : 'application/octet-stream'
-    }
+  public getDownloadToken(imageId: number): Promise<any> {
+    return this.http.get<any>(`${this.configService.apiUrlBase}${this.requestUrl}/image/${imageId}/token`, this.serviceHelper.getHttpOptions()).toPromise();
+  }
 
-    return this.http.get<Blob>(this.configService.apiUrlBase + this.requestUrl + "/image/" + imageId, 
-    {
-      headers : new HttpHeaders(headerDict),
-      responseType : 'blob' as 'json'
-    });
+  public async getInvoiceImage(imageId : number)
+  {
+
+    var token = await this.getDownloadToken(imageId);
+    var downloadLink = this.configService.apiUrlBase + this.requestUrl + "/image/" + token + "/" + imageId;
+
+    window.open(downloadLink, "_blank");
   }
 
   public addInvoiceImage(invoiceImage: InvoiceImage): Observable<number> {
 
-    if(invoiceImage.file.size > 1048576)
-    {
-      return throwError("Payload is too large - 413");
-    }
-
-    let formData: FormData = new FormData();
-    formData.append('requestId', invoiceImage.requestId.toString());
-    formData.append('file', invoiceImage.file, invoiceImage.file.name);
+    // // if(invoiceImage.file.size > 1048576)
+    // // {
+    // //   return throwError("Payload is too large - 413");
+    // // }
 
     let request = new HttpRequest('POST',
       this.configService.apiUrlBase + this.requestUrl,
-      formData,
+      invoiceImage,
       {
         reportProgress: true
       });
@@ -60,6 +56,8 @@ export class InvoiceImageService {
       else if (event instanceof HttpResponse) {
         progress.complete();
       }
+    }, (error) => {
+      progress.error(error);
     });
     return progress;
   }

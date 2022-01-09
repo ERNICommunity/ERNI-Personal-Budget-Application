@@ -1,95 +1,213 @@
-import { Component } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RequestService } from '../../services/request.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { PatchRequest } from '../../model/PatchRequest';
-import { NgbDate, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
+import { Request } from '../../model/request/request';
+import { PatchRequest } from '../../model/PatchRequest';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { NewRequest } from '../../model/newRequest';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { RequestApprovalState } from '../../model/requestState';
 
 @Component({
     selector: 'app-request-edit',
     templateUrl: 'requestEdit.component.html',
     styleUrls: ['requestEdit.component.css']
 })
-export class RequestEditComponent {
-    requestForm: FormGroup;
+export class RequestEditComponent implements OnInit {
     httpResponseError: string;
-    dirty: boolean;
-
     requestId: number;
+
+    popupTitle: string;
+    isVisible: boolean;
+
+    budgetId: number;
     budgetType: BudgetTypeEnum;
+    newRequest: boolean;
+    request: Request;
+
+    title: string;
+    amount: number;
+
+    public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
 
     constructor(private requestService: RequestService,
-        public modal: NgbActiveModal,
-        private location: Location,
-        private fb: FormBuilder,
+        private router: Router,
+        private route: ActivatedRoute,
         private alertService: AlertService,
-        private dataChangeNotificationService: DataChangeNotificationService) {
-        this.createForm();
+        private dataChangeNotificationService: DataChangeNotificationService,
+        private busyIndicatorService: BusyIndicatorService) { }
+
+    ngOnInit() {
+
+      this.isVisible = true;
+
+      this.route.params.subscribe((params: Params) => {
+
+        this.budgetId = Number(params['budgetId']);
+        this.requestId = Number(params['requestId']);
+
+        if (!isNaN(this.budgetId)) {
+
+          console.log("Creating request");
+          this.popupTitle = 'Create new request';
+          this.request = this.createNewRequest();
+          this.newRequest = true;
+
+        } else if (!isNaN(this.requestId)) {
+
+          console.log("Loading request");
+          this.popupTitle = 'Request details';
+          this.loadRequest(this.requestId);
+          this.newRequest = false;
+        } else {
+
+          this.router.navigate(['my-budget']);
+
+        }
+      });
     }
 
-    createForm() {
-        this.requestForm = this.fb.group({
-            title: ['', Validators.required],
-            amount: ['', Validators.required],
-            date: ['', Validators.required]
-        });
+
+    private createNewRequest(): Request {
+      var request = new Request();
+      request.date = new Date();
+      request.state = RequestApprovalState.Pending;
+      return request;
     }
 
-    public showRequest(id: number): void {
-        this.requestService.getRequest(id)
-            .subscribe(request => {
-                this.requestId = id;
+    public loadRequest(requestId: number): void {
+        this.requestId = requestId;
+        this.requestService.getRequest(requestId).subscribe(
+          (request) => {
 
-                var date = new Date(request.date);
+            this.request = {
+              amount: request.amount,
+              budget: request.budget,
+              createDate: request.createDate,
+              date: new Date(request.date),
+              id: request.id,
+              state: request.state,
+              title: request.title,
+              user: request.user,
+              invoicedAmount: request.invoicedAmount,
+              invoiceCount: request.invoiceCount
+            } as Request;
+            console.log(request);
+            console.log(this.request);
 
-                var ngbDate = new NgbDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
-
-                this.requestForm.setValue({
-                    title: request.title,
-                    amount: request.amount,
-                    date: ngbDate
-                });
-            }, err => {
-                this.httpResponseError = err.error
-            });
+          },
+          (err) => {
+            this.httpResponseError = err.error;
+          }
+        );
     }
 
-    setDirty(): void {
-        this.dirty = true;
+    public async save() {
+      // this.busyIndicatorService.start();
+
+      console.log('Saving');
+
+      if (this.request.state == RequestApprovalState.Pending) {
+        console.log("Saving basic info");
+        this.saveBasicInfo();
+      } else if (this.request.state == RequestApprovalState.Approved) {
+        await this.updateSpentAmount();
+      }
     }
 
-    isDirty(): boolean {
-        return this.dirty;
+    private saveBasicInfo() {
+      let budgetId = this.budgetId;
+      let id = this.requestId;
+      let title: string = this.request.title;
+      let amount: number = this.request.amount;
+      let date = this.request.date;
+
+        if (this.newRequest) {
+            this.saveNewRequest({ budgetId, title, amount, date } as NewRequest);
+        } else if (this.request.state == RequestApprovalState.Pending) {
+          console.log('Calling editExistingRequest()');
+            this.editExistingRequest({ id, title, amount, date } as PatchRequest);
+        }
+
+        this.dataChangeNotificationService.notify();
     }
 
-    goBack(): void {
-        this.location.back();
+    private saveNewRequest(payload: NewRequest): void {
+
+      console.log('Calling saveNewRequest()');
+      console.log(payload);
+
+      let request = this.budgetType == BudgetTypeEnum.TeamBudget
+          ? this.requestService.addTeamRequest(payload)
+          : this.requestService.addRequest(payload);
+
+      request.subscribe((_) => {
+          this.busyIndicatorService.end();
+
+          this.dataChangeNotificationService.notify();
+          this.alertService.alert(new Alert({ message: "Request created successfully", type: AlertType.Success, keepAfterRouteChange: true }));
+
+          this.router.navigate(['my-budget']);
+      },
+      err => {
+          this.busyIndicatorService.end();
+          this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
+      });
+  }
+
+  private async updateSpentAmount() {
+    console.log("Saving amount " + this.request.invoicedAmount);
+
+    if (this.request.invoicedAmount) {
+      try {
+        await this.requestService.updateInvoicedAmount(
+          this.request.id,
+          this.request.invoicedAmount
+        );
+        this.dataChangeNotificationService.notify();
+        this.alertService.alert(
+          new Alert({
+            message: "Spent amount saved",
+            type: AlertType.Success,
+            keepAfterRouteChange: true,
+          })
+        );
+
+        this.router.navigate(["my-budget"]);
+      } catch (error) {
+        this.alertService.error(JSON.stringify(error.error), "addRequestError");
+      }
+    }
+  }
+
+  private editExistingRequest(payload: PatchRequest): void {
+
+      let request = this.budgetType == BudgetTypeEnum.TeamBudget
+          ? this.requestService.updateTeamRequest(payload)
+          : this.requestService.updateRequest(payload);
+
+      request.subscribe(() => {
+          this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
+          this.dataChangeNotificationService.notify();
+      },
+          err => {
+              this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
+          });
+  }
+
+
+    public trimTitle() : void {
+        this.title = this.title.trim();
     }
 
-    save(): void {
-        let title = this.requestForm.get("title").value;
-        let amount = this.requestForm.get("amount").value;
-        let ngbDate = this.requestForm.get("date").value;
-        let date = new Date(ngbDate.year, ngbDate.month - 1, ngbDate.day);
-        let id = this.requestId;
-        // SAVE
+    public onHide(): void {
+      this.router.navigate(['my-budget']);
+    }
 
-        let requestData = { id, title, amount, date } as PatchRequest;
-        let request = this.budgetType == BudgetTypeEnum.TeamBudget
-            ? this.requestService.updateTeamRequest(requestData)
-            : this.requestService.updateRequest(requestData);
-
-        request.subscribe(() => {
-            this.alertService.alert(new Alert({ message: "Request updated", type: AlertType.Success, keepAfterRouteChange: true }));
-            this.dataChangeNotificationService.notify();
-            this.modal.close();
-        },
-            err => {
-                this.alertService.error("Error while creating request: " + JSON.stringify(err.error), "addRequestError");
-            });
+    public close(): void {
+      this.router.navigate(['my-budget']);
     }
 }
