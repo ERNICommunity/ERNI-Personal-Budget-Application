@@ -69,9 +69,9 @@ export class AuthenticationService {
     this.userInfoSubject.next(userInfo);
   }
 
-  private parseUser(authResult: AuthenticationResult): UserInfo {
-    const name = authResult.idTokenClaims['name'] as string;
-    const roles = authResult.idTokenClaims['roles'] as string[];
+    private parseUser(authResult: AuthenticationResult): UserInfo {
+        const name = authResult.idTokenClaims['name'] as string;
+        const roles = (authResult.idTokenClaims['roles'] as string[]) ?? [];
 
     return { isAdmin: roles.indexOf('PBA.Admin') >= 0, isFinance: roles.indexOf('PBA.Finance') >= 0, isSuperior: roles.indexOf('PBA.Superior') >= 0, name };
   }
