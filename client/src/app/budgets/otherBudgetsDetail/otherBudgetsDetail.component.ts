@@ -4,8 +4,6 @@ import { Budget } from '../../model/budget';
 import { BudgetService } from '../../services/budget.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../model/user';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
     selector: 'app-other-budgets-detail',
@@ -17,11 +15,11 @@ export class OtherBudgetsDetailComponent implements OnInit {
     availableUsers: User[];
     selectedUserId: number;
 
-
-    constructor(private budgetService: BudgetService,
+    constructor(
+        private budgetService: BudgetService,
         private location: Location,
-        private route: ActivatedRoute) {
-    }
+        private route: ActivatedRoute
+    ) {}
 
     ngOnInit() {
         this.getUserBudget();
@@ -29,17 +27,17 @@ export class OtherBudgetsDetailComponent implements OnInit {
 
     getUserBudget(): void {
         const id = this.route.snapshot.paramMap.get('id');
-        this.budgetService.getBudget(parseInt(id))
-            .subscribe(budget => {
-                this.budget = budget;
-                this.selectedUserId = budget.user.id;
-                this.getAvailableUsers();
-            });
+        this.budgetService.getBudget(parseInt(id)).subscribe((budget) => {
+            this.budget = budget;
+            this.selectedUserId = budget.user.id;
+            this.getAvailableUsers();
+        });
     }
 
     getAvailableUsers(): void {
-        this.budgetService.getUsersAvailableForBudgetType(this.budget.type)
-            .subscribe(users => this.availableUsers = users);
+        this.budgetService
+            .getUsersAvailableForBudgetType(this.budget.type)
+            .subscribe((users) => (this.availableUsers = users));
     }
 
     goBack(): void {
@@ -47,13 +45,13 @@ export class OtherBudgetsDetailComponent implements OnInit {
     }
 
     save(): void {
-
-        this.budgetService.updateBudget(this.budget.id,
-            this.budget.amount)
+        this.budgetService
+            .updateBudget(this.budget.id, this.budget.amount)
             .subscribe(() => {
                 if (this.selectedUserId != this.budget.user.id) {
-                    this.budgetService.transferBudget(this.budget.id
-                        , this.selectedUserId).subscribe();
+                    this.budgetService
+                        .transferBudget(this.budget.id, this.selectedUserId)
+                        .subscribe();
                 }
                 this.goBack();
             });

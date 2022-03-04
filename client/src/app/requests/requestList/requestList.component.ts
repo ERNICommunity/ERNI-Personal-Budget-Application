@@ -3,7 +3,6 @@ import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
 import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
-import { UserService } from '../../services/user.service';
 import { RequestApprovalState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +12,6 @@ import { AlertService } from '../../services/alert.service';
 import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
 import { ApprovalStateModel } from '../../shared/model/approvalStateModel';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { MenuItem } from 'primeng/api/menuitem';
 
 @Component({
@@ -22,10 +20,10 @@ import { MenuItem } from 'primeng/api/menuitem';
     styleUrls: ['requestList.component.css']
 })
 export class RequestListComponent implements OnInit {
-    pendingRoute: string = "/requests/pending";
-    approvedRoute: string = "/requests/approved";
-    completedRoute: string = "/requests/completed";
-    rejectedRoute: string = "/requests/rejected";
+    pendingRoute: string = '/requests/pending';
+    approvedRoute: string = '/requests/approved';
+    completedRoute: string = '/requests/completed';
+    rejectedRoute: string = '/requests/rejected';
 
     budgetTypes: BudgetType[];
 
@@ -60,21 +58,52 @@ export class RequestListComponent implements OnInit {
 
     getFilter(): ApprovalStateModel[] {
         return [
-            { state: RequestApprovalState.Pending, key: "pending", name: "Pending" },
-            { state: RequestApprovalState.Approved, key: "approved", name: "Approved" },
-            { state: RequestApprovalState.Completed, key: "completed", name: "Completed" },
-            { state: RequestApprovalState.Rejected, key: "rejected", name: "Rejected" },
-        ]
+            {
+                state: RequestApprovalState.Pending,
+                key: 'pending',
+                name: 'Pending'
+            },
+            {
+                state: RequestApprovalState.Approved,
+                key: 'approved',
+                name: 'Approved'
+            },
+            {
+                state: RequestApprovalState.Completed,
+                key: 'completed',
+                name: 'Completed'
+            },
+            {
+                state: RequestApprovalState.Rejected,
+                key: 'rejected',
+                name: 'Rejected'
+            }
+        ];
     }
 
     filterRequests(searchString: string) {
-        searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        searchString = searchString
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
 
-        return this.requests.filter(request => request.user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
-            request.user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString.toLowerCase()) !== -1);
+        return this.requests.filter(
+            (request) =>
+                request.user.firstName
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .indexOf(searchString) !== -1 ||
+                request.user.lastName
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .indexOf(searchString.toLowerCase()) !== -1
+        );
     }
 
-    constructor(private authService: AuthenticationService,
+    constructor(
+        private authService: AuthenticationService,
         private budgetService: BudgetService,
         private requestService: RequestService,
         private route: ActivatedRoute,
@@ -89,8 +118,7 @@ export class RequestListComponent implements OnInit {
     }
 
     async ngOnInit() {
-        var currentYear = (new Date()).getFullYear();
-
+        var currentYear = new Date().getFullYear();
 
         var types = await this.budgetService.getBudgetsTypes().toPromise();
         this.budgetTypes = types;
@@ -99,82 +127,134 @@ export class RequestListComponent implements OnInit {
         this.route.params.subscribe((params: Params) => {
             var yearParam = params['year'];
 
-            this.selectedBudgetType = this.budgetTypes.find(b => b.key == params['budgetType']) ?? this.budgetTypes[0];
+            this.selectedBudgetType =
+                this.budgetTypes.find((b) => b.key == params['budgetType']) ??
+                this.budgetTypes[0];
 
             this.years = [];
-            for (var year = new Date().getFullYear() + 1; year >= this.config.getOldestYear; year--) {
+            for (
+                var year = new Date().getFullYear() + 1;
+                year >= this.config.getOldestYear;
+                year--
+            ) {
                 this.years.push({
                     label: year.toString(),
-                    routerLink: ["/requests/", this.selectedBudgetType.key, this.requestFilter.key, year],
+                    routerLink: [
+                        '/requests/',
+                        this.selectedBudgetType.key,
+                        this.requestFilter.key,
+                        year
+                    ]
                 });
             }
 
-            this.selectedYear = yearParam != null ? parseInt(yearParam) : currentYear;
-            this.selectedYearItem = this.years.find(_ => _.label == this.selectedYear.toString());
+            this.selectedYear =
+                yearParam != null ? parseInt(yearParam) : currentYear;
+            this.selectedYearItem = this.years.find(
+                (_) => _.label == this.selectedYear.toString()
+            );
 
-            this.requestFilter = 
-                this.approvalStates.find(f => f.key == params['requestState']) ?? this.approvalStates[0];
+            this.requestFilter =
+                this.approvalStates.find(
+                    (f) => f.key == params['requestState']
+                ) ?? this.approvalStates[0];
 
-            this.getRequests(this.requestFilter.state, this.selectedYear, this.selectedBudgetType.id);
+            this.getRequests(
+                this.requestFilter.state,
+                this.selectedYear,
+                this.selectedBudgetType.id
+            );
         });
     }
 
-    getRequests(filter: RequestApprovalState, year: number, budgetTypeId: number): void {
+    getRequests(
+        filter: RequestApprovalState,
+        year: number,
+        budgetTypeId: number
+    ): void {
         var requests: Observable<Request[]>;
 
         switch (filter) {
             case RequestApprovalState.Approved:
-                requests = this.requestService.getApprovedRequests(year, budgetTypeId);
+                requests = this.requestService.getApprovedRequests(
+                    year,
+                    budgetTypeId
+                );
                 break;
             case RequestApprovalState.Pending:
-                requests = this.requestService.getPendingRequests(year, budgetTypeId);
+                requests = this.requestService.getPendingRequests(
+                    year,
+                    budgetTypeId
+                );
                 break;
             case RequestApprovalState.Rejected:
-                requests = this.requestService.getRejectedRequests(year, budgetTypeId);
+                requests = this.requestService.getRejectedRequests(
+                    year,
+                    budgetTypeId
+                );
                 break;
             case RequestApprovalState.Completed:
-                requests = this.requestService.getCompletedRequests(year, budgetTypeId);
+                requests = this.requestService.getCompletedRequests(
+                    year,
+                    budgetTypeId
+                );
             default:
                 break;
         }
 
-        requests.subscribe(requests => { this.requests = requests, this.filteredRequests = this.requests });
+        requests.subscribe((requests) => {
+            (this.requests = requests), (this.filteredRequests = this.requests);
+        });
     }
 
     approveRequest(id: number): void {
-        this.requestService.approveRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
+        this.requestService.approveRequest(id).subscribe(() => {
+            (this.requests = this.requests.filter((req) => req.id !== id)),
+                (this.filteredRequests = this.requests);
+        });
     }
 
     async completeRequest(request: Request) {
-      if (!request.invoicedAmount) {
-        console.log(request);
-        console.log(request.invoicedAmount);
-        this.alertService.error('Cannot complete request without invoiced amount entered');
-        return;
-      }
+        if (!request.invoicedAmount) {
+            console.log(request);
+            console.log(request.invoicedAmount);
+            this.alertService.error(
+                'Cannot complete request without invoiced amount entered'
+            );
+            return;
+        }
 
-      if (request.invoiceCount < 1) {
-        this.alertService.error('Cannot complete request without any invoice attached');
-        return;
-      }
+        if (request.invoiceCount < 1) {
+            this.alertService.error(
+                'Cannot complete request without any invoice attached'
+            );
+            return;
+        }
 
-      try {
-        await this.requestService.completeRequest(request.id);
+        try {
+            await this.requestService.completeRequest(request.id);
 
-        this.requests = this.requests.filter(req => req.id !== request.id);
-        this.filteredRequests = this.requests;
-
-      } catch (error) {
-        this.alertService.error(JSON.stringify(error.error));
-      }
+            this.requests = this.requests.filter(
+                (req) => req.id !== request.id
+            );
+            this.filteredRequests = this.requests;
+        } catch (error) {
+            this.alertService.error(JSON.stringify(error.error));
+        }
     }
 
     rejectRequest(id: number): void {
-        this.requestService.rejectRequest(id).subscribe(() => { this.requests = this.requests.filter(req => req.id !== id), this.filteredRequests = this.requests });
+        this.requestService.rejectRequest(id).subscribe(() => {
+            (this.requests = this.requests.filter((req) => req.id !== id)),
+                (this.filteredRequests = this.requests);
+        });
     }
 
     canRejectRequest(id: number): boolean {
-        return this.authService.userInfo.isAdmin && this.requestFilter.state != RequestApprovalState.Rejected;
+        return (
+            this.authService.userInfo.isAdmin &&
+            this.requestFilter.state != RequestApprovalState.Rejected
+        );
     }
 
     export(month: number, year: number) {
@@ -187,8 +267,8 @@ export class RequestListComponent implements OnInit {
 
     deleteRequest(id: number): void {
         this.requestService.deleteRequest(id).subscribe(() => {
-            this.requests = this.requests.filter(req => req.id !== id),
-                this.filteredRequests = this.requests
+            (this.requests = this.requests.filter((req) => req.id !== id)),
+                (this.filteredRequests = this.requests);
         });
     }
 }
