@@ -69,7 +69,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     Year = currentYear,
                     Title = parameter.Title,
                     Amount = parameter.Amount,
-                    Date = parameter.Date.ToLocalTime().Date,
                     CreateDate = DateTime.Now,
                     State = RequestState.Completed,
                     RequestType = budget.BudgetType,

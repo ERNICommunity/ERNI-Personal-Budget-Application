@@ -59,7 +59,6 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                     Id = _.Id,
                     Title = _.Request.Title,
                     Amount = _.Amount,
-                    Date = _.Request.Date,
                     CreateDate = _.Request.CreateDate,
                     State = _.Request.State
                 })

@@ -74,7 +74,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
             request.Title = parameter.Title;
             request.Amount = parameter.Amount;
-            request.Date = parameter.Date.ToLocalTime();
             await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
 
             await _unitOfWork.SaveChanges(cancellationToken);

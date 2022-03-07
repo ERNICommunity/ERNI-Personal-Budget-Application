@@ -84,7 +84,6 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             request.Title = parameter.Payload.Title;
             request.Amount = parameter.Payload.Amount;
             request.InvoicedAmount = parameter.Payload.Amount;
-            request.Date = parameter.Payload.Date.ToLocalTime();
 
             await _requestRepository.AddOrUpdateTransactions(parameter.RequestId, transactions);
 
@@ -93,8 +92,6 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
         public class PatchTeamRequestModel
         {
-            public DateTime Date { get; set; }
-
             public string Title { get; set; } = null!;
 
             public decimal Amount { get; set; }

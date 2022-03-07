@@ -22,7 +22,7 @@ namespace ERNI.PBA.Server.Domain.Models.Entities
 
         public decimal? InvoicedAmount { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public DateTime CreateDate { get; set; }
 

@@ -21,8 +21,6 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Queries.Requests
 
             public int Id { get; init; }
 
-            public DateTime Date { get; init; }
-
             public DateTime CreateDate { get; init; }
 
             public BudgetModel Budget { get; init; } = null!;

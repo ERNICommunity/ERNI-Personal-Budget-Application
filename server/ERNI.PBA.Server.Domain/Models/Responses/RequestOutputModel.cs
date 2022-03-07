@@ -11,8 +11,6 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 
         public decimal Amount { get; init; }
 
-        public DateTime Date { get; init; }
-
         public DateTime CreateDate { get; init; }
 
         public RequestState State { get; init; }

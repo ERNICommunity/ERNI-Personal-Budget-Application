@@ -71,7 +71,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             request.Title = parameter.Title;
             request.Amount = parameter.Amount;
-            request.Date = parameter.Date.ToLocalTime();
 
             var transactions = new[]
             {
