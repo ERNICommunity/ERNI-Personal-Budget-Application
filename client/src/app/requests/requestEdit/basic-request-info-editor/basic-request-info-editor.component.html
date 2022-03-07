@@ -1,28 +1,48 @@
 <div *ngIf="request">
-
   <div class="p-field p-grid">
-    <label for="title" class="p-col-fixed" style="width:200px">Title</label>
+    <label for="title" class="p-col-fixed" style="width: 200px">Title</label>
     <div class="p-col">
-      <textarea pInputTextarea [(ngModel)]="request.title" id="title" name="title" #requestTitle placeholder="title"
-        #title="ngModel" [disabled]="isReadonly"></textarea>
+      <textarea
+        pInputTextarea
+        [(ngModel)]="request.title"
+        id="title"
+        name="title"
+        #requestTitle
+        placeholder="title"
+        #title="ngModel"
+        [disabled]="isReadonly"
+      ></textarea>
     </div>
   </div>
 
-  <div *ngIf="title.invalid && (title.dirty || title.touched)" class="alert alert-danger col-md-6">
+  <div
+    *ngIf="title.invalid && (title.dirty || title.touched)"
+    class="alert alert-danger col-md-6"
+  >
     <div *ngIf="title.errors.required">Title is required.</div>
   </div>
 
   <div class="p-field p-grid">
-    <label for="date" class="p-col-fixed" style="width:200px">Date of occasion</label>
+    <label for="date" class="p-col-fixed" style="width: 200px"
+      >Date of occasion</label
+    >
     <div class="p-col">
-      <p-calendar [(ngModel)]="request.date" [disabled]="isReadonly"></p-calendar>
+      <p-calendar
+        [(ngModel)]="request.date"
+        [disabled]="isReadonly"
+      ></p-calendar>
     </div>
   </div>
 
   <div class="p-field p-grid">
-    <label for="amount" class="p-col-fixed" style="width:200px">Amount</label>
+    <label for="amount" class="p-col-fixed" style="width: 200px">Amount</label>
     <div class="p-col">
-      <p-inputNumber [(ngModel)]="request.amount" mode="currency" currency="EUR" [disabled]="isReadonly">
+      <p-inputNumber
+        [(ngModel)]="request.amount"
+        mode="currency"
+        currency="EUR"
+        [disabled]="isReadonly"
+      >
       </p-inputNumber>
     </div>
   </div>
