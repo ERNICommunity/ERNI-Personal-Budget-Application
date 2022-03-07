@@ -13,7 +13,6 @@ import { BudgetLeft } from '../../model/budgetLeft';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 
-
 @Component({
     selector: 'app-request-mass',
     templateUrl: './requestMass.component.html',
@@ -31,13 +30,15 @@ export class RequestMassComponent implements OnInit {
 
     addedUsers: User[];
 
-    constructor(private requestService: RequestService,
+    constructor(
+        private requestService: RequestService,
         private userService: UserService,
         private location: Location,
         private route: ActivatedRoute,
         private fb: FormBuilder,
         private alertService: AlertService,
-        private busyIndicatorService: BusyIndicatorService) {
+        private busyIndicatorService: BusyIndicatorService
+    ) {
         this.createForm();
     }
 
@@ -52,13 +53,16 @@ export class RequestMassComponent implements OnInit {
     createForm() {
         this.requestForm = this.fb.group({
             title: ['', Validators.required],
-            amount: ['', Validators.required],
+            amount: ['', Validators.required]
         });
     }
 
     validate(controlName: string): boolean {
-        return this.requestForm.controls[controlName].invalid &&
-            (this.requestForm.controls[controlName].dirty || this.requestForm.controls[controlName].touched);
+        return (
+            this.requestForm.controls[controlName].invalid &&
+            (this.requestForm.controls[controlName].dirty ||
+                this.requestForm.controls[controlName].touched)
+        );
     }
 
     get searchTerm(): string {
@@ -71,10 +75,24 @@ export class RequestMassComponent implements OnInit {
     }
 
     filterUsers(searchString: string) {
-        searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        searchString = searchString
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
 
-        return this.users.filter(user => user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1 ||
-            user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").indexOf(searchString) !== -1);
+        return this.users.filter(
+            (user) =>
+                user.firstName
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .indexOf(searchString) !== -1 ||
+                user.lastName
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .indexOf(searchString) !== -1
+        );
     }
 
     usersWithBudgetLeft(): void {
@@ -86,13 +104,15 @@ export class RequestMassComponent implements OnInit {
         let request = new BudgetLeft();
         request.amount = amount;
         request.year = this.selectedDate.getFullYear();
-        this.requestService.getUsersWithBudgetLeft(request).subscribe(u => this.sufficientBudgetLeftUsers = u);
+        this.requestService
+            .getUsersWithBudgetLeft(request)
+            .subscribe((u) => (this.sufficientBudgetLeftUsers = u));
     }
 
     getInvalidUsers(): User[] {
         let invalidUsers = this.addedUsers.slice();
-        this.sufficientBudgetLeftUsers.forEach(user => {
-            invalidUsers = invalidUsers.filter(f => f.id != user.id);
+        this.sufficientBudgetLeftUsers.forEach((user) => {
+            invalidUsers = invalidUsers.filter((f) => f.id != user.id);
         });
         return invalidUsers;
     }
@@ -103,13 +123,16 @@ export class RequestMassComponent implements OnInit {
 
     removeInvalidUsers(): void {
         let invalidUsers = this.getInvalidUsers();
-        invalidUsers.forEach(user => {
+        invalidUsers.forEach((user) => {
             this.removeUser(user);
         });
     }
 
     getUsers(filter: UserState): void {
-        this.userService.getAllUsers().subscribe(users => { this.users = users.filter(u => u.state == filter), this.filteredUsers = this.users });
+        this.userService.getAllUsers().subscribe((users) => {
+            (this.users = users.filter((u) => u.state == filter)),
+                (this.filteredUsers = this.users);
+        });
     }
 
     addUser(user: User, ammount: number): void {
@@ -117,11 +140,11 @@ export class RequestMassComponent implements OnInit {
     }
 
     hasBudgetLeft(user: User): boolean {
-        return this.sufficientBudgetLeftUsers.some(u => u.id == user.id);;
+        return this.sufficientBudgetLeftUsers.some((u) => u.id == user.id);
     }
 
     removeUser(user: User): void {
-        this.addedUsers = this.addedUsers.filter(u => u !== user)
+        this.addedUsers = this.addedUsers.filter((u) => u !== user);
     }
 
     isUserListValid(): boolean {
@@ -129,7 +152,7 @@ export class RequestMassComponent implements OnInit {
     }
 
     isAdded(user: User): boolean {
-        return this.addedUsers.some(u => u.id == user.id);
+        return this.addedUsers.some((u) => u.id == user.id);
     }
 
     goBack(): void {
@@ -148,15 +171,28 @@ export class RequestMassComponent implements OnInit {
             users: users
         } as RequestMass;
 
-        this.requestService.addMassRequest(requestData)
-            .subscribe(() => {
-                this.alertService.alert(new Alert({ message: "Multiple requests created", type: AlertType.Success, keepAfterRouteChange: true }));
-                this.busyIndicatorService.end();
-                this.goBack();
-            },
-                err => {
-                    this.alertService.error("Error while creating request: " + JSON.stringify(err.error));
+        this.requestService
+            .addMassRequest(requestData)
+            .subscribe(
+                () => {
+                    this.alertService.alert(
+                        new Alert({
+                            message: 'Multiple requests created',
+                            type: AlertType.Success,
+                            keepAfterRouteChange: true
+                        })
+                    );
                     this.busyIndicatorService.end();
-                }).add(() => this.busyIndicatorService.end());
+                    this.goBack();
+                },
+                (err) => {
+                    this.alertService.error(
+                        'Error while creating request: ' +
+                            JSON.stringify(err.error)
+                    );
+                    this.busyIndicatorService.end();
+                }
+            )
+            .add(() => this.busyIndicatorService.end());
     }
 }
