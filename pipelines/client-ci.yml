@@ -8,7 +8,7 @@ steps:
 - task: NodeTool@0
   displayName: 'Use Node 10.x'
   inputs:
-    versionSpec: '10.x'
+    versionSpec: '16.x'
 
 - task: Npm@1
   displayName: 'npm ci'
