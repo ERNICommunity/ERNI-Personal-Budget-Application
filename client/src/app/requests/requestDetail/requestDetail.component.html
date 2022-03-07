@@ -1,36 +1,50 @@
-<p-dialog [header]="request?.title" [(visible)]="isVisible" [style]="{width: '50vw'}" [draggable]="false"
-    [modal]="true" [resizable]="false" (onHide)="onHide()">
+<p-dialog
+  [header]="request?.title"
+  [(visible)]="isVisible"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [modal]="true"
+  [resizable]="false"
+  (onHide)="onHide()"
+>
+  <div class="modal-body">
+    <h5>Date</h5>
+    <p>{{ selectedDate | date: 'shortDate' }}</p>
 
-    <div class="modal-body">
-        <h5>Date</h5>
-        <p>{{ selectedDate | date : 'shortDate'}} </p>
+    <h5>Amount</h5>
+    <p>{{ request?.amount }}</p>
 
-        <h5>Amount</h5>
-        <p>{{request?.amount}}</p>
-
-        <div *ngIf="httpResponseError">
-            <font color="red" size="4">
-                {{httpResponseError}}
-            </font>
-        </div>
-        <h5>Uploaded files</h5>
-        <div class="fileLists">
-            <div *ngIf="images?.length == 0">No files yet</div>
-            <ul class="pl-0">
-                <li *ngFor="let image of images">
-                    <div class="row mt-2">
-                        <div class="col-md-8">{{image.name}}</div>
-                        <button class="col-md-3 btn btn-outline-primary"
-                            (click)="download(image.id, image.name)">Download</button>
-                        <a #downloadLink></a>
-                    </div>
-                </li>
-            </ul>
-        </div>
+    <div *ngIf="httpResponseError">
+      <font color="red" size="4">
+        {{ httpResponseError }}
+      </font>
     </div>
- 
-    <ng-template pTemplate="footer">
-          <p-button icon="pi pi-times" (click)="close()" label="Close" styleClass="p-button-secondary p-button-text"></p-button>
-    </ng-template>
+    <h5>Uploaded files</h5>
+    <div class="fileLists">
+      <div *ngIf="images?.length == 0">No files yet</div>
+      <ul class="pl-0">
+        <li *ngFor="let image of images">
+          <div class="row mt-2">
+            <div class="col-md-8">{{ image.name }}</div>
+            <button
+              class="col-md-3 btn btn-outline-primary"
+              (click)="download(image.id, image.name)"
+            >
+              Download
+            </button>
+            <a #downloadLink></a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 
+  <ng-template pTemplate="footer">
+    <p-button
+      icon="pi pi-times"
+      (click)="close()"
+      label="Close"
+      styleClass="p-button-secondary p-button-text"
+    ></p-button>
+  </ng-template>
 </p-dialog>
