@@ -67,7 +67,6 @@ export class RequestEditComponent implements OnInit {
 
     private createNewRequest(): Request {
         var request = new Request();
-        request.date = new Date();
         request.state = RequestApprovalState.Pending;
         return request;
     }
@@ -80,14 +79,13 @@ export class RequestEditComponent implements OnInit {
                     amount: request.amount,
                     budget: request.budget,
                     createDate: request.createDate,
-                    date: new Date(request.date),
                     id: request.id,
                     state: request.state,
                     title: request.title,
                     user: request.user,
                     invoicedAmount: request.invoicedAmount,
                     invoiceCount: request.invoiceCount
-                } as Request;
+                };
                 console.log(request);
                 console.log(this.request);
             },
@@ -115,23 +113,20 @@ export class RequestEditComponent implements OnInit {
         let id = this.requestId;
         let title: string = this.request.title;
         let amount: number = this.request.amount;
-        let date = this.request.date;
 
         if (this.newRequest) {
             this.saveNewRequest({
                 budgetId,
                 title,
-                amount,
-                date
-            } as NewRequest);
+                amount
+            });
         } else if (this.request.state == RequestApprovalState.Pending) {
             console.log('Calling editExistingRequest()');
             this.editExistingRequest({
                 id,
                 title,
-                amount,
-                date
-            } as PatchRequest);
+                amount
+            });
         }
 
         this.dataChangeNotificationService.notify();

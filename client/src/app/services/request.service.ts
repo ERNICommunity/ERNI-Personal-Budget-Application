@@ -157,7 +157,7 @@ export class RequestService {
                     this.requestUrl +
                     id +
                     '/setAmount',
-                { amount: amount } as InvoicedAmount,
+                { amount: amount },
                 this.serviceHelper.getHttpOptions()
             )
             .toPromise();

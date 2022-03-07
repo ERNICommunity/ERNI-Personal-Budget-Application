@@ -1,6 +1,6 @@
-import { User } from "../user";
-import { RequestApprovalState } from "../requestState";
-import { Budget } from "./budget";
+import { User } from '../user';
+import { RequestApprovalState } from '../requestState';
+import { Budget } from './budget';
 
 export class Request {
     id: number;
@@ -10,7 +10,6 @@ export class Request {
     user: User;
     budget: Budget;
     title: string;
-    date: Date;
     createDate: Date;
     state: RequestApprovalState;
 }

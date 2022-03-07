@@ -30,7 +30,6 @@
         <tr>
           <th scope="col">Title</th>
           <th scope="col">Amount</th>
-          <th scope="col">Date</th>
           <th scope="col">Create date</th>
           <th scope="col">Request State</th>
           <th scope="col"></th>
@@ -40,7 +39,6 @@
         <tr *ngFor="let request of budget.requests">
           <td>{{ request.title }}</td>
           <td>{{ request.amount | number: '1.2-2' }}</td>
-          <td>{{ request.date | date: 'dd/MM/yyyy' }}</td>
           <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
           <td>{{ requestStateType[request.state] }}</td>
           <td class="button-table-cell">

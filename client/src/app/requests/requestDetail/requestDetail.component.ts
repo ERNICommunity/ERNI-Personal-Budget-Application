@@ -14,7 +14,7 @@ import { InvoiceImageService } from '../../services/invoice-image.service';
 export class RequestDetailComponent implements OnInit {
     @ViewChild('downloadLink', { static: false }) downloadLink: ElementRef;
     request: Request;
-    selectedDate: Date;
+    createDate: Date;
     requestForm: FormGroup;
     httpResponseError: string;
     images: [number, string][];
@@ -43,7 +43,7 @@ export class RequestDetailComponent implements OnInit {
         this.requestService.getRequest(id).subscribe(
             (request) => {
                 this.request = request;
-                this.selectedDate = new Date(request.date);
+                this.createDate = new Date(request.createDate);
                 this.invoiceImageService
                     .getInvoiceImages(id)
                     .subscribe((names) => {
