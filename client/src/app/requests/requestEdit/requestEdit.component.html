@@ -1,28 +1,54 @@
-<p-dialog [(header)]="popupTitle" [(visible)]="isVisible" [style]="{width: '50vw'}" [draggable]="false" [modal]="true"
-  [resizable]="false" (onHide)="onHide()">
-
+<p-dialog
+  [(header)]="popupTitle"
+  [(visible)]="isVisible"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [modal]="true"
+  [resizable]="false"
+  (onHide)="onHide()"
+>
   <div class="modal-body">
     <app-alert id="addRequestError"></app-alert>
 
-    <app-basic-request-info-editor [(request)]="request" [isReadonly]="!request || request.state != RequestState.Pending"></app-basic-request-info-editor>
+    <app-basic-request-info-editor
+      [(request)]="request"
+      [isReadonly]="!request || request.state != RequestState.Pending"
+    ></app-basic-request-info-editor>
 
-
-    <div *ngIf="request && !newRequest && request.state == RequestState.Pending">
+    <div
+      *ngIf="request && !newRequest && request.state == RequestState.Pending"
+    >
       <p-divider></p-divider>
-      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="2.5s"></p-progressSpinner>
+      <p-progressSpinner
+        [style]="{ width: '50px', height: '50px' }"
+        styleClass="custom-spinner"
+        strokeWidth="8"
+        fill="#EEEEEE"
+        animationDuration="2.5s"
+      ></p-progressSpinner>
       <p>Request approval pending</p>
     </div>
 
     <div *ngIf="request && request.state >= RequestState.Approved">
       <div class="p-field p-grid">
-        <label for="actualAmount" class="p-col-fixed" style="width:200px">Amount spent</label>
+        <label for="actualAmount" class="p-col-fixed" style="width: 200px"
+          >Amount spent</label
+        >
         <div class="p-col">
-          <p-inputNumber [(ngModel)]="request.invoicedAmount" mode="currency" currency="EUR" [(disabled)]="request.state != RequestState.Approved">
+          <p-inputNumber
+            [(ngModel)]="request.invoicedAmount"
+            mode="currency"
+            currency="EUR"
+            [(disabled)]="request.state != RequestState.Approved"
+          >
           </p-inputNumber>
         </div>
       </div>
 
-      <app-file-upload [(requestIdInput)]="request.id" [uploadEnabled]="request && request.state == RequestState.Approved">
+      <app-file-upload
+        [(requestIdInput)]="request.id"
+        [uploadEnabled]="request && request.state == RequestState.Approved"
+      >
       </app-file-upload>
     </div>
 
@@ -33,23 +59,45 @@
     </div>
   </div>
 
-
   <ng-template pTemplate="footer">
-    <div  *ngIf="request && (newRequest || request.state == RequestState.Approved || request.state == RequestState.Pending)">
+    <div
+      *ngIf="
+        request &&
+        (newRequest ||
+          request.state == RequestState.Approved ||
+          request.state == RequestState.Pending)
+      "
+    >
       <p-button
-      icon="pi pi-save" (click)="save()" label="Save changes" styleClass="p-button-success p-button-text"></p-button>
-      <p-button icon="pi pi-trash" (click)="close()" label="Discard changes" styleClass="p-button-danger p-button-text"></p-button>
+        icon="pi pi-save"
+        (click)="save()"
+        label="Save changes"
+        styleClass="p-button-success p-button-text"
+      ></p-button>
+      <p-button
+        icon="pi pi-trash"
+        (click)="close()"
+        label="Discard changes"
+        styleClass="p-button-danger p-button-text"
+      ></p-button>
     </div>
 
-    <div  *ngIf="request && (request.state == RequestState.Completed || request.state == RequestState.Rejected)">
-      <p-button icon="pi pi-times" (click)="close()" label="Close" styleClass="p-button-secondary  p-button-text"></p-button>
+    <div
+      *ngIf="
+        request &&
+        (request.state == RequestState.Completed ||
+          request.state == RequestState.Rejected)
+      "
+    >
+      <p-button
+        icon="pi pi-times"
+        (click)="close()"
+        label="Close"
+        styleClass="p-button-secondary  p-button-text"
+      ></p-button>
     </div>
-
-
 
     <!-- <p-button icon="pi pi-check" (click)="displayBasic=false" label="Yes" styleClass="p-button-text"></p-button>
   <p-button icon="pi pi-times" (click)="displayBasic=false" label="No"></p-button> -->
   </ng-template>
-
-
 </p-dialog>
