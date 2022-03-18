@@ -78,7 +78,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 {
                     RequestId = request.Id,
                     BudgetId = budget.Id,
-                    Amount = request.InvoicedAmount ?? parameter.Amount,
+                    Amount = parameter.Amount,
                     RequestType = budget.BudgetType,
                 }
             };

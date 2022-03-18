@@ -83,7 +83,6 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             request.Title = parameter.Payload.Title;
             request.Amount = parameter.Payload.Amount;
-            request.InvoicedAmount = parameter.Payload.Amount;
 
             await _requestRepository.AddOrUpdateTransactions(parameter.RequestId, transactions);
 
