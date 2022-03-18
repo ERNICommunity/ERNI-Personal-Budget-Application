@@ -83,7 +83,6 @@ export class RequestEditComponent implements OnInit {
                     state: request.state,
                     title: request.title,
                     user: request.user,
-                    invoicedAmount: request.invoicedAmount,
                     invoiceCount: request.invoiceCount
                 };
                 console.log(request);
