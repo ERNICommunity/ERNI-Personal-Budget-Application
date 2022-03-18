@@ -49,7 +49,6 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 Amount = request.Amount,
                 Year = request.Year,
                 CreateDate = request.CreateDate,
-                InvoicedAmount = request.InvoicedAmount,
                 InvoiceCount = invoiceCount,
                 State = request.State,
                 User = new UserOutputModel

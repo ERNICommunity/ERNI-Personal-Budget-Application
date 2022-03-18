@@ -82,14 +82,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         private static (bool isValid, string? error) CanComplete(Domain.Models.Entities.Request request,
             int invoiceCount)
         {
-            if (request.State != RequestState.Approved)
+            if (request.State != RequestState.Pending)
             {
                 return (false, "Only pending requests can be approved.");
-            }
-
-            if (!request.InvoicedAmount.HasValue || request.InvoicedAmount <= 0)
-            {
-                return (false, "Request without invoiced amount cannot be completed.");
             }
 
             if (invoiceCount <= 0)
