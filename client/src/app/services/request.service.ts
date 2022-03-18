@@ -63,20 +63,6 @@ export class RequestService {
         );
     }
 
-    public getCompletedRequests(
-        year: number,
-        budgetTypeId: number
-    ): Observable<Request[]> {
-        return this.http.get<Request[]>(
-            this.configService.apiUrlBase +
-                this.requestUrl +
-                year +
-                '/state/completed/type/' +
-                budgetTypeId,
-            this.serviceHelper.getHttpOptions()
-        );
-    }
-
     public getRequest(id): Observable<Request> {
         return this.http.get<Request>(
             this.configService.apiUrlBase + this.requestUrl + id,
@@ -96,18 +82,6 @@ export class RequestService {
             this.configService.apiUrlBase + this.requestUrl + id + '/reject',
             this.serviceHelper.getHttpOptions()
         );
-    }
-
-    public completeRequest(id: number): Promise<Request> {
-        return this.http
-            .post<Request>(
-                this.configService.apiUrlBase +
-                    this.requestUrl +
-                    id +
-                    '/complete',
-                this.serviceHelper.getHttpOptions()
-            )
-            .toPromise();
     }
 
     public addRequest(request: NewRequest): Observable<any> {
@@ -148,19 +122,6 @@ export class RequestService {
             request,
             this.serviceHelper.getHttpOptions()
         );
-    }
-
-    public updateInvoicedAmount(id: number, amount: number): Promise<any> {
-        return this.http
-            .put(
-                this.configService.apiUrlBase +
-                    this.requestUrl +
-                    id +
-                    '/setAmount',
-                { amount: amount },
-                this.serviceHelper.getHttpOptions()
-            )
-            .toPromise();
     }
 
     public deleteRequest(id: number): Observable<Request> {

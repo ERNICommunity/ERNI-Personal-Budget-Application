@@ -69,11 +69,6 @@ export class RequestListComponent implements OnInit {
                 name: 'Approved'
             },
             {
-                state: RequestApprovalState.Completed,
-                key: 'completed',
-                name: 'Completed'
-            },
-            {
                 state: RequestApprovalState.Rejected,
                 key: 'rejected',
                 name: 'Rejected'
@@ -193,24 +188,12 @@ export class RequestListComponent implements OnInit {
                     budgetTypeId
                 );
                 break;
-            case RequestApprovalState.Completed:
-                requests = this.requestService.getCompletedRequests(
-                    year,
-                    budgetTypeId
-                );
             default:
                 break;
         }
 
         requests.subscribe((requests) => {
             (this.requests = requests), (this.filteredRequests = this.requests);
-        });
-    }
-
-    approveRequest(id: number): void {
-        this.requestService.approveRequest(id).subscribe(() => {
-            (this.requests = this.requests.filter((req) => req.id !== id)),
-                (this.filteredRequests = this.requests);
         });
     }
 
@@ -232,7 +215,12 @@ export class RequestListComponent implements OnInit {
         }
 
         try {
-            await this.requestService.completeRequest(request.id);
+            this.requestService.approveRequest(request.id).subscribe(() => {
+                (this.requests = this.requests.filter(
+                    (req) => req.id !== request.id
+                )),
+                    (this.filteredRequests = this.requests);
+            });
 
             this.requests = this.requests.filter(
                 (req) => req.id !== request.id
