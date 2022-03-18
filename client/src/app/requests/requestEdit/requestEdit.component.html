@@ -15,45 +15,16 @@
       [isReadonly]="!request || request.state != RequestState.Pending"
     ></app-basic-request-info-editor>
 
-    <div
-      *ngIf="request && !newRequest && request.state == RequestState.Pending"
-    >
-      <p-divider></p-divider>
-      <p-progressSpinner
-        [style]="{ width: '50px', height: '50px' }"
-        styleClass="custom-spinner"
-        strokeWidth="8"
-        fill="#EEEEEE"
-        animationDuration="2.5s"
-      ></p-progressSpinner>
-      <p>Request approval pending</p>
-    </div>
-
-    <div *ngIf="request && request.state >= RequestState.Approved">
-      <div class="p-field p-grid">
-        <label for="actualAmount" class="p-col-fixed" style="width: 200px"
-          >Amount spent</label
-        >
-        <div class="p-col">
-          <p-inputNumber
-            [(ngModel)]="request.invoicedAmount"
-            mode="currency"
-            currency="EUR"
-            [(disabled)]="request.state != RequestState.Approved"
-          >
-          </p-inputNumber>
-        </div>
-      </div>
-
+    <div *ngIf="request && !newRequest">
       <app-file-upload
         [(requestIdInput)]="request.id"
-        [uploadEnabled]="request && request.state == RequestState.Approved"
+        [uploadEnabled]="request && request.state == RequestState.Pending"
       >
       </app-file-upload>
     </div>
 
     <!-- Closed -->
-    <div *ngIf="request && request.state == RequestState.Completed">
+    <div *ngIf="request && request.state == RequestState.Approved">
       <p-divider></p-divider>
       <p>Request was approved</p>
     </div>

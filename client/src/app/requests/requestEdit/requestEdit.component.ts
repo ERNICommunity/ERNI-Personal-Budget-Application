@@ -103,8 +103,6 @@ export class RequestEditComponent implements OnInit {
         if (this.request.state == RequestApprovalState.Pending) {
             console.log('Saving basic info');
             this.saveBasicInfo();
-        } else if (this.request.state == RequestApprovalState.Approved) {
-            await this.updateSpentAmount();
         }
     }
 
@@ -165,34 +163,6 @@ export class RequestEditComponent implements OnInit {
                 );
             }
         );
-    }
-
-    private async updateSpentAmount() {
-        console.log('Saving amount ' + this.request.invoicedAmount);
-
-        if (this.request.invoicedAmount) {
-            try {
-                await this.requestService.updateInvoicedAmount(
-                    this.request.id,
-                    this.request.invoicedAmount
-                );
-                this.dataChangeNotificationService.notify();
-                this.alertService.alert(
-                    new Alert({
-                        message: 'Spent amount saved',
-                        type: AlertType.Success,
-                        keepAfterRouteChange: true
-                    })
-                );
-
-                this.router.navigate(['my-budget']);
-            } catch (error) {
-                this.alertService.error(
-                    JSON.stringify(error.error),
-                    'addRequestError'
-                );
-            }
-        }
     }
 
     private editExistingRequest(payload: PatchRequest): void {
