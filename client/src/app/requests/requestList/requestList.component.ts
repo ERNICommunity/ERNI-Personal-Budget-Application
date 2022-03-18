@@ -198,15 +198,6 @@ export class RequestListComponent implements OnInit {
     }
 
     async completeRequest(request: Request) {
-        if (!request.invoicedAmount) {
-            console.log(request);
-            console.log(request.invoicedAmount);
-            this.alertService.error(
-                'Cannot complete request without invoiced amount entered'
-            );
-            return;
-        }
-
         if (request.invoiceCount < 1) {
             this.alertService.error(
                 'Cannot complete request without any invoice attached'

@@ -9,7 +9,6 @@ import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
 import { PatchRequest } from '../model/PatchRequest';
-import { InvoicedAmount } from '../model/invoicedAmount';
 
 @Injectable()
 export class RequestService {

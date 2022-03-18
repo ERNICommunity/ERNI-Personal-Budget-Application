@@ -5,7 +5,6 @@ import { Budget } from './budget';
 export class Request {
     id: number;
     amount: number;
-    invoicedAmount?: number;
     invoiceCount: number;
     user: User;
     budget: Budget;
