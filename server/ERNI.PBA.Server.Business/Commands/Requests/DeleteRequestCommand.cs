@@ -43,9 +43,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
             }
 
-            if (request.State == RequestState.Completed)
+            if (request.State == RequestState.Approved)
             {
-                throw new OperationErrorException(ErrorCodes.CannotDeleteCompletedRequest, "Cannot delete completed request");
+                throw new OperationErrorException(ErrorCodes.CannotDeleteCompletedRequest, "Cannot delete approved request");
             }
 
             await _requestRepository.DeleteRequest(request);

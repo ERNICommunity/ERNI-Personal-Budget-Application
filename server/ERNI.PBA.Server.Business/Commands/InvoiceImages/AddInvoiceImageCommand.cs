@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
@@ -46,9 +46,9 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                 throw AppExceptions.AuthorizationException();
             }
 
-            if (request.State != RequestState.Approved)
+            if (request.State != RequestState.Pending)
             {
-                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Invoices can be uploaded only to Approved requests.");
+                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Invoices can be uploaded only to Pending requests.");
             }
 
             var blobPath = await _invoiceImageRepository.UploadImageDataBlob(parameter.Data, request.Id, cancellationToken);

@@ -30,8 +30,8 @@ namespace ERNI.PBA.Server.Host
                 {
                     blobService.CreateBlobContainer(blobStorageSettings.Value.AttachmentDataContainerName);
                 }
-                var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
-                cmd.Execute().Wait();
+                //var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
+                //cmd.Execute().Wait();
             }
 
             host.Run();

@@ -99,10 +99,10 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         private static RequestState GetRequestState(BudgetTypeEnum budgetType) =>
             budgetType switch
             {
-                BudgetTypeEnum.CommunityBudget => RequestState.Completed,
+                BudgetTypeEnum.CommunityBudget => RequestState.Approved,
                 BudgetTypeEnum.PersonalBudget => RequestState.Pending,
-                BudgetTypeEnum.RecreationBudget => RequestState.Approved,
-                BudgetTypeEnum.TeamBudget => RequestState.Completed,
+                BudgetTypeEnum.RecreationBudget => RequestState.Pending,
+                BudgetTypeEnum.TeamBudget => RequestState.Approved,
                 _ => throw new InvalidOperationException($"Unexpected budget type: {budgetType}")
             };
 

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Commands.InvoiceImages;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
@@ -46,13 +47,16 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.InvoiceImages
     public class AddInvoiceImageCommandTests
     {
         [TestMethod]
-        public async Task UnapprovedRequestFails()
+        public async Task ApprovedRequestFails()
         {
             var userGuid = Guid.Parse("72df13d2-25bf-4a1a-b104-65e0ef71cbff");
 
             var requestRepositoryMock = new Mock<IRequestRepository>();
             requestRepositoryMock.Setup(_ => _.GetRequest(1, CancellationToken.None))
-                .Returns((int a, CancellationToken b) => Task.FromResult(new Request()));
+                .Returns((int a, CancellationToken b) => Task.FromResult(new Request()
+                {
+                    State = RequestState.Approved
+                }));
 
             var userRepositoryMock = new Mock<IUserRepository>();
             userRepositoryMock.Setup(_ => _.GetUser(userGuid, It.IsAny<CancellationToken>()))
@@ -70,7 +74,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.InvoiceImages
         }
 
         [TestMethod]
-        public async Task ApprovedRequestFails()
+        public async Task ApprovedRequestSucceeds()
         {
             var userGuid = Guid.Parse("72df13d2-25bf-4a1a-b104-65e0ef71cbff");
 
@@ -78,7 +82,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.InvoiceImages
             requestRepositoryMock.Setup(_ => _.GetRequest(1, CancellationToken.None))
                 .Returns((int a, CancellationToken b) => Task.FromResult(new Request()
                 {
-                    State = Domain.Enums.RequestState.Approved
+                    State = Domain.Enums.RequestState.Pending
                 }));
 
             var userRepositoryMock = new Mock<IUserRepository>();

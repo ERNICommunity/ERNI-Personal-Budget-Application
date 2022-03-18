@@ -49,10 +49,10 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             }
 
             if (!principal.IsInRole(Roles.Admin) &&
-                (request.State == RequestState.Completed || request.State == RequestState.Rejected))
+                (request.State == RequestState.Approved || request.State == RequestState.Rejected))
             {
                 throw new OperationErrorException(ErrorCodes.ValidationError,
-                    $"Cannot update completed or rejected requests.");
+                    $"Cannot update approved or rejected requests.");
             }
 
             var allBudgets =

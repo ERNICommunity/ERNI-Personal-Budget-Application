@@ -69,19 +69,15 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ToArrayAsync(cancellationToken);
         }
 
-        public Task<Budget[]> GetBudgetsByYear(int year, CancellationToken cancellationToken)
-        {
-            return _context.Budgets
+        public Task<Budget[]> GetBudgetsByYear(int year, CancellationToken cancellationToken) =>
+            _context.Budgets
                 .Where(_ => _.Year == year)
                 .Include(_ => _.User)
                 .ToArrayAsync(cancellationToken);
-        }
 
-        public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken)
-        {
-            return _context.Transactions.Where(r => r.BudgetId == budgetId && r.Request.State != RequestState.Rejected)
+        public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken) =>
+            _context.Transactions.Where(r => r.BudgetId == budgetId && r.Request.State != RequestState.Rejected)
                 .SumAsync(r => r.Amount, cancellationToken);
-        }
 
         public async Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken)
         {
