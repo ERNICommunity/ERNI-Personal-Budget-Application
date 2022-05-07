@@ -76,7 +76,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 Year = currentYear,
                 Title = parameter.Title.Trim(),
                 Amount = parameter.Amount,
-                Date = parameter.Date.ToLocalTime(),
                 CreateDate = DateTime.Now,
                 State = GetRequestState(budget.BudgetType),
                 RequestType = budget.BudgetType,
@@ -109,8 +108,6 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         public class PostRequestModel
         {
-            public DateTime Date { get; set; }
-
             public string Title { get; set; } = null!;
 
             public decimal Amount { get; set; }

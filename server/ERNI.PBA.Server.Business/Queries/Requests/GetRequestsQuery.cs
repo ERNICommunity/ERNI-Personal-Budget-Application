@@ -48,7 +48,6 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 Title = request.Title,
                 Amount = request.Amount,
                 Year = request.Year,
-                Date = request.Date,
                 CreateDate = request.CreateDate,
                 InvoicedAmount = request.InvoicedAmount,
                 InvoiceCount = invoiceCount,

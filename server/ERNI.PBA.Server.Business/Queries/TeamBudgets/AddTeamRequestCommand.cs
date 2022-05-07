@@ -83,7 +83,6 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 Title = parameter.Title,
                 Amount = parameter.Amount,
                 InvoicedAmount = parameter.Amount,
-                Date = parameter.Date.ToLocalTime(),
                 CreateDate = DateTime.Now,
                 State = RequestState.Approved,
                 RequestType = BudgetTypeEnum.TeamBudget,
@@ -99,8 +98,6 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
         public class NewTeamRequestModel
         {
-            public DateTime Date { get; set; }
-
             public string Title { get; set; } = null!;
 
             public decimal Amount { get; set; }

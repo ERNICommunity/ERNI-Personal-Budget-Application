@@ -6,8 +6,6 @@ namespace ERNI.PBA.Server.Domain.Models.Payloads
     {
         public int Id { get; set; }
 
-        public DateTime Date { get; set; }
-
         public string Title { get; set; } = null!;
 
         public decimal Amount { get; set; }

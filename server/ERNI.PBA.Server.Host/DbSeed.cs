@@ -87,7 +87,6 @@ namespace ERNI.PBA.Server.Host
                 {
                     Title = _.ToString(CultureInfo.InvariantCulture),
                     Amount = (_ * 1878 % 50) + 10,
-                    Date = new DateTime(budget.Year, _, 5),
                     Category = categories[_ % categories.Length]
                 }));
             }
