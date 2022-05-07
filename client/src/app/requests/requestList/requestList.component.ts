@@ -30,7 +30,7 @@ export class RequestListComponent implements OnInit {
     requests: Request[];
     filteredRequests: Request[];
 
-    approvalStates: ApprovalStateModel[];
+    approvalStates: MenuItem[];
     requestFilter: ApprovalStateModel;
     requestFilterType = RequestApprovalState;
 
@@ -56,22 +56,22 @@ export class RequestListComponent implements OnInit {
         this.filteredRequests = this.filterRequests(value);
     }
 
-    getFilter(): ApprovalStateModel[] {
+    getFilter(): MenuItem[] {
         return [
             {
-                state: RequestApprovalState.Pending,
-                key: 'pending',
-                name: 'Pending'
+                //state: RequestApprovalState.Pending,
+                //key: 'pending',
+                label: 'Pending'
             },
             {
-                state: RequestApprovalState.Approved,
-                key: 'approved',
-                name: 'Approved'
+                //state: RequestApprovalState.Approved,
+                //key: 'approved',
+                label: 'Approved'
             },
             {
-                state: RequestApprovalState.Rejected,
-                key: 'rejected',
-                name: 'Rejected'
+                //state: RequestApprovalState.Rejected,
+                //key: 'rejected',
+                label: 'Rejected'
             }
         ];
     }

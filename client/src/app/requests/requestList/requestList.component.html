@@ -72,7 +72,12 @@
 />
 <br />
 
-<ul class="nav nav-tabs">
+<p-tabMenu
+  [model]="approvalStates"
+  [activeItem]="selectedApprovalState"
+></p-tabMenu>
+
+<!-- <ul class="nav nav-tabs">
   <li class="nav-item" *ngFor="let approvalState of approvalStates">
     <a
       class="nav-link"
@@ -87,7 +92,7 @@
       {{ approvalState.name }}
     </a>
   </li>
-</ul>
+</ul> -->
 
 <table class="table">
   <thead>
