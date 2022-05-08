@@ -81,9 +81,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddRequest([FromBody] AddRequestCommand.PostRequestModel payload,
             [FromServices] AddRequestCommand addRequestCommand, CancellationToken cancellationToken)
         {
-            await addRequestCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            var id = await addRequestCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
-            return Ok();
+            return Ok(id);
         }
 
         /// <summary>

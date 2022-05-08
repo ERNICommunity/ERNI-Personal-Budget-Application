@@ -83,16 +83,16 @@ export class RequestService {
         );
     }
 
-    public addRequest(request: NewRequest): Observable<any> {
-        return this.http.post(
+    public addRequest(request: NewRequest): Observable<number> {
+        return this.http.post<number>(
             this.configService.apiUrlBase + this.requestUrl,
             request,
             this.serviceHelper.getHttpOptions()
         );
     }
 
-    public addTeamRequest(request: NewRequest): Observable<any> {
-        return this.http.post(
+    public addTeamRequest(request: NewRequest): Observable<number> {
+        return this.http.post<number>(
             this.configService.apiUrlBase + this.requestUrl + 'team',
             request,
             this.serviceHelper.getHttpOptions()

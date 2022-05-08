@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
         protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var requestId = parameter.Id;
+            var requestId = parameter.RequestId;
 
             var request = await _requestRepository.GetRequest(requestId, cancellationToken)
                           ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
@@ -68,7 +68,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
         public class InvoiceImageModel
         {
-            public InvoiceImageModel(int id, string? filename, string? mimeType, byte[]? data)
+            public InvoiceImageModel(int requestId, string? filename, string? mimeType, byte[]? data)
             {
                 if (data is null || data.Length == 0)
                 {
@@ -102,13 +102,13 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                     throw new OperationErrorException(ErrorCodes.InvalidAttachmentType, "Attachments only support images.");
                 }
 
-                Id = id;
+                RequestId = requestId;
                 Data = data;
                 Filename = filename;
                 MimeType = mimeType;
             }
 
-            public int Id { get; }
+            public int RequestId { get; }
             public byte[] Data { get; }
             public string Filename { get; }
             public string MimeType { get; }

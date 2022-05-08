@@ -12,16 +12,20 @@
 
     <app-basic-request-info-editor
       [(request)]="request"
-      [isReadonly]="!request || request.state != RequestState.Pending"
-    ></app-basic-request-info-editor>
+      [isReadonly]="
+        !request || request.state != RequestState.Pending || isSaveInProgress
+      "
+    >
+    </app-basic-request-info-editor>
 
-    <div *ngIf="request && !newRequest">
-      <app-file-upload
-        [(requestIdInput)]="request.id"
-        [uploadEnabled]="request && request.state == RequestState.Pending"
-      >
-      </app-file-upload>
-    </div>
+    <app-file-list
+      [uploadEnabled]="
+        request && request.state == RequestState.Pending && !isSaveInProgress
+      "
+      [images]="images"
+      (onNewImageAdded)="onNewImageAdded($event)"
+    >
+    </app-file-list>
 
     <!-- Closed -->
     <div *ngIf="request && request.state == RequestState.Approved">
@@ -30,7 +34,7 @@
     </div>
   </div>
 
-  <ng-template pTemplate="footer">
+  <ng-template pTemplate="footer" style="display: inline">
     <div
       *ngIf="
         request &&
@@ -39,15 +43,24 @@
           request.state == RequestState.Pending)
       "
     >
+      <div class="progress-spinner" *ngIf="isSaveInProgress">
+        <p-progressSpinner
+          [style]="{ width: '20px', height: '20px' }"
+          strokeWidth="8"
+        ></p-progressSpinner>
+        Saving in progress
+      </div>
       <p-button
         icon="pi pi-save"
         (click)="save()"
+        [disabled]="isSaveInProgress"
         label="Save changes"
         styleClass="p-button-success p-button-text"
       ></p-button>
       <p-button
         icon="pi pi-trash"
         (click)="close()"
+        [disabled]="isSaveInProgress"
         label="Discard changes"
         styleClass="p-button-danger p-button-text"
       ></p-button>
@@ -63,12 +76,10 @@
       <p-button
         icon="pi pi-times"
         (click)="close()"
+        [disabled]="isSaveInProgress"
         label="Close"
         styleClass="p-button-secondary  p-button-text"
       ></p-button>
     </div>
-
-    <!-- <p-button icon="pi pi-check" (click)="displayBasic=false" label="Yes" styleClass="p-button-text"></p-button>
-  <p-button icon="pi pi-times" (click)="displayBasic=false" label="No"></p-button> -->
   </ng-template>
 </p-dialog>

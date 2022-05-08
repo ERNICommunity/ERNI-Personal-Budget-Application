@@ -12,7 +12,7 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class AddRequestCommand : Command<AddRequestCommand.PostRequestModel>
+    public class AddRequestCommand : Command<AddRequestCommand.PostRequestModel, int>
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
@@ -31,7 +31,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task<int> Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(parameter.Title))
             {
@@ -93,6 +93,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             await _requestRepository.AddRequest(request);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+
+            return request.Id;
         }
 
 

@@ -1,6 +1,5 @@
-export class InvoiceImage
-{
-  id: number;
+export class InvoiceImage {
+  requestId: number;
   data: string;
   filename: string;
   mimeType: string;
