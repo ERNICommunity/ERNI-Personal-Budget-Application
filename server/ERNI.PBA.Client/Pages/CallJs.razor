@@ -1,0 +1,17 @@
+﻿@page "/calljs"
+
+@inject IJSRuntime JsRuntime
+
+<h3>CallJs</h3>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("foo.bar");
+
+        await JsRuntime.InvokeVoidAsync("alert", "Warning!"); // Alert
+
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?"); // Confirm
+        string prompted = await JsRuntime.InvokeAsync<string>("prompt", "Take some input:"); // Prompt
+    }
+}
