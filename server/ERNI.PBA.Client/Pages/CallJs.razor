@@ -5,8 +5,18 @@
 <h3>CallJs</h3>
 
 @code {
+    public static event Action Triggered;
+
+    [JSInvokable]
+    public static Task CallFromJs()
+    {
+        return Task.Run(() => Triggered?.Invoke());
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        Triggered += () => JsRuntime.InvokeVoidAsync("foo.alert");
+
         await JsRuntime.InvokeVoidAsync("foo.bar");
 
         await JsRuntime.InvokeVoidAsync("alert", "Warning!"); // Alert
