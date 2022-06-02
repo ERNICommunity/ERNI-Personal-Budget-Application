@@ -24,5 +24,10 @@
     private void IncrementCount()
     {
         currentCount++;
+        Task.Delay(1000).ContinueWith(_ => {
+            currentCount++;
+            StateHasChanged();
+        });
+
     }
 }
