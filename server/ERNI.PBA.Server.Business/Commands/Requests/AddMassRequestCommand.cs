@@ -4,8 +4,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Business.Infrastructure;
-using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
@@ -14,7 +14,6 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
@@ -72,9 +71,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     CreateDate = DateTime.Now,
                     State = RequestState.Completed,
                     RequestType = budget.BudgetType,
-                };
-
-                request.Transactions = new[]
+                    Transactions = new[]
                 {
                     new Transaction()
                     {
@@ -82,6 +79,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                         BudgetId = budget.Id,
                         RequestType = budget.BudgetType,
                     }
+                }
                 };
 
                 requests.Add(request);

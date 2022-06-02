@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Business.Commands.Budgets;
 using ERNI.PBA.Server.Business.UnitTests.Commands.InvoiceImages;
 using ERNI.PBA.Server.Domain.Interfaces;
@@ -34,7 +35,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Budgets
 
             await subject.ExecuteAsync(new Domain.Models.Payloads.CreateBudgetsForAllActiveUsersRequest()
             {
-                BudgetType = Domain.Enums.BudgetTypeEnum.PersonalBudget
+                BudgetType = BudgetTypeEnum.PersonalBudget
             }, PrincipalBuilder.New().Build(), CancellationToken.None);
 
             budgetRepositoryMock.Verify(_ => _.AddBudgetAsync(It.IsAny<Budget>()), Times.Once);

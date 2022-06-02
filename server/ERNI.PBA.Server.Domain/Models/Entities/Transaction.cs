@@ -1,4 +1,4 @@
-﻿using ERNI.PBA.Server.Domain.Enums;
+﻿using ERNI.PBA.API;
 
 namespace ERNI.PBA.Server.Domain.Models.Entities
 {

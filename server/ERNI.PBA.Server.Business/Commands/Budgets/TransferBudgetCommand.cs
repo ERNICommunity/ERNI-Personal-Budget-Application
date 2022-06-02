@@ -36,7 +36,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
                 throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.BudgetId} not found");
             }
 
-            if (!BudgetType.Types.Single(type => type.Id == budget.BudgetType).IsTransferable)
+            if (!BudgetTypes.Types.Single(type => type.Id == budget.BudgetType).IsTransferable)
             {
                 throw new OperationErrorException(ErrorCodes.UnknownError, $"Budget with id {parameter.BudgetId} can not be transferred");
             }

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Models;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Host;
 using ERNI.PBA.Server.IntegrationTests.Utils;
 using Microsoft.AspNetCore.Authentication;

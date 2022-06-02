@@ -36,7 +36,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             var currentYear = DateTime.Now.Year;
             IEnumerable<User> users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-            var budgetType = BudgetType.Types.Single(_ => _.Id == parameter.BudgetType);
+            var budgetType = BudgetTypes.Types.Single(_ => _.Id == parameter.BudgetType);
 
             if (budgetType.SinglePerUser)
             {

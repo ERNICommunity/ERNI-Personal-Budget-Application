@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.API;
 
 namespace ERNI.PBA.Server.Domain.Models
 {
-    public class BudgetType
+    public static class BudgetTypes
     {
         public static readonly IReadOnlyCollection<BudgetType> Types = new[]
         {
@@ -40,15 +40,5 @@ namespace ERNI.PBA.Server.Domain.Models
                 IsTransferable = false
             }
         };
-
-        public BudgetTypeEnum Id { get; init; }
-
-        public string Name { get; init; } = null!;
-
-        public string Key { get; init; } = null!;
-
-        public bool SinglePerUser { get; init; }
-
-        public bool IsTransferable { get; init; }
     }
 }

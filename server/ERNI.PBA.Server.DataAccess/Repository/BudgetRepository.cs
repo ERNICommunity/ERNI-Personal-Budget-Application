@@ -6,6 +6,7 @@ using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using System;
+using ERNI.PBA.API;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {

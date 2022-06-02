@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
@@ -32,7 +33,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
             IEnumerable<User> users =
                 await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
-            var budgetType = BudgetType.Types.Single(_ => _.Id == parameter);
+            var budgetType = BudgetTypes.Types.Single(_ => _.Id == parameter);
 
             if (budgetType.SinglePerUser)
             {

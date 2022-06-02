@@ -62,7 +62,7 @@ namespace ERNI.PBA.Server.Business.Queries.Requests
                 {
                     Id = t.BudgetId,
                     Title = t.Budget.Title,
-                    Type = BudgetType.Types.Single(_ => _.Id == t.Budget.BudgetType)
+                    Type = BudgetTypes.Types.Single(_ => _.Id == t.Budget.BudgetType)
                 }
             };
         }

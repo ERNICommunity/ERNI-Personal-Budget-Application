@@ -1,4 +1,5 @@
 using System;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
 using ERNI.PBA.Server.Domain.Models;

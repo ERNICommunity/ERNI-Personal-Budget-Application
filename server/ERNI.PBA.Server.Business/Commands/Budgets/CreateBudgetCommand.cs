@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
-using ERNI.PBA.Server.Business.Utils;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces;
@@ -13,7 +12,6 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
@@ -44,7 +42,7 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
             }
 
             var budgets = await _budgetRepository.GetBudgets(userId, currentYear, cancellationToken);
-            var budgetType = BudgetType.Types.Single(_ => _.Id == parameter.BudgetType);
+            var budgetType = BudgetTypes.Types.Single(_ => _.Id == parameter.BudgetType);
             if (budgetType.SinglePerUser && budgets.Any(b => b.BudgetType == parameter.BudgetType))
             {
                 throw new OperationErrorException(ErrorCodes.UnknownError, $"User {user.LastName} {user.FirstName}  already has a budget of type {budgetType.Name} assigned for this year");

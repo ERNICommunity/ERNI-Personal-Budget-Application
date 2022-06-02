@@ -1,13 +1,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Domain;
-using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
+using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using ERNI.PBA.Server.Host.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -131,6 +131,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpGet("types")]
-        public async Task<IActionResult> GetBudgetTypes() => await Task.FromResult(Ok(Domain.Models.BudgetType.Types));
+        public async Task<IActionResult> GetBudgetTypes() => await Task.FromResult(Ok(BudgetTypes.Types));
     }
 }

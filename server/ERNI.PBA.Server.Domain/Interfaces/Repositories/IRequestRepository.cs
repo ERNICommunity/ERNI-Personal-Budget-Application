@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ERNI.PBA.Server.Domain.Enums;
+using ERNI.PBA.API;
 using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
