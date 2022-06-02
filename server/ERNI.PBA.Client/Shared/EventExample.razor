@@ -1,0 +1,31 @@
+﻿@implements IDisposable
+<h3>EventExample</h3>
+
+@code {
+    // Parameter collection is available
+    public override Task SetParametersAsync(ParameterView parameters) => base.SetParametersAsync(parameters);
+
+    // Component is created
+    // We initialize values here
+    protected override void OnInitialized() => base.OnInitialized();
+
+    protected override Task OnInitializedAsync() => base.OnInitializedAsync();
+
+    // The parameters have been set and are available to the component
+    protected override void OnParametersSet() => base.OnParametersSet();
+
+    protected override Task OnParametersSetAsync() => base.OnParametersSetAsync();
+
+    // Boolean returned to see if the component should re-render
+    protected override bool ShouldRender() => base.ShouldRender();
+
+    // Rendering to HTML is completed
+    protected override void OnAfterRender(bool firstRender) => base.OnAfterRender(firstRender);
+
+    protected override Task OnAfterRenderAsync(bool firstRender) => base.OnAfterRenderAsync(firstRender);
+
+    public void Dispose()
+    {
+        
+    }
+}
