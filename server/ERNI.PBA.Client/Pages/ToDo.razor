@@ -2,44 +2,30 @@
 
 @using ERNI.PBA.Client.Pages
 
+@inject TodoState TodoState
+
 <PageTitle>New page title</PageTitle>
 
 <h3>Todo</h3>
 
+@*<DeleteTodoItemDialog*@ 
+
 <ul>
-    @foreach (var item in Todos)
+    @foreach (var item in TodoState.Todos)
     {
         <li>@item.Todo</li>
     }
 </ul>
 
-<input @bind="NewTodo" @bind:event="oninput" placeholder="What do you need to do?" />
-<input @bind="DueDate" @bind:format="yyyy-MM-dd" placeholder="Due date" />
-<button @onclick="Save">Save</button>
+<input @bind="TodoState.NewTodo" @bind:event="oninput" placeholder="What do you need to do?" />
+<input @bind="TodoState.DueDate" @bind:format="yyyy-MM-dd" placeholder="Due date" />
+<button @onclick="TodoState.Save">Save</button>
 
-@if (!string.IsNullOrEmpty(NewTodo))
+@if (!string.IsNullOrEmpty(TodoState.NewTodo))
 {
-    <p>@NewTodo Due: @DueDate?.ToShortDateString()</p>
+    <p>@TodoState.NewTodo Due: @TodoState.DueDate?.ToShortDateString()</p>
 }
 
 @code {
-    private List<TodoItem> Todos = new();
-
-    private string NewTodo { get; set; } = string.Empty;
-
-    private DateTime? DueDate = null;
-
-    private void Save()
-    {
-        if (string.IsNullOrEmpty(NewTodo)) return;
-
-        Todos.Add(new TodoItem
-            {
-                Todo = NewTodo
-            });
-
-        NewTodo = string.Empty;
-
-    }
 
 }

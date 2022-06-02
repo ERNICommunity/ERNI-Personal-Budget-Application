@@ -1,0 +1,16 @@
+﻿<h3>DeleteTodoItemDialog</h3>
+
+<div style="border: solid 1px #aabbcc">
+    <button @onclick="OnConfirm">Confirm</button>
+    <button @onclick="OnCancel">Cancel</button>
+</div>
+
+
+@code {
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel{ get; set; }
+
+}

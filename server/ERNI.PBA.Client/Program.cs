@@ -1,4 +1,5 @@
 using ERNI.PBA.Client;
+using ERNI.PBA.Client.Pages;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -20,6 +21,8 @@ builder.Services.AddHttpClient("WebAPI",
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("WebAPI"));
+
+builder.Services.AddScoped<TodoState>();
 
 builder.Services.AddMsalAuthentication(options =>
 {
