@@ -1,0 +1,25 @@
+﻿@page "/address"
+
+<EditForm Model="Address" OnValidSubmit="SubmitAddress">
+    <h4>Review address</h4>
+
+    <AddressEditor Address="Address" />
+
+    <button type="submit" class="checkout-button btn btn-warning" disabled="@isSubmitting">
+        Sumbit
+    </button>
+
+    <DataAnnotationsValidator />
+</EditForm>
+
+@code {
+    bool isSubmitting;
+
+    private Address Address = new Address();
+
+    Task SubmitAddress()
+    {
+        isSubmitting = true;
+        return Task.CompletedTask;
+    }
+}
