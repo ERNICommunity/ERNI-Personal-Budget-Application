@@ -1,4 +1,5 @@
 ﻿@page "/fetchdata"
+@using ERNI.PBA.API
 @inject HttpClient Http
 
 <PageTitle>Weather forecast</PageTitle>
@@ -26,10 +27,10 @@ else
             @foreach (var forecast in forecasts)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@forecast.Key</td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.Id</td>
+                    <td>@forecast.SinglePerUser</td>
                 </tr>
             }
         </tbody>
@@ -37,11 +38,15 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private BudgetType[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        //forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+
+        forecasts   = await Http.GetFromJsonAsync<BudgetType[]>("api/budget/types");
+
+
     }
 
     public class WeatherForecast
