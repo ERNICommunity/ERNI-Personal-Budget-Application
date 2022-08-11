@@ -70,15 +70,14 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                     CreateDate = DateTime.Now,
                     State = RequestState.Approved,
                     RequestType = budget.BudgetType,
-                };
-
-                request.Transactions = new[]
-                {
-                    new Transaction()
+                    Transactions = new[]
                     {
-                        Amount =  parameter.Amount,
-                        BudgetId = budget.Id,
-                        RequestType = budget.BudgetType,
+                        new Transaction()
+                        {
+                            Amount =  parameter.Amount,
+                            BudgetId = budget.Id,
+                            RequestType = budget.BudgetType,
+                        }
                     }
                 };
 
