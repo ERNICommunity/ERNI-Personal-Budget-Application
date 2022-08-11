@@ -13,7 +13,7 @@ import { RequestApprovalState } from '../../model/requestState';
 import { InvoiceImageService } from '../../services/invoice-image.service';
 import { Image, NewImage } from '../../shared/file-list/file-list.component';
 import { concatMap, delay, tap } from 'rxjs/operators';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of, Subject, zip } from 'rxjs';
 import { InvoiceImage } from '../../model/InvoiceImage';
 
 @Component({
@@ -241,7 +241,7 @@ export class RequestEditComponent implements OnInit {
                 ? this.requestService.updateTeamRequest(payload)
                 : this.requestService.updateRequest(payload);
 
-        request.subscribe(
+        forkJoin([request, this.uploadImages(payload.id)]).subscribe(
             () => {
                 this.dataChangeNotificationService.notify();
                 this.isSaveInProgress = false;
