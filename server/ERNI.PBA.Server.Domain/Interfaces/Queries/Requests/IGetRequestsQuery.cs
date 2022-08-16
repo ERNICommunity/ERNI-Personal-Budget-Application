@@ -29,8 +29,6 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Queries.Requests
 
             public decimal Amount { get; init; }
 
-            public decimal? InvoicedAmount { get; set; }
-
             public int InvoiceCount { get; init; }
 
             public RequestState State { get; init; }

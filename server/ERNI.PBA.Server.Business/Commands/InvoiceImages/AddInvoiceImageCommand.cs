@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
         protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var requestId = parameter.Id;
+            var requestId = parameter.RequestId;
 
             var request = await _requestRepository.GetRequest(requestId, cancellationToken)
                           ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
@@ -46,9 +46,9 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                 throw AppExceptions.AuthorizationException();
             }
 
-            if (request.State != RequestState.Approved)
+            if (request.State != RequestState.Pending)
             {
-                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Invoices can be uploaded only to Approved requests.");
+                throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Invoices can be uploaded only to Pending requests.");
             }
 
             var blobPath = await _invoiceImageRepository.UploadImageDataBlob(parameter.Data, request.Id, cancellationToken);
@@ -68,7 +68,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 
         public class InvoiceImageModel
         {
-            public InvoiceImageModel(int id, string? filename, string? mimeType, byte[]? data)
+            public InvoiceImageModel(int requestId, string? filename, string? mimeType, byte[]? data)
             {
                 if (data is null || data.Length == 0)
                 {
@@ -102,13 +102,13 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
                     throw new OperationErrorException(ErrorCodes.InvalidAttachmentType, "Attachments only support images.");
                 }
 
-                Id = id;
+                RequestId = requestId;
                 Data = data;
                 Filename = filename;
                 MimeType = mimeType;
             }
 
-            public int Id { get; }
+            public int RequestId { get; }
             public byte[] Data { get; }
             public string Filename { get; }
             public string MimeType { get; }

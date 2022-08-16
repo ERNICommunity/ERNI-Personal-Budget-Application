@@ -25,7 +25,7 @@ namespace ERNI.Rmt.ExcelExport
             using var workbook = new XLWorkbook();
 
             AddSheet(workbook, $"Approved {month}-{year}", transactions[RequestState.Approved]);
-            AddSheet(workbook, $"Completed {month}-{year}", transactions[RequestState.Completed]);
+            // AddSheet(workbook, $"Completed {month}-{year}", transactions[RequestState.Completed]);
 
             workbook.SaveAs(stream);
         }

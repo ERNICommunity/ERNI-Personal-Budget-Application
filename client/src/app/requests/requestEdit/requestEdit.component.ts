@@ -10,6 +10,11 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NewRequest } from '../../model/newRequest';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RequestApprovalState } from '../../model/requestState';
+import { InvoiceImageService } from '../../services/invoice-image.service';
+import { Image, NewImage } from '../../shared/file-list/file-list.component';
+import { concatMap, delay, tap } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject, zip } from 'rxjs';
+import { InvoiceImage } from '../../model/InvoiceImage';
 
 @Component({
     selector: 'app-request-edit',
@@ -31,7 +36,10 @@ export class RequestEditComponent implements OnInit {
     title: string;
     amount: number;
 
+    public isSaveInProgress = false;
+
     public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
+    public images: (Image | NewImage)[];
 
     constructor(
         private requestService: RequestService,
@@ -39,7 +47,8 @@ export class RequestEditComponent implements OnInit {
         private route: ActivatedRoute,
         private alertService: AlertService,
         private dataChangeNotificationService: DataChangeNotificationService,
-        private busyIndicatorService: BusyIndicatorService
+        private busyIndicatorService: BusyIndicatorService,
+        private invoiceImageService: InvoiceImageService
     ) {}
 
     ngOnInit() {
@@ -54,6 +63,7 @@ export class RequestEditComponent implements OnInit {
                 this.popupTitle = 'Create new request';
                 this.request = this.createNewRequest();
                 this.newRequest = true;
+                this.images = [];
             } else if (!isNaN(this.requestId)) {
                 console.log('Loading request');
                 this.popupTitle = 'Request details';
@@ -83,28 +93,85 @@ export class RequestEditComponent implements OnInit {
                     state: request.state,
                     title: request.title,
                     user: request.user,
-                    invoicedAmount: request.invoicedAmount,
                     invoiceCount: request.invoiceCount
                 };
-                console.log(request);
-                console.log(this.request);
             },
             (err) => {
                 this.httpResponseError = err.error;
             }
         );
+
+        this.invoiceImageService
+            .getInvoiceImages(this.requestId)
+            .subscribe((names) => (this.images = names));
+    }
+
+    public onNewImageAdded(files: FileList) {
+        for (var i = 0; i < files.length; i++) {
+            const selectedFile = files[i];
+
+            const im = new NewImage();
+            im.name = selectedFile.name;
+            im.file = selectedFile;
+            this.images.push(im);
+        }
+    }
+
+    private uploadImages(requestId: number): Observable<any> {
+        console.log('Uploading images');
+        console.log(this.images);
+        const images = this.images.filter((_) => _ instanceof NewImage);
+        console.log(images);
+        const uploads = images.map((_) =>
+            this.uploadImage(requestId, _ as NewImage)
+        );
+
+        return forkJoin(uploads);
+    }
+
+    private uploadImage(
+        requestId: number,
+        image: NewImage
+    ): Observable<number> {
+        const progress = new Subject<number>();
+
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(image.file);
+        fileReader.onload = () => {
+            if (fileReader.result) {
+                const payload: InvoiceImage = {
+                    requestId: requestId,
+                    data: fileReader.result
+                        .toString()
+                        .replace('data:', '')
+                        .replace(/^.+,/, ''),
+                    filename: image.name,
+                    mimeType: image.file.type
+                };
+
+                image.progress = 0;
+
+                return this.invoiceImageService
+                    .addInvoiceImage(payload)
+                    .pipe(
+                        tap((progress) => {
+                            image.progress = progress;
+                        })
+                    )
+                    .subscribe(progress);
+            }
+        };
+
+        return progress;
     }
 
     public async save() {
-        // this.busyIndicatorService.start();
-
-        console.log('Saving');
+        //this.busyIndicatorService.start();
+        this.isSaveInProgress = true;
 
         if (this.request.state == RequestApprovalState.Pending) {
             console.log('Saving basic info');
             this.saveBasicInfo();
-        } else if (this.request.state == RequestApprovalState.Approved) {
-            await this.updateSpentAmount();
         }
     }
 
@@ -128,71 +195,44 @@ export class RequestEditComponent implements OnInit {
                 amount
             });
         }
-
-        this.dataChangeNotificationService.notify();
     }
 
     private saveNewRequest(payload: NewRequest): void {
-        console.log('Calling saveNewRequest()');
-        console.log(payload);
-
         let request =
             this.budgetType == BudgetTypeEnum.TeamBudget
                 ? this.requestService.addTeamRequest(payload)
                 : this.requestService.addRequest(payload);
 
-        request.subscribe(
-            (_) => {
-                this.busyIndicatorService.end();
+        request
+            .pipe(
+                delay(4000),
+                concatMap((requestId) => this.uploadImages(requestId))
+            )
+            .subscribe(
+                (_) => {
+                    this.dataChangeNotificationService.notify();
+                    this.isSaveInProgress = false;
+                    this.alertService.alert(
+                        new Alert({
+                            message: 'Request created successfully',
+                            type: AlertType.Success,
+                            keepAfterRouteChange: true
+                        })
+                    );
 
-                this.dataChangeNotificationService.notify();
-                this.alertService.alert(
-                    new Alert({
-                        message: 'Request created successfully',
-                        type: AlertType.Success,
-                        keepAfterRouteChange: true
-                    })
-                );
+                    this.router.navigate(['my-budget']);
+                },
 
-                this.router.navigate(['my-budget']);
-            },
-            (err) => {
-                this.busyIndicatorService.end();
-                this.alertService.error(
-                    'Error while creating request: ' +
-                        JSON.stringify(err.error),
-                    'addRequestError'
-                );
-            }
-        );
-    }
-
-    private async updateSpentAmount() {
-        console.log('Saving amount ' + this.request.invoicedAmount);
-
-        if (this.request.invoicedAmount) {
-            try {
-                await this.requestService.updateInvoicedAmount(
-                    this.request.id,
-                    this.request.invoicedAmount
-                );
-                this.dataChangeNotificationService.notify();
-                this.alertService.alert(
-                    new Alert({
-                        message: 'Spent amount saved',
-                        type: AlertType.Success,
-                        keepAfterRouteChange: true
-                    })
-                );
-
-                this.router.navigate(['my-budget']);
-            } catch (error) {
-                this.alertService.error(
-                    JSON.stringify(error.error),
-                    'addRequestError'
-                );
-            }
-        }
+                (err) => {
+                    this.dataChangeNotificationService.notify();
+                    this.isSaveInProgress = false;
+                    this.alertService.error(
+                        'Error while creating request: ' +
+                            JSON.stringify(err.error),
+                        'addRequestError'
+                    );
+                }
+            );
     }
 
     private editExistingRequest(payload: PatchRequest): void {
@@ -201,8 +241,10 @@ export class RequestEditComponent implements OnInit {
                 ? this.requestService.updateTeamRequest(payload)
                 : this.requestService.updateRequest(payload);
 
-        request.subscribe(
+        forkJoin([request, this.uploadImages(payload.id)]).subscribe(
             () => {
+                this.dataChangeNotificationService.notify();
+                this.isSaveInProgress = false;
                 this.alertService.alert(
                     new Alert({
                         message: 'Request updated',
@@ -213,6 +255,8 @@ export class RequestEditComponent implements OnInit {
                 this.dataChangeNotificationService.notify();
             },
             (err) => {
+                this.dataChangeNotificationService.notify();
+                this.isSaveInProgress = false;
                 this.alertService.error(
                     'Error while creating request: ' +
                         JSON.stringify(err.error),

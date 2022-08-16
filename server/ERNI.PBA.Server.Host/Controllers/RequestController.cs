@@ -26,7 +26,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
         private readonly Lazy<IUpdateRequestCommand> _updateRequestCommand;
         private readonly Lazy<IUpdateTeamRequestCommand> _updateTeamRequestCommand;
-        private readonly Lazy<ISetInvoicedAmountCommand> _setInvoicedAmountCommand;
         private readonly Lazy<IDeleteRequestCommand> _deleteRequestCommand;
 
         public RequestController(
@@ -37,7 +36,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<IAddMassRequestCommand> addMassRequestCommand,
             Lazy<IUpdateRequestCommand> updateRequestCommand,
             Lazy<IUpdateTeamRequestCommand> updateTeamRequestCommand,
-            Lazy<ISetInvoicedAmountCommand> setInvoicedAmountCommand,
             Lazy<IDeleteRequestCommand> deleteRequestCommand)
         {
             _getRequestQuery = getRequestQuery;
@@ -47,7 +45,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             _addMassRequestCommand = addMassRequestCommand;
             _updateRequestCommand = updateRequestCommand;
             _updateTeamRequestCommand = updateTeamRequestCommand;
-            _setInvoicedAmountCommand = setInvoicedAmountCommand;
             _deleteRequestCommand = deleteRequestCommand;
         }
 
@@ -70,15 +67,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
-        [HttpPost("{id}/complete")]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> CompleteRequest(int id, CancellationToken cancellationToken)
-        {
-            await _setRequestStateCommand.Value.ExecuteAsync((id, RequestState.Completed), HttpContext.User, cancellationToken);
-
-            return Ok();
-        }
-
         [HttpPost("{id}/reject")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
@@ -93,9 +81,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> AddRequest([FromBody] AddRequestCommand.PostRequestModel payload,
             [FromServices] AddRequestCommand addRequestCommand, CancellationToken cancellationToken)
         {
-            await addRequestCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            var id = await addRequestCommand.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
-            return Ok();
+            return Ok(id);
         }
 
         /// <summary>
@@ -128,14 +116,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         public async Task<IActionResult> UpdateRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
             await _updateRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
-
-            return Ok();
-        }
-
-        [HttpPut("{id}/setAmount")]
-        public async Task<IActionResult> SetInvoicedAmount(int id, [FromBody] SetInvoicedAmountModel payload, CancellationToken cancellationToken)
-        {
-            await _setInvoicedAmountCommand.Value.ExecuteAsync((id, payload), HttpContext.User, cancellationToken);
 
             return Ok();
         }

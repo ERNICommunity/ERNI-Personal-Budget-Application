@@ -12,54 +12,29 @@
 
     <app-basic-request-info-editor
       [(request)]="request"
-      [isReadonly]="!request || request.state != RequestState.Pending"
-    ></app-basic-request-info-editor>
-
-    <div
-      *ngIf="request && !newRequest && request.state == RequestState.Pending"
+      [isReadonly]="
+        !request || request.state != RequestState.Pending || isSaveInProgress
+      "
     >
-      <p-divider></p-divider>
-      <p-progressSpinner
-        [style]="{ width: '50px', height: '50px' }"
-        styleClass="custom-spinner"
-        strokeWidth="8"
-        fill="#EEEEEE"
-        animationDuration="2.5s"
-      ></p-progressSpinner>
-      <p>Request approval pending</p>
-    </div>
+    </app-basic-request-info-editor>
 
-    <div *ngIf="request && request.state >= RequestState.Approved">
-      <div class="p-field p-grid">
-        <label for="actualAmount" class="p-col-fixed" style="width: 200px"
-          >Amount spent</label
-        >
-        <div class="p-col">
-          <p-inputNumber
-            [(ngModel)]="request.invoicedAmount"
-            mode="currency"
-            currency="EUR"
-            [(disabled)]="request.state != RequestState.Approved"
-          >
-          </p-inputNumber>
-        </div>
-      </div>
-
-      <app-file-upload
-        [(requestIdInput)]="request.id"
-        [uploadEnabled]="request && request.state == RequestState.Approved"
-      >
-      </app-file-upload>
-    </div>
+    <app-file-list
+      [uploadEnabled]="
+        request && request.state == RequestState.Pending && !isSaveInProgress
+      "
+      [images]="images"
+      (onNewImageAdded)="onNewImageAdded($event)"
+    >
+    </app-file-list>
 
     <!-- Closed -->
-    <div *ngIf="request && request.state == RequestState.Completed">
+    <div *ngIf="request && request.state == RequestState.Approved">
       <p-divider></p-divider>
       <p>Request was approved</p>
     </div>
   </div>
 
-  <ng-template pTemplate="footer">
+  <ng-template pTemplate="footer" style="display: inline">
     <div
       *ngIf="
         request &&
@@ -68,15 +43,24 @@
           request.state == RequestState.Pending)
       "
     >
+      <div class="progress-spinner" *ngIf="isSaveInProgress">
+        <p-progressSpinner
+          [style]="{ width: '20px', height: '20px' }"
+          strokeWidth="8"
+        ></p-progressSpinner>
+        Saving in progress
+      </div>
       <p-button
         icon="pi pi-save"
         (click)="save()"
+        [disabled]="isSaveInProgress"
         label="Save changes"
         styleClass="p-button-success p-button-text"
       ></p-button>
       <p-button
         icon="pi pi-trash"
         (click)="close()"
+        [disabled]="isSaveInProgress"
         label="Discard changes"
         styleClass="p-button-danger p-button-text"
       ></p-button>
@@ -92,12 +76,10 @@
       <p-button
         icon="pi pi-times"
         (click)="close()"
+        [disabled]="isSaveInProgress"
         label="Close"
         styleClass="p-button-secondary  p-button-text"
       ></p-button>
     </div>
-
-    <!-- <p-button icon="pi pi-check" (click)="displayBasic=false" label="Yes" styleClass="p-button-text"></p-button>
-  <p-button icon="pi pi-times" (click)="displayBasic=false" label="No"></p-button> -->
   </ng-template>
 </p-dialog>

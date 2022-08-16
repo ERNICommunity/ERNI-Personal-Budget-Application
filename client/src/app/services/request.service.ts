@@ -9,7 +9,6 @@ import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
 import { PatchRequest } from '../model/PatchRequest';
-import { InvoicedAmount } from '../model/invoicedAmount';
 
 @Injectable()
 export class RequestService {
@@ -63,20 +62,6 @@ export class RequestService {
         );
     }
 
-    public getCompletedRequests(
-        year: number,
-        budgetTypeId: number
-    ): Observable<Request[]> {
-        return this.http.get<Request[]>(
-            this.configService.apiUrlBase +
-                this.requestUrl +
-                year +
-                '/state/completed/type/' +
-                budgetTypeId,
-            this.serviceHelper.getHttpOptions()
-        );
-    }
-
     public getRequest(id): Observable<Request> {
         return this.http.get<Request>(
             this.configService.apiUrlBase + this.requestUrl + id,
@@ -98,28 +83,16 @@ export class RequestService {
         );
     }
 
-    public completeRequest(id: number): Promise<Request> {
-        return this.http
-            .post<Request>(
-                this.configService.apiUrlBase +
-                    this.requestUrl +
-                    id +
-                    '/complete',
-                this.serviceHelper.getHttpOptions()
-            )
-            .toPromise();
-    }
-
-    public addRequest(request: NewRequest): Observable<any> {
-        return this.http.post(
+    public addRequest(request: NewRequest): Observable<number> {
+        return this.http.post<number>(
             this.configService.apiUrlBase + this.requestUrl,
             request,
             this.serviceHelper.getHttpOptions()
         );
     }
 
-    public addTeamRequest(request: NewRequest): Observable<any> {
-        return this.http.post(
+    public addTeamRequest(request: NewRequest): Observable<number> {
+        return this.http.post<number>(
             this.configService.apiUrlBase + this.requestUrl + 'team',
             request,
             this.serviceHelper.getHttpOptions()
@@ -148,19 +121,6 @@ export class RequestService {
             request,
             this.serviceHelper.getHttpOptions()
         );
-    }
-
-    public updateInvoicedAmount(id: number, amount: number): Promise<any> {
-        return this.http
-            .put(
-                this.configService.apiUrlBase +
-                    this.requestUrl +
-                    id +
-                    '/setAmount',
-                { amount: amount },
-                this.serviceHelper.getHttpOptions()
-            )
-            .toPromise();
     }
 
     public deleteRequest(id: number): Observable<Request> {

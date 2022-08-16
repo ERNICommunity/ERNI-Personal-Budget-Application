@@ -1,25 +1,15 @@
 <p>Uploaded files</p>
 <div class="fileLists">
-  <div *ngIf="images?.length == 0 && uploadingImages?.length == 0">No files yet</div>
+  <!-- <div *ngIf="images?.length == 0 && uploadingImages?.length == 0">No files yet</div> -->
   <ul class="pl-0">
     <li *ngFor="let image of images">
       <div class="row mt-2">
         <div class="col-md-8">{{image.name}}</div>
-        <button class="col-md-3 btn btn-outline-primary"
+        <!-- <p-progressBar [value]="50"></p-progressBar> -->
+        {{image.progress}}
+        <button *ngIf="image.id" class="col-md-3 btn btn-outline-primary"
         (click)="download(image.id, image.name)">Download</button>
-        <a #downloadLink></a>
       </div>
-    </li>
-  </ul>
-  <div class="alert alert-danger m-1" *ngIf=showError>
-    Error ocured during file upload: {{error}}
-  </div>
-  
-  <ul>
-    <li *ngFor="let uploadingImage of uploadingImages">
-      <p>{{uploadingImage.name}}</p>
-      <ngb-progressbar height="20px" [value]=uploadingImage.progress>
-      </ngb-progressbar>
     </li>
   </ul>
 </div>

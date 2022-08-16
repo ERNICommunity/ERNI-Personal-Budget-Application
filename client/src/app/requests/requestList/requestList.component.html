@@ -95,7 +95,6 @@
       <th scope="col">Employee</th>
       <th scope="col">Title</th>
       <th scope="col">Amount</th>
-      <th scope="col">Invoiced amount</th>
       <th scope="col">Budget</th>
       <th scope="col">Create date</th>
       <th scope="col"></th>
@@ -106,7 +105,6 @@
       <th>{{ request.user.firstName }} {{ request.user.lastName }}</th>
       <td>{{ request.title }}</td>
       <td>{{ request.amount }}</td>
-      <td>{{ request.invoicedAmount }}</td>
       <td>{{ request.budget.title }}</td>
       <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
 

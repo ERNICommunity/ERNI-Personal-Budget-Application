@@ -69,11 +69,6 @@ export class RequestListComponent implements OnInit {
                 name: 'Approved'
             },
             {
-                state: RequestApprovalState.Completed,
-                key: 'completed',
-                name: 'Completed'
-            },
-            {
                 state: RequestApprovalState.Rejected,
                 key: 'rejected',
                 name: 'Rejected'
@@ -193,11 +188,6 @@ export class RequestListComponent implements OnInit {
                     budgetTypeId
                 );
                 break;
-            case RequestApprovalState.Completed:
-                requests = this.requestService.getCompletedRequests(
-                    year,
-                    budgetTypeId
-                );
             default:
                 break;
         }
@@ -207,23 +197,7 @@ export class RequestListComponent implements OnInit {
         });
     }
 
-    approveRequest(id: number): void {
-        this.requestService.approveRequest(id).subscribe(() => {
-            (this.requests = this.requests.filter((req) => req.id !== id)),
-                (this.filteredRequests = this.requests);
-        });
-    }
-
     async completeRequest(request: Request) {
-        if (!request.invoicedAmount) {
-            console.log(request);
-            console.log(request.invoicedAmount);
-            this.alertService.error(
-                'Cannot complete request without invoiced amount entered'
-            );
-            return;
-        }
-
         if (request.invoiceCount < 1) {
             this.alertService.error(
                 'Cannot complete request without any invoice attached'
@@ -232,7 +206,12 @@ export class RequestListComponent implements OnInit {
         }
 
         try {
-            await this.requestService.completeRequest(request.id);
+            this.requestService.approveRequest(request.id).subscribe(() => {
+                (this.requests = this.requests.filter(
+                    (req) => req.id !== request.id
+                )),
+                    (this.filteredRequests = this.requests);
+            });
 
             this.requests = this.requests.filter(
                 (req) => req.id !== request.id

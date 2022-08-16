@@ -82,7 +82,6 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 Year = currentYear,
                 Title = parameter.Title,
                 Amount = parameter.Amount,
-                InvoicedAmount = parameter.Amount,
                 CreateDate = DateTime.Now,
                 State = RequestState.Approved,
                 RequestType = BudgetTypeEnum.TeamBudget,

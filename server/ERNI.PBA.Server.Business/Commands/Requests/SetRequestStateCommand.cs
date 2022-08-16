@@ -57,16 +57,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
             request.State = parameter.requestState;
 
-#pragma warning disable IDE0010 // Add missing cases
-            switch (parameter.requestState)
-#pragma warning restore IDE0010 // Add missing cases
+            if (parameter.requestState == RequestState.Approved)
             {
-                case RequestState.Approved:
-                    request.ApprovedDate = DateTime.Now;
-                    break;
-                case RequestState.Completed:
-                    request.CompletedDate = DateTime.Now;
-                    break;
+                request.ApprovedDate = DateTime.Now;
             }
 
             await _unitOfWork.SaveChanges(cancellationToken);
@@ -81,8 +74,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         private static (bool isValid, string? error) Validate(RequestState newState, Domain.Models.Entities.Request request, int invoiceCount) => newState switch
         {
             RequestState.Pending => (false, "Cannot change state to pending"),
-            RequestState.Approved => request.State == RequestState.Pending ? (true, null) : (false, "Only pending requests can be approved."),
-            RequestState.Completed => CanComplete(request, invoiceCount),
+            RequestState.Approved => CanComplete(request, invoiceCount),
             RequestState.Rejected => (true, null),
             _ => throw new NotImplementedException(),
         };
@@ -90,14 +82,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         private static (bool isValid, string? error) CanComplete(Domain.Models.Entities.Request request,
             int invoiceCount)
         {
-            if (request.State != RequestState.Approved)
+            if (request.State != RequestState.Pending)
             {
-                return (false, "The request is not approved.");
-            }
-
-            if (!request.InvoicedAmount.HasValue || request.InvoicedAmount <= 0)
-            {
-                return (false, "Request without invoiced amount cannot be completed.");
+                return (false, "Only pending requests can be approved.");
             }
 
             if (invoiceCount <= 0)

@@ -17,7 +17,7 @@ export class RequestDetailComponent implements OnInit {
     createDate: Date;
     requestForm: FormGroup;
     httpResponseError: string;
-    images: [number, string][];
+    images: { id: number, name: string}[];
     isVisible: boolean;
 
     constructor(
