@@ -1,100 +1,169 @@
-<h2>Other Budgets - {{selectedYear}}</h2>
+<h2>Other Budgets - {{ selectedYear }}</h2>
 
 <p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
-<hr>
-
-<p-tabMenu [model]="budgetTypes" [activeItem]="selectedBudgetTypeItem"></p-tabMenu>
+<p-tabMenu
+  [model]="budgetTypes"
+  [activeItem]="selectedBudgetTypeItem"
+></p-tabMenu>
 
 <ng-template #content let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-title">Create budgets</h4>
-        <button type="button" class="close" aria-describedby="modal-title" (click)="c()">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <app-alert id="addOtherBudget"></app-alert>
-        <p>
-            You are going to set budgets in year {{year}} for users without budget.
-        </p>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Create budgets</h4>
+    <button
+      type="button"
+      class="close"
+      aria-describedby="modal-title"
+      (click)="c()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-alert id="addOtherBudget"></app-alert>
+    <p>
+      You are going to set budgets in year {{ year }} for users without budget.
+    </p>
 
-        <div class="form-group">
-            <label for="title">Budget title *</label>
-            <input type="text" class="form-control" id="title" #title="ngModel" placeholder="Enter budget title"
-                [(ngModel)]="budgetTitle" required minlength="1">
-        </div>
-        <div *ngIf="title.invalid && (title.dirty || title.touched)" class="alert alert-danger">
-            Title is required
-        </div>
+    <div class="form-group">
+      <label for="title">Budget title *</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        #title="ngModel"
+        placeholder="Enter budget title"
+        [(ngModel)]="budgetTitle"
+        required
+        minlength="1"
+      />
+    </div>
+    <div
+      *ngIf="title.invalid && (title.dirty || title.touched)"
+      class="alert alert-danger"
+    >
+      Title is required
+    </div>
 
-        <div class="form-group">
-            <label for="title">Amount</label>
-            <input type="number" class="form-control" placeholder="0.0" id="amount" #budgetAmount="ngModel"
-                [(ngModel)]="amount" required min="1">
-        </div>
-        <div *ngIf="budgetAmount.invalid && (budgetAmount.dirty || budgetAmount.touched)" class="alert alert-danger">
-            Amount is required </div>
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">Employee</label>
-            <select class="form-control" id="exampleFormControlSelect1" #selectedUser="ngModel"
-                [(ngModel)]="selectedUserId" required>
-                <option value="0">All active users</option>
-                <option *ngFor="let user of availableUsers" [ngValue]="user.id">
-                    {{user.lastName}} {{user.firstName}}
-                </option>
-            </select>
-        </div>
+    <div class="form-group">
+      <label for="title">Amount</label>
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.0"
+        id="amount"
+        #budgetAmount="ngModel"
+        [(ngModel)]="amount"
+        required
+        min="1"
+      />
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)=close()>Close</button>
-        <button type="button" [disabled]="title.invalid || budgetAmount.invalid || selectedUser.invalid"
-            class="btn btn-primary" (click)="setBudgetsForYear()">
-            Set
-        </button>
+    <div
+      *ngIf="
+        budgetAmount.invalid && (budgetAmount.dirty || budgetAmount.touched)
+      "
+      class="alert alert-danger"
+    >
+      Amount is required
     </div>
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Employee</label>
+      <select
+        class="form-control"
+        id="exampleFormControlSelect1"
+        #selectedUser="ngModel"
+        [(ngModel)]="selectedUserId"
+        required
+      >
+        <option value="0">All active users</option>
+        <option *ngFor="let user of availableUsers" [ngValue]="user.id">
+          {{ user.lastName }} {{ user.firstName }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      Close
+    </button>
+    <button
+      type="button"
+      [disabled]="title.invalid || budgetAmount.invalid || selectedUser.invalid"
+      class="btn btn-primary"
+      (click)="setBudgetsForYear()"
+    >
+      Set
+    </button>
+  </div>
 </ng-template>
-<br>
+<br />
 
-<button class="btn btn-primary float-right" (click)="openAmountModal(content)" [disabled]="disableSetOrEditBudgets">
-    Set budgets
+<button
+  pButton
+  (click)="openAmountModal(content)"
+  [disabled]="disableSetOrEditBudgets"
+>
+  Set budgets
 </button>
 
-<input class="form-control col-md-6" placeholder="Search employee" id="searchBox" type="text" [(ngModel)]="searchTerm">
-<br>
+<div class="p-toolbar-group-left">
+  <span class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <input
+      type="text"
+      pInputText
+      placeholder="Search employee"
+      [(ngModel)]="searchTerm"
+    />
+  </span>
+</div>
 
-<p-table [value]="filteredBudgets" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
-    <ng-template pTemplate="header">
-        <tr>
-            <th scope="col">Last</th>
-            <th scope="col">First</th>
-            <th scope="col">Budget name</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Amount left</th>
-            <th scope="col"></th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-budget>
-        <tr>
-            <td>{{budget.user.lastName}}</td>
-            <td>{{budget.user.firstName}}</td>
-            <td>{{budget.title}}</td>
-            <td>{{budget.amount}}</td>
-            <td>{{budget.amountLeft}}</td>
+<br />
 
-            <td>
-                <a *ngIf="!disableSetOrEditBudgets" class="btn btn-primary float-right" href="#" role="button"
-                    routerLink="/other-budgets/edit/{{budget.id}}">
-                    Edit
-                </a>
-            </td>
-            <ng-template #cannotEdit>
-                <td>
-                    <button class="btn btn-primary float-right" disabled="true"
-                        title="Cannot edit request from years ago.">
-                        Edit
-                    </button>
-                </td>
-            </ng-template>
-        </tr>
-    </ng-template>
+<p-table
+  [value]="filteredBudgets"
+  styleClass="p-datatable-gridlines p-datatable-striped"
+  responsiveLayout="scroll"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th scope="col">Last</th>
+      <th scope="col">First</th>
+      <th scope="col">Budget name</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Amount left</th>
+      <th scope="col"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-budget>
+    <tr>
+      <td>{{ budget.user.lastName }}</td>
+      <td>{{ budget.user.firstName }}</td>
+      <td>{{ budget.title }}</td>
+      <td>{{ budget.amount }}</td>
+      <td>{{ budget.amountLeft }}</td>
+
+      <td>
+        <a
+          *ngIf="!disableSetOrEditBudgets"
+          class="btn btn-primary float-right"
+          href="#"
+          role="button"
+          routerLink="/other-budgets/edit/{{ budget.id }}"
+        >
+          Edit
+        </a>
+      </td>
+      <ng-template #cannotEdit>
+        <td>
+          <button
+            class="btn btn-primary float-right"
+            disabled="true"
+            title="Cannot edit request from years ago."
+          >
+            Edit
+          </button>
+        </td>
+      </ng-template>
+    </tr>
+  </ng-template>
 </p-table>
