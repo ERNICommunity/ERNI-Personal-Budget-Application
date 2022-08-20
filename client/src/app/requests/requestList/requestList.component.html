@@ -41,7 +41,6 @@
     <p-menu #menu [popup]="true" [model]="exportMenuItems"></p-menu>
   </div>
 </p-toolbar>
-
 <p-table
   [value]="filteredRequests"
   styleClass="p-datatable-gridlines p-datatable-striped"
@@ -60,7 +59,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-request>
-    <tr *ngFor="let request of filteredRequests">
+    <tr>
       <td>{{ request.user.firstName }} {{ request.user.lastName }}</td>
       <td>{{ request.title }}</td>
       <td>{{ request.amount }}</td>
@@ -74,7 +73,7 @@
       </td>
       <td>
         <div *ngIf="isAdmin">
-          <div *ngIf="request.state == requestFilterType.Pending">
+          <div *ngIf="request.state === requestFilterType.Pending">
             <button
               pButton
               type="button"
@@ -87,7 +86,7 @@
         </div>
       </td>
       <td
-        *ngIf="requestFilter != requestFilterType.Rejected"
+        *ngIf="requestFilter !== requestFilterType.Rejected"
         class="button-table-cell"
       >
         <div *ngIf="canRejectRequest(request.id); else cannotReject">
