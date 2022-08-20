@@ -1,3 +1,8 @@
+<p-confirmDialog
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
 <p-panel>
   <ng-template pTemplate="icons">
     <span class="mr-2"
@@ -13,14 +18,6 @@
     >
       Create new request
     </a>
-    <!-- <button
-      pButton
-      class="p-panel-header-icon p-link"
-      (click)="menu.toggle($event)"
-    >
-      <span class="pi pi-cog"></span>
-    </button>
-    <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu> -->
   </ng-template>
   <ng-template pTemplate="header">
     <div *ngIf="budget.title">{{ budget.title }} - {{ budgetTypeName }}</div>
@@ -55,13 +52,12 @@
         <td class="button-table-cell">
           <button
             pButton
-            (click)="openDeleteConfirmationModal(deleteConfirmation)"
+            (click)="openDeleteConfirmationModal(request)"
             *ngIf="request.state == requestStateType.Pending"
             class="p-button-sm"
           >
             Delete
           </button>
-
           <a
             pButton
             class="p-button-sm"
@@ -71,29 +67,6 @@
             Open
           </a>
         </td>
-        <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
-          <div class="modal-header">
-            <h4 class="modal-title" id="modal-title">Delete request</h4>
-            <button pButton type="button" (click)="c()">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-          <div class="modal-body float-centre">
-            <label>
-              Are you sure you want to delete {{ request.title }} request?
-            </label>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-danger mr-1"
-              (click)="c(deleteRequest(request.id))"
-            >
-              Yes
-            </button>
-            <button class="btn btn-primary" (click)="c()">No</button>
-          </div>
-        </ng-template>
       </tr>
     </ng-template>
   </p-table>

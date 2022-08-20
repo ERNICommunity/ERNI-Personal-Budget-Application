@@ -22,7 +22,7 @@ import { MessageService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ProgressBarModule } from 'primeng/progressbar';
-
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 @NgModule({
     declarations: [AlertComponent, FileListComponent],
     imports: [
@@ -40,6 +40,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
         FormsModule,
         DividerModule,
         CalendarModule,
+        ConfirmDialogModule,
         InputTextModule,
         InputTextareaModule,
         InputNumberModule,
