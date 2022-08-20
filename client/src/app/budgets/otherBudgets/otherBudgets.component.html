@@ -6,104 +6,14 @@
   [activeItem]="selectedBudgetTypeItem"
 ></p-tabMenu>
 
-<ng-template #content let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-title">Create budgets</h4>
-    <button
-      type="button"
-      class="close"
-      aria-describedby="modal-title"
-      (click)="c()"
-    >
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <app-alert id="addOtherBudget"></app-alert>
-    <p>
-      You are going to set budgets in year {{ year }} for users without budget.
-    </p>
-
-    <div class="form-group">
-      <label for="title">Budget title *</label>
-      <input
-        type="text"
-        class="form-control"
-        id="title"
-        #title="ngModel"
-        placeholder="Enter budget title"
-        [(ngModel)]="budgetTitle"
-        required
-        minlength="1"
-      />
-    </div>
-    <div
-      *ngIf="title.invalid && (title.dirty || title.touched)"
-      class="alert alert-danger"
-    >
-      Title is required
-    </div>
-
-    <div class="form-group">
-      <label for="title">Amount</label>
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.0"
-        id="amount"
-        #budgetAmount="ngModel"
-        [(ngModel)]="amount"
-        required
-        min="1"
-      />
-    </div>
-    <div
-      *ngIf="
-        budgetAmount.invalid && (budgetAmount.dirty || budgetAmount.touched)
-      "
-      class="alert alert-danger"
-    >
-      Amount is required
-    </div>
-    <div class="form-group">
-      <label for="exampleFormControlSelect1">Employee</label>
-      <select
-        class="form-control"
-        id="exampleFormControlSelect1"
-        #selectedUser="ngModel"
-        [(ngModel)]="selectedUserId"
-        required
-      >
-        <option value="0">All active users</option>
-        <option *ngFor="let user of availableUsers" [ngValue]="user.id">
-          {{ user.lastName }} {{ user.firstName }}
-        </option>
-      </select>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="close()">
-      Close
-    </button>
-    <button
-      type="button"
-      [disabled]="title.invalid || budgetAmount.invalid || selectedUser.invalid"
-      class="btn btn-primary"
-      (click)="setBudgetsForYear()"
-    >
-      Set
-    </button>
-  </div>
-</ng-template>
-<br />
-
-<button
-  pButton
-  (click)="openAmountModal(content)"
-  [disabled]="disableSetOrEditBudgets"
->
-  Set budgets
-</button>
+<p-accordion>
+  <p-accordionTab header="Create budgets">
+    <app-create-budgets
+      [year]="selectedYear"
+      [budgetType]="selectedBudgetType"
+    ></app-create-budgets>
+  </p-accordionTab>
+</p-accordion>
 
 <div class="p-toolbar-group-left">
   <span class="p-input-icon-left">

@@ -23,6 +23,9 @@ import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AccordionModule } from 'primeng/accordion';
+import { DropdownModule } from 'primeng/dropdown';
+
 @NgModule({
     declarations: [AlertComponent, FileListComponent],
     imports: [
@@ -58,7 +61,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
         MenuModule,
         TabMenuModule,
         ProgressBarModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        AccordionModule,
+        DropdownModule
     ],
     providers: [MessageService]
 })
