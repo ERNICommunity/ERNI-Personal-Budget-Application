@@ -32,6 +32,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
         BrowserModule,
         BrowserAnimationsModule,
         ProgressBarModule,
+        ButtonModule,
         ProgressSpinnerModule
     ],
     exports: [

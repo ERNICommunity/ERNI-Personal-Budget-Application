@@ -1,17 +1,40 @@
-<p>Uploaded files</p>
+<label>Uploaded files</label>
 <div class="fileLists">
-  <!-- <div *ngIf="images?.length == 0 && uploadingImages?.length == 0">No files yet</div> -->
   <ul class="pl-0">
     <li *ngFor="let image of images">
-      <div class="row mt-2">
-        <div class="col-md-8">{{image.name}}</div>
-        <!-- <p-progressBar [value]="50"></p-progressBar> -->
-        {{image.progress}}
-        <button *ngIf="image.id" class="col-md-3 btn btn-outline-primary"
-        (click)="download(image.id, image.name)">Download</button>
-      </div>
+      <p-progressSpinner
+        *ngIf="image.status.code === 'in-progress'"
+        [style]="{ width: '20px', height: '20px' }"
+        styleClass="custom-spinner"
+        strokeWidth="5"
+        fill="var(--surface-ground)"
+        animationDuration=".5s"
+      ></p-progressSpinner>
+
+      <button
+        pButton
+        [disabled]="!image.status.id"
+        class="p-button-sm p-button-text"
+        (click)="download(image.status.id, image.name)"
+      >
+        {{ image.name }}
+      </button>
     </li>
   </ul>
 </div>
-<button *ngIf="uploadEnabled" class="btn btn-outline-primary" (click)="onButtonClick()">Add file</button>
-<input id="fileDialog" type="file" #file (change)="onImageAdded($event.target.files)" style="display: none;" />
+<button
+  pButton
+  *ngIf="uploadEnabled"
+  (click)="onButtonClick()"
+  class="p-button-sm"
+>
+  Add file
+</button>
+
+<input
+  id="fileDialog"
+  type="file"
+  #file
+  (change)="onImageAdded($event.target.files)"
+  style="display: none"
+/>

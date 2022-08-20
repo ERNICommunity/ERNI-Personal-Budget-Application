@@ -14,7 +14,7 @@ using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
 {
-    public class AddInvoiceImageCommand : Command<AddInvoiceImageCommand.InvoiceImageModel>
+    public class AddInvoiceImageCommand : Command<AddInvoiceImageCommand.InvoiceImageModel, int>
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository _userRepository;
@@ -33,7 +33,7 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        protected override async Task<int> Execute(InvoiceImageModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var requestId = parameter.RequestId;
 
@@ -64,6 +64,8 @@ namespace ERNI.PBA.Server.Business.Commands.InvoiceImages
             await _invoiceImageRepository.AddInvoiceImage(image, cancellationToken);
 
             await _unitOfWork.SaveChanges(cancellationToken);
+
+            return image.Id;
         }
 
         public class InvoiceImageModel
