@@ -12,11 +12,13 @@ import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
 import { ApprovalStateModel } from '../../shared/model/approvalStateModel';
 import { MenuItem } from 'primeng/api/menuitem';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'app-request-list',
     templateUrl: 'requestList.component.html',
-    styleUrls: ['requestList.component.css']
+    styleUrls: ['requestList.component.css'],
+    providers: [ConfirmationService]
 })
 export class RequestListComponent implements OnInit {
     pendingRoute: string = '/requests/pending';
@@ -105,7 +107,7 @@ export class RequestListComponent implements OnInit {
         private budgetService: BudgetService,
         private requestService: RequestService,
         private route: ActivatedRoute,
-        //private modalService: NgbModal,
+        private confirmationService: ConfirmationService,
         private exportService: ExportService,
         private alertService: AlertService,
         private config: ConfigService
@@ -267,13 +269,6 @@ export class RequestListComponent implements OnInit {
         }
     }
 
-    rejectRequest(id: number): void {
-        this.requestService.rejectRequest(id).subscribe(() => {
-            (this.requests = this.requests.filter((req) => req.id !== id)),
-                (this.filteredRequests = this.requests);
-        });
-    }
-
     canRejectRequest(id: number): boolean {
         return (
             this.authService.userInfo.isAdmin &&
@@ -285,14 +280,35 @@ export class RequestListComponent implements OnInit {
         this.exportService.downloadExport(month, year);
     }
 
-    openDeleteConfirmationModal(content) {
-        //this.modalService.open(content, { centered: true, backdrop: 'static' });
+    openDeleteConfirmationModal(request: Request) {
+        this.confirmationService.confirm({
+            message: `Are you sure you want to delete the request "${request.title}"?`,
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            accept: () => {
+                this.requestService.deleteRequest(request.id).subscribe(() => {
+                    (this.requests = this.requests.filter(
+                        (req) => req.id !== request.id
+                    )),
+                        (this.filteredRequests = this.requests);
+                });
+            }
+        });
     }
 
-    deleteRequest(id: number): void {
-        this.requestService.deleteRequest(id).subscribe(() => {
-            (this.requests = this.requests.filter((req) => req.id !== id)),
-                (this.filteredRequests = this.requests);
+    openRejectConfirmationModal(request: Request) {
+        this.confirmationService.confirm({
+            message: `Are you sure you want to reject the request "${request.title}"?`,
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            accept: () => {
+                this.requestService.rejectRequest(request.id).subscribe(() => {
+                    (this.requests = this.requests.filter(
+                        (req) => req.id !== request.id
+                    )),
+                        (this.filteredRequests = this.requests);
+                });
+            }
         });
     }
 }

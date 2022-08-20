@@ -1,3 +1,9 @@
+<p-confirmDialog
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
+
 <p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
 
 <p-tabMenu
@@ -55,7 +61,7 @@
   </ng-template>
   <ng-template pTemplate="body" let-request>
     <tr *ngFor="let request of filteredRequests">
-      <th>{{ request.user.firstName }} {{ request.user.lastName }}</th>
+      <td>{{ request.user.firstName }} {{ request.user.lastName }}</td>
       <td>{{ request.title }}</td>
       <td>{{ request.amount }}</td>
       <td>{{ request.budget.title }}</td>
@@ -89,7 +95,7 @@
             pButton
             type="button"
             class="p-button-sm"
-            (click)="openDeleteConfirmationModal(rejectConfirmation)"
+            (click)="openRejectConfirmationModal(request)"
           >
             Reject
           </button>
@@ -97,49 +103,11 @@
             pButton
             type="button"
             class="p-button-sm"
-            (click)="openDeleteConfirmationModal(deleteConfirmation)"
+            (click)="openDeleteConfirmationModal(request)"
           >
             Delete
           </button>
         </div>
-        <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
-          <div class="modal-body float-centre">
-            <button class="btn-xs btn-light float-right" (click)="c()">
-              X
-            </button>
-            <label>
-              Are you sure you want to delete {{ request.title }} request?
-            </label>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-danger mr-1"
-              (click)="c(deleteRequest(request.id))"
-            >
-              Yes
-            </button>
-            <button class="btn btn-primary" (click)="c()">No</button>
-          </div>
-        </ng-template>
-        <ng-template #rejectConfirmation let-c="close" let-d="dismiss">
-          <div class="modal-body float-centre">
-            <button class="btn-xs btn-light float-right" (click)="c()">
-              X
-            </button>
-            <label>
-              Are you sure you want to reject {{ request.title }} request?
-            </label>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-danger mr-1"
-              (click)="c(rejectRequest(request.id))"
-            >
-              Yes
-            </button>
-            <button class="btn btn-primary" (click)="c()">No</button>
-          </div>
-        </ng-template>
       </td>
     </tr>
   </ng-template>
