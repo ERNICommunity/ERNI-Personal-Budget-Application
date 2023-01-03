@@ -132,7 +132,7 @@ export class RequestEditComponent implements OnInit {
         const invoices = this.images;
         const uploads = invoices
             .filter((_) => _.status.code === 'new')
-            .map((_) => this.uploadInvoice(requestId, _, _.file));
+            .map((_) => this.uploadInvoice(requestId, _, _.file).id);
 
         return forkJoin(uploads).pipe(defaultIfEmpty(null));
     }

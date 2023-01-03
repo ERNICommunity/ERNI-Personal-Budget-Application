@@ -51,6 +51,7 @@
       <th scope="col">Employee</th>
       <th scope="col">Title</th>
       <th scope="col">Amount</th>
+      <th scope="col" pSortableColumn="invoiceCount">Invoice count</th>
       <th scope="col">Budget</th>
       <th scope="col">Create date</th>
       <th scope="col">Details</th>
@@ -63,8 +64,18 @@
       <td>{{ request.user.firstName }} {{ request.user.lastName }}</td>
       <td>{{ request.title }}</td>
       <td>{{ request.amount }}</td>
+      <td>
+        <p-badge
+          [value]="
+            request.invoiceCount > 0
+              ? request.invoiceCount + ' invoice(s)'
+              : 'Missing invoice'
+          "
+          [severity]="request.invoiceCount > 0 ? 'success' : 'warning'"
+        ></p-badge>
+      </td>
       <td>{{ request.budget.title }}</td>
-      <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ request.createDate | date : 'dd/MM/yyyy' }}</td>
 
       <td>
         <a pButton class="p-button-sm" routerLink="detail/{{ request.id }}">

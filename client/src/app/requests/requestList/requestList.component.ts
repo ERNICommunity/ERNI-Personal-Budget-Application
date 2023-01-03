@@ -240,7 +240,10 @@ export class RequestListComponent implements OnInit {
         }
 
         requests.subscribe((requests) => {
-            (this.requests = requests), (this.filteredRequests = this.requests);
+            (this.requests = requests.sort(
+                (a, b) => b.invoiceCount - a.invoiceCount
+            )),
+                (this.filteredRequests = this.requests);
         });
     }
 
