@@ -1,8 +1,7 @@
 <p-tabMenu [model]="years" [activeItem]="selectedYear"></p-tabMenu>
-<hr>
 
-<div *ngFor="let budget of budgets">
-    <app-budget [budget]="budget"></app-budget>
+<div *ngFor="let budget of budgets" style="margin-top: 10px">
+  <app-budget [budget]="budget"></app-budget>
 </div>
 
 <router-outlet></router-outlet>

@@ -6,9 +6,10 @@ import { OtherBudgetsDetailComponent } from './otherBudgetsDetail/otherBudgetsDe
 import { OtherBudgetsComponent } from './otherBudgets/otherBudgets.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { CreateBudgetsComponent } from './create-budgets/create-budgets.component';
 
 @NgModule({
-    declarations: [OtherBudgetsComponent, OtherBudgetsDetailComponent],
+    declarations: [OtherBudgetsComponent, OtherBudgetsDetailComponent, CreateBudgetsComponent],
     imports: [
         CommonModule,
         FormsModule,

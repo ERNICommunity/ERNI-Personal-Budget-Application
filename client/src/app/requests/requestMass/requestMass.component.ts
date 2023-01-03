@@ -3,7 +3,7 @@ import { RequestService } from '../../services/request.service';
 import { Request } from '../../model/request/request';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user';
@@ -20,7 +20,7 @@ import { Alert, AlertType } from '../../model/alert.model';
 })
 export class RequestMassComponent implements OnInit {
     selectedDate: Date;
-    requestForm: FormGroup;
+    requestForm: UntypedFormGroup;
     users: User[];
     filteredUsers: User[];
     sufficientBudgetLeftUsers: User[];
@@ -35,7 +35,7 @@ export class RequestMassComponent implements OnInit {
         private userService: UserService,
         private location: Location,
         private route: ActivatedRoute,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private alertService: AlertService,
         private busyIndicatorService: BusyIndicatorService
     ) {

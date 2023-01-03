@@ -3,7 +3,7 @@ import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,7 +18,7 @@ export class UserDetailComponent implements OnInit {
   id: number;
   user: User;
   users: User[];
-  form: FormGroup;
+  form: UntypedFormGroup;
   submitted: boolean = false;
 
 
@@ -27,7 +27,7 @@ export class UserDetailComponent implements OnInit {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private alertService: AlertService,
     private busyIndicatorService: BusyIndicatorService) {
   }

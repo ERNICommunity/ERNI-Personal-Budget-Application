@@ -1,0 +1,68 @@
+<app-alert id="addOtherBudget"></app-alert>
+<p>You are going to set budgets in year {{ year }} for users without budget.</p>
+
+<div class="field">
+  <label for="title" class="block">Budget title</label>
+  <input
+    id="title"
+    type="text"
+    pInputText
+    required
+    #title="ngModel"
+    [(ngModel)]="budgetTitle"
+  />
+  <small
+    *ngIf="title.invalid && (title.dirty || title.touched)"
+    id="username2-help"
+    class="p-error block"
+    >Title is required.</small
+  >
+</div>
+
+<div class="field">
+  <label for="title" class="block">Amount</label>
+  <p-inputNumber
+    #budgetAmount="ngModel"
+    [(ngModel)]="amount"
+    mode="currency"
+    currency="EUR"
+    inputId="amount"
+    required
+  >
+  </p-inputNumber>
+  <small
+    *ngIf="budgetAmount.invalid && (budgetAmount.dirty || budgetAmount.touched)"
+    id="budgetAmount-help"
+    class="p-error block"
+    >Amount is required.</small
+  >
+</div>
+
+<div class="field">
+  <label for="employee" class="block">Employee</label>
+  <p-dropdown
+    inputId="employee"
+    [options]="availableUsers"
+    placeholder="All employees"
+    [showClear]="true"
+    [(ngModel)]="selectedEmployee"
+  >
+    <ng-template pTemplate="selectedItem">
+      <div *ngIf="selectedEmployee">
+        {{ selectedEmployee.lastName }} {{ selectedEmployee.firstName }}
+      </div>
+    </ng-template>
+
+    <ng-template let-employee pTemplate="item">
+      {{ employee.lastName }} {{ employee.firstName }}
+    </ng-template>
+  </p-dropdown>
+</div>
+
+<button
+  pButton
+  [disabled]="title.invalid || budgetAmount.invalid"
+  (click)="setBudgetsForYear()"
+>
+  Set
+</button>

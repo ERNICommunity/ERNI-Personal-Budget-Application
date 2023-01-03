@@ -1,105 +1,73 @@
-<div class="card text-center" style="margin-bottom: 20px">
-  <div class="card-header">
-    <div class="row">
-      <div class="col"></div>
-      <div class="col">
-        <div *ngIf="budget.title">
-          {{ budget.title }} - {{ budgetTypeName }}
-        </div>
-        <div *ngIf="!budget.title">{{ budgetTypeName }}</div>
-      </div>
-      <div class="col">
-        <a
-          *ngIf="budget.year == currentYear"
-          class="float-right"
-          routerLink="new-request/{{ budget.id }}"
-          [state]="{ budget: budget }"
-        >
-          Create new request
-        </a>
-      </div>
-    </div>
-  </div>
-  <div class="card-body">
-    <!-- <h5 class="card-title">{{budget.title}}</h5>
-    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a> -->
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Title</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Create date</th>
-          <th scope="col">Request State</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let request of budget.requests">
-          <td>{{ request.title }}</td>
-          <td>{{ request.amount | number: '1.2-2' }}</td>
-          <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ requestStateType[request.state] }}</td>
-          <td class="button-table-cell">
-            <button
-              class="btn btn-danger float-right"
-              title="delete request"
-              (click)="openDeleteConfirmationModal(deleteConfirmation)"
-              *ngIf="request.state == requestStateType.Pending"
-            >
-              Delete
-            </button>
-
-            <a
-              class="btn btn-success float-right mr-1"
-              href="#"
-              role="button"
-              routerLink="request/{{ request.id }}"
-              [state]="{ budget: budget }"
-            >
-              Open
-            </a>
-          </td>
-          <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
-            <div class="modal-header">
-              <h4 class="modal-title" id="modal-title">Delete request</h4>
-              <button
-                type="button"
-                class="close"
-                aria-describedby="modal-title"
-                (click)="c()"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-
-            <div class="modal-body float-centre">
-              <label>
-                Are you sure you want to delete {{ request.title }} request?
-              </label>
-            </div>
-            <div class="modal-footer">
-              <button
-                class="btn btn-danger mr-1"
-                (click)="c(deleteRequest(request.id))"
-              >
-                Yes
-              </button>
-              <button class="btn btn-primary" (click)="c()">No</button>
-            </div>
-          </ng-template>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="card-footer text-muted">
-    <ngb-progressbar
-      height="30px"
-      type="primary"
-      [value]="(100 * budget.amountLeft) / budget.amount"
+<p-confirmDialog
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
+<p-panel>
+  <ng-template pTemplate="icons">
+    <span class="mr-2"
+      >{{ budget.amountLeft }} € left out of {{ budget.amount }}</span
     >
-      {{ budget.amountLeft }} € left out of {{ budget.amount }}</ngb-progressbar
+
+    <a
+      pButton
+      *ngIf="budget.year == currentYear"
+      class="p-button-sm"
+      routerLink="new-request/{{ budget.id }}"
+      [state]="{ budget: budget }"
     >
-  </div>
-</div>
+      Create new request
+    </a>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <div *ngIf="budget.title">{{ budget.title }} - {{ budgetTypeName }}</div>
+    <div *ngIf="!budget.title">{{ budgetTypeName }}</div>
+  </ng-template>
+
+  <p-progressBar
+    [value]="(100 * budget.amountLeft) / budget.amount"
+    [showValue]="false"
+  ></p-progressBar>
+
+  <p-table
+    [value]="budget.requests"
+    styleClass="p-datatable-gridlines p-datatable-striped mt-3"
+    responsiveLayout="scroll"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Create date</th>
+        <th scope="col">Request State</th>
+        <th scope="col"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-request>
+      <tr>
+        <td>{{ request.title }}</td>
+        <td>{{ request.amount | number: '1.2-2' }}</td>
+        <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ requestStateType[request.state] }}</td>
+        <td class="button-table-cell">
+          <button
+            pButton
+            (click)="openDeleteConfirmationModal(request)"
+            *ngIf="request.state == requestStateType.Pending"
+            class="p-button-sm"
+          >
+            Delete
+          </button>
+          <a
+            pButton
+            class="p-button-sm"
+            routerLink="request/{{ request.id }}"
+            [state]="{ budget: budget }"
+          >
+            Open
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-panel>

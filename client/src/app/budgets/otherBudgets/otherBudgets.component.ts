@@ -1,188 +1,156 @@
-import { Component, OnInit } from "@angular/core";
-import { BudgetService } from "../../services/budget.service";
-import { Budget } from "../../model/budget";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ActivatedRoute, Params } from "@angular/router";
-import { ConfigService } from "../../services/config.service";
-import { BudgetType } from "../../model/budgetType";
-import { User } from "../../model/user";
-import { AlertService } from "../../services/alert.service";
-import { MenuItem } from "primeng/api/menuitem";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BudgetService } from '../../services/budget.service';
+import { Budget } from '../../model/budget';
+import { ActivatedRoute, Params } from '@angular/router';
+import { ConfigService } from '../../services/config.service';
+import { MenuItem } from 'primeng/api/menuitem';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: "app-other-budgets",
-  templateUrl: "./otherBudgets.component.html",
-  styleUrls: ["./otherBudgets.component.css"],
+    selector: 'app-other-budgets',
+    templateUrl: './otherBudgets.component.html',
+    styleUrls: ['./otherBudgets.component.css']
 })
-export class OtherBudgetsComponent implements OnInit {
-  budgets: Budget[];
-  filteredBudgets: Budget[];
-  amount: number;
-  selectedUserId: number;
-  budgetTitle: string;
+export class OtherBudgetsComponent implements OnInit, OnDestroy {
+    private destroy$ = new Subject<void>();
 
-  budgetTypes: MenuItem[];
-  selectedBudgetTypeItem: MenuItem;
-  selectedBudgetType: number;
+    budgets: Budget[];
+    filteredBudgets: Budget[];
+    selectedUserId: number;
 
-  availableUsers: User[];
+    budgetTypes: MenuItem[];
+    selectedBudgetTypeItem: MenuItem;
+    selectedBudgetType: number;
 
-  years: MenuItem[];
-  selectedYearItem: MenuItem;
-  selectedYear: number;
+    years: MenuItem[];
+    selectedYearItem: MenuItem;
+    selectedYear: number;
 
-  rlao: object;
-  disableSetOrEditBudgets: boolean;
-  private _searchTerm: string;
-  private _modal: any;
+    disableSetOrEditBudgets: boolean;
+    public _searchTerm: string;
 
-  get searchTerm(): string {
-    return this._searchTerm;
-  }
+    get searchTerm(): string {
+        return this._searchTerm;
+    }
 
-  set searchTerm(value: string) {
-    this._searchTerm = value;
-    this.filteredBudgets = this.filterBudgets(value);
-  }
+    set searchTerm(value: string) {
+        this._searchTerm = value;
+        this.filteredBudgets = this.filterBudgets(value);
+    }
 
-  filterBudgets(searchString: string) {
-    searchString = searchString
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-
-    return this.budgets
-      .filter((b) => b.type == this.selectedBudgetType)
-      .filter(
-        (budget) =>
-          budget.user.firstName
+    filterBudgets(searchString: string) {
+        searchString = searchString
             .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .indexOf(searchString) !== -1 ||
-          budget.user.lastName
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .indexOf(searchString) !== -1
-      );
-  }
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
 
-  constructor(
-    private budgetService: BudgetService,
-    private modalService: NgbModal,
-    private route: ActivatedRoute,
-    private alertService: AlertService,
-    private config: ConfigService
-  ) {
-    this.years = [];
-    
-  }
+        return this.budgets
+            .filter((b) => b.type == this.selectedBudgetType)
+            .filter(
+                (budget) =>
+                    budget.user.firstName
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .indexOf(searchString) !== -1 ||
+                    budget.user.lastName
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .indexOf(searchString) !== -1
+            );
+    }
 
-  ngOnInit() {
-    this.route.params.subscribe((params: Params) => {
-      var currentYear = new Date().getFullYear();
+    constructor(
+        private budgetService: BudgetService,
+        private route: ActivatedRoute,
+        private config: ConfigService,
+        private notificationService: DataChangeNotificationService
+    ) {
+        this.years = [];
+    }
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 
-      this.selectedYear = params["year"] != null ? parseInt(params["year"]) : currentYear;
+    ngOnInit() {
+        this.route.params.subscribe((params: Params) => {
+            var currentYear = new Date().getFullYear();
 
-      this.selectedBudgetType = Number(params["budgetType"]);
+            this.selectedYear =
+                params['year'] != null ? parseInt(params['year']) : currentYear;
 
-      this.years = [];
-      for (var year = new Date().getFullYear() + 1; year >= this.config.getOldestYear; year--) {
-        this.years.push({
-          label: year.toString(),
-          routerLink: ["/other-budgets/", year, this.selectedBudgetType],
+            this.selectedBudgetType = Number(params['budgetType']);
+
+            this.years = [];
+            for (
+                var year = new Date().getFullYear() + 1;
+                year >= this.config.getOldestYear;
+                year--
+            ) {
+                this.years.push({
+                    label: year.toString(),
+                    routerLink: [
+                        '/other-budgets/',
+                        year,
+                        this.selectedBudgetType
+                    ]
+                });
+            }
+
+            this.selectedYearItem = this.years.find(
+                (_) => _.label == this.selectedYear.toString()
+            );
+
+            if (
+                this.selectedYear == currentYear ||
+                this.selectedYear == currentYear + 1
+            ) {
+                this.disableSetOrEditBudgets = false;
+            } else {
+                this.disableSetOrEditBudgets = true;
+            }
+
+            this.getActiveUsersBudgets(this.selectedYear);
         });
-      }
 
-      this.selectedYearItem = this.years.find(_ => _.label == this.selectedYear.toString());
+        this.budgetService.getBudgetsTypes().subscribe((types) => {
+            this.budgetTypes = [];
+            var dict = [];
 
-      if (this.selectedYear == currentYear ||
-        this.selectedYear == currentYear + 1
-      ) {
-        this.disableSetOrEditBudgets = false;
-      } else {
-        this.disableSetOrEditBudgets = true;
-      }
+            types.forEach((type) => {
+                var item = {
+                    label: type.name,
+                    routerLink: [
+                        '/other-budgets/',
+                        this.selectedYear.toString(),
+                        type.id
+                    ]
+                };
+                this.budgetTypes.push(item);
 
-      this.budgetService
-        .getUsersAvailableForBudgetType(this.selectedBudgetType)
-        .subscribe((users) => (this.availableUsers = users));
+                dict[type.id] = item;
+            });
 
-      this.getActiveUsersBudgets(this.selectedYear);
-    });
+            this.selectedBudgetTypeItem = dict[this.selectedBudgetType];
+        });
 
-    this.budgetService.getBudgetsTypes().subscribe((types) => {
-      this.budgetTypes = [];
-      var dict = [];
+        this.notificationService.notifications$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((_) => {
+                this.getActiveUsersBudgets(this.selectedYear);
+            });
+    }
 
-      types.forEach((type) => {
-        var item = {
-          label: type.name,
-          routerLink: [ "/other-budgets/", this.selectedYear.toString(), type.id, ],
-        };
-        this.budgetTypes.push(item);
-
-        dict[type.id] = item;
-      });
-
-      this.selectedBudgetTypeItem = dict[this.selectedBudgetType];
-    });
-  }
-
-  getActiveUsersBudgets(year: number): void {
-    this.budgetService.getCurrentUsersBudgets(year).subscribe((budgets) => {
-      this.budgets = budgets;
-      this.filteredBudgets = budgets.filter((b) => {
-        return b.type == this.selectedBudgetType;
-      });
-    });
-  }
-
-  setBudgetsForYear(): void {
-    var task =
-      this.selectedUserId == 0
-        ? this.budgetService.createBudgetsForAllActiveUsers(
-            this.budgetTitle,
-            this.amount,
-            this.selectedBudgetType
-          )
-        : this.budgetService.createBudget(
-            this.budgetTitle,
-            this.amount,
-            this.selectedUserId,
-            this.selectedBudgetType
-          );
-
-    task.subscribe(
-      () => {
-        this.getActiveUsersBudgets(this.selectedYear);
-        this.alertService.success("Budget created", "addOtherBudget");
-      },
-      (err) => {
-        this.alertService.error(
-          "Error while creating budget: " + JSON.stringify(err.error),
-          "addOtherBudget"
-        );
-      }
-    );
-  }
-
-  openAmountModal(content) {
-    this.setBudgetToDefault();
-    this._modal = this.modalService.open(content, {
-      centered: true,
-      backdrop: "static",
-    });
-  }
-
-  close() {
-    this._modal.close();
-  }
-
-  setBudgetToDefault() {
-    this.budgetTitle = "";
-    this.amount = 0;
-    this.selectedUserId = undefined;
-  }
+    getActiveUsersBudgets(year: number): void {
+        this.budgetService.getCurrentUsersBudgets(year).subscribe((budgets) => {
+            this.budgets = budgets;
+            this.filteredBudgets = budgets.filter((b) => {
+                return b.type == this.selectedBudgetType;
+            });
+        });
+    }
 }

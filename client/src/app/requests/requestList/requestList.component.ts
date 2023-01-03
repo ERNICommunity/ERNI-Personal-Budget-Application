@@ -5,7 +5,6 @@ import { ActivatedRoute, Params, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { RequestApprovalState } from '../../model/requestState';
 import { ConfigService } from '../../services/config.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportService } from '../../services/export.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { AlertService } from '../../services/alert.service';
@@ -13,19 +12,19 @@ import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
 import { ApprovalStateModel } from '../../shared/model/approvalStateModel';
 import { MenuItem } from 'primeng/api/menuitem';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'app-request-list',
     templateUrl: 'requestList.component.html',
-    styleUrls: ['requestList.component.css']
+    styleUrls: ['requestList.component.css'],
+    providers: [ConfirmationService]
 })
 export class RequestListComponent implements OnInit {
     pendingRoute: string = '/requests/pending';
     approvedRoute: string = '/requests/approved';
     completedRoute: string = '/requests/completed';
     rejectedRoute: string = '/requests/rejected';
-
-    budgetTypes: BudgetType[];
 
     requests: Request[];
     filteredRequests: Request[];
@@ -37,6 +36,12 @@ export class RequestListComponent implements OnInit {
     years: MenuItem[];
     selectedYearItem: MenuItem;
     selectedYear: number;
+
+    budgetTypeMenuItems: MenuItem[];
+    selectedBudgetTypeItem: MenuItem;
+
+    approvalStateMenuItems: MenuItem[];
+    selectedApprovalState: MenuItem;
 
     rlao: object;
     selectedBudgetType: BudgetType;
@@ -102,7 +107,7 @@ export class RequestListComponent implements OnInit {
         private budgetService: BudgetService,
         private requestService: RequestService,
         private route: ActivatedRoute,
-        private modalService: NgbModal,
+        private confirmationService: ConfirmationService,
         private exportService: ExportService,
         private alertService: AlertService,
         private config: ConfigService
@@ -112,19 +117,29 @@ export class RequestListComponent implements OnInit {
         console.log(this.requestFilter);
     }
 
+    exportMenuItems: MenuItem[];
+
     async ngOnInit() {
+        this.exportMenuItems = [];
+        for (let i = 1; i <= 12; i++) {
+            this.exportMenuItems.push({
+                label: i.toString(),
+                command: (event) => this.export(i, this.selectedYear)
+            });
+        }
+
         var currentYear = new Date().getFullYear();
 
-        var types = await this.budgetService.getBudgetsTypes().toPromise();
-        this.budgetTypes = types;
-        this.selectedBudgetType = this.budgetTypes[0];
+        var budgetTypes = await this.budgetService
+            .getBudgetsTypes()
+            .toPromise();
 
         this.route.params.subscribe((params: Params) => {
             var yearParam = params['year'];
 
             this.selectedBudgetType =
-                this.budgetTypes.find((b) => b.key == params['budgetType']) ??
-                this.budgetTypes[0];
+                budgetTypes.find((b) => b.key == params['budgetType']) ??
+                budgetTypes[0];
 
             this.years = [];
             for (
@@ -153,6 +168,38 @@ export class RequestListComponent implements OnInit {
                 this.approvalStates.find(
                     (f) => f.key == params['requestState']
                 ) ?? this.approvalStates[0];
+
+            this.budgetTypeMenuItems = budgetTypes.map((budgetType) => ({
+                id: budgetType.key,
+                label: budgetType.name,
+                routerLink: [
+                    '/requests/',
+                    budgetType.key,
+                    this.requestFilter.key,
+                    this.selectedYear
+                ]
+            }));
+            this.selectedBudgetTypeItem = this.budgetTypeMenuItems.find(
+                (t) => t.id == params.requestType
+            );
+
+            let approvalStates = this.getFilter();
+
+            this.approvalStateMenuItems = approvalStates.map(
+                (approvalState) => ({
+                    id: approvalState.key,
+                    label: approvalState.name,
+                    routerLink: [
+                        '/requests/',
+                        params.budgetType,
+                        approvalState.key,
+                        this.selectedYear
+                    ]
+                })
+            );
+            this.selectedApprovalState = this.approvalStateMenuItems.find(
+                (t) => t.id == params.requestState
+            );
 
             this.getRequests(
                 this.requestFilter.state,
@@ -193,7 +240,10 @@ export class RequestListComponent implements OnInit {
         }
 
         requests.subscribe((requests) => {
-            (this.requests = requests), (this.filteredRequests = this.requests);
+            (this.requests = requests.sort(
+                (a, b) => b.invoiceCount - a.invoiceCount
+            )),
+                (this.filteredRequests = this.requests);
         });
     }
 
@@ -222,13 +272,6 @@ export class RequestListComponent implements OnInit {
         }
     }
 
-    rejectRequest(id: number): void {
-        this.requestService.rejectRequest(id).subscribe(() => {
-            (this.requests = this.requests.filter((req) => req.id !== id)),
-                (this.filteredRequests = this.requests);
-        });
-    }
-
     canRejectRequest(id: number): boolean {
         return (
             this.authService.userInfo.isAdmin &&
@@ -240,14 +283,35 @@ export class RequestListComponent implements OnInit {
         this.exportService.downloadExport(month, year);
     }
 
-    openDeleteConfirmationModal(content) {
-        this.modalService.open(content, { centered: true, backdrop: 'static' });
+    openDeleteConfirmationModal(request: Request) {
+        this.confirmationService.confirm({
+            message: `Are you sure you want to delete the request "${request.title}"?`,
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            accept: () => {
+                this.requestService.deleteRequest(request.id).subscribe(() => {
+                    (this.requests = this.requests.filter(
+                        (req) => req.id !== request.id
+                    )),
+                        (this.filteredRequests = this.requests);
+                });
+            }
+        });
     }
 
-    deleteRequest(id: number): void {
-        this.requestService.deleteRequest(id).subscribe(() => {
-            (this.requests = this.requests.filter((req) => req.id !== id)),
-                (this.filteredRequests = this.requests);
+    openRejectConfirmationModal(request: Request) {
+        this.confirmationService.confirm({
+            message: `Are you sure you want to reject the request "${request.title}"?`,
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            accept: () => {
+                this.requestService.rejectRequest(request.id).subscribe(() => {
+                    (this.requests = this.requests.filter(
+                        (req) => req.id !== request.id
+                    )),
+                        (this.filteredRequests = this.requests);
+                });
+            }
         });
     }
 }

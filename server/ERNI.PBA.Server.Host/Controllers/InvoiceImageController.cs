@@ -50,9 +50,9 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize]
         public async Task<IActionResult> AddInvoiceImage([FromBody] AddInvoiceImageCommand.InvoiceImageModel invoiceImageModel, [FromServices] AddInvoiceImageCommand command, CancellationToken cancellationToken)
         {
-            await command.ExecuteAsync(invoiceImageModel, HttpContext.User, cancellationToken);
+            var id = await command.ExecuteAsync(invoiceImageModel, HttpContext.User, cancellationToken);
 
-            return Ok();
+            return Ok(id);
         }
     }
 }

@@ -1,207 +1,126 @@
-<h2>{{ requestFilter?.name }} requests</h2>
+<p-confirmDialog
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
 
 <p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
-<hr />
 
-<div class="row">
-  <div class="col">
-    <div ngbDropdown class="d-inline-block">
-      <button
-        class="btn btn-outline-primary"
-        id="dropdownBasic1"
-        ngbDropdownToggle
-      >
-        Export
-      </button>
-      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <button (click)="export(1, selectedYear)" ngbDropdownItem>
-          January
-        </button>
-        <button (click)="export(2, selectedYear)" ngbDropdownItem>
-          February
-        </button>
-        <button (click)="export(3, selectedYear)" ngbDropdownItem>March</button>
-        <button (click)="export(4, selectedYear)" ngbDropdownItem>April</button>
-        <button (click)="export(5, selectedYear)" ngbDropdownItem>May</button>
-        <button (click)="export(6, selectedYear)" ngbDropdownItem>June</button>
-        <button (click)="export(7, selectedYear)" ngbDropdownItem>July</button>
-        <button (click)="export(8, selectedYear)" ngbDropdownItem>
-          August
-        </button>
-        <button (click)="export(9, selectedYear)" ngbDropdownItem>
-          September
-        </button>
-        <button (click)="export(10, selectedYear)" ngbDropdownItem>
-          October
-        </button>
-        <button (click)="export(11, selectedYear)" ngbDropdownItem>
-          November
-        </button>
-        <button (click)="export(12, selectedYear)" ngbDropdownItem>
-          December
-        </button>
-      </div>
-    </div>
+<p-tabMenu
+  [model]="budgetTypeMenuItems"
+  [activeItem]="selectedBudgetTypeItem"
+></p-tabMenu>
+
+<p-tabMenu
+  [model]="approvalStateMenuItems"
+  [activeItem]="selectedApprovalState"
+></p-tabMenu>
+
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        pInputText
+        placeholder="Search employee"
+        [(ngModel)]="searchTerm"
+      />
+    </span>
   </div>
-</div>
 
-<ul class="nav nav-pills">
-  <li class="nav-item" *ngFor="let budgetType of budgetTypes">
-    <a
-      class="nav-link"
-      [routerLinkActive]="['active']"
-      [routerLink]="[
-        '/requests',
-        budgetType.key,
-        requestFilter.key,
-        selectedYear
-      ]"
-    >
-      {{ budgetType.name }}
-    </a>
-  </li>
-</ul>
+  <div class="p-toolbar-group-right">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-bars"
+      label="Export"
+      (click)="menu.toggle($event)"
+    ></button>
 
-<br />
-<input
-  class="form-control col-md-6"
-  placeholder="Search employee"
-  id="searchBox"
-  type="text"
-  [(ngModel)]="searchTerm"
-/>
-<br />
-
-<ul class="nav nav-tabs">
-  <li class="nav-item" *ngFor="let approvalState of approvalStates">
-    <a
-      class="nav-link"
-      [routerLinkActive]="['active']"
-      [routerLink]="[
-        '/requests',
-        selectedBudgetType?.key,
-        approvalState.key,
-        selectedYear
-      ]"
-    >
-      {{ approvalState.name }}
-    </a>
-  </li>
-</ul>
-
-<table class="table">
-  <thead>
+    <p-menu #menu [popup]="true" [model]="exportMenuItems"></p-menu>
+  </div>
+</p-toolbar>
+<p-table
+  [value]="filteredRequests"
+  styleClass="p-datatable-gridlines p-datatable-striped"
+  responsiveLayout="scroll"
+>
+  <ng-template pTemplate="header">
     <tr>
       <th scope="col">Employee</th>
       <th scope="col">Title</th>
       <th scope="col">Amount</th>
+      <th scope="col" pSortableColumn="invoiceCount">Invoice count</th>
       <th scope="col">Budget</th>
       <th scope="col">Create date</th>
+      <th scope="col">Details</th>
+      <th scope="col"></th>
       <th scope="col"></th>
     </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let request of filteredRequests">
-      <th>{{ request.user.firstName }} {{ request.user.lastName }}</th>
+  </ng-template>
+  <ng-template pTemplate="body" let-request>
+    <tr>
+      <td>{{ request.user.firstName }} {{ request.user.lastName }}</td>
       <td>{{ request.title }}</td>
       <td>{{ request.amount }}</td>
+      <td>
+        <p-badge
+          [value]="
+            request.invoiceCount > 0
+              ? request.invoiceCount + ' invoice(s)'
+              : 'Missing invoice'
+          "
+          [severity]="request.invoiceCount > 0 ? 'success' : 'warning'"
+        ></p-badge>
+      </td>
       <td>{{ request.budget.title }}</td>
-      <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ request.createDate | date : 'dd/MM/yyyy' }}</td>
 
       <td>
+        <a pButton class="p-button-sm" routerLink="detail/{{ request.id }}">
+          Detail
+        </a>
+      </td>
+      <td>
         <div *ngIf="isAdmin">
-          <div *ngIf="request.state == requestFilterType.Pending">
+          <div *ngIf="request.state === requestFilterType.Pending">
             <button
-              class="btn btn-success float-right"
-              title="approve request"
-              (click)="approveRequest(request.id)"
+              pButton
+              type="button"
+              (click)="completeRequest(request)"
+              class="p-button-sm"
             >
               Approve
             </button>
           </div>
-          <div *ngIf="request.state == requestFilterType.Approved">
-            <button
-              class="btn btn-success float-right"
-              title="Complete request"
-              (click)="completeRequest(request)"
-            >
-              Complete
-            </button>
-          </div>
         </div>
       </td>
-
-      <td>
-        <a
-          class="btn btn-primary float-right mr-1"
-          href="#"
-          role="button"
-          routerLink="detail/{{ request.id }}"
-        >
-          Detail
-        </a>
-      </td>
       <td
-        *ngIf="requestFilter != requestFilterType.Rejected"
+        *ngIf="requestFilter !== requestFilterType.Rejected"
         class="button-table-cell"
       >
         <div *ngIf="canRejectRequest(request.id); else cannotReject">
           <button
-            class="btn btn-danger float-right"
-            title="reject request"
-            (click)="openDeleteConfirmationModal(rejectConfirmation)"
+            pButton
+            type="button"
+            class="p-button-sm"
+            (click)="openRejectConfirmationModal(request)"
           >
             Reject
           </button>
           <button
-            class="btn btn-danger float-right mr-1"
-            title="delete request"
-            (click)="openDeleteConfirmationModal(deleteConfirmation)"
+            pButton
+            type="button"
+            class="p-button-sm"
+            (click)="openDeleteConfirmationModal(request)"
           >
             Delete
           </button>
         </div>
-        <ng-template #deleteConfirmation let-c="close" let-d="dismiss">
-          <div class="modal-body float-centre">
-            <button class="btn-xs btn-light float-right" (click)="c()">
-              X
-            </button>
-            <label>
-              Are you sure you want to delete {{ request.title }} request?
-            </label>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-danger mr-1"
-              (click)="c(deleteRequest(request.id))"
-            >
-              Yes
-            </button>
-            <button class="btn btn-primary" (click)="c()">No</button>
-          </div>
-        </ng-template>
-        <ng-template #rejectConfirmation let-c="close" let-d="dismiss">
-          <div class="modal-body float-centre">
-            <button class="btn-xs btn-light float-right" (click)="c()">
-              X
-            </button>
-            <label>
-              Are you sure you want to reject {{ request.title }} request?
-            </label>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-danger mr-1"
-              (click)="c(rejectRequest(request.id))"
-            >
-              Yes
-            </button>
-            <button class="btn btn-primary" (click)="c()">No</button>
-          </div>
-        </ng-template>
       </td>
     </tr>
-  </tbody>
-</table>
+  </ng-template>
+</p-table>
 
 <router-outlet></router-outlet>

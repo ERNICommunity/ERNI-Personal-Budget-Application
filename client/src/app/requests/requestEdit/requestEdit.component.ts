@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RequestService } from '../../services/request.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
@@ -11,9 +11,12 @@ import { NewRequest } from '../../model/newRequest';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RequestApprovalState } from '../../model/requestState';
 import { InvoiceImageService } from '../../services/invoice-image.service';
-import { Image, NewImage } from '../../shared/file-list/file-list.component';
-import { concatMap, delay, tap } from 'rxjs/operators';
-import { forkJoin, Observable, of, Subject, zip } from 'rxjs';
+import {
+    Invoice,
+    InvoiceStatus
+} from '../../shared/file-list/file-list.component';
+import { concatMap, defaultIfEmpty } from 'rxjs/operators';
+import { forkJoin, Observable, Subject } from 'rxjs';
 import { InvoiceImage } from '../../model/InvoiceImage';
 
 @Component({
@@ -39,7 +42,7 @@ export class RequestEditComponent implements OnInit {
     public isSaveInProgress = false;
 
     public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
-    public images: (Image | NewImage)[];
+    public images: (Invoice & { file?: File })[];
 
     constructor(
         private requestService: RequestService,
@@ -59,13 +62,11 @@ export class RequestEditComponent implements OnInit {
             this.requestId = Number(params['requestId']);
 
             if (!isNaN(this.budgetId)) {
-                console.log('Creating request');
                 this.popupTitle = 'Create new request';
                 this.request = this.createNewRequest();
                 this.newRequest = true;
                 this.images = [];
             } else if (!isNaN(this.requestId)) {
-                console.log('Loading request');
                 this.popupTitle = 'Request details';
                 this.loadRequest(this.requestId);
                 this.newRequest = false;
@@ -101,42 +102,56 @@ export class RequestEditComponent implements OnInit {
             }
         );
 
-        this.invoiceImageService
-            .getInvoiceImages(this.requestId)
-            .subscribe((names) => (this.images = names));
+        this.invoiceImageService.getInvoiceImages(this.requestId).subscribe(
+            (names) =>
+                (this.images = names.map((invoice) => ({
+                    name: invoice.name,
+                    status: { code: 'saved', id: invoice.id }
+                })))
+        );
     }
 
     public onNewImageAdded(files: FileList) {
         for (var i = 0; i < files.length; i++) {
             const selectedFile = files[i];
 
-            const im = new NewImage();
-            im.name = selectedFile.name;
-            im.file = selectedFile;
+            const im: Invoice & { file: File } = {
+                status: { code: 'new' },
+                name: selectedFile.name,
+                file: selectedFile
+            };
             this.images.push(im);
+
+            if (!this.newRequest) {
+                this.uploadInvoice(this.requestId, im, selectedFile);
+            }
         }
     }
 
-    private uploadImages(requestId: number): Observable<any> {
-        console.log('Uploading images');
-        console.log(this.images);
-        const images = this.images.filter((_) => _ instanceof NewImage);
-        console.log(images);
-        const uploads = images.map((_) =>
-            this.uploadImage(requestId, _ as NewImage)
-        );
+    private uploadInvoices(requestId: number): Observable<any> {
+        const invoices = this.images;
+        const uploads = invoices
+            .filter((_) => _.status.code === 'new')
+            .map((_) => this.uploadInvoice(requestId, _, _.file).id);
 
-        return forkJoin(uploads);
+        return forkJoin(uploads).pipe(defaultIfEmpty(null));
     }
 
-    private uploadImage(
+    private uploadInvoice(
         requestId: number,
-        image: NewImage
-    ): Observable<number> {
-        const progress = new Subject<number>();
+        invoice: Invoice,
+        file: File
+    ): {
+        progress: Observable<number>;
+        id: Observable<number>;
+    } {
+        const result = {
+            progress: new Subject<number>(),
+            id: new Subject<number>()
+        };
 
         const fileReader = new FileReader();
-        fileReader.readAsDataURL(image.file);
+        fileReader.readAsDataURL(file);
         fileReader.onload = () => {
             if (fileReader.result) {
                 const payload: InvoiceImage = {
@@ -145,32 +160,42 @@ export class RequestEditComponent implements OnInit {
                         .toString()
                         .replace('data:', '')
                         .replace(/^.+,/, ''),
-                    filename: image.name,
-                    mimeType: image.file.type
+                    filename: invoice.name,
+                    mimeType: file.type
                 };
 
-                image.progress = 0;
+                const status: InvoiceStatus = {
+                    code: 'in-progress',
+                    progress: 0
+                };
 
-                return this.invoiceImageService
-                    .addInvoiceImage(payload)
-                    .pipe(
-                        tap((progress) => {
-                            image.progress = progress;
-                        })
-                    )
-                    .subscribe(progress);
+                invoice.status = status;
+
+                var uploadInfo =
+                    this.invoiceImageService.addInvoiceImage(payload);
+
+                uploadInfo.progress.subscribe(
+                    (progress) => (status.progress = progress)
+                );
+                uploadInfo.id.subscribe((id) => {
+                    const status: InvoiceStatus = (invoice.status = {
+                        code: 'saved',
+                        id: id
+                    });
+                });
+
+                uploadInfo.id.subscribe(result.id);
+                uploadInfo.progress.subscribe(result.progress);
             }
         };
 
-        return progress;
+        return result;
     }
 
     public async save() {
-        //this.busyIndicatorService.start();
         this.isSaveInProgress = true;
 
         if (this.request.state == RequestApprovalState.Pending) {
-            console.log('Saving basic info');
             this.saveBasicInfo();
         }
     }
@@ -188,7 +213,6 @@ export class RequestEditComponent implements OnInit {
                 amount
             });
         } else if (this.request.state == RequestApprovalState.Pending) {
-            console.log('Calling editExistingRequest()');
             this.editExistingRequest({
                 id,
                 title,
@@ -204,10 +228,7 @@ export class RequestEditComponent implements OnInit {
                 : this.requestService.addRequest(payload);
 
         request
-            .pipe(
-                delay(4000),
-                concatMap((requestId) => this.uploadImages(requestId))
-            )
+            .pipe(concatMap((requestId) => this.uploadInvoices(requestId)))
             .subscribe(
                 (_) => {
                     this.dataChangeNotificationService.notify();
@@ -220,15 +241,16 @@ export class RequestEditComponent implements OnInit {
                         })
                     );
 
-                    this.router.navigate(['my-budget']);
+                    this.router.navigate(['../../'], {
+                        relativeTo: this.route
+                    });
                 },
 
                 (err) => {
                     this.dataChangeNotificationService.notify();
                     this.isSaveInProgress = false;
                     this.alertService.error(
-                        'Error while creating request: ' +
-                            JSON.stringify(err.error),
+                        'Error while creating request: ' + JSON.stringify(err),
                         'addRequestError'
                     );
                 }
@@ -241,7 +263,7 @@ export class RequestEditComponent implements OnInit {
                 ? this.requestService.updateTeamRequest(payload)
                 : this.requestService.updateRequest(payload);
 
-        forkJoin([request, this.uploadImages(payload.id)]).subscribe(
+        request.subscribe(
             () => {
                 this.dataChangeNotificationService.notify();
                 this.isSaveInProgress = false;
