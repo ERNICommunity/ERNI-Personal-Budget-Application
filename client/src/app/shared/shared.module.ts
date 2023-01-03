@@ -26,6 +26,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AccordionModule } from 'primeng/accordion';
 import { DropdownModule } from 'primeng/dropdown';
 import { BadgeModule } from 'primeng/badge';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
     declarations: [AlertComponent, FileListComponent],
@@ -37,7 +39,9 @@ import { BadgeModule } from 'primeng/badge';
         BrowserAnimationsModule,
         ProgressBarModule,
         ButtonModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        MessageModule,
+        MessagesModule
     ],
     exports: [
         CommonModule,
@@ -65,7 +69,9 @@ import { BadgeModule } from 'primeng/badge';
         ProgressSpinnerModule,
         AccordionModule,
         DropdownModule,
-        BadgeModule
+        BadgeModule,
+        MessageModule,
+        MessagesModule
     ],
     providers: [MessageService]
 })
