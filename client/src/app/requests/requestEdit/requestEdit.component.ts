@@ -115,9 +115,10 @@ export class RequestEditComponent implements OnInit {
         for (var i = 0; i < files.length; i++) {
             const selectedFile = files[i];
 
-            const im: Invoice = {
+            const im: Invoice & { file: File } = {
                 status: { code: 'new' },
-                name: selectedFile.name
+                name: selectedFile.name,
+                file: selectedFile
             };
             this.images.push(im);
 
@@ -249,8 +250,7 @@ export class RequestEditComponent implements OnInit {
                     this.dataChangeNotificationService.notify();
                     this.isSaveInProgress = false;
                     this.alertService.error(
-                        'Error while creating request: ' +
-                            JSON.stringify(err.error),
+                        'Error while creating request: ' + JSON.stringify(err),
                         'addRequestError'
                     );
                 }
