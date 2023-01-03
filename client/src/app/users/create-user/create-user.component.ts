@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
@@ -15,13 +15,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class CreateUserComponent implements OnInit {
     superiors: User[];
-    createForm: FormGroup;
+    createForm: UntypedFormGroup;
     submitted: boolean = false;
     errorMessage: string;
 
     constructor(
         private router: Router,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private userService: UserService,
         private alertService: AlertService,
         public busyIndicatorService: BusyIndicatorService

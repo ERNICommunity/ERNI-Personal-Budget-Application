@@ -116,7 +116,6 @@
       }
     }
   },
-  "defaultProject": "pba-client",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

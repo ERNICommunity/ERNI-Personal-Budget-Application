@@ -3,7 +3,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, FormBuilder, Validators } from '@angular/forms';
 import { InvoiceImageService } from '../../services/invoice-image.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class RequestDetailComponent implements OnInit {
     @ViewChild('downloadLink', { static: false }) downloadLink: ElementRef;
     request: Request;
     createDate: Date;
-    requestForm: FormGroup;
+    requestForm: UntypedFormGroup;
     httpResponseError: string;
     images: { id: number, name: string}[];
     isVisible: boolean;
