@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+    Component,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges
+} from '@angular/core';
 import { BudgetType } from '../../model/budgetType';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 import { User } from '../../model/user';
@@ -11,7 +17,7 @@ import { DataChangeNotificationService } from '../../services/dataChangeNotifica
     templateUrl: './create-budgets.component.html',
     styleUrls: ['./create-budgets.component.css']
 })
-export class CreateBudgetsComponent implements OnInit {
+export class CreateBudgetsComponent implements OnInit, OnChanges {
     @Input()
     public year: Number;
 
@@ -29,6 +35,12 @@ export class CreateBudgetsComponent implements OnInit {
         private alertService: AlertService,
         private notificationService: DataChangeNotificationService
     ) {}
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.year !== undefined || changes.budgetType !== undefined) {
+            this.ngOnInit();
+        }
+    }
 
     ngOnInit(): void {
         this.budgetService
