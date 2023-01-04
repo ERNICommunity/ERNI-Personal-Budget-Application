@@ -1,7 +1,19 @@
-<p-tabMenu [model]="years" [activeItem]="selectedYear"></p-tabMenu>
+<p-tabMenu [model]="years"></p-tabMenu>
 
-<div *ngFor="let budget of budgets" style="margin-top: 10px">
-  <app-budget [budget]="budget"></app-budget>
+<div class="card" *ngIf="isBusy">
+  <div
+    class="flex align-content-center justify-content-center flex-wrap card-container yellow-container"
+    style="min-height: 200px"
+  >
+    <div class="flex align-items-center justify-content-center">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </div>
 </div>
+<ng-container *ngIf="!isBusy">
+  <div *ngFor="let budget of budgets" style="margin-top: 10px">
+    <app-budget [budget]="budget"></app-budget>
+  </div>
+</ng-container>
 
 <router-outlet></router-outlet>
