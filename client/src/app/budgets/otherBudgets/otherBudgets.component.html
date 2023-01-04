@@ -1,16 +1,13 @@
-<h2>Other Budgets - {{ selectedYear }}</h2>
+<h2>Other Budgets - {{ selectedYear$ | async }}</h2>
 
-<p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
-<p-tabMenu
-  [model]="budgetTypes"
-  [activeItem]="selectedBudgetTypeItem"
-></p-tabMenu>
+<p-tabMenu [model]="years$ | async"></p-tabMenu>
+<p-tabMenu [model]="budgetTypes$ | async"></p-tabMenu>
 
 <p-accordion>
   <p-accordionTab header="Create budgets">
     <app-create-budgets
-      [year]="selectedYear"
-      [budgetType]="selectedBudgetType"
+      [year]="selectedYear$ | async"
+      [budgetType]="selectedBudgetType$ | async"
     ></app-create-budgets>
   </p-accordionTab>
 </p-accordion>
@@ -30,7 +27,7 @@
 <br />
 
 <p-table
-  [value]="filteredBudgets"
+  [value]="budgets$ | async"
   styleClass="p-datatable-gridlines p-datatable-striped"
   responsiveLayout="scroll"
 >
@@ -54,7 +51,7 @@
 
       <td>
         <a
-          *ngIf="!disableSetOrEditBudgets"
+          *ngIf="enableSetOrEditBudgets | async"
           class="btn btn-primary float-right"
           href="#"
           role="button"

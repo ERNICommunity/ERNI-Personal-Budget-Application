@@ -5,49 +5,121 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { MenuItem } from 'primeng/api/menuitem';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import {
+    distinctUntilChanged,
+    map,
+    switchMap,
+    takeUntil
+} from 'rxjs/operators';
+import { MenuHelper } from '../../shared/menu-helper';
+import { BudgetType } from '../../model/budgetType';
 
 @Component({
     selector: 'app-other-budgets',
     templateUrl: './otherBudgets.component.html',
     styleUrls: ['./otherBudgets.component.css']
 })
-export class OtherBudgetsComponent implements OnInit, OnDestroy {
-    private destroy$ = new Subject<void>();
+export class OtherBudgetsComponent implements OnInit {
+    years$: Observable<MenuItem[]>;
+    budgetTypes$: Observable<MenuItem[]>;
 
-    budgets: Budget[];
-    filteredBudgets: Budget[];
-    selectedUserId: number;
+    budgets$: Observable<Budget[]>;
 
-    budgetTypes: MenuItem[];
-    selectedBudgetTypeItem: MenuItem;
-    selectedBudgetType: number;
+    disableSetOrEditBudgets$: Observable<boolean>;
 
-    years: MenuItem[];
-    selectedYearItem: MenuItem;
-    selectedYear: number;
+    selectedYear$: Observable<number>;
+    selectedBudgetType$: Observable<number>;
 
-    disableSetOrEditBudgets: boolean;
-    public _searchTerm: string;
+    private searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
 
     get searchTerm(): string {
-        return this._searchTerm;
+        return this.searchTerm$.value;
     }
 
     set searchTerm(value: string) {
-        this._searchTerm = value;
-        this.filteredBudgets = this.filterBudgets(value);
+        this.searchTerm$.next(value);
     }
 
-    filterBudgets(searchString: string) {
+    constructor(
+        private budgetService: BudgetService,
+        private route: ActivatedRoute,
+        private notificationService: DataChangeNotificationService
+    ) {}
+
+    ngOnInit() {
+        this.selectedYear$ = this.route.params.pipe(
+            map((params) => +params['year']),
+            distinctUntilChanged()
+        );
+
+        this.selectedBudgetType$ = this.route.params.pipe(
+            map((params) => +params['budgetType']),
+            distinctUntilChanged()
+        );
+
+        var currentYear = new Date().getFullYear();
+
+        this.disableSetOrEditBudgets$ = this.selectedYear$.pipe(
+            map(
+                (selectedYear) =>
+                    selectedYear === currentYear ||
+                    selectedYear === currentYear + 1
+            )
+        );
+
+        this.years$ = this.selectedBudgetType$.pipe(
+            map((budgetType) =>
+                MenuHelper.getYearMenu((year) => [
+                    '/other-budgets/',
+                    year,
+                    budgetType
+                ])
+            )
+        );
+
+        const budgets$ = combineLatest([
+            this.selectedYear$,
+            this.notificationService.notifications$
+        ]).pipe(
+            switchMap(([year]) =>
+                this.budgetService.getActiveUsersBudgets(year)
+            )
+        );
+
+        this.budgets$ = combineLatest([
+            budgets$,
+            this.searchTerm$,
+            this.selectedBudgetType$
+        ]).pipe(
+            map(([budgets, searchTerm, budgetType]) =>
+                this.filterBudgets(budgets, searchTerm, budgetType)
+            )
+        );
+
+        this.budgetTypes$ = combineLatest([
+            this.budgetService.getBudgetsTypes(),
+            this.selectedYear$
+        ]).pipe(
+            map(([types, year]) =>
+                types.map((type) => ({
+                    label: type.name,
+                    routerLink: ['/other-budgets/', year, type.id]
+                }))
+            )
+        );
+    }
+
+    filterBudgets(budgets: Budget[], searchString: string, budgetType: number) {
+        searchString = searchString ?? '';
+
         searchString = searchString
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
 
-        return this.budgets
-            .filter((b) => b.type == this.selectedBudgetType)
+        return budgets
+            .filter((b) => b.type == budgetType)
             .filter(
                 (budget) =>
                     budget.user.firstName
@@ -61,96 +133,5 @@ export class OtherBudgetsComponent implements OnInit, OnDestroy {
                         .replace(/[\u0300-\u036f]/g, '')
                         .indexOf(searchString) !== -1
             );
-    }
-
-    constructor(
-        private budgetService: BudgetService,
-        private route: ActivatedRoute,
-        private config: ConfigService,
-        private notificationService: DataChangeNotificationService
-    ) {
-        this.years = [];
-    }
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
-
-    ngOnInit() {
-        this.route.params.subscribe((params: Params) => {
-            var currentYear = new Date().getFullYear();
-
-            this.selectedYear =
-                params['year'] != null ? parseInt(params['year']) : currentYear;
-
-            this.selectedBudgetType = Number(params['budgetType']);
-
-            this.years = [];
-            for (
-                var year = new Date().getFullYear() + 1;
-                year >= this.config.getOldestYear;
-                year--
-            ) {
-                this.years.push({
-                    label: year.toString(),
-                    routerLink: [
-                        '/other-budgets/',
-                        year,
-                        this.selectedBudgetType
-                    ]
-                });
-            }
-
-            this.selectedYearItem = this.years.find(
-                (_) => _.label == this.selectedYear.toString()
-            );
-
-            if (
-                this.selectedYear == currentYear ||
-                this.selectedYear == currentYear + 1
-            ) {
-                this.disableSetOrEditBudgets = false;
-            } else {
-                this.disableSetOrEditBudgets = true;
-            }
-
-            this.getActiveUsersBudgets(this.selectedYear);
-        });
-
-        this.budgetService.getBudgetsTypes().subscribe((types) => {
-            this.budgetTypes = [];
-            var dict = [];
-
-            types.forEach((type) => {
-                var item = {
-                    label: type.name,
-                    routerLink: [
-                        '/other-budgets/',
-                        this.selectedYear.toString(),
-                        type.id
-                    ]
-                };
-                this.budgetTypes.push(item);
-
-                dict[type.id] = item;
-            });
-
-            this.selectedBudgetTypeItem = dict[this.selectedBudgetType];
-        });
-
-        this.notificationService.notifications$
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((_) => {
-                this.getActiveUsersBudgets(this.selectedYear);
-            });
-    }
-
-    getActiveUsersBudgets(year: number): void {
-        this.budgetService.getCurrentUsersBudgets(year).subscribe((budgets) => {
-            this.budgets = budgets;
-            this.filteredBudgets = budgets.filter((b) => {
-                return b.type == this.selectedBudgetType;
-            });
-        });
     }
 }
