@@ -31,8 +31,7 @@ import { BasicRequestInfoEditorComponent } from './requestEdit/basic-request-inf
                     {
                         path: '',
                         redirectTo:
-                            'personal/pending/' +
-                            new Date().getFullYear().toString(),
+                            '1/pending/' + new Date().getFullYear().toString(),
                         pathMatch: 'full'
                     },
                     {

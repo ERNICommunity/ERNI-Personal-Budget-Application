@@ -20,43 +20,16 @@ export class RequestService {
         private configService: ConfigService
     ) {}
 
-    public getPendingRequests(
+    public getRequests(
         year: number,
+        state: 'approved' | 'rejected' | 'pending',
         budgetTypeId: number
     ): Observable<Request[]> {
         return this.http.get<Request[]>(
             this.configService.apiUrlBase +
                 this.requestUrl +
                 year +
-                '/state/pending/type/' +
-                budgetTypeId,
-            this.serviceHelper.getHttpOptions()
-        );
-    }
-
-    public getApprovedRequests(
-        year: number,
-        budgetTypeId: number
-    ): Observable<Request[]> {
-        return this.http.get<Request[]>(
-            this.configService.apiUrlBase +
-                this.requestUrl +
-                year +
-                '/state/approved/type/' +
-                budgetTypeId,
-            this.serviceHelper.getHttpOptions()
-        );
-    }
-
-    public getRejectedRequests(
-        year: number,
-        budgetTypeId: number
-    ): Observable<Request[]> {
-        return this.http.get<Request[]>(
-            this.configService.apiUrlBase +
-                this.requestUrl +
-                year +
-                '/state/rejected/type/' +
+                `/state/${state}/type/` +
                 budgetTypeId,
             this.serviceHelper.getHttpOptions()
         );
@@ -123,7 +96,7 @@ export class RequestService {
         );
     }
 
-    public deleteRequest(id: number): Observable<Request> {
+    public deleteRequest(id: number): Observable<any> {
         return this.http.delete<Request>(
             this.configService.apiUrlBase + this.requestUrl + id,
             this.serviceHelper.getHttpOptions()

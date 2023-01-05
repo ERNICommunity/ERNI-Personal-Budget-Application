@@ -1,18 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { ActivatedRoute, Params, Data } from '@angular/router';
-import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import {
+    BehaviorSubject,
+    combineLatest,
+    merge,
+    Observable,
+    ReplaySubject,
+    Subject
+} from 'rxjs';
 import { RequestApprovalState } from '../../model/requestState';
-import { ConfigService } from '../../services/config.service';
 import { ExportService } from '../../services/export.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { AlertService } from '../../services/alert.service';
 import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
-import { ApprovalStateModel } from '../../shared/model/approvalStateModel';
 import { MenuItem } from 'primeng/api/menuitem';
 import { ConfirmationService } from 'primeng/api';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { MenuHelper } from '../../shared/menu-helper';
+import {
+    maintainList,
+    RemoveEvent,
+    ResetEvent
+} from '../../shared/utils/observableUtils';
 
 @Component({
     selector: 'app-request-list',
@@ -26,68 +38,60 @@ export class RequestListComponent implements OnInit {
     completedRoute: string = '/requests/completed';
     rejectedRoute: string = '/requests/rejected';
 
-    requests: Request[];
-    filteredRequests: Request[];
+    requests$: Observable<Request[]>;
 
-    approvalStates: ApprovalStateModel[];
-    requestFilter: ApprovalStateModel;
-    requestFilterType = RequestApprovalState;
+    years$: Observable<MenuItem[]>;
+    budgetTypeMenuItems$: Observable<MenuItem[]>;
+    approvalStateMenuItems$: Observable<MenuItem[]>;
+    exportMenuItems$: Observable<MenuItem[]>;
 
-    years: MenuItem[];
-    selectedYearItem: MenuItem;
-    selectedYear: number;
+    approvalStates = RequestApprovalState;
 
-    budgetTypeMenuItems: MenuItem[];
-    selectedBudgetTypeItem: MenuItem;
+    states: {
+        state: RequestApprovalState;
+        key: 'approved' | 'rejected' | 'pending';
+        name: string;
+    }[] = [
+        {
+            state: RequestApprovalState.Pending,
+            key: 'pending',
+            name: 'Pending'
+        },
+        {
+            state: RequestApprovalState.Approved,
+            key: 'approved',
+            name: 'Approved'
+        },
+        {
+            state: RequestApprovalState.Rejected,
+            key: 'rejected',
+            name: 'Rejected'
+        }
+    ];
 
-    approvalStateMenuItems: MenuItem[];
-    selectedApprovalState: MenuItem;
-
-    rlao: object;
-    selectedBudgetType: BudgetType;
+    removeEvent$ = new Subject<ResetEvent<Request> | RemoveEvent>();
 
     get isAdmin(): boolean {
         return this.authService.userInfo.isAdmin;
     }
 
-    private _searchTerm: string;
+    private _searchTerm$ = new BehaviorSubject<string>('');
 
     get searchTerm(): string {
-        return this._searchTerm;
+        return this._searchTerm$.value;
     }
 
     set searchTerm(value: string) {
-        this._searchTerm = value;
-        this.filteredRequests = this.filterRequests(value);
+        this._searchTerm$.next(value);
     }
 
-    getFilter(): ApprovalStateModel[] {
-        return [
-            {
-                state: RequestApprovalState.Pending,
-                key: 'pending',
-                name: 'Pending'
-            },
-            {
-                state: RequestApprovalState.Approved,
-                key: 'approved',
-                name: 'Approved'
-            },
-            {
-                state: RequestApprovalState.Rejected,
-                key: 'rejected',
-                name: 'Rejected'
-            }
-        ];
-    }
-
-    filterRequests(searchString: string) {
+    filterRequests(requests: Request[], searchString: string): Request[] {
         searchString = searchString
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
 
-        return this.requests.filter(
+        return requests.filter(
             (request) =>
                 request.user.firstName
                     .toLowerCase()
@@ -109,142 +113,122 @@ export class RequestListComponent implements OnInit {
         private route: ActivatedRoute,
         private confirmationService: ConfirmationService,
         private exportService: ExportService,
-        private alertService: AlertService,
-        private config: ConfigService
-    ) {
-        this.approvalStates = this.getFilter();
-        this.requestFilter = this.approvalStates[0];
-        console.log(this.requestFilter);
-    }
-
-    exportMenuItems: MenuItem[];
+        private alertService: AlertService
+    ) {}
 
     async ngOnInit() {
-        this.exportMenuItems = [];
-        for (let i = 1; i <= 12; i++) {
-            this.exportMenuItems.push({
-                label: i.toString(),
-                command: (event) => this.export(i, this.selectedYear)
-            });
-        }
+        const selectedYear$ = this.route.params.pipe(
+            map((params) => +params['year']),
+            distinctUntilChanged()
+        );
 
-        var currentYear = new Date().getFullYear();
+        const selectedBudgetType$ = this.route.params.pipe(
+            map((params) => +params['budgetType']),
+            distinctUntilChanged()
+        );
 
-        var budgetTypes = await this.budgetService
-            .getBudgetsTypes()
-            .toPromise();
+        const requestState$ = this.route.params.pipe(
+            map((params) => '' + params['requestState']),
+            distinctUntilChanged()
+        );
 
-        this.route.params.subscribe((params: Params) => {
-            var yearParam = params['year'];
+        const budgetTypes$ = new ReplaySubject<BudgetType[]>();
+        this.budgetService.getBudgetsTypes().subscribe(budgetTypes$);
 
-            this.selectedBudgetType =
-                budgetTypes.find((b) => b.key == params['budgetType']) ??
-                budgetTypes[0];
+        this.exportMenuItems$ = selectedYear$.pipe(
+            map((year) => {
+                const list = [];
+                for (let i = 1; i <= 12; i++) {
+                    list.push({
+                        label: i.toString(),
+                        command: () => this.export(i, year)
+                    });
+                }
+                return list;
+            })
+        );
 
-            this.years = [];
-            for (
-                var year = new Date().getFullYear() + 1;
-                year >= this.config.getOldestYear;
-                year--
-            ) {
-                this.years.push({
-                    label: year.toString(),
-                    routerLink: [
-                        '/requests/',
-                        this.selectedBudgetType.key,
-                        this.requestFilter.key,
-                        year
-                    ]
-                });
-            }
-
-            this.selectedYear =
-                yearParam != null ? parseInt(yearParam) : currentYear;
-            this.selectedYearItem = this.years.find(
-                (_) => _.label == this.selectedYear.toString()
-            );
-
-            this.requestFilter =
-                this.approvalStates.find(
-                    (f) => f.key == params['requestState']
-                ) ?? this.approvalStates[0];
-
-            this.budgetTypeMenuItems = budgetTypes.map((budgetType) => ({
-                id: budgetType.key,
-                label: budgetType.name,
-                routerLink: [
+        this.years$ = combineLatest([selectedBudgetType$, requestState$]).pipe(
+            map(([budgetType, requestState]) =>
+                MenuHelper.getYearMenu((year) => [
                     '/requests/',
-                    budgetType.key,
-                    this.requestFilter.key,
-                    this.selectedYear
-                ]
-            }));
-            this.selectedBudgetTypeItem = this.budgetTypeMenuItems.find(
-                (t) => t.id == params.requestType
-            );
+                    budgetType,
+                    requestState,
+                    year
+                ])
+            )
+        );
 
-            let approvalStates = this.getFilter();
-
-            this.approvalStateMenuItems = approvalStates.map(
-                (approvalState) => ({
+        this.approvalStateMenuItems$ = combineLatest([
+            selectedBudgetType$,
+            selectedYear$
+        ]).pipe(
+            map(([budgetType, year]) =>
+                this.states.map((approvalState) => ({
                     id: approvalState.key,
                     label: approvalState.name,
                     routerLink: [
                         '/requests/',
-                        params.budgetType,
+                        budgetType,
                         approvalState.key,
-                        this.selectedYear
+                        year
                     ]
-                })
-            );
-            this.selectedApprovalState = this.approvalStateMenuItems.find(
-                (t) => t.id == params.requestState
-            );
+                }))
+            )
+        );
 
-            this.getRequests(
-                this.requestFilter.state,
-                this.selectedYear,
-                this.selectedBudgetType.id
-            );
-        });
-    }
+        this.budgetTypeMenuItems$ = combineLatest([
+            budgetTypes$,
+            selectedYear$,
+            requestState$
+        ]).pipe(
+            map(([budgetTypes, selectedYear, requestState]) =>
+                budgetTypes.map((budgetType) => ({
+                    id: budgetType.key,
+                    label: budgetType.name,
+                    routerLink: [
+                        '/requests/',
+                        budgetType.id,
+                        requestState,
+                        selectedYear
+                    ]
+                }))
+            )
+        );
 
-    getRequests(
-        filter: RequestApprovalState,
-        year: number,
-        budgetTypeId: number
-    ): void {
-        var requests: Observable<Request[]>;
-
-        switch (filter) {
-            case RequestApprovalState.Approved:
-                requests = this.requestService.getApprovedRequests(
+        const requests$ = combineLatest([
+            selectedBudgetType$,
+            selectedYear$,
+            requestState$
+        ]).pipe(
+            switchMap(([budgetType, year, state]) =>
+                this.requestService.getRequests(
                     year,
-                    budgetTypeId
-                );
-                break;
-            case RequestApprovalState.Pending:
-                requests = this.requestService.getPendingRequests(
-                    year,
-                    budgetTypeId
-                );
-                break;
-            case RequestApprovalState.Rejected:
-                requests = this.requestService.getRejectedRequests(
-                    year,
-                    budgetTypeId
-                );
-                break;
-            default:
-                break;
-        }
+                    this.states.find((_) => _.key === state).key,
+                    budgetType
+                )
+            ),
+            map((requests) =>
+                requests.sort((a, b) => b.invoiceCount - a.invoiceCount)
+            ),
+            map(
+                (requests) =>
+                    ({ list: requests } as ResetEvent<Request> | RemoveEvent)
+            )
+        );
 
-        requests.subscribe((requests) => {
-            (this.requests = requests.sort(
-                (a, b) => b.invoiceCount - a.invoiceCount
-            )),
-                (this.filteredRequests = this.requests);
-        });
+        const maintainedRequests = maintainList(
+            merge(requests$, this.removeEvent$.asObservable())
+        );
+
+        this.requests$ = combineLatest([
+            maintainedRequests,
+            this._searchTerm$
+        ]).pipe(
+            map(([requests, searchString]) =>
+                this.filterRequests(requests, searchString)
+            )
+        );
     }
 
     async completeRequest(request: Request) {
@@ -254,29 +238,9 @@ export class RequestListComponent implements OnInit {
             );
             return;
         }
-
-        try {
-            this.requestService.approveRequest(request.id).subscribe(() => {
-                (this.requests = this.requests.filter(
-                    (req) => req.id !== request.id
-                )),
-                    (this.filteredRequests = this.requests);
-            });
-
-            this.requests = this.requests.filter(
-                (req) => req.id !== request.id
-            );
-            this.filteredRequests = this.requests;
-        } catch (error) {
-            this.alertService.error(JSON.stringify(error.error));
-        }
-    }
-
-    canRejectRequest(id: number): boolean {
-        return (
-            this.authService.userInfo.isAdmin &&
-            this.requestFilter.state != RequestApprovalState.Rejected
-        );
+        this.requestService
+            .approveRequest(request.id)
+            .subscribe((_) => this.removeEvent$.next({ id: request.id }));
     }
 
     export(month: number, year: number) {
@@ -289,12 +253,11 @@ export class RequestListComponent implements OnInit {
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             accept: () => {
-                this.requestService.deleteRequest(request.id).subscribe(() => {
-                    (this.requests = this.requests.filter(
-                        (req) => req.id !== request.id
-                    )),
-                        (this.filteredRequests = this.requests);
-                });
+                this.requestService
+                    .deleteRequest(request.id)
+                    .subscribe((_) =>
+                        this.removeEvent$.next({ id: request.id })
+                    );
             }
         });
     }
@@ -305,12 +268,11 @@ export class RequestListComponent implements OnInit {
             header: 'Delete Confirmation',
             icon: 'pi pi-info-circle',
             accept: () => {
-                this.requestService.rejectRequest(request.id).subscribe(() => {
-                    (this.requests = this.requests.filter(
-                        (req) => req.id !== request.id
-                    )),
-                        (this.filteredRequests = this.requests);
-                });
+                this.requestService
+                    .rejectRequest(request.id)
+                    .subscribe((_) =>
+                        this.removeEvent$.next({ id: request.id })
+                    );
             }
         });
     }

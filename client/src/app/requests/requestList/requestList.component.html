@@ -4,17 +4,11 @@
   rejectButtonStyleClass="p-button-text"
 ></p-confirmDialog>
 
-<p-tabMenu [model]="years" [activeItem]="selectedYearItem"></p-tabMenu>
+<p-tabMenu [model]="years$ | async"></p-tabMenu>
 
-<p-tabMenu
-  [model]="budgetTypeMenuItems"
-  [activeItem]="selectedBudgetTypeItem"
-></p-tabMenu>
+<p-tabMenu [model]="budgetTypeMenuItems$ | async"></p-tabMenu>
 
-<p-tabMenu
-  [model]="approvalStateMenuItems"
-  [activeItem]="selectedApprovalState"
-></p-tabMenu>
+<p-tabMenu [model]="approvalStateMenuItems$ | async"></p-tabMenu>
 
 <p-toolbar>
   <div class="p-toolbar-group-left">
@@ -38,11 +32,11 @@
       (click)="menu.toggle($event)"
     ></button>
 
-    <p-menu #menu [popup]="true" [model]="exportMenuItems"></p-menu>
+    <p-menu #menu [popup]="true" [model]="exportMenuItems$ | async"></p-menu>
   </div>
 </p-toolbar>
 <p-table
-  [value]="filteredRequests"
+  [value]="requests$ | async"
   styleClass="p-datatable-gridlines p-datatable-striped"
   responsiveLayout="scroll"
 >
@@ -84,7 +78,7 @@
       </td>
       <td>
         <div *ngIf="isAdmin">
-          <div *ngIf="request.state === requestFilterType.Pending">
+          <div *ngIf="request.state === approvalStates.Pending">
             <button
               pButton
               type="button"
@@ -97,10 +91,10 @@
         </div>
       </td>
       <td
-        *ngIf="requestFilter !== requestFilterType.Rejected"
+        *ngIf="request.state !== approvalStates.Rejected"
         class="button-table-cell"
       >
-        <div *ngIf="canRejectRequest(request.id); else cannotReject">
+        <div *ngIf="isAdmin && request.state !== approvalStates.Rejected">
           <button
             pButton
             type="button"
