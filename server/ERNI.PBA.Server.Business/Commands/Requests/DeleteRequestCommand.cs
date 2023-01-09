@@ -36,9 +36,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
             }
 
-            var user = _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
 
-            if (!principal.IsInRole(Roles.Admin) && user.Id != request.UserId)
+            if (!principal.IsInRole(Roles.Admin) && user?.Id != request.UserId)
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
             }
