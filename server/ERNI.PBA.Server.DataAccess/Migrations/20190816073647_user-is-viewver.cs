@@ -3,7 +3,7 @@
 namespace ERNI.PBA.Server.DataAccess.Migrations
 {
 #pragma warning disable IDE1006 // Naming Styles
-    public partial class userisviewver : Migration
+    public partial class Userisviewver : Migration
 #pragma warning restore IDE1006 // Naming Styles
     {
         protected override void Up(MigrationBuilder migrationBuilder)

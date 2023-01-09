@@ -29,6 +29,6 @@ namespace ERNI.PBA.Server.Business.Utils
         }
 
         public static string GetIdentifier(this ClaimsPrincipal claimsPrincipal, string identifier) =>
-            claimsPrincipal.FindFirstValue(identifier);
+            claimsPrincipal.FindFirstValue(identifier) ?? throw new InvalidOperationException($"{nameof(claimsPrincipal)} contains no claim '{identifier}'");
     }
 }

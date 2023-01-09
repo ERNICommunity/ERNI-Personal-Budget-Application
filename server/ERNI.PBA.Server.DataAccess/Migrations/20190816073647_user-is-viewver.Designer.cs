@@ -11,7 +11,7 @@ namespace ERNI.PBA.Server.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     [Migration("20190816073647_user-is-viewver")]
-    partial class userisviewver
+    partial class Userisviewver
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
