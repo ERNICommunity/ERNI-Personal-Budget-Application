@@ -1,216 +1,76 @@
 <h2>Create Request</h2>
 <br />
-<form [formGroup]="requestForm">
-  <div class="form-group">
-    <h5>
-      <label class="col-md-6">
-        Title
-        <textarea
-          #requestTitle
-          class="form-control"
-          formControlName="title"
-          type="textarea"
-        ></textarea>
-      </label>
-      *
-    </h5>
-  </div>
-  <div *ngIf="validate('title')" class="alert alert-danger col-md-6">
-    <div *ngIf="requestForm.controls['title'].errors.required">
-      Title is required.
-    </div>
-  </div>
 
-  <div class="form-group">
-    <h5>
-      <label class="col-md-6">
-        Amount
-        <input
-          #requestAmount
-          class="form-control"
-          formControlName="amount"
-          type="number"
-          placeholder="0.00"
-          (input)="usersWithBudgetLeft()"
-        />
-      </label>
-      *
-    </h5>
-  </div>
-  <div *ngIf="validate('amount')" class="alert alert-danger col-md-6">
-    <div *ngIf="requestForm.controls['amount'].errors.required">
-      Amount is required.
-    </div>
-  </div>
+<app-basic-request-info-editor></app-basic-request-info-editor>
 
-  <div class="form-group">
-    <div *ngIf="invalidUsersExist()" class="alert alert-danger col-md-6">
-      <div>
-        <div>
-          Some of the added users have not sufficient budget left. Please remove
-          them.
-        </div>
-        <div class="text-center">
-          <button
-            class="btn btn-danger float-center"
-            title="remove invalid users"
-            (click)="removeInvalidUsers()"
-          >
-            Remove users without sufficient budget
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <h5>Assign Employees</h5>
-    </div>
-    <div class="row">
-      <input
-        class="form-control col-md-6"
-        placeholder="Search employee"
-        id="searchBox"
-        type="text"
-        [(ngModel)]="searchTerm"
-        [ngModelOptions]="{ standalone: true }"
-      />
-      <h5 class="col-md-6">Assigned Employees</h5>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <table class="table">
-          <thead class="thead-borderless">
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Last</th>
-              <th scope="col">First</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of filteredUsers">
-              <td>
-                <div *ngIf="hasBudgetLeft(user); else noBudgetId">
-                  {{ user.id }}
-                </div>
-                <ng-template #noBudgetId>
-                  <div class="noBudgetUser">
-                    {{ user.id }}
-                  </div>
-                </ng-template>
-              </td>
-              <td>
-                <div *ngIf="hasBudgetLeft(user); else noBudgetLastName">
-                  {{ user.lastName }}
-                </div>
-                <ng-template #noBudgetLastName>
-                  <div class="noBudgetUser">
-                    {{ user.lastName }}
-                  </div>
-                </ng-template>
-              </td>
-              <td>
-                <div *ngIf="hasBudgetLeft(user); else noBudgetFirstName">
-                  {{ user.firstName }}
-                </div>
-                <ng-template #noBudgetFirstName>
-                  <div class="noBudgetUser">
-                    {{ user.firstName }}
-                  </div>
-                </ng-template>
-              </td>
-
-              <td class="button-table-cell">
-                <div *ngIf="!isAdded(user) && hasBudgetLeft(user)">
-                  <button
-                    class="btn btn-success float-right"
-                    title="activate employee"
-                    (click)="addUser(user, requestAmount.value)"
-                  >
-                    Add
-                  </button>
-                </div>
-                <div *ngIf="isAdded(user)">
-                  <button
-                    class="btn btn-danger float-right"
-                    title="deactivate employee"
-                    (click)="removeUser(user)"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="col-md-6">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Last</th>
-              <th scope="col">First</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of addedUsers">
-              <td>
-                <div *ngIf="hasBudgetLeft(user); else noBudgetId">
-                  {{ user.id }}
-                </div>
-                <ng-template #noBudgetId>
-                  <div class="noBudgetUser">
-                    {{ user.id }}
-                  </div>
-                </ng-template>
-              </td>
-              <td>
-                <div *ngIf="hasBudgetLeft(user); else noBudgetLastName">
-                  {{ user.lastName }}
-                </div>
-                <ng-template #noBudgetLastName>
-                  <div class="noBudgetUser">
-                    {{ user.lastName }}
-                  </div>
-                </ng-template>
-              </td>
-              <td>
-                <div *ngIf="hasBudgetLeft(user); else noBudgetFirstName">
-                  {{ user.firstName }}
-                </div>
-                <ng-template #noBudgetFirstName>
-                  <div class="noBudgetUser">
-                    {{ user.firstName }}
-                  </div>
-                </ng-template>
-              </td>
-
-              <td *ngIf="isAdded(user)" class="button-table-cell">
-                <button
-                  class="btn btn-danger float-right"
-                  title="deactivate employee"
-                  (click)="removeUser(user)"
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <button class="btn btn-primary mr-1" (click)="goBack()">back</button>
-  <button
-    class="btn btn-success"
-    type="submit"
-    [disabled]="
-      requestForm.pristine || requestForm.invalid || !isUserListValid()
-    "
-    (click)="save(requestTitle.value, requestAmount.value)"
+<div class="field">
+  <label for="title" class="block">Title</label>
+  <input
+    id="title"
+    type="text"
+    pInputText
+    required
+    #inputTitle="ngModel"
+    [(ngModel)]="title"
+  />
+  <small id="username1-help" class="block"
+    >Short summary of what you are going to buy.</small
   >
-    save
-  </button>
-</form>
+</div>
+<small
+  *ngIf="inputTitle.invalid && (inputTitle.dirty || inputTitle.touched)"
+  id="username2-help"
+  class="p-error block"
+  >Title is required.</small
+>
+
+<div class="field">
+  <label for="amount" class="block">Amount (max {{ maximumAmount }} €)</label>
+  <p-inputNumber
+    [(ngModel)]="amount"
+    mode="currency"
+    currency="EUR"
+    required
+    #inputAmount="ngModel"
+    [max]="maximumAmount"
+    inputId="amount"
+  >
+  </p-inputNumber>
+</div>
+
+<small
+  *ngIf="inputAmount.invalid && (inputAmount.dirty || inputAmount.touched)"
+  class="p-error block"
+  >Amount is required.</small
+>
+
+<div class="form-group">
+  <label>Attendees</label>
+  <p-pickList
+    [source]="availableUsers"
+    [target]="selectedUsers"
+    [dragdrop]="false"
+    [showSourceControls]="false"
+    [showTargetControls]="false"
+    (onMoveToTarget)="onAttendeesChanges()"
+    (onMoveToSource)="onAttendeesChanges()"
+    [sourceStyle]="{ height: '30rem' }"
+    [targetStyle]="{ height: '30rem' }"
+    sourceHeader="Employees"
+    targetHeader="Attendees"
+    filterBy="firstName"
+  >
+    <ng-template let-car pTemplate="item">
+      <div style="font-size: 14px; float: right; margin: 0px 0px 0 0">
+        {{ car.firstName }} - {{ car.lastName }} ({{ car.budgetLeft }} €)
+      </div>
+    </ng-template>
+  </p-pickList>
+</div>
+
+<p-button
+  icon="pi pi-save"
+  (click)="save()"
+  label="Create request"
+  styleClass="p-button-success"
+></p-button>

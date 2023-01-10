@@ -28,6 +28,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { BadgeModule } from 'primeng/badge';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { PickListModule } from 'primeng/picklist';
 
 @NgModule({
     declarations: [AlertComponent, FileListComponent],
@@ -71,7 +72,8 @@ import { MessageModule } from 'primeng/message';
         DropdownModule,
         BadgeModule,
         MessageModule,
-        MessagesModule
+        MessagesModule,
+        PickListModule
     ],
     providers: [MessageService]
 })

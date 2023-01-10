@@ -2,13 +2,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Commands.Requests;
+using ERNI.PBA.Server.Business.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
-using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Requests;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using ERNI.PBA.Server.Domain.Models.Responses;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +20,6 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly Lazy<IGetRequestQuery> _getRequestQuery;
         private readonly Lazy<IGetRequestsQuery> _getRequestsQuery;
-        private readonly Lazy<IGetBudgetLeftQuery> _getBudgetLeftQuery;
         private readonly Lazy<ISetRequestStateCommand> _setRequestStateCommand;
         private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
         private readonly Lazy<IUpdateRequestCommand> _updateRequestCommand;
@@ -31,7 +29,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         public RequestController(
             Lazy<IGetRequestQuery> getRequestQuery,
             Lazy<IGetRequestsQuery> getRequestsQuery,
-            Lazy<IGetBudgetLeftQuery> getBudgetLeftQuery,
             Lazy<ISetRequestStateCommand> approveRequestCommand,
             Lazy<IAddMassRequestCommand> addMassRequestCommand,
             Lazy<IUpdateRequestCommand> updateRequestCommand,
@@ -40,7 +37,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         {
             _getRequestQuery = getRequestQuery;
             _getRequestsQuery = getRequestsQuery;
-            _getBudgetLeftQuery = getBudgetLeftQuery;
             _setRequestStateCommand = approveRequestCommand;
             _addMassRequestCommand = addMassRequestCommand;
             _updateRequestCommand = updateRequestCommand;
@@ -136,9 +132,9 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
-        [HttpGet("budget-left/{amount}/{year}")]
+        [HttpGet("personal-budget-left")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<UserModel[]> BudgetLeft(BudgetLeftModel payload, CancellationToken cancellationToken) =>
-            await _getBudgetLeftQuery.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+        public async Task<GetBudgetLeftQuery.UserModel[]> BudgetLeft([FromServices] GetBudgetLeftQuery query, CancellationToken cancellationToken) =>
+            await query.ExecuteAsync(HttpContext.User, cancellationToken);
     }
 }

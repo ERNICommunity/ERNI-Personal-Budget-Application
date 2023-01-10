@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
-import { RequestMass } from '../model/requestMass';
+import { MassRequest } from '../model/massRequest';
 import { BudgetLeft } from '../model/budgetLeft';
 import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
@@ -72,8 +72,8 @@ export class RequestService {
         );
     }
 
-    public addMassRequest(request: RequestMass): Observable<any> {
-        return this.http.post<RequestMass>(
+    public addMassRequest(request: MassRequest): Observable<any> {
+        return this.http.post<MassRequest>(
             this.configService.apiUrlBase + this.requestUrl + 'mass',
             request,
             this.serviceHelper.getHttpOptions()
@@ -103,14 +103,25 @@ export class RequestService {
         );
     }
 
-    public getUsersWithBudgetLeft(request: BudgetLeft): Observable<User[]> {
-        return this.http.get<User[]>(
+    public getRemainingBudgets(): Observable<
+        {
+            id: number;
+            firstName: string;
+            lastName: string;
+            budgetLeft: number;
+        }[]
+    > {
+        return this.http.get<
+            {
+                id: number;
+                firstName: string;
+                lastName: string;
+                budgetLeft: number;
+            }[]
+        >(
             this.configService.apiUrlBase +
                 this.requestUrl +
-                'budget-left/' +
-                request.amount +
-                '/' +
-                request.year,
+                'personal-budget-left',
             this.serviceHelper.getHttpOptions()
         );
     }

@@ -8,7 +8,6 @@ import { RouterModule } from '@angular/router';
 import { TeamBudgetStateComponent } from './team-budget-state/team-budget-state.component';
 import { TeamRequestComponent } from './team-request/team-request.component';
 import { CreateRequestComponent } from './create-request/create-request.component';
-import { PickListModule } from 'primeng/picklist';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SharedModule } from '../shared/shared.module';
 import { MsalGuard } from '@azure/msal-angular';
@@ -26,7 +25,6 @@ import { MsalGuard } from '@azure/msal-angular';
         CommonModule,
         RouterModule,
         InputNumberModule,
-        PickListModule,
         RouterModule.forChild([
             {
                 path: 'team-budget',
