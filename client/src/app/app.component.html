@@ -1,93 +1,113 @@
 <nav>
-    <ul class="home">
-        <li>
-            <a routerLink="/">
-                PBA
-            </a>
-        </li>
-    </ul>
-    <ul class="menu" *ngIf="(authService.userInfo$ | async)">
-        <li class="nav-item" [routerLinkActive]="['active']">
-            <a class="nav-link" routerLink="/my-budget">
-                My budget
-            </a>
-        </li>
-        <li [routerLinkActive]="['active']"
-            *ngIf="(authService.userInfo$ | async)?.isSuperior || (authService.userInfo$ | async)?.isAdmin">
-            <a routerLink="/team-budget">
-                Team budget
-            </a>
-        </li>
-        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-            <a routerLink="/other-budgets">
-                Other Budgets
-            </a>
-        </li>
-        <li [routerLinkActive]="['active']"
-            *ngIf="(authService.userInfo$ | async)?.isAdmin || (authService.userInfo$ | async)?.isFinance">
-            <a routerLink="/requests">
-                Requests
-            </a>
-        </li>
-        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-            <a routerLink="/mass-request">
-                Mass Request
-            </a>
-        </li>
-        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-            <a routerLink="/users">
-                Employees
-            </a>
-        </li>
-        <li [routerLinkActive]="['active']" *ngIf="(authService.userInfo$ | async)?.isAdmin">
-            <a routerLink="/statistics">
-                Statistics
-            </a>
-        </li>
-        <li>
-            <a href="https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx" target="_blank"
-                class="nav-link">
-                Conditions of use
-            </a>
-        </li>
-    </ul>
+  <ul class="home">
+    <li>
+      <a routerLink="/"> PBA </a>
+    </li>
+  </ul>
+  <ul class="menu" *ngIf="authService.userInfo$ | async">
+    <li class="nav-item" [routerLinkActive]="['active']">
+      <a class="nav-link" routerLink="/my-budget"> My budget </a>
+    </li>
+    <li
+      [routerLinkActive]="['active']"
+      *ngIf="
+        (authService.userInfo$ | async)?.isSuperior ||
+        (authService.userInfo$ | async)?.isAdmin
+      "
+    >
+      <a routerLink="/team-budget"> Team budget </a>
+    </li>
+    <li
+      [routerLinkActive]="['active']"
+      *ngIf="(authService.userInfo$ | async)?.isAdmin"
+    >
+      <a routerLink="/other-budgets"> Other Budgets </a>
+    </li>
+    <li
+      [routerLinkActive]="['active']"
+      *ngIf="
+        (authService.userInfo$ | async)?.isAdmin ||
+        (authService.userInfo$ | async)?.isFinance
+      "
+    >
+      <a routerLink="/requests"> Requests </a>
+    </li>
+    <li
+      [routerLinkActive]="['active']"
+      *ngIf="(authService.userInfo$ | async)?.isAdmin"
+    >
+      <a routerLink="/mass-request"> Mass Request </a>
+    </li>
+    <li
+      [routerLinkActive]="['active']"
+      *ngIf="(authService.userInfo$ | async)?.isAdmin"
+    >
+      <a routerLink="/users"> Employees </a>
+    </li>
+    <li
+      [routerLinkActive]="['active']"
+      *ngIf="(authService.userInfo$ | async)?.isAdmin"
+    >
+      <a routerLink="/statistics"> Statistics </a>
+    </li>
+    <li>
+      <a
+        href="https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx"
+        target="_blank"
+        class="nav-link"
+      >
+        Conditions of use
+      </a>
+    </li>
+  </ul>
 
-    <ul class="user" *ngIf="(authService.userInfo$ | async)">
-        <li>
-            <a><i class="pi pi-user"></i>{{(authService.userInfo$ | async)?.name}}</a>
-        </li>
-        <li>
-            <a href="#" (click)="logout()">
-                <i class="pi pi-sign-out"></i> Logout
-            </a>
-        </li>
-    </ul>
+  <ul class="user" *ngIf="authService.userInfo$ | async">
+    <li>
+      <a
+        ><i class="pi pi-user"></i
+        >{{ (authService.userInfo$ | async)?.name }}</a
+      >
+    </li>
+    <li>
+      <a href="#" (click)="logout()"> <i class="pi pi-sign-out"></i> Logout </a>
+    </li>
+  </ul>
 </nav>
 
 <main>
-    <div class="p-grid p-jc-center">
-        <div class="p-col-8">
+  <div class="p-grid p-jc-center">
+    <div class="p-col-8">
       <app-alert></app-alert>
-            <router-outlet></router-outlet>
-        </div>
+      <router-outlet></router-outlet>
     </div>
+  </div>
 </main>
 
 <p-toast position="bottom-center"></p-toast>
 
-
-<div class="modal" tabindex="-1" role="dialog" [style.display]="busyIndicatorService.isBusy ? 'block' : 'none'">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Loading...</h5>
-            </div>
-            <div class="modal-body">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-                </div>
-            </div>
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [style.display]="busyIndicatorService.isBusy ? 'block' : 'none'"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Loading...</h5>
+      </div>
+      <div class="modal-body">
+        <div class="progress">
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            aria-valuenow="100"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style="width: 100%"
+          ></div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
