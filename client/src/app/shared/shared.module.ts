@@ -29,9 +29,10 @@ import { BadgeModule } from 'primeng/badge';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { PickListModule } from 'primeng/picklist';
+import { AuthDirective } from './directives/authDirective';
 
 @NgModule({
-    declarations: [AlertComponent, FileListComponent],
+    declarations: [AlertComponent, FileListComponent, AuthDirective],
     imports: [
         CommonModule,
         FormsModule,
@@ -73,7 +74,8 @@ import { PickListModule } from 'primeng/picklist';
         BadgeModule,
         MessageModule,
         MessagesModule,
-        PickListModule
+        PickListModule,
+        AuthDirective
     ],
     providers: [MessageService]
 })

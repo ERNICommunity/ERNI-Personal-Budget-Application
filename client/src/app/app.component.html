@@ -4,50 +4,30 @@
       <a routerLink="/"> PBA </a>
     </li>
   </ul>
-  <ul class="menu" *ngIf="authService.userInfo$ | async">
-    <li class="nav-item" [routerLinkActive]="['active']">
+  <ul class="menu">
+    <li
+      class="nav-item"
+      [routerLinkActive]="['active']"
+      *auth="'canAccessMyBudget'"
+    >
       <a class="nav-link" routerLink="/my-budget"> My budget </a>
     </li>
-    <li
-      [routerLinkActive]="['active']"
-      *ngIf="
-        (authService.userInfo$ | async)?.isSuperior ||
-        (authService.userInfo$ | async)?.isAdmin
-      "
-    >
+    <li [routerLinkActive]="['active']" *auth="'isSuperior'">
       <a routerLink="/team-budget"> Team budget </a>
     </li>
-    <li
-      [routerLinkActive]="['active']"
-      *ngIf="(authService.userInfo$ | async)?.isAdmin"
-    >
+    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
       <a routerLink="/other-budgets"> Other Budgets </a>
     </li>
-    <li
-      [routerLinkActive]="['active']"
-      *ngIf="
-        (authService.userInfo$ | async)?.isAdmin ||
-        (authService.userInfo$ | async)?.isFinance
-      "
-    >
+    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
       <a routerLink="/requests"> Requests </a>
     </li>
-    <li
-      [routerLinkActive]="['active']"
-      *ngIf="(authService.userInfo$ | async)?.isAdmin"
-    >
+    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
       <a routerLink="/mass-request"> Mass Request </a>
     </li>
-    <li
-      [routerLinkActive]="['active']"
-      *ngIf="(authService.userInfo$ | async)?.isAdmin"
-    >
+    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
       <a routerLink="/users"> Employees </a>
     </li>
-    <li
-      [routerLinkActive]="['active']"
-      *ngIf="(authService.userInfo$ | async)?.isAdmin"
-    >
+    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
       <a routerLink="/statistics"> Statistics </a>
     </li>
     <li>
