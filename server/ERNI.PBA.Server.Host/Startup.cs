@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
@@ -5,7 +6,6 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
-using ERNI.PBA.Server.Host.Auth;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
@@ -54,7 +54,9 @@ namespace ERNI.PBA.Server.Host
 
             services.AddAuthorization();
 
-            services.AddQuartz(typeof(DailyMailNotifications), Configuration["Crons:EmailCron"]);
+            services.AddQuartz(typeof(DailyMailNotifications),
+                Configuration["Crons:EmailCron"] ??
+                throw new InvalidOperationException("Missing 'Crons:EmailCron' configuration"));
 
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
             services.AddSwaggerGen(c =>

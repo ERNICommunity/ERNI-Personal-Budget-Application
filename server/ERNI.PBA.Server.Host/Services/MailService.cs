@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Net;
 using System.Net.Mail;
@@ -16,11 +17,17 @@ namespace ERNI.PBA.Server.Host.Services
 
         public MailService(IConfiguration configuration)
         {
-            _smtpServer = configuration["MailSettings:SmtpServer"];
-            _port = configuration["MailSettings:Port"];
-            _userName = configuration["MailSettings:UserName"];
-            _password = configuration["MailSettings:Password"];
-            _enableSsl = configuration["MailSettings:EnableSsl"];
+            string GetConfig(string key)
+            {
+                return configuration[key] ??
+                       throw new InvalidOperationException($"Configuration '{key}' not found");
+            }
+
+            _smtpServer = GetConfig("MailSettings:SmtpServer");
+            _port = GetConfig("MailSettings:Port");
+            _userName = GetConfig("MailSettings:UserName");
+            _password = GetConfig("MailSettings:Password");
+            _enableSsl = GetConfig("MailSettings:EnableSsl");
         }
 
         public void SendMail(string body, string emails)

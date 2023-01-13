@@ -23,7 +23,9 @@ namespace ERNI.PBA.Server.Host.Utils
         {
             _requestRepository = requestRepository;
             _mailService = new MailService(configuration);
-            _notificationEmails = configuration["NotificationEmails"].Split(";");
+            _notificationEmails =
+                (configuration["NotificationEmails"] ??
+                 throw new InvalidOperationException("Missing 'NotificationEmails' configuration")).Split(";");
         }
 
         public async Task Execute(IJobExecutionContext context) =>
