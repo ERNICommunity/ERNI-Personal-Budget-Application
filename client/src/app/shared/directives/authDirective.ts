@@ -5,7 +5,7 @@ import {
     Input,
     OnDestroy
 } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthenticationService } from '../../services/authentication.service';
 import {
@@ -20,20 +20,16 @@ export class AuthDirective implements OnDestroy {
     constructor(
         private templateRef: TemplateRef<any>,
         private viewContainer: ViewContainerRef,
-        private authService: AuthenticationService
+        authService: AuthenticationService
     ) {
-        this.subscription = this.policy
+        this.subscription = combineLatest([this.policy, authService.userInfo$])
             .pipe(
                 distinctUntilChanged(),
-                map((policy) => {
-                    console.log(policy);
-                    return !policy
+                map(([policy, userInfo]) =>
+                    !policy
                         ? true
-                        : AuthorizationPolicy.evaluate(
-                              policy,
-                              authService.userInfo
-                          );
-                }),
+                        : AuthorizationPolicy.evaluate(policy, userInfo)
+                ),
                 distinctUntilChanged()
             )
             .subscribe((visible) => {

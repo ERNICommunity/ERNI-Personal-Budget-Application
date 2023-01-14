@@ -20,6 +20,14 @@ export class AuthorizationPolicy {
         return user.isAdmin;
     }
 
+    public static canReadRequests(user: UserInfo | null | undefined): boolean {
+        if (!user) {
+            return false;
+        }
+
+        return user.isAdmin || user.isFinance;
+    }
+
     public static canAccessMyBudget(
         user: UserInfo | null | undefined
     ): boolean {

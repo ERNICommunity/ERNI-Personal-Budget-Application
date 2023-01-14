@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
 import { ActivatedRoute } from '@angular/router';
@@ -8,7 +8,8 @@ import {
     merge,
     Observable,
     ReplaySubject,
-    Subject
+    Subject,
+    Subscription
 } from 'rxjs';
 import { RequestApprovalState } from '../../model/requestState';
 import { ExportService } from '../../services/export.service';
@@ -32,7 +33,7 @@ import {
     styleUrls: ['requestList.component.css'],
     providers: [ConfirmationService]
 })
-export class RequestListComponent implements OnInit {
+export class RequestListComponent implements OnInit, OnDestroy {
     pendingRoute: string = '/requests/pending';
     approvedRoute: string = '/requests/approved';
     completedRoute: string = '/requests/completed';
@@ -46,6 +47,8 @@ export class RequestListComponent implements OnInit {
     exportMenuItems$: Observable<MenuItem[]>;
 
     approvalStates = RequestApprovalState;
+
+    isAdmin: boolean;
 
     states: {
         state: RequestApprovalState;
@@ -71,11 +74,8 @@ export class RequestListComponent implements OnInit {
 
     removeEvent$ = new Subject<ResetEvent<Request> | RemoveEvent>();
 
-    get isAdmin(): boolean {
-        return this.authService.userInfo.isAdmin;
-    }
-
     private _searchTerm$ = new BehaviorSubject<string>('');
+    subscription: Subscription;
 
     get searchTerm(): string {
         return this._searchTerm$.value;
@@ -116,7 +116,15 @@ export class RequestListComponent implements OnInit {
         private alertService: AlertService
     ) {}
 
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
+
     async ngOnInit() {
+        this.subscription = this.authService.userInfo$.subscribe(
+            (_) => (this.isAdmin = !!_ && _.isAdmin)
+        );
+
         const selectedYear$ = this.route.params.pipe(
             map((params) => +params['year']),
             distinctUntilChanged()

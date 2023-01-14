@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.Business.Queries.Users;
 using ERNI.PBA.Server.Domain.Enums;
-using ERNI.PBA.Server.Domain.Interfaces.Commands.Users;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Users;
-using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Domain.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,24 +17,13 @@ namespace ERNI.PBA.Server.Host.Controllers
     {
         private readonly Lazy<IGetCurrentUserQuery> _getCurrentUserQuery;
         private readonly Lazy<IGetActiveUsersQuery> _getActiveUsersQuery;
-        private readonly Lazy<IRegisterUserCommand> _registerUserCommand;
 
         public UserController(
             Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
-            Lazy<IGetActiveUsersQuery> getActiveUsersQuery,
-            Lazy<IRegisterUserCommand> registerUserCommand)
+            Lazy<IGetActiveUsersQuery> getActiveUsersQuery)
         {
             _getCurrentUserQuery = getCurrentUserQuery;
             _getActiveUsersQuery = getActiveUsersQuery;
-            _registerUserCommand = registerUserCommand;
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser(CancellationToken cancellationToken)
-        {
-            var userModel = await _registerUserCommand.Value.ExecuteAsync(new RegisterUserModel(), HttpContext.User, cancellationToken);
-
-            return Ok(userModel);
         }
 
         [HttpPost("create")]

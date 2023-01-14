@@ -18,7 +18,7 @@
     <li [routerLinkActive]="['active']" *auth="'isAdmin'">
       <a routerLink="/other-budgets"> Other Budgets </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li [routerLinkActive]="['active']" *auth="'canReadRequests'">
       <a routerLink="/requests"> Requests </a>
     </li>
     <li [routerLinkActive]="['active']" *auth="'isAdmin'">
