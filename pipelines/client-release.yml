@@ -28,7 +28,7 @@ steps:
   inputs:
     command: 'custom'
     workingDir: 'client/'
-    customCommand: 'run build -- --prod'
+    customCommand: 'run build -- --configuration=production'
 
 - task: ArchiveFiles@2
   displayName: 'Zip build artifacts'
