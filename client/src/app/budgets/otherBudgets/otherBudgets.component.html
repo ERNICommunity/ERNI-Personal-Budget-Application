@@ -51,7 +51,7 @@
 
       <td>
         <a
-          *ngIf="enableSetOrEditBudgets | async"
+          *auth="'isAdmin'"
           class="btn btn-primary float-right"
           href="#"
           role="button"
@@ -60,17 +60,6 @@
           Edit
         </a>
       </td>
-      <ng-template #cannotEdit>
-        <td>
-          <button
-            class="btn btn-primary float-right"
-            disabled="true"
-            title="Cannot edit request from years ago."
-          >
-            Edit
-          </button>
-        </td>
-      </ng-template>
     </tr>
   </ng-template>
 </p-table>
