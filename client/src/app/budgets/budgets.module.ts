@@ -9,14 +9,18 @@ import { SharedModule } from '../shared/shared.module';
 import { CreateBudgetsComponent } from './create-budgets/create-budgets.component';
 
 @NgModule({
-    declarations: [OtherBudgetsComponent, OtherBudgetsDetailComponent, CreateBudgetsComponent],
+    declarations: [
+        OtherBudgetsComponent,
+        OtherBudgetsDetailComponent,
+        CreateBudgetsComponent
+    ],
     imports: [
         CommonModule,
         FormsModule,
         SharedModule,
         RouterModule.forChild([
             {
-                path: 'other-budgets',
+                path: '',
                 canActivate: [AdminRoleGuard],
                 children: [
                     {

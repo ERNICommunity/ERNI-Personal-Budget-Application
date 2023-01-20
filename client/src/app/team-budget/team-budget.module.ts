@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TeamBudgetComponent } from './team-budget.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { TeamBudgetStateComponent } from './team-budget-state/team-budget-state.component';
 import { TeamRequestComponent } from './team-request/team-request.component';
 import { CreateRequestComponent } from './create-request/create-request.component';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SharedModule } from '../shared/shared.module';
-import { MsalGuard } from '@azure/msal-angular';
 
 @NgModule({
     declarations: [
@@ -27,8 +24,7 @@ import { MsalGuard } from '@azure/msal-angular';
         InputNumberModule,
         RouterModule.forChild([
             {
-                path: 'team-budget',
-                canActivate: [MsalGuard],
+                path: '',
                 children: [
                     {
                         path: '',
@@ -38,19 +34,15 @@ import { MsalGuard } from '@azure/msal-angular';
                     {
                         path: ':year',
                         component: TeamBudgetComponent,
-                        canActivate: [MsalGuard],
                         children: [
                             {
                                 path: 'create-request',
-                                component: CreateRequestComponent,
-                                canActivate: [MsalGuard]
+                                component: CreateRequestComponent
                             },
                             {
                                 path: 'request/:requestId',
-                                component: CreateRequestComponent,
-                                canActivate: [MsalGuard]
+                                component: CreateRequestComponent
                             }
-                            // { path: 'request/:requestId/edit', component: EditRequestModalComponent, canActivate: [MsalGuard] }
                         ]
                     }
                 ]

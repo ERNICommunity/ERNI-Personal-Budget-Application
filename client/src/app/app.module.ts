@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
@@ -12,9 +13,6 @@ import { UserService } from './services/user.service';
 import { BudgetService } from './services/budget.service';
 import { FormsModule } from '@angular/forms';
 import { ServiceHelper } from './services/service.helper';
-import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
-import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
-import { RequestMassComponent } from './requests/requestMass/requestMass.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BusyIndicatorService } from './services/busy-indicator.service';
@@ -23,7 +21,6 @@ import { DataChangeNotificationService } from './services/dataChangeNotification
 import { InvoiceImageService } from './services/invoice-image.service';
 import { TeamBudgetService } from './services/team-budget.service';
 import { ExportService } from './services/export.service';
-import { TeamBudgetModule } from './team-budget/team-budget.module';
 
 import {
     MsalInterceptor,
@@ -31,33 +28,23 @@ import {
     MSAL_GUARD_CONFIG,
     MSAL_INTERCEPTOR_CONFIG,
     MsalService,
-    MsalGuard,
     MsalBroadcastService
 } from '@azure/msal-angular';
 
 import { AdminRoleGuard } from './services/guards/admin-role.guard';
 import { AuthenticationService } from './services/authentication.service';
-import { MyBudgetModule } from './my-budget/my-budget.module';
-import { RequestsModule } from './requests/requests.module';
 import {
     MSALGuardConfigFactory,
     MSALInstanceFactory,
     MSALInterceptorConfigFactory
 } from './utils/msal';
-import { UsersModule } from './users/users.module';
-import { BudgetsModule } from './budgets/budgets.module';
 import { SharedModule } from './shared/shared.module';
-import { StatisticsModule } from './statistics/statistics.module';
 import { StatisticsService } from './services/statistics.service';
+import { AuthenticatedComponent } from './authenticated/authenticated.component';
+import { AutheticatedGuard } from './services/guards/authenticated.guard';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        LoginComponent,
-        RequestDetailComponent,
-        RequestEditComponent,
-        RequestMassComponent
-    ],
+    declarations: [AppComponent, LoginComponent, AuthenticatedComponent],
     imports: [
         FormsModule,
         HttpClientModule,
@@ -65,12 +52,7 @@ import { StatisticsService } from './services/statistics.service';
         SharedModule,
         RouterModule.forRoot(rootRouterConfig),
         ReactiveFormsModule,
-        MyBudgetModule,
-        RequestsModule,
-        UsersModule,
-        BudgetsModule,
-        TeamBudgetModule,
-        StatisticsModule
+        BrowserAnimationsModule
     ],
     providers: [
         ConfigService,
@@ -85,6 +67,7 @@ import { StatisticsService } from './services/statistics.service';
         InvoiceImageService,
         StatisticsService,
         ViewerGuard,
+        AutheticatedGuard,
         AuthenticationService,
         {
             provide: HTTP_INTERCEPTORS,
@@ -104,7 +87,6 @@ import { StatisticsService } from './services/statistics.service';
             useFactory: MSALInterceptorConfigFactory
         },
         MsalService,
-        MsalGuard,
         MsalBroadcastService,
         AdminRoleGuard
     ],

@@ -5,16 +5,21 @@ import { RequestsComponent } from './requests.component';
 import { ViewerGuard } from '../services/guards/viewer.guard';
 import { RequestDetailComponent } from './requestDetail/requestDetail.component';
 import { RequestEditComponent } from './requestEdit/requestEdit.component';
-import { MsalGuard } from '@azure/msal-angular';
 import { RequestListComponent } from './requestList/requestList.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { BasicRequestInfoEditorComponent } from './requestEdit/basic-request-info-editor/basic-request-info-editor.component';
+import { RequestMassComponent } from './requestMass/requestMass.component';
+import { AdminRoleGuard } from '../services/guards/admin-role.guard';
 
 @NgModule({
     declarations: [
         RequestsComponent,
+        BasicRequestInfoEditorComponent,
+        RequestEditComponent,
         RequestListComponent,
+        RequestDetailComponent,
+        RequestMassComponent,
         BasicRequestInfoEditorComponent
     ],
     exports: [BasicRequestInfoEditorComponent],
@@ -24,7 +29,7 @@ import { BasicRequestInfoEditorComponent } from './requestEdit/basic-request-inf
         SharedModule,
         RouterModule.forChild([
             {
-                path: 'requests',
+                path: '',
                 component: RequestsComponent,
                 canActivate: [ViewerGuard],
                 children: [
@@ -46,10 +51,14 @@ import { BasicRequestInfoEditorComponent } from './requestEdit/basic-request-inf
                             },
                             {
                                 path: 'edit/:id',
-                                component: RequestEditComponent,
-                                canActivate: [MsalGuard]
+                                component: RequestEditComponent
                             }
                         ]
+                    },
+                    {
+                        path: 'mass-request',
+                        component: RequestMassComponent,
+                        canActivate: [AdminRoleGuard]
                     }
                 ]
             }

@@ -30,13 +30,17 @@
     <a
       class="nav-link"
       [routerLinkActive]="['active']"
-      routerLink="/users/active"
+      routerLink="/employees/active"
     >
       Active
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" [routerLinkActive]="['active']" routerLink="/users/new">
+    <a
+      class="nav-link"
+      [routerLinkActive]="['active']"
+      routerLink="/employees/new"
+    >
       New
     </a>
   </li>
@@ -44,7 +48,7 @@
     <a
       class="nav-link"
       [routerLinkActive]="['active']"
-      routerLink="/users/inactive"
+      routerLink="/employees/inactive"
     >
       Inactive
     </a>
@@ -97,7 +101,7 @@
           pButton
           href="#"
           role="button"
-          routerLink="/users/detail/{{ user.id }}"
+          routerLink="/employees/detail/{{ user.id }}"
         >
           Detail
         </a>

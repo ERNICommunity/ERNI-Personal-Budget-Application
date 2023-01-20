@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { BusyIndicatorService } from './services/busy-indicator.service';
-import { AuthenticationService } from './services/authentication.service';
+import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 
 @Component({
     selector: 'app-root',
@@ -9,11 +8,10 @@ import { AuthenticationService } from './services/authentication.service';
 })
 export class AppComponent {
     constructor(
-        public authService: AuthenticationService,
-        public busyIndicatorService: BusyIndicatorService
-    ) {}
-
-    async logout(): Promise<void> {
-        await this.authService.logout();
+        private msal: MsalService,
+        // !!! DO NOT REMOVE THIS: MsalBroadcastService has to be injected/created, the login won't work otherwise
+        private msalBroadcast: MsalBroadcastService
+    ) {
+        this.msal.instance.handleRedirectPromise();
     }
 }
