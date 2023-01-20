@@ -42,6 +42,7 @@ import { SharedModule } from './shared/shared.module';
 import { StatisticsService } from './services/statistics.service';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
 import { AutheticatedGuard } from './services/guards/authenticated.guard';
+import { SuperiorGuard } from './services/guards/superior.guard';
 
 @NgModule({
     declarations: [AppComponent, LoginComponent, AuthenticatedComponent],
@@ -68,6 +69,7 @@ import { AutheticatedGuard } from './services/guards/authenticated.guard';
         StatisticsService,
         ViewerGuard,
         AutheticatedGuard,
+        SuperiorGuard,
         AuthenticationService,
         {
             provide: HTTP_INTERCEPTORS,
