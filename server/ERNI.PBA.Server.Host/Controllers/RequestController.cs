@@ -84,7 +84,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         /// </summary>
         [HttpPost("mass")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> AddMassRequest([FromBody] RequestMassModel payload, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddMassRequest([FromBody] MassRequestModel payload, CancellationToken cancellationToken)
         {
             await _addMassRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 

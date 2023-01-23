@@ -3,7 +3,7 @@ using ERNI.PBA.Server.Domain.Models.Payloads;
 
 namespace ERNI.PBA.Server.Domain.Interfaces.Commands.Requests
 {
-    public interface IAddMassRequestCommand : ICommand<RequestMassModel>
+    public interface IAddMassRequestCommand : ICommand<MassRequestModel>
     {
     }
 }

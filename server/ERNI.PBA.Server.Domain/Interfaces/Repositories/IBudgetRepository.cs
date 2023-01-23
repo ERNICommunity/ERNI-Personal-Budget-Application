@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
@@ -29,6 +30,8 @@ namespace ERNI.PBA.Server.Domain.Interfaces.Repositories
         Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken);
 
         Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken);
+
+        Task<(Budget Budget, decimal AmountSpent)[]> GetBudgetsWithRequestedAmounts(Expression<Func<Budget, bool>> filter, CancellationToken cancellationToken);
 
         Task<(BudgetTypeEnum type, int count, decimal total, decimal totalSpent)[]> GetBudgetStats(int year);
     }

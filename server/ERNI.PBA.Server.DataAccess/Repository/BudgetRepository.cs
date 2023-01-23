@@ -6,6 +6,7 @@ using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using System;
+using System.Linq.Expressions;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -76,6 +77,16 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken) =>
             _context.Transactions.Where(r => r.BudgetId == budgetId && r.Request.State != RequestState.Rejected)
                 .SumAsync(r => r.Amount, cancellationToken);
+
+        public async Task<(Budget Budget, decimal AmountSpent)[]> GetBudgetsWithRequestedAmounts(
+            Expression<Func<Budget, bool>> filter, CancellationToken cancellationToken)
+        {
+            var budgets = await _context.Budgets.Where(filter)
+                .Select(budget => new { budget, amount = budget.Transactions.Sum(t => t.Amount) })
+                .ToArrayAsync(cancellationToken);
+
+            return budgets.Select(_ => (Budget: _.budget, AmountSpent: _.amount)).ToArray();
+        }
 
         public async Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken)
         {

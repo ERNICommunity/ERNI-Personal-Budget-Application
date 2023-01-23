@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -16,7 +15,7 @@ using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class AddMassRequestCommand : Command<RequestMassModel>, IAddMassRequestCommand
+    public class AddMassRequestCommand : Command<MassRequestModel>, IAddMassRequestCommand
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IRequestRepository _requestRepository;
@@ -32,7 +31,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             _unitOfWork = unitOfWork;
         }
 
-        protected override async Task Execute(RequestMassModel parameter, ClaimsPrincipal principal,
+        protected override async Task Execute(MassRequestModel parameter, ClaimsPrincipal principal,
             CancellationToken cancellationToken)
         {
             if (!principal.IsInRole(Roles.Admin))
@@ -41,55 +40,58 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             }
 
             var currentYear = DateTime.Now.Year;
-            var requests = new List<Request>();
-            foreach (var user in parameter.Users)
+
+            var budgets = await _budgetRepository.GetBudgetsWithRequestedAmounts(
+                budget => parameter.Employees.Contains(budget.UserId) && budget.Year == currentYear && budget.BudgetType == BudgetTypeEnum.PersonalBudget,
+                cancellationToken);
+
+            var usersWithMultipleBudgets = budgets.GroupBy(_ => _.Budget.UserId).Where(_ => _.Count() > 1)
+                .Select(_ => _.Key).ToArray();
+            if (usersWithMultipleBudgets.Any())
             {
-                var userId = user.Id;
+                throw new OperationErrorException(ErrorCodes.UnknownError,
+                    $"Users '{string.Join(", ", usersWithMultipleBudgets)}' have multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
+            }
 
-                var budgets = await _budgetRepository.GetBudgetsByType(user.Id, BudgetTypeEnum.PersonalBudget,
-                    currentYear, cancellationToken);
+            var userWithoutBudgets = parameter.Employees.Except(budgets.Select(_ => _.Budget.UserId)).ToArray();
+            if (userWithoutBudgets.Any())
+            {
+                throw new OperationErrorException(ErrorCodes.UnknownError,
+                    $"Users '{string.Join(", ", userWithoutBudgets)}' have no {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
+            }
 
-                if (budgets.Length > 1)
+            var usersWithNotEnoughBudget =
+                budgets.Where(budget => parameter.Amount > budget.Budget.Amount - budget.AmountSpent).ToArray();
+            if (usersWithNotEnoughBudget.Any())
+            {
+                throw new OperationErrorException(ErrorCodes.UnknownError,
+                    $"Users '{string.Join(", ", usersWithNotEnoughBudget.Select(_ => _.Budget.UserId))}' do not have sufficient amount left on their budgets.");
+            }
+
+            var requests = budgets.Select(budget =>
+                new Request
                 {
-                    throw new OperationErrorException(ErrorCodes.UnknownError,
-                        $"User {user.Id} has multiple budgets of type {BudgetTypeEnum.PersonalBudget} for year {currentYear}");
-                }
-
-                var budget = budgets.Single();
-                if (parameter.Amount > await GetRemainingAmount(budget, cancellationToken))
-                {
-                    continue;
-                }
-
-                var request = new Request
-                {
-                    UserId = userId,
+                    UserId = budget.Budget.UserId,
                     Year = currentYear,
                     Title = parameter.Title,
                     Amount = parameter.Amount,
                     CreateDate = DateTime.Now,
                     State = RequestState.Approved,
-                    RequestType = budget.BudgetType,
+                    RequestType = budget.Budget.BudgetType,
                     Transactions = new[]
                     {
-                        new Transaction()
+                        new Transaction
                         {
-                            Amount =  parameter.Amount,
-                            BudgetId = budget.Id,
-                            RequestType = budget.BudgetType,
+                            Amount = parameter.Amount,
+                            BudgetId = budget.Budget.Id,
+                            RequestType = budget.Budget.BudgetType,
                         }
                     }
-                };
-
-                requests.Add(request);
-            }
+                });
 
             await _requestRepository.AddRequests(requests);
 
             await _unitOfWork.SaveChanges(cancellationToken);
         }
-
-        private async Task<decimal> GetRemainingAmount(Budget budget, CancellationToken cancellationToken) =>
-            budget.Amount - await _budgetRepository.GetTotalRequestedAmount(budget.Id, cancellationToken);
     }
 }
