@@ -24,14 +24,12 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ThenInclude(_ => _.Request)
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
 
-        public async Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken)
-        {
-            return await _context.Budgets
+        public async Task<Budget[]> GetBudgets(int userId, int year, BudgetTypeEnum[] excludedTypes, CancellationToken cancellationToken) =>
+            await _context.Budgets
                 .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
-                .Where(_ => _.BudgetType != BudgetTypeEnum.TeamBudget)
-                .Where(_ => _.User.ObjectId == userId && _.Year == year)
+                .Where(_ => !excludedTypes.Contains(_.BudgetType))
+                .Where(_ => _.UserId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
-        }
 
         public async Task<Budget[]> GetTeamBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
