@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
 using ERNI.PBA.Server.Business.Utils;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Exceptions;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
@@ -41,7 +42,8 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                 var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
                     ?? throw AppExceptions.AuthorizationException();
 
-                if (request.UserId != currentUser.Id)
+                if (request.UserId != currentUser.Id && !(request.RequestType == BudgetTypeEnum.CommunityBudget &&
+                                                          principal.IsInRole(Roles.CommunityLeader)))
                 {
                     throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
                 }

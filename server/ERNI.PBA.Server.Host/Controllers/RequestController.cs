@@ -18,7 +18,6 @@ namespace ERNI.PBA.Server.Host.Controllers
     [Authorize]
     public class RequestController : Controller
     {
-        private readonly Lazy<IGetRequestQuery> _getRequestQuery;
         private readonly Lazy<IGetRequestsQuery> _getRequestsQuery;
         private readonly Lazy<ISetRequestStateCommand> _setRequestStateCommand;
         private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
@@ -27,7 +26,6 @@ namespace ERNI.PBA.Server.Host.Controllers
         private readonly Lazy<IDeleteRequestCommand> _deleteRequestCommand;
 
         public RequestController(
-            Lazy<IGetRequestQuery> getRequestQuery,
             Lazy<IGetRequestsQuery> getRequestsQuery,
             Lazy<ISetRequestStateCommand> approveRequestCommand,
             Lazy<IAddMassRequestCommand> addMassRequestCommand,
@@ -35,7 +33,6 @@ namespace ERNI.PBA.Server.Host.Controllers
             Lazy<IUpdateTeamRequestCommand> updateTeamRequestCommand,
             Lazy<IDeleteRequestCommand> deleteRequestCommand)
         {
-            _getRequestQuery = getRequestQuery;
             _getRequestsQuery = getRequestsQuery;
             _setRequestStateCommand = approveRequestCommand;
             _addMassRequestCommand = addMassRequestCommand;
@@ -46,10 +43,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         [HttpGet("{id}")]
 #pragma warning disable CA1721 // Property names should not match get methods
-        public async Task<IActionResult> GetRequest(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetRequest([FromServices] IGetRequestQuery query, int id, CancellationToken cancellationToken)
 #pragma warning restore CA1721 // Property names should not match get methods
         {
-            var request = await _getRequestQuery.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
+            var request = await query.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
             return Ok(request);
         }
