@@ -95,6 +95,7 @@ namespace ERNI.PBA.Server.Host
             });
 
             services.Configure<BlobStorageSettings>(Configuration.GetSection(BlobStorageSettings.SectionName));
+            services.AddApplicationInsightsTelemetry();
 
             services.AddOptions();
         }
