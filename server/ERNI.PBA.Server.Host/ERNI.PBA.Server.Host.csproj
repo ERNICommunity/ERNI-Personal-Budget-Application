@@ -57,4 +57,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+	<Content Remove="Resources/carlito/Carlito-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="Resources/carlito/Carlito-Regular.ttf" />
+  </ItemGroup>
 </Project>
