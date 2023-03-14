@@ -1,0 +1,39 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: CIFrontendPipeline
+    source: 'Release - CLIENT'
+    trigger:
+      branches:
+      - main
+
+jobs:
+  - deployment: deployErniPbaFrontend
+    displayName: 'Deploy ERNI PBA Frontend'
+    environment: ERNI PBA Azure
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: none
+
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'specific'
+                project: 'b5eb9840-78e9-4124-a5f7-c437675508b6'
+                definition: '846'
+                specificBuildWithTriggering: true
+                buildVersionToDownload: 'latest'
+                artifactName: 'erni-pba-release'
+                targetPath: '$(Pipeline.Workspace)'
+
+            - task: AzureStaticWebApp@0
+              inputs:
+                workingDirectory: '$(Pipeline.Workspace)'
+                app_location: ''
+                skip_app_build: true
+                skip_api_build: true
+                azure_static_web_apps_api_token: '$(DeployToken)'
