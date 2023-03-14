@@ -27,7 +27,7 @@ jobs:
                 definition: '846'
                 specificBuildWithTriggering: true
                 buildVersionToDownload: 'latest'
-                artifactName: 'erni-pba-master'
+                artifactName: 'erni-pba-release'
                 targetPath: '$(Pipeline.Workspace)'
 
             - task: AzureStaticWebApp@0
