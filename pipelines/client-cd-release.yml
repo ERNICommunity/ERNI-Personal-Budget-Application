@@ -23,8 +23,8 @@ jobs:
             - task: DownloadPipelineArtifact@2
               inputs:
                 buildType: 'specific'
-                project: 'b5eb9840-78e9-4124-a5f7-c437675508b6'
-                definition: '846'
+                project: 'a8f9c350-6687-4de5-a5b1-dd543f183854'
+                definition: '602'
                 specificBuildWithTriggering: true
                 buildVersionToDownload: 'latest'
                 artifactName: 'erni-pba-release'
