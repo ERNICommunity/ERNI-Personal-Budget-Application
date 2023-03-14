@@ -3,7 +3,7 @@ trigger: none
 resources:
   pipelines:
   - pipeline: CIFrontendPipeline
-    source: CI Frontend
+    source: 'Release - CLIENT'
     trigger:
       branches:
       - main
