@@ -7,7 +7,6 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Queries.Budgets;
 using ERNI.PBA.Server.Domain.Models.Payloads;
 using ERNI.PBA.Server.Domain.Security;
-using ERNI.PBA.Server.Host.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -3,6 +3,8 @@
         <LangVersion>latest</LangVersion>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-        <NoWarn>$(NoWarn);CA1014</NoWarn>
+	    <NoWarn>$(NoWarn);CA1014;CS1591;CS1573</NoWarn>
+	    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 </Project>

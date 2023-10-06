@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace ERNI.PBA.Server.Domain.Exceptions
+﻿namespace ERNI.PBA.Server.Domain.Exceptions
 {
     public static class AppExceptions
     {
