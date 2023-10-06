@@ -37,11 +37,8 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 return Array.Empty<BudgetOutputModel>();
             }
 
-            var masterBudget = budgets.SingleOrDefault(x => x.UserId == user.Id);
-            if (masterBudget == null)
-            {
-                throw new OperationErrorException(ErrorCodes.UnknownError, "Cumulative budget does not exists");
-            }
+            var masterBudget = budgets.SingleOrDefault(x => x.UserId == user.Id)
+                ?? throw new OperationErrorException(ErrorCodes.UnknownError, "Cumulative budget does not exists");
 
             var amount = budgets.Sum(_ => _.Amount);
             var amountLeft = amount - budgets.SelectMany(_ => _.Transactions.Where(x => x.Request.State != RequestState.Rejected)).Sum(_ => _.Amount);

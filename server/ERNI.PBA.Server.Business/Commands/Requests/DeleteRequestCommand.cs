@@ -30,11 +30,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         protected override async Task Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
-            }
+            var request = await _requestRepository.GetRequest(parameter, cancellationToken)
+                ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
 

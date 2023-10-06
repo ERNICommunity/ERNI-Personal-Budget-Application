@@ -35,11 +35,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         protected override async Task Execute(UpdateRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(parameter.Id, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
-            }
+            var request = await _requestRepository.GetRequest(parameter.Id, cancellationToken)
+                ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
 
             var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
                 ?? throw AppExceptions.AuthorizationException();

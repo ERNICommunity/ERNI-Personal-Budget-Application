@@ -32,14 +32,11 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 
         protected override async Task<IEnumerable<ImageOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
-            }
+            var request = await _requestRepository.GetRequest(parameter, cancellationToken)
+                ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
 
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
-                       ?? throw AppExceptions.AuthorizationException();
+                ?? throw AppExceptions.AuthorizationException();
 
             if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId &&
                 !(request.RequestType == BudgetTypeEnum.CommunityBudget &&

@@ -7,7 +7,6 @@ using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Commands.Budgets;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Payloads;
-using Microsoft.AspNetCore.Http;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
@@ -26,11 +25,8 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
 
         protected override async Task Execute(UpdateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var budget = await _budgetRepository.GetBudget(parameter.Id, cancellationToken);
-            if (budget == null)
-            {
-                throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.Id} not found");
-            }
+            var budget = await _budgetRepository.GetBudget(parameter.Id, cancellationToken)
+                ?? throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.Id} not found");
 
             budget.Amount = parameter.Amount;
 

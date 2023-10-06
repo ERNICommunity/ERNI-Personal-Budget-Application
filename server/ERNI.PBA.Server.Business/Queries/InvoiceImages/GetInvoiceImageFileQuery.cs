@@ -23,14 +23,10 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 
         protected override async Task<InvoiceModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var image = await _invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken);
-            if (image == null)
-            {
-                throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
-            }
+            var image = await _invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken)
+                ?? throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
 
-            var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken);
-            if (request == null)
+            if (await _requestRepository.GetRequest(image.RequestId, cancellationToken) == null)
             {
                 throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
             }

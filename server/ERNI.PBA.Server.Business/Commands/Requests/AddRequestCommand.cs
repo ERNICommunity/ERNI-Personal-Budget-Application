@@ -33,12 +33,8 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         protected override async Task<int> Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-
-            if (user is null)
-            {
-                throw AppExceptions.AuthorizationException();
-            }
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                ?? throw AppExceptions.AuthorizationException();
 
             if (string.IsNullOrWhiteSpace(parameter.Title))
             {
