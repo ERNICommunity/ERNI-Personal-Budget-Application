@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { CanActivate, UrlTree } from '@angular/router';
+import { UrlTree } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class SuperiorGuard implements CanActivate {
+export class SuperiorGuard  {
     constructor(private auth: AuthenticationService) {}
 
     canActivate():

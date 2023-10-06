@@ -1,16 +1,11 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import {
-    ActivatedRouteSnapshot,
-    CanActivate,
-    RouterStateSnapshot,
-    UrlTree
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class ViewerGuard implements CanActivate {
+export class ViewerGuard  {
     constructor(private auth: AuthenticationService) {}
 
     canActivate(
