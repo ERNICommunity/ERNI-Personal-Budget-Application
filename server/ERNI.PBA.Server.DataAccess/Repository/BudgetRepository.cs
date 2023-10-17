@@ -82,7 +82,7 @@ namespace ERNI.PBA.Server.DataAccess.Repository
             Expression<Func<Budget, bool>> filter, CancellationToken cancellationToken)
         {
             var budgets = await _context.Budgets.Where(filter)
-                .Select(budget => new { budget, amount = budget.Transactions.Sum(t => t.Amount) })
+                .Select(budget => new { budget, amount = budget.Transactions.Where(t => t.Request.State != RequestState.Rejected).Sum(t => t.Amount) })
                 .ToArrayAsync(cancellationToken);
 
             return budgets.Select(_ => (Budget: _.budget, AmountSpent: _.amount)).ToArray();
