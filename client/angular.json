@@ -68,21 +68,21 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "pba-client:build"
+            "buildTarget": "pba-client:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "pba-client:build:production"
+              "buildTarget": "pba-client:build:production"
             },
             "test": {
-              "browserTarget": "pba-client:build:test"
+              "buildTarget": "pba-client:build:test"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "pba-client:build"
+            "buildTarget": "pba-client:build"
           }
         },
         "test": {
