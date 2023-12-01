@@ -4,11 +4,15 @@ import { MenuItem } from 'primeng/api/menuitem';
 import { StatisticsModel } from '../../model/statisticsModel';
 import { ConfigService } from '../../services/config.service';
 import { StatisticsService } from '../../services/statistics.service';
+import { NgFor } from '@angular/common';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
     selector: 'app-statistics',
     templateUrl: './statistics.component.html',
-    styleUrls: ['./statistics.component.css']
+    styleUrls: ['./statistics.component.css'],
+    standalone: true,
+    imports: [TabMenuModule, NgFor]
 })
 export class StatisticsComponent implements OnInit {
     years: MenuItem[];

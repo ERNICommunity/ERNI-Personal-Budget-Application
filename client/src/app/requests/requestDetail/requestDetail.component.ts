@@ -1,15 +1,20 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { Location, NgIf, NgFor, DatePipe } from '@angular/common';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
 import { UntypedFormGroup, FormBuilder, Validators } from '@angular/forms';
 import { InvoiceImageService } from '../../services/invoice-image.service';
+import { ButtonModule } from 'primeng/button';
+import { SharedModule } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
     selector: 'app-request-detail',
     templateUrl: 'requestDetail.component.html',
-    styleUrls: ['requestDetail.component.css']
+    styleUrls: ['requestDetail.component.css'],
+    standalone: true,
+    imports: [DialogModule, NgIf, NgFor, SharedModule, ButtonModule, DatePipe]
 })
 export class RequestDetailComponent implements OnInit {
     @ViewChild('downloadLink', { static: false }) downloadLink: ElementRef;

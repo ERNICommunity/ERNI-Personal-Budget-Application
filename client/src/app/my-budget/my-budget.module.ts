@@ -7,7 +7,6 @@ import { SharedModule } from '../shared/shared.module';
 import { RequestEditComponent } from '../requests/requestEdit/requestEdit.component';
 
 @NgModule({
-    declarations: [BudgetComponent, MyBudgetComponent],
     imports: [
         CommonModule,
         SharedModule,
@@ -31,7 +30,8 @@ import { RequestEditComponent } from '../requests/requestEdit/requestEdit.compon
                     }
                 ]
             }
-        ])
+        ]),
+        BudgetComponent, MyBudgetComponent
     ]
 })
 export class MyBudgetModule {}

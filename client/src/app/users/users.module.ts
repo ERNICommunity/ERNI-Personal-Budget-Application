@@ -11,12 +11,6 @@ import { UserState } from '../model/userState';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-    declarations: [
-        UsersComponent,
-        UserListComponent,
-        UserDetailComponent,
-        CreateUserComponent
-    ],
     imports: [
         FormsModule,
         ReactiveFormsModule,
@@ -54,7 +48,11 @@ import { SharedModule } from '../shared/shared.module';
                     }
                 ]
             }
-        ])
+        ]),
+        UsersComponent,
+        UserListComponent,
+        UserDetailComponent,
+        CreateUserComponent
     ]
 })
 export class UsersModule {}

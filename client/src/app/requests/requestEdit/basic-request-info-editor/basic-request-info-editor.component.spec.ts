@@ -8,8 +8,8 @@ describe('BasicRequestInfoEditorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BasicRequestInfoEditorComponent ]
-    })
+    imports: [BasicRequestInfoEditorComponent]
+})
     .compileComponents();
   });
 

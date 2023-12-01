@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 import {
     BehaviorSubject,
     combineLatest,
@@ -18,7 +18,7 @@ import { AlertService } from '../../services/alert.service';
 import { BudgetType } from '../../model/budgetType';
 import { BudgetService } from '../../services/budget.service';
 import { MenuItem } from 'primeng/api/menuitem';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, SharedModule } from 'primeng/api';
 import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { MenuHelper } from '../../shared/menu-helper';
 import {
@@ -26,12 +26,24 @@ import {
     RemoveEvent,
     ResetEvent
 } from '../../shared/utils/observableUtils';
+import { NgIf, AsyncPipe, DatePipe } from '@angular/common';
+import { BadgeModule } from 'primeng/badge';
+import { TableModule } from 'primeng/table';
+import { MenuModule } from 'primeng/menu';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-request-list',
     templateUrl: 'requestList.component.html',
     styleUrls: ['requestList.component.css'],
-    providers: [ConfirmationService]
+    providers: [ConfirmationService],
+    standalone: true,
+    imports: [ConfirmDialogModule, TabMenuModule, ToolbarModule, FormsModule, InputTextModule, ButtonModule, MenuModule, TableModule, SharedModule, BadgeModule, RouterLink, NgIf, RouterOutlet, AsyncPipe, DatePipe]
 })
 export class RequestListComponent implements OnInit, OnDestroy {
     pendingRoute: string = '/requests/pending';

@@ -3,11 +3,14 @@ import { Subscription } from 'rxjs';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { Message } from 'primeng/api/message';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
     selector: 'app-alert',
     templateUrl: './alert.component.html',
-    styleUrls: ['./alert.component.css']
+    styleUrls: ['./alert.component.css'],
+    standalone: true,
+    imports: [MessagesModule]
 })
 export class AlertComponent implements OnInit {
     @Input() id: string;

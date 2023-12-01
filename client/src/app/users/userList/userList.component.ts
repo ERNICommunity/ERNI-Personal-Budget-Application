@@ -1,13 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserState } from '../../model/userState';
+import { NgIf } from '@angular/common';
+import { SharedModule } from 'primeng/api';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { ToolbarModule } from 'primeng/toolbar';
 
 @Component({
     selector: 'app-users-list',
     templateUrl: './userList.component.html',
-    styleUrls: ['./userList.component.css']
+    styleUrls: ['./userList.component.css'],
+    standalone: true,
+    imports: [ToolbarModule, FormsModule, InputTextModule, ButtonModule, RouterLink, RouterLinkActive, TableModule, SharedModule, NgIf]
 })
 export class UserListComponent implements OnInit {
     users: User[];

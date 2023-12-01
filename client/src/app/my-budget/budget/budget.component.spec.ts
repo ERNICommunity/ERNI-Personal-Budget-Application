@@ -8,8 +8,8 @@ describe('BudgetComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BudgetComponent ]
-    })
+    imports: [BudgetComponent]
+})
     .compileComponents();
   }));
 

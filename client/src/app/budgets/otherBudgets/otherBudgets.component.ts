@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BudgetService } from '../../services/budget.service';
 import { Budget } from '../../model/budget';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 import { MenuItem } from 'primeng/api/menuitem';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
@@ -14,11 +14,22 @@ import {
 } from 'rxjs/operators';
 import { MenuHelper } from '../../shared/menu-helper';
 import { BudgetType } from '../../model/budgetType';
+import { AsyncPipe } from '@angular/common';
+import { AuthDirective } from '../../shared/directives/authDirective';
+import { SharedModule } from 'primeng/api';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { CreateBudgetsComponent } from '../create-budgets/create-budgets.component';
+import { AccordionModule } from 'primeng/accordion';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
     selector: 'app-other-budgets',
     templateUrl: './otherBudgets.component.html',
-    styleUrls: ['./otherBudgets.component.css']
+    styleUrls: ['./otherBudgets.component.css'],
+    standalone: true,
+    imports: [TabMenuModule, AccordionModule, CreateBudgetsComponent, FormsModule, InputTextModule, TableModule, SharedModule, AuthDirective, RouterLink, AsyncPipe]
 })
 export class OtherBudgetsComponent implements OnInit {
     years$: Observable<MenuItem[]>;

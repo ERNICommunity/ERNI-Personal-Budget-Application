@@ -11,18 +11,23 @@ import { NewRequest } from '../../model/newRequest';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RequestApprovalState } from '../../model/requestState';
 import { InvoiceImageService } from '../../services/invoice-image.service';
-import {
-    Invoice,
-    InvoiceStatus
-} from '../../shared/file-list/file-list.component';
+import { Invoice, InvoiceStatus, FileListComponent } from '../../shared/file-list/file-list.component';
 import { concatMap, defaultIfEmpty } from 'rxjs/operators';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { InvoiceImage } from '../../model/InvoiceImage';
+import { DividerModule } from 'primeng/divider';
+import { ButtonModule } from 'primeng/button';
+import { NgIf } from '@angular/common';
+import { BasicRequestInfoEditorComponent } from './basic-request-info-editor/basic-request-info-editor.component';
+import { AlertComponent } from '../../shared/alert/alert.component';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
     selector: 'app-request-edit',
     templateUrl: 'requestEdit.component.html',
-    styleUrls: ['requestEdit.component.css']
+    styleUrls: ['requestEdit.component.css'],
+    standalone: true,
+    imports: [DialogModule, AlertComponent, BasicRequestInfoEditorComponent, NgIf, ButtonModule, FileListComponent, DividerModule]
 })
 export class RequestEditComponent implements OnInit {
     httpResponseError: string;

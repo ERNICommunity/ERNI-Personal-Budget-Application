@@ -4,14 +4,23 @@ import { RequestService } from '../../services/request.service';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetService } from '../../services/budget.service';
 import { RequestApprovalState } from '../../model/requestState';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, SharedModule } from 'primeng/api';
 import { Request } from '../../model/request/request';
+import { TableModule } from 'primeng/table';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { NgIf, DecimalPipe, DatePipe } from '@angular/common';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-budget',
     templateUrl: './budget.component.html',
     styleUrls: ['./budget.component.css'],
-    providers: [ConfirmationService]
+    providers: [ConfirmationService],
+    standalone: true,
+    imports: [ConfirmDialogModule, PanelModule, SharedModule, NgIf, ButtonModule, RouterLink, ProgressBarModule, TableModule, DecimalPipe, DatePipe]
 })
 export class BudgetComponent implements OnInit {
     @Input() budget: Budget;

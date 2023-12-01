@@ -2,16 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Location, NgIf, NgClass, NgFor } from '@angular/common';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './userDetail.component.html',
-  styleUrls: ['./userDetail.component.css']
+    selector: 'app-users',
+    templateUrl: './userDetail.component.html',
+    styleUrls: ['./userDetail.component.css'],
+    standalone: true,
+    imports: [NgIf, FormsModule, ReactiveFormsModule, NgClass, NgFor]
 })
 
 export class UserDetailComponent implements OnInit {

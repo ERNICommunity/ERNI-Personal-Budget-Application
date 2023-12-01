@@ -9,11 +9,6 @@ import { SharedModule } from '../shared/shared.module';
 import { CreateBudgetsComponent } from './create-budgets/create-budgets.component';
 
 @NgModule({
-    declarations: [
-        OtherBudgetsComponent,
-        OtherBudgetsDetailComponent,
-        CreateBudgetsComponent
-    ],
     imports: [
         CommonModule,
         FormsModule,
@@ -40,7 +35,10 @@ import { CreateBudgetsComponent } from './create-budgets/create-budgets.componen
                     }
                 ]
             }
-        ])
+        ]),
+        OtherBudgetsComponent,
+        OtherBudgetsDetailComponent,
+        CreateBudgetsComponent
     ]
 })
 export class BudgetsModule {}

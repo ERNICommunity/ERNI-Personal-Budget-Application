@@ -1,17 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { BudgetService } from '../services/budget.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { DataChangeNotificationService } from '../services/dataChangeNotification.service';
 import { MenuItem } from 'primeng/api/menuitem';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { MenuHelper } from '../shared/menu-helper';
 import { CurrentUsersBudget } from '../model/current-users-budget';
+import { BudgetComponent } from './budget/budget.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NgIf, NgFor } from '@angular/common';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
     selector: 'app-my-Budget',
     templateUrl: './myBudget.component.html',
-    styleUrls: ['./myBudget.component.css']
+    styleUrls: ['./myBudget.component.css'],
+    standalone: true,
+    imports: [TabMenuModule, NgIf, ProgressSpinnerModule, NgFor, BudgetComponent, RouterOutlet]
 })
 export class MyBudgetComponent implements OnInit {
     budgets: CurrentUsersBudget[];

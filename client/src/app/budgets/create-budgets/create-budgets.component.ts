@@ -11,11 +11,21 @@ import { User } from '../../model/user';
 import { AlertService } from '../../services/alert.service';
 import { BudgetService } from '../../services/budget.service';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
+import { ButtonModule } from 'primeng/button';
+import { SharedModule } from 'primeng/api';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { NgIf } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { AlertComponent } from '../../shared/alert/alert.component';
 
 @Component({
     selector: 'app-create-budgets',
     templateUrl: './create-budgets.component.html',
-    styleUrls: ['./create-budgets.component.css']
+    styleUrls: ['./create-budgets.component.css'],
+    standalone: true,
+    imports: [AlertComponent, FormsModule, InputTextModule, NgIf, InputNumberModule, DropdownModule, SharedModule, ButtonModule]
 })
 export class CreateBudgetsComponent implements OnInit, OnChanges {
     @Input()

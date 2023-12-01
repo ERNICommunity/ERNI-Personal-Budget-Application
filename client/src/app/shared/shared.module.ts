@@ -30,7 +30,6 @@ import { PickListModule } from 'primeng/picklist';
 import { AuthDirective } from './directives/authDirective';
 
 @NgModule({
-    declarations: [AlertComponent, FileListComponent, AuthDirective],
     imports: [
         CommonModule,
         FormsModule,
@@ -39,7 +38,8 @@ import { AuthDirective } from './directives/authDirective';
         ButtonModule,
         ProgressSpinnerModule,
         MessageModule,
-        MessagesModule
+        MessagesModule,
+        AlertComponent, FileListComponent, AuthDirective
     ],
     exports: [
         CommonModule,

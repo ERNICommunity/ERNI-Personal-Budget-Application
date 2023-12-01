@@ -5,6 +5,17 @@ import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AlertService } from "../../services/alert.service";
 import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
 import { RequestApprovalState } from "../../model/requestState";
+import { ButtonModule } from "primeng/button";
+import { SharedModule } from "primeng/api";
+import { PickListModule } from "primeng/picklist";
+import { InputNumberModule } from "primeng/inputnumber";
+import { CalendarModule } from "primeng/calendar";
+import { InputTextModule } from "primeng/inputtext";
+import { FormsModule } from "@angular/forms";
+import { PanelModule } from "primeng/panel";
+import { NgIf } from "@angular/common";
+import { AlertComponent } from "../../shared/alert/alert.component";
+import { DialogModule } from "primeng/dialog";
 
 export class RequestViewModel {
   title: string;
@@ -15,9 +26,23 @@ export class RequestViewModel {
 }
 
 @Component({
-  selector: "app-create-request",
-  templateUrl: "./create-request.component.html",
-  styleUrls: ["./create-request.component.css"],
+    selector: "app-create-request",
+    templateUrl: "./create-request.component.html",
+    styleUrls: ["./create-request.component.css"],
+    standalone: true,
+    imports: [
+        DialogModule,
+        AlertComponent,
+        NgIf,
+        PanelModule,
+        FormsModule,
+        InputTextModule,
+        CalendarModule,
+        InputNumberModule,
+        PickListModule,
+        SharedModule,
+        ButtonModule,
+    ],
 })
 export class CreateRequestComponent implements OnInit {
   isVisible: boolean;

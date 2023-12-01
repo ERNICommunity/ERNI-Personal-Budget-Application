@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
@@ -7,11 +7,14 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { Router } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NgClass, NgIf, NgFor } from '@angular/common';
 
 @Component({
     selector: 'app-create-user',
     templateUrl: './create-user.component.html',
-    styleUrls: ['./create-user.component.css']
+    styleUrls: ['./create-user.component.css'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, NgClass, NgIf, NgFor]
 })
 export class CreateUserComponent implements OnInit {
     superiors: User[];

@@ -4,11 +4,21 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { MassRequest } from '../../model/massRequest';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
+import { ButtonModule } from 'primeng/button';
+import { SharedModule } from 'primeng/api';
+import { PickListModule } from 'primeng/picklist';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { NgIf } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { BasicRequestInfoEditorComponent } from '../requestEdit/basic-request-info-editor/basic-request-info-editor.component';
 
 @Component({
     selector: 'app-request-mass',
     templateUrl: './requestMass.component.html',
-    styleUrls: ['./requestMass.component.css']
+    styleUrls: ['./requestMass.component.css'],
+    standalone: true,
+    imports: [BasicRequestInfoEditorComponent, FormsModule, InputTextModule, NgIf, InputNumberModule, PickListModule, SharedModule, ButtonModule]
 })
 export class RequestMassComponent implements OnInit {
     availableUsers: {

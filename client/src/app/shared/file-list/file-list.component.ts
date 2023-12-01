@@ -1,5 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { InvoiceImageService } from '../../services/invoice-image.service';
+import { ButtonModule } from 'primeng/button';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NgFor, NgIf } from '@angular/common';
 
 export type InvoiceStatus =
     | { code: 'new' }
@@ -14,7 +17,9 @@ export type Invoice = {
 @Component({
     selector: 'app-file-list',
     templateUrl: './file-list.component.html',
-    styleUrls: ['./file-list.component.css']
+    styleUrls: ['./file-list.component.css'],
+    standalone: true,
+    imports: [NgFor, NgIf, ProgressSpinnerModule, ButtonModule]
 })
 export class FileListComponent {
     @Input() uploadEnabled: boolean;

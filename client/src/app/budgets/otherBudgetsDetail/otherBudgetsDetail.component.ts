@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { Location, NgIf, NgFor } from '@angular/common';
 import { Budget } from '../../model/budget';
 import { BudgetService } from '../../services/budget.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../model/user';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-other-budgets-detail',
     templateUrl: 'otherBudgetsDetail.component.html',
-    styleUrls: ['otherBudgetsDetail.component.css']
+    styleUrls: ['otherBudgetsDetail.component.css'],
+    standalone: true,
+    imports: [NgIf, FormsModule, NgFor]
 })
 export class OtherBudgetsDetailComponent implements OnInit {
     budget: Budget;

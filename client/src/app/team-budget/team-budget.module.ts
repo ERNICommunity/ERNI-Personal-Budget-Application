@@ -11,12 +11,6 @@ import { SharedModule } from '../shared/shared.module';
 import { SuperiorGuard } from '../services/guards/superior.guard';
 
 @NgModule({
-    declarations: [
-        TeamBudgetComponent,
-        TeamBudgetStateComponent,
-        TeamRequestComponent,
-        CreateRequestComponent
-    ],
     imports: [
         SharedModule,
         FormsModule,
@@ -49,7 +43,11 @@ import { SuperiorGuard } from '../services/guards/superior.guard';
                     }
                 ]
             }
-        ])
+        ]),
+        TeamBudgetComponent,
+        TeamBudgetStateComponent,
+        TeamRequestComponent,
+        CreateRequestComponent
     ],
     exports: [TeamBudgetComponent]
 })

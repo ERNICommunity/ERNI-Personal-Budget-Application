@@ -6,7 +6,6 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
 import { StatisticsComponent } from './statistics/statistics.component';
 
 @NgModule({
-    declarations: [StatisticsComponent],
     imports: [
         CommonModule,
         SharedModule,
@@ -27,7 +26,8 @@ import { StatisticsComponent } from './statistics/statistics.component';
                     }
                 ]
             }
-        ])
+        ]),
+        StatisticsComponent
     ]
 })
 export class StatisticsModule {}

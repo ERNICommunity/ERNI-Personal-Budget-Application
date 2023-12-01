@@ -13,7 +13,10 @@ import {
     PolicyNames
 } from '../../services/authorization-policy';
 
-@Directive({ selector: '[auth]' })
+@Directive({
+    selector: '[auth]',
+    standalone: true
+})
 export class AuthDirective implements OnDestroy {
     subscription: Subscription;
 

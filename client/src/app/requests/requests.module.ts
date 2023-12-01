@@ -13,15 +13,6 @@ import { RequestMassComponent } from './requestMass/requestMass.component';
 import { AdminRoleGuard } from '../services/guards/admin-role.guard';
 
 @NgModule({
-    declarations: [
-        RequestsComponent,
-        BasicRequestInfoEditorComponent,
-        RequestEditComponent,
-        RequestListComponent,
-        RequestDetailComponent,
-        RequestMassComponent,
-        BasicRequestInfoEditorComponent
-    ],
     exports: [BasicRequestInfoEditorComponent],
     imports: [
         CommonModule,
@@ -35,8 +26,7 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
                 children: [
                     {
                         path: '',
-                        redirectTo:
-                            '1/pending/' + new Date().getFullYear().toString(),
+                        redirectTo: '1/pending/' + new Date().getFullYear().toString(),
                         pathMatch: 'full'
                     },
                     {
@@ -62,7 +52,14 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
                     }
                 ]
             }
-        ])
+        ]),
+        RequestsComponent,
+        BasicRequestInfoEditorComponent,
+        RequestEditComponent,
+        RequestListComponent,
+        RequestDetailComponent,
+        RequestMassComponent,
+        BasicRequestInfoEditorComponent
     ]
 })
 export class RequestsModule {}
