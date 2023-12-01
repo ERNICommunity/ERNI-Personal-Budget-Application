@@ -1,5 +1,12 @@
 import { NgModule } from "@angular/core";
-import { CommonModule, NgClass, NgFor, NgIf } from "@angular/common";
+import {
+  CommonModule,
+  DatePipe,
+  DecimalPipe,
+  NgClass,
+  NgFor,
+  NgIf,
+} from "@angular/common";
 import { AlertComponent } from "./alert/alert.component";
 import { FileListComponent } from "./file-list/file-list.component";
 import { DividerModule } from "primeng/divider";
@@ -86,6 +93,8 @@ import { RouterLink, RouterOutlet } from "@angular/router";
     NgClass,
     NgIf,
     NgFor,
+    DecimalPipe,
+    DatePipe,
   ],
   providers: [MessageService],
 })

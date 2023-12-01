@@ -22,15 +22,27 @@ export class MyBudgetComponent {
   #dataChangeNotificationService = inject(DataChangeNotificationService);
 
   isBusy = signal(false);
+
+  #budgetTypes = this.#budgetService.getBudgetsTypes();
+
+  #rawBudgets = combineLatest([
+    this.#route.params,
+    this.#dataChangeNotificationService.notifications$,
+  ]).pipe(
+    tap(() => this.isBusy.set(true)),
+    map(([params]) => +params["year"]),
+    switchMap((_) => this.#budgetService.getCurrentUserBudgets(_)),
+    tap((_) => this.isBusy.set(false))
+  );
+
   budgets = toSignal(
-    combineLatest([
-      this.#route.params,
-      this.#dataChangeNotificationService.notifications$,
-    ]).pipe(
-      tap(() => this.isBusy.set(true)),
-      map(([params]) => +params["year"]),
-      switchMap((_) => this.#budgetService.getCurrentUserBudgets(_)),
-      tap((_) => this.isBusy.set(false))
+    combineLatest([this.#rawBudgets, this.#budgetTypes]).pipe(
+      map(([budgets, budgetTypes]) =>
+        budgets.map((budget) => ({
+          ...budget,
+          typeName: budgetTypes.find((_) => _.id === budget.type)?.name ?? "",
+        }))
+      )
     ),
     { initialValue: [] }
   );
