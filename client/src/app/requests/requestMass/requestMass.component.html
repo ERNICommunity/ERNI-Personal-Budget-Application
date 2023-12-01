@@ -1,7 +1,7 @@
 <h2>Create Request</h2>
 <br />
 
-<app-basic-request-info-editor></app-basic-request-info-editor>
+<!-- <app-basic-request-info-editor></app-basic-request-info-editor> -->
 
 <div class="field">
   <label for="title" class="block">Title</label>
@@ -30,7 +30,6 @@
     [(ngModel)]="amount"
     mode="currency"
     currency="EUR"
-    required
     #inputAmount="ngModel"
     [max]="maximumAmount"
     inputId="amount"

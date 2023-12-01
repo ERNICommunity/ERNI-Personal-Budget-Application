@@ -6,18 +6,17 @@ import { AlertService } from "../../services/alert.service";
 import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
 import { RequestApprovalState } from "../../model/requestState";
 import { ButtonModule } from "primeng/button";
-import { SharedModule } from "primeng/api";
 import { PickListModule } from "primeng/picklist";
 import { InputNumberModule } from "primeng/inputnumber";
 import { CalendarModule } from "primeng/calendar";
 import { InputTextModule } from "primeng/inputtext";
 import { FormsModule } from "@angular/forms";
-import { PanelModule } from "primeng/panel";
 import { NgIf } from "@angular/common";
 import { AlertComponent } from "../../shared/alert/alert.component";
 import { DialogModule } from "primeng/dialog";
+import { SharedModule } from "../../shared/shared.module";
 
-export class RequestViewModel {
+export interface RequestViewModel {
   title: string;
   date: Date;
   state?: RequestApprovalState;
@@ -26,39 +25,38 @@ export class RequestViewModel {
 }
 
 @Component({
-    selector: "app-create-request",
-    templateUrl: "./create-request.component.html",
-    styleUrls: ["./create-request.component.css"],
-    standalone: true,
-    imports: [
-        DialogModule,
-        AlertComponent,
-        NgIf,
-        PanelModule,
-        FormsModule,
-        InputTextModule,
-        CalendarModule,
-        InputNumberModule,
-        PickListModule,
-        SharedModule,
-        ButtonModule,
-    ],
+  selector: "app-create-request",
+  templateUrl: "./create-request.component.html",
+  styleUrls: ["./create-request.component.css"],
+  standalone: true,
+  imports: [
+    DialogModule,
+    AlertComponent,
+    NgIf,
+    FormsModule,
+    InputTextModule,
+    CalendarModule,
+    InputNumberModule,
+    PickListModule,
+    SharedModule,
+    ButtonModule,
+  ],
 })
 export class CreateRequestComponent implements OnInit {
-  isVisible: boolean;
+  isVisible: boolean = false;
 
-  request: RequestViewModel;
+  request!: RequestViewModel;
 
-  list1: TeamBudgetModel[];
+  list1: TeamBudgetModel[] = [];
 
-  list2: TeamBudgetModel[];
+  list2: TeamBudgetModel[] = [];
 
-  popupTitle: string;
-  requestId: number;
-  newRequest: boolean;
-  maxAmount: number;
+  popupTitle!: string;
+  requestId!: number;
+  newRequest!: boolean;
+  maxAmount!: number;
 
-  teamBudgets: TeamBudgetModel[];
+  teamBudgets!: TeamBudgetModel[];
 
   public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
 
@@ -89,7 +87,7 @@ export class CreateRequestComponent implements OnInit {
         // this.request = this.createNewRequest();
         this.newRequest = true;
 
-        this.request = new RequestViewModel();
+        this.request = {} as RequestViewModel;
       } else {
         console.log("Loading request");
         this.popupTitle = "Request details";
@@ -102,7 +100,9 @@ export class CreateRequestComponent implements OnInit {
   public async loadRequest(requestId: number): Promise<void> {
     this.requestId = requestId;
 
-    var request = await this.teamBudgetService.getSingleTeamRequest(requestId);
+    const request = await this.teamBudgetService.getSingleTeamRequest(
+      requestId
+    );
 
     this.list1 = this.teamBudgets.filter(
       (_) => !request.transactions.find((t) => t.employeeId == _.employee.id)
@@ -119,11 +119,10 @@ export class CreateRequestComponent implements OnInit {
       id: request.id,
       state: request.state,
       title: request.title,
-      isReadonly: true
+      isReadonly: true,
     } as RequestViewModel;
     console.log(request);
     console.log(this.request);
-
   }
 
   trimTitle(): void {
@@ -147,19 +146,18 @@ export class CreateRequestComponent implements OnInit {
 
   async save() {
     try {
-
       if (this.request.state == null) {
         await this.createRequest();
       } else {
         await this.updateRequest();
       }
     } catch (error) {
-      this.alertService.error(JSON.stringify(error.error), "addRequestError");
+      this.alertService.error(JSON.stringify(error), "addRequestError");
     }
   }
 
   async createRequest(): Promise<void> {
-    var id = await this.teamBudgetService.createTeamRequest({
+    const id = await this.teamBudgetService.createTeamRequest({
       employees: this.list2.map((_) => _.employee.id),
       title: this.request.title,
       amount: this.request.amount,
@@ -190,10 +188,7 @@ export class CreateRequestComponent implements OnInit {
 
     this.dataChangeNotificationService.notify();
 
-    this.alertService.success(
-      "Request updated.",
-      "addRequestError"
-    );
+    this.alertService.success("Request updated.", "addRequestError");
   }
 
   onHide() {

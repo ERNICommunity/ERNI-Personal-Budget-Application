@@ -1,9 +1,13 @@
 import { Routes } from "@angular/router";
 import { AuthenticatedComponent } from "./authenticated/authenticated.component";
 import { LoginComponent } from "./login/login.component";
-import { RequestMassComponent } from "./requests/requestMass/requestMass.component";
-import { AdminRoleGuard } from "./services/guards/admin-role.guard";
 import { AutheticatedGuard } from "./services/guards/authenticated.guard";
+import { myBudgetRoutes } from "./my-budget/my-budget.routing";
+import { budgetRoutes } from "./budgets/budgets.routes";
+import { requestsRoutes } from "./requests/requests.module";
+import { employeesRoutes } from "./users/users.routes";
+import { statisticsRoutes } from "./statistics/statistics.routes";
+import { teamBudgetRoutes } from "./team-budget/team-budget.routes";
 
 export const routes: Routes = [
   {
@@ -19,37 +23,27 @@ export const routes: Routes = [
     children: [
       {
         path: "my-budget",
-        loadChildren: () =>
-          import("./my-budget/my-budget.module").then((m) => m.MyBudgetModule),
+        children: myBudgetRoutes,
       },
       {
         path: "budgets",
-        loadChildren: () =>
-          import("./budgets/budgets.module").then((m) => m.BudgetsModule),
+        children: budgetRoutes,
       },
       {
         path: "requests",
-        loadChildren: () =>
-          import("./requests/requests.module").then((m) => m.RequestsModule),
+        children: requestsRoutes,
       },
       {
         path: "employees",
-        loadChildren: () =>
-          import("./users/users.module").then((m) => m.UsersModule),
+        children: employeesRoutes,
       },
       {
         path: "statistics",
-        loadChildren: () =>
-          import("./statistics/statistics.module").then(
-            (m) => m.StatisticsModule
-          ),
+        children: statisticsRoutes,
       },
       {
         path: "team-budget",
-        loadChildren: () =>
-          import("./team-budget/team-budget.module").then(
-            (m) => m.TeamBudgetModule
-          ),
+        children: teamBudgetRoutes,
       },
     ],
   },

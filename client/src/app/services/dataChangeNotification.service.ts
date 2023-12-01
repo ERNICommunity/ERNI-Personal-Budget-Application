@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { Request } from "../model/request/request";
 
-export class Unit {  
-}
+export class Unit {}
 
-@Injectable()
+@Injectable({
+  providedIn: "root",
+})
 export class DataChangeNotificationService {
   private readonly _todos = new BehaviorSubject<Unit>(new Unit());
 

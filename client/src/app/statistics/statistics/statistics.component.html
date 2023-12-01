@@ -1,10 +1,13 @@
 <p-tabMenu [model]="years" [activeItem]="selectedYear"></p-tabMenu>
-<hr>
-<h1>{{selectedYear?.label}}</h1>
+<hr />
+<h1>{{ selectedYear.label }}</h1>
 
-<div *ngFor="let budget of statistics?.budgets">
-    <h1>{{budget.budgetType}}</h1>
-    <p>Count: {{budget.budgetCount}}</p>
-    <p>Total amount: {{budget.totalAmount}}</p>
-    <p>Total amount spent: {{budget.totalSpentAmount}}</p>
+@if (statistics) {
+
+<div *ngFor="let budget of statistics.budgets">
+  <h1>{{ budget.budgetType }}</h1>
+  <p>Count: {{ budget.budgetCount }}</p>
+  <p>Total amount: {{ budget.totalAmount }}</p>
+  <p>Total amount spent: {{ budget.totalSpentAmount }}</p>
 </div>
+}

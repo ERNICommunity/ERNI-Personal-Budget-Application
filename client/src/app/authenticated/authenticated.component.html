@@ -5,29 +5,25 @@
     </li>
   </ul>
   <ul class="menu">
-    <li
-      class="nav-item"
-      [routerLinkActive]="['active']"
-      *auth="'canAccessMyBudget'"
-    >
+    <li class="nav-item" *auth="'canAccessMyBudget'">
       <a class="nav-link" routerLink="/my-budget">My budget</a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isSuperior'">
+    <li *auth="'isSuperior'">
       <a routerLink="/team-budget">Team budget</a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li *auth="'isAdmin'">
       <a routerLink="/budgets">Manage budgets</a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'canReadRequests'">
+    <li *auth="'canReadRequests'">
       <a routerLink="/requests">Requests</a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li *auth="'isAdmin'">
       <a routerLink="/requests/mass-request">Mass Request</a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li *auth="'isAdmin'">
       <a routerLink="/employees">Employees</a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li *auth="'isAdmin'">
       <a routerLink="/statistics">Statistics</a>
     </li>
     <li>

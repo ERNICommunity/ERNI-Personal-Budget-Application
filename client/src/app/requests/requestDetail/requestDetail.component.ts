@@ -1,71 +1,69 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Location, NgIf, NgFor, DatePipe } from '@angular/common';
-import { Request } from '../../model/request/request';
-import { RequestService } from '../../services/request.service';
-import { UntypedFormGroup, FormBuilder, Validators } from '@angular/forms';
-import { InvoiceImageService } from '../../services/invoice-image.service';
-import { ButtonModule } from 'primeng/button';
-import { SharedModule } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
+import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { NgIf, NgFor, DatePipe } from "@angular/common";
+import { Request } from "../../model/request/request";
+import { RequestService } from "../../services/request.service";
+import { UntypedFormGroup } from "@angular/forms";
+import { InvoiceImageService } from "../../services/invoice-image.service";
+import { ButtonModule } from "primeng/button";
+import { SharedModule } from "primeng/api";
+import { DialogModule } from "primeng/dialog";
 
 @Component({
-    selector: 'app-request-detail',
-    templateUrl: 'requestDetail.component.html',
-    styleUrls: ['requestDetail.component.css'],
-    standalone: true,
-    imports: [DialogModule, NgIf, NgFor, SharedModule, ButtonModule, DatePipe]
+  selector: "app-request-detail",
+  templateUrl: "requestDetail.component.html",
+  styleUrls: ["requestDetail.component.css"],
+  standalone: true,
+  imports: [DialogModule, NgIf, NgFor, SharedModule, ButtonModule, DatePipe],
 })
 export class RequestDetailComponent implements OnInit {
-    @ViewChild('downloadLink', { static: false }) downloadLink: ElementRef;
-    request: Request;
-    createDate: Date;
-    requestForm: UntypedFormGroup;
-    httpResponseError: string;
-    images: { id: number, name: string}[];
-    isVisible: boolean;
+  @ViewChild("downloadLink", { static: false }) downloadLink!: ElementRef;
+  request!: Request;
+  createDate!: Date;
 
-    constructor(
-        private requestService: RequestService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private invoiceImageService: InvoiceImageService
-    ) {
-        this.isVisible = true;
-    }
+  httpResponseError?: string;
+  images!: { id: number; name: string }[];
+  isVisible: boolean;
 
-    ngOnInit() {
-        this.route.params.subscribe((params) => {
-            this.getRequest(params['requestId']);
+  constructor(
+    private requestService: RequestService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private invoiceImageService: InvoiceImageService
+  ) {
+    this.isVisible = true;
+  }
+
+  ngOnInit() {
+    this.route.params.subscribe((params) => {
+      this.getRequest(params["requestId"]);
+    });
+  }
+
+  download(imageId: number, imageName: string) {
+    this.invoiceImageService.getInvoiceImage(imageId);
+  }
+
+  public getRequest(id: number): void {
+    this.requestService.getRequest(id).subscribe(
+      (request) => {
+        this.request = request;
+        this.createDate = new Date(request.createDate);
+        this.invoiceImageService.getInvoiceImages(id).subscribe((names) => {
+          this.images = names;
         });
-    }
+      },
+      (err) => {
+        this.httpResponseError = err.error;
+      }
+    );
+  }
 
-    download(imageId: number, imageName: string) {
-        this.invoiceImageService.getInvoiceImage(imageId);
-    }
+  public onHide(): void {
+    this.router.navigate(["../../"], { relativeTo: this.route });
+  }
 
-    public getRequest(id: number): void {
-        this.requestService.getRequest(id).subscribe(
-            (request) => {
-                this.request = request;
-                this.createDate = new Date(request.createDate);
-                this.invoiceImageService
-                    .getInvoiceImages(id)
-                    .subscribe((names) => {
-                        this.images = names;
-                    });
-            },
-            (err) => {
-                this.httpResponseError = err.error;
-            }
-        );
-    }
-
-    public onHide(): void {
-        this.router.navigate(['../../'], { relativeTo: this.route });
-    }
-
-    public close(): void {
-        this.router.navigate(['../../'], { relativeTo: this.route });
-    }
+  public close(): void {
+    this.router.navigate(["../../"], { relativeTo: this.route });
+  }
 }

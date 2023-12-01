@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
 
-@Injectable()
-
+@Injectable({
+  providedIn: "root",
+})
 export class ConfigService {
-    constructor() {
-    }
+  constructor() {}
 
-    public get apiUrlBase(): any {
-        return environment.apiBaseUrl;
-    }
+  public get apiUrlBase() {
+    return environment.apiBaseUrl;
+  }
 
-    public get getOldestYear(): number {
-        return 2015;
-    }
+  public get getOldestYear(): number {
+    return 2015;
+  }
 }

@@ -1,5 +1,4 @@
-
-export class NewTeamRequestModel {
+export interface NewTeamRequestModel {
   employees: number[];
   title: string;
   date: Date;

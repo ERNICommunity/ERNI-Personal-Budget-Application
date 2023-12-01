@@ -11,14 +11,16 @@
         animationDuration=".5s"
       ></p-progressSpinner>
 
+      @if (image.status.code === 'saved') {
       <button
         pButton
         [disabled]="!image.status.id"
         class="p-button-sm p-button-text"
-        (click)="download(image.status.id, image.name)"
+        (click)="download(image.status.id)"
       >
         {{ image.name }}
       </button>
+      }
     </li>
   </ul>
 </div>
@@ -35,6 +37,6 @@
   id="fileDialog"
   type="file"
   #file
-  (change)="onImageAdded($event.target.files)"
+  (change)="onImageAdded($event)"
   style="display: none"
 />

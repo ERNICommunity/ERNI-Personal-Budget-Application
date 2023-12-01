@@ -15,7 +15,7 @@
         *ngIf="submitted && controls.firstName.errors"
         class="invalid-feedback"
       >
-        <div *ngIf="controls.firstName.errors.required">
+        <div *ngIf="controls.firstName.errors['required']">
           First name is required
         </div>
       </div>
@@ -34,7 +34,7 @@
         *ngIf="submitted && controls.lastName.errors"
         class="invalid-feedback"
       >
-        <div *ngIf="controls.lastName.errors.required">
+        <div *ngIf="controls.lastName.errors['required']">
           Last name is required
         </div>
       </div>
@@ -49,8 +49,8 @@
         [ngClass]="{ 'is-invalid': submitted && controls.email.errors }"
       />
       <div *ngIf="submitted && controls.email.errors" class="invalid-feedback">
-        <div *ngIf="controls.email.errors.required">Email is required</div>
-        <div *ngIf="controls.email.errors.email">
+        <div *ngIf="controls.email.errors['required']">Email is required</div>
+        <div *ngIf="controls.email.errors['email']">
           Wrong email address format
         </div>
       </div>
@@ -81,7 +81,7 @@
         <option [value]="2">Inactive</option>
       </select>
       <div *ngIf="submitted && controls.state.errors" class="invalid-feedback">
-        <div *ngIf="controls.state.errors.required">State is required</div>
+        <div *ngIf="controls.state.errors['required']">State is required</div>
       </div>
     </div>
 
