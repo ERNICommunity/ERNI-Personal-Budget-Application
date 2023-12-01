@@ -1,61 +1,39 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { BudgetService } from "../services/budget.service";
-import { ActivatedRoute, RouterOutlet } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { combineLatest } from "rxjs";
 import { DataChangeNotificationService } from "../services/dataChangeNotification.service";
-import { MenuItem } from "primeng/api/menuitem";
 import { map, switchMap, tap } from "rxjs/operators";
 import { MenuHelper } from "../shared/menu-helper";
-import { CurrentUsersBudget } from "../model/current-users-budget";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { SharedModule } from "../shared/shared.module";
 import { BudgetComponent } from "./budget/budget.component";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { NgIf, NgFor } from "@angular/common";
-import { TabMenuModule } from "primeng/tabmenu";
 
 @Component({
-  selector: "app-my-Budget",
+  selector: "app-my-budget",
   templateUrl: "./myBudget.component.html",
   styleUrls: ["./myBudget.component.css"],
   standalone: true,
-  imports: [
-    TabMenuModule,
-    NgIf,
-    ProgressSpinnerModule,
-    NgFor,
-    BudgetComponent,
-    RouterOutlet,
-  ],
+  imports: [BudgetComponent, SharedModule],
 })
-export class MyBudgetComponent implements OnInit {
-  budgets: CurrentUsersBudget[] = [];
+export class MyBudgetComponent {
+  #budgetService = inject(BudgetService);
+  #route = inject(ActivatedRoute);
+  #dataChangeNotificationService = inject(DataChangeNotificationService);
 
-  years: MenuItem[];
-
-  currentYear: number | null = null;
-
-  isBusy: boolean = false;
-
-  constructor(
-    private budgetService: BudgetService,
-    private route: ActivatedRoute,
-    private dataChangeNotificationService: DataChangeNotificationService
-  ) {
-    this.years = MenuHelper.getYearMenu((year) => ["/my-budget", year]);
-  }
-
-  ngOnInit() {
+  isBusy = signal(false);
+  budgets = toSignal(
     combineLatest([
-      this.route.params,
-      this.dataChangeNotificationService.notifications$,
-    ])
-      .pipe(
-        tap((_) => (this.budgets = [])),
-        map(([params]) => +params["year"]),
-        switchMap((_) => this.budgetService.getCurrentUserBudgets(_))
-      )
-      .subscribe((_) => {
-        this.budgets = _;
-        this.isBusy = false;
-      });
-  }
+      this.#route.params,
+      this.#dataChangeNotificationService.notifications$,
+    ]).pipe(
+      tap(() => this.isBusy.set(true)),
+      map(([params]) => +params["year"]),
+      switchMap((_) => this.#budgetService.getCurrentUserBudgets(_)),
+      tap((_) => this.isBusy.set(false))
+    ),
+    { initialValue: [] }
+  );
+
+  years = MenuHelper.getYearMenu((year) => ["/my-budget", year]);
 }
