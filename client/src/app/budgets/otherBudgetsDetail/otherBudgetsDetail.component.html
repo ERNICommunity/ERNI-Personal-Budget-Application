@@ -1,33 +1,48 @@
 <div *ngIf="budget">
-    <h2>
-        Budget Edit - {{budget.year}} - {{budget.user.firstName}} {{budget.user.lastName}}
-    </h2>
-    <form> 
-        <div class="form-group">
-            <label for="otherBudgetsDetailAmount">
-                Amount:
-            </label>
-            <br>
-            <input type="number" name="otherBudgetsDetailAmount" [(ngModel)]="budget.amount" placeholder="0.00" id="otherBudgetsDetailAmount">
-        </div>
-        <div *ngIf="budget.type == 2" class="form-group">
-            <label for="otherBudgetsDetailUser">
-                Assigned user:
-            </label>
-            <select class="form-control" [(ngModel)]="selectedUserId" id="otherBudgetsDetailUser" name="otherBudgetsDetailUser">
-                <option *ngFor="let user of availableUsers" [ngValue]="user.id">
-                    {{user.lastName}} {{user.firstName}}
-                </option>
-            </select>
-        </div>
-        <br>
-        <div class="form-group">
-            <button class="btn btn-primary mr-1" (click)="goBack()">
-                back
-            </button>
-            <button class="btn btn-success" (click)="save()">
-                save
-            </button>
-        </div>
-    </form>
+  <h2>
+    Budget Edit - {{ budget.year }} - {{ budget.user.firstName }}
+    {{ budget.user.lastName }}
+  </h2>
+  <form [formGroup]="form">
+    <div class="form-group">
+      <label for="otherBudgetsDetailAmount"> Amount: </label>
+      <br />
+      <p-inputNumber
+        formControlName="amount"
+        mode="currency"
+        currency="EUR"
+        id="otherBudgetsDetailAmount"
+        [useGrouping]="false"
+        placeholder="0.0"
+      >
+      </p-inputNumber>
+    </div>
+    <div *ngIf="budget.type === 2" class="form-group">
+      <label for="otherBudgetsDetailUser"> Assigned user: </label>
+      <p-dropdown
+        [options]="availableUsers"
+        [showClear]="false"
+        id="otherBudgetsDetailUser"
+        formControlName="user"
+        placeholder="Select user"
+        optionValue="id"
+      >
+        <ng-template let-user pTemplate="selectedItem">
+          @if (user) {
+          {{ user.lastName }} {{ user.firstName }}
+          }
+        </ng-template>
+        <ng-template let-user pTemplate="item">
+          {{ user.lastName }} {{ user.firstName }}
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <br />
+    <div class="form-group">
+      <button pButton class="btn btn-primary mr-1" (click)="goBack()">
+        back
+      </button>
+      <button pButton class="btn btn-success" (click)="save()">save</button>
+    </div>
+  </form>
 </div>

@@ -41,7 +41,7 @@ export class BudgetService {
     );
   }
 
-  public updateBudget(id: number, amount: number): Observable<any> {
+  public updateBudget(id: number, amount: number) {
     return this.http.put(
       this.configService.apiUrlBase + this.url,
       { id, amount },
@@ -49,7 +49,7 @@ export class BudgetService {
     );
   }
 
-  public transferBudget(budgetId: number, userId: number): Observable<any> {
+  public transferBudget(budgetId: number, userId: number) {
     return this.http.put(
       this.configService.apiUrlBase +
         this.url +
@@ -77,7 +77,7 @@ export class BudgetService {
     title: string,
     amount: number,
     budgetType: number
-  ): Observable<any> {
+  ) {
     return this.http.post(
       this.configService.apiUrlBase + this.url + "users/all",
       { title, amount, budgetType },
@@ -92,8 +92,8 @@ export class BudgetService {
     );
   }
 
-  public getUsersAvailableForBudgetType(budgetType: number): Observable<any> {
-    return this.http.get<User>(
+  public getUsersAvailableForBudgetType(budgetType: number) {
+    return this.http.get<User[]>(
       this.configService.apiUrlBase +
         this.url +
         "usersAvailableForBudgetType/" +
