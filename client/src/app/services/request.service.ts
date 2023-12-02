@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Request } from "../model/request/request";
-import { Observable, of } from "rxjs";
+import { Observable, delay, map, of } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "./config.service";
 import { ServiceHelper } from "./service.helper";
 import { MassRequest } from "../model/massRequest";
 import { NewRequest } from "../model/newRequest";
 import { PatchRequest } from "../model/PatchRequest";
+import { StringDates, toDate } from "../utils/dates";
 
 @Injectable({
   providedIn: "root",
@@ -25,14 +26,32 @@ export class RequestService {
     state: "approved" | "rejected" | "pending",
     budgetTypeId: number
   ): Observable<Request[]> {
-    return this.http.get<Request[]>(
-      this.configService.apiUrlBase +
-        this.requestUrl +
-        year +
-        `/state/${state}/type/` +
-        budgetTypeId,
-      this.serviceHelper.getHttpOptions()
-    );
+    return this.http
+      .get<StringDates<Request>[]>(
+        this.configService.apiUrlBase +
+          this.requestUrl +
+          year +
+          `/state/${state}/type/` +
+          budgetTypeId,
+        this.serviceHelper.getHttpOptions()
+      )
+      .pipe(
+        map((requests) =>
+          requests.map(
+            (request) =>
+              ({
+                id: request.id,
+                title: request.title,
+                amount: request.amount,
+                invoiceCount: request.invoiceCount,
+                user: request.user,
+                budget: request.budget,
+                createDate: toDate(request.createDate),
+                state: request.state,
+              } as Request)
+          )
+        )
+      );
   }
 
   public getRequest(id: number): Observable<Request> {

@@ -1,62 +1,50 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { NgIf, NgFor, DatePipe } from "@angular/common";
-import { Request } from "../../model/request/request";
 import { RequestService } from "../../services/request.service";
-import { UntypedFormGroup } from "@angular/forms";
 import { InvoiceImageService } from "../../services/invoice-image.service";
-import { ButtonModule } from "primeng/button";
-import { SharedModule } from "primeng/api";
-import { DialogModule } from "primeng/dialog";
+import { distinctUntilChanged, map, shareReplay, switchMap } from "rxjs";
+import { mapSuccessfulResult, toResultSignal } from "../../utils/signals";
+import { SharedModule } from "../../shared/shared.module";
 
 @Component({
   selector: "app-request-detail",
   templateUrl: "requestDetail.component.html",
   styleUrls: ["requestDetail.component.css"],
   standalone: true,
-  imports: [DialogModule, NgIf, NgFor, SharedModule, ButtonModule, DatePipe],
+  imports: [SharedModule],
 })
-export class RequestDetailComponent implements OnInit {
-  @ViewChild("downloadLink", { static: false }) downloadLink!: ElementRef;
-  request!: Request;
-  createDate!: Date;
+export class RequestDetailComponent {
+  route = inject(ActivatedRoute);
+  requestService = inject(RequestService);
+  router = inject(Router);
+  invoiceImageService = inject(InvoiceImageService);
 
-  httpResponseError?: string;
-  images!: { id: number; name: string }[];
-  isVisible: boolean;
+  #requestId$ = this.route.params.pipe(
+    map((params) => +params["requestId"]),
+    distinctUntilChanged(),
+    shareReplay(1)
+  );
 
-  constructor(
-    private requestService: RequestService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private invoiceImageService: InvoiceImageService
-  ) {
-    this.isVisible = true;
-  }
+  request = toResultSignal(
+    this.#requestId$.pipe(
+      switchMap((requestId) => this.requestService.getRequest(requestId))
+    )
+  );
 
-  ngOnInit() {
-    this.route.params.subscribe((params) => {
-      this.getRequest(params["requestId"]);
-    });
-  }
+  title = computed(() => mapSuccessfulResult(this.request(), (r) => r.title));
 
-  download(imageId: number, imageName: string) {
+  images = toResultSignal(
+    this.#requestId$.pipe(
+      switchMap((requestId) =>
+        this.invoiceImageService.getInvoiceImages(requestId)
+      )
+    )
+  );
+
+  isVisible: boolean = true;
+
+  download(imageId: number) {
     this.invoiceImageService.getInvoiceImage(imageId);
-  }
-
-  public getRequest(id: number): void {
-    this.requestService.getRequest(id).subscribe(
-      (request) => {
-        this.request = request;
-        this.createDate = new Date(request.createDate);
-        this.invoiceImageService.getInvoiceImages(id).subscribe((names) => {
-          this.images = names;
-        });
-      },
-      (err) => {
-        this.httpResponseError = err.error;
-      }
-    );
   }
 
   public onHide(): void {
