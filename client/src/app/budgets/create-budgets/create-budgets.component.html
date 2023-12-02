@@ -41,7 +41,7 @@
   <label for="employee" class="block">Employee</label>
   <p-dropdown
     inputId="employee"
-    [options]="availableUsers"
+    [options]="availableUsers()"
     placeholder="All employees"
     [showClear]="true"
     [(ngModel)]="selectedEmployee"
