@@ -8,7 +8,7 @@ import { TeamBudgetModel } from "../model/teamBudget";
 import { TeamRequestModel } from "../model/request/teamRequestModel";
 import { NewTeamRequestModel } from "../model/request/newTeamRequestModel";
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class TeamBudgetService {
   url = "TeamBudget/";
 

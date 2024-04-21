@@ -5,12 +5,10 @@ import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { MassRequest } from '../model/massRequest';
-import { BudgetLeft } from '../model/budgetLeft';
-import { User } from '../model/user';
 import { NewRequest } from '../model/newRequest';
 import { PatchRequest } from '../model/PatchRequest';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RequestService {
     requestUrl = 'Request/';
 

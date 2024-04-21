@@ -1,7 +1,7 @@
 import { ConfigService } from './config.service';
 import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class BusyIndicatorService {
     public isBusy: boolean = true;
     public count: number = 0;

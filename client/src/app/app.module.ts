@@ -5,24 +5,13 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { rootRouterConfig } from './app.routes';
-import { ConfigService } from './services/config.service';
-import { RequestService } from './services/request.service';
 import { HttpClientModule } from '@angular/common/http';
-import { UserService } from './services/user.service';
-import { BudgetService } from './services/budget.service';
 import { FormsModule } from '@angular/forms';
-import { ServiceHelper } from './services/service.helper';
 import { RequestEditComponent } from './requests/requestEdit/requestEdit.component';
 import { RequestDetailComponent } from './requests/requestDetail/requestDetail.component';
 import { RequestMassComponent } from './requests/requestMass/requestMass.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BusyIndicatorService } from './services/busy-indicator.service';
-import { ViewerGuard } from './services/guards/viewer.guard';
-import { DataChangeNotificationService } from './services/dataChangeNotification.service';
-import { InvoiceImageService } from './services/invoice-image.service';
-import { TeamBudgetService } from './services/team-budget.service';
-import { ExportService } from './services/export.service';
 import { TeamBudgetModule } from './team-budget/team-budget.module';
 
 import {
@@ -34,9 +23,6 @@ import {
     MsalGuard,
     MsalBroadcastService
 } from '@azure/msal-angular';
-
-import { AdminRoleGuard } from './services/guards/admin-role.guard';
-import { AuthenticationService } from './services/authentication.service';
 import { MyBudgetModule } from './my-budget/my-budget.module';
 import { RequestsModule } from './requests/requests.module';
 import {
@@ -48,7 +34,6 @@ import { UsersModule } from './users/users.module';
 import { BudgetsModule } from './budgets/budgets.module';
 import { SharedModule } from './shared/shared.module';
 import { StatisticsModule } from './statistics/statistics.module';
-import { StatisticsService } from './services/statistics.service';
 
 @NgModule({
     declarations: [
@@ -73,19 +58,6 @@ import { StatisticsService } from './services/statistics.service';
         StatisticsModule
     ],
     providers: [
-        ConfigService,
-        ServiceHelper,
-        ExportService,
-        RequestService,
-        UserService,
-        BudgetService,
-        TeamBudgetService,
-        BusyIndicatorService,
-        DataChangeNotificationService,
-        InvoiceImageService,
-        StatisticsService,
-        ViewerGuard,
-        AuthenticationService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: MsalInterceptor,
@@ -106,7 +78,6 @@ import { StatisticsService } from './services/statistics.service';
         MsalService,
         MsalGuard,
         MsalBroadcastService,
-        AdminRoleGuard
     ],
     bootstrap: [AppComponent]
 })

@@ -7,7 +7,7 @@ import { UserInfo } from '../model/userInfo';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     url = 'Authorization/';
 

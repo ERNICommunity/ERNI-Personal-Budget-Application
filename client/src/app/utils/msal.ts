@@ -21,6 +21,8 @@ export function MSALInstanceFactory(): IPublicClientApplication {
       storeAuthStateInCookie: false
     },
     system: {
+      asyncPopups: true,
+      allowNativeBroker: false,
       loggerOptions: {
         logLevel: LogLevel.Verbose,
         loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
@@ -39,8 +41,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 
   Object
     .keys(environment.protectedResourceMap)
-    .forEach(key => protectedResourceMap
-    .set(key, environment.protectedResourceMap[key]));
+    .forEach(key => protectedResourceMap.set(key, environment.protectedResourceMap[key]));
 
   return {
     interactionType: InteractionType.Popup,

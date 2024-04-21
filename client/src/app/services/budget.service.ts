@@ -7,7 +7,7 @@ import { ServiceHelper } from './service.helper';
 import { BudgetType } from '../model/budgetType';
 import { User } from '../model/user';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class BudgetService {
     url = 'Budget/';
 

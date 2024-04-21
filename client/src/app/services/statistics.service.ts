@@ -4,7 +4,7 @@ import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { StatisticsModel } from '../model/statisticsModel';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class StatisticsService {
     serviceUrl = 'statistics';
 

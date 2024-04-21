@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExportService {
     serviceUrl = 'export';
 

@@ -10,7 +10,7 @@ import { Observable, Subject, throwError } from 'rxjs';
 import { ServiceHelper } from './service.helper';
 import { InvoiceImage } from '../model/InvoiceImage';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class InvoiceImageService {
     requestUrl = 'InvoiceImage';
 
