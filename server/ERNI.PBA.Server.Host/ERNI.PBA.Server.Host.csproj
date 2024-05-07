@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>4624c157-9deb-48cc-9fe5-023a92045204</UserSecretsId>
     <Version>0.0.0.4</Version>
     <Nullable>enable</Nullable>

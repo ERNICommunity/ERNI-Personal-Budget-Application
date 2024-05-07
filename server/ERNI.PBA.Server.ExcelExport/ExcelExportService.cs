@@ -11,15 +11,11 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.Rmt.ExcelExport
 {
-    public class ExcelExportService : IExcelExportService
+    public class ExcelExportService(IRequestRepository requestRepository) : IExcelExportService
     {
-        private readonly IRequestRepository _requestRepository;
-
-        public ExcelExportService(IRequestRepository requestRepository) => _requestRepository = requestRepository;
-
         public async Task Export(Stream stream, int year, int month, CancellationToken cancellationToken)
         {
-            var transactions = (await _requestRepository.GetRequests(year, month, BudgetTypeEnum.PersonalBudget))
+            var transactions = (await requestRepository.GetRequests(year, month, BudgetTypeEnum.PersonalBudget))
                 .ToLookup(_ => _.Request.State);
 
             using var workbook = new XLWorkbook();

@@ -9,34 +9,30 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(DatabaseContext context) : IUserRepository
     {
-        private readonly DatabaseContext _context;
-
-        public UserRepository(DatabaseContext context) => _context = context;
-
         public Task<User?> GetUser(int id, CancellationToken cancellationToken) =>
-            _context.Users.Where(_ => _.Id == id)
+            context.Users.Where(_ => _.Id == id)
                 .Include(u => u.Superior)
                 .FirstOrDefaultAsync(cancellationToken);
 
         public Task<User?> GetUser(Guid id, CancellationToken cancellationToken) =>
-            _context.Users.Where(_ => _.ObjectId == id)
+            context.Users.Where(_ => _.ObjectId == id)
                 .Include(u => u.Superior)
                 .FirstOrDefaultAsync(cancellationToken);
 
-        public Task<User?> GetAsync(string username) => _context.Users.SingleOrDefaultAsync(x => x.Username == username);
+        public Task<User?> GetAsync(string username) => context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
         public Task<User[]> GetAllUsers(CancellationToken cancellationToken)
         {
-            return _context.Users
+            return context.Users
                 .Include(u => u.Superior)
                 .ToArrayAsync(cancellationToken);
         }
 
         public Task<User[]> GetAllUsers(Expression<Func<User, bool>> filter, CancellationToken cancellationToken)
         {
-            return _context.Users
+            return context.Users
                 .Where(filter)
                 .ToArrayAsync(cancellationToken);
         }
@@ -46,16 +42,16 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         /// </summary>
         public Task<User[]> GetSubordinateUsers(int superiorId, CancellationToken cancellationToken)
         {
-            return _context.Users
+            return context.Users
                 .Include(u => u.Superior)
                 .Where(u => u.SuperiorId == superiorId)
                 .ToArrayAsync(cancellationToken);
         }
 
-        public async Task AddUserAsync(User user) => await _context.Users.AddAsync(user);
+        public async Task AddUserAsync(User user) => await context.Users.AddAsync(user);
 
-        public async Task<bool> ExistsAsync(string username) => await _context.Users.AnyAsync(x => x.Username == username);
+        public async Task<bool> ExistsAsync(string username) => await context.Users.AnyAsync(x => x.Username == username);
 
-        public void Update(User user) => _context.Entry(user).State = EntityState.Modified;
+        public void Update(User user) => context.Entry(user).State = EntityState.Modified;
     }
 }

@@ -6,7 +6,7 @@ namespace ERNI.Rmt.ExcelExport
 {
     public class DownloadTokenManager : IDownloadTokenManager
     {
-        private readonly Dictionary<Guid, TokenInfo> _tokenDictionary = new();
+        private readonly Dictionary<Guid, TokenInfo> _tokenDictionary = [];
 
         public Guid GenerateToken(DateTime validUntil, string category)
         {
