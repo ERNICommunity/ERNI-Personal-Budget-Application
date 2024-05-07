@@ -22,11 +22,7 @@ public class UpdateRequestCommand(
 {
     protected override async Task Execute(UpdateRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {
-        var request = await requestRepository.GetRequest(parameter.Id, cancellationToken);
-        if (request == null)
-        {
-            throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
-        }
+        var request = await requestRepository.GetRequest(parameter.Id, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
 
         var currentUser = await userRepository.GetUser(principal.GetId(), cancellationToken)
             ?? throw AppExceptions.AuthorizationException();

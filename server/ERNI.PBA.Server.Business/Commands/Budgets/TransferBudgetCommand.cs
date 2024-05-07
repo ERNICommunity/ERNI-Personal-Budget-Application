@@ -19,22 +19,14 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
     {
         protected override async Task Execute(TransferBudgetModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var budget = await budgetRepository.GetBudget(parameter.BudgetId, cancellationToken);
-            if (budget == null)
-            {
-                throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.BudgetId} not found");
-            }
+            var budget = await budgetRepository.GetBudget(parameter.BudgetId, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.BudgetId} not found");
 
             if (!BudgetType.Types.Single(type => type.Id == budget.BudgetType).IsTransferable)
             {
                 throw new OperationErrorException(ErrorCodes.UnknownError, $"Budget with id {parameter.BudgetId} can not be transferred");
             }
 
-            var user = await userRepository.GetUser(parameter.UserId, cancellationToken);
-            if (user == null)
-            {
-                throw new OperationErrorException(ErrorCodes.UserNotFound, $"User with id {parameter.UserId} not found");
-            }
+            var user = await userRepository.GetUser(parameter.UserId, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.UserNotFound, $"User with id {parameter.UserId} not found");
 
             budget.UserId = parameter.UserId;
 

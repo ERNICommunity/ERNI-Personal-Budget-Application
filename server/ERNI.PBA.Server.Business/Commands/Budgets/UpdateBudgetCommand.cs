@@ -16,11 +16,7 @@ public class UpdateBudgetCommand(
 {
     protected override async Task Execute(UpdateBudgetRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {
-        var budget = await budgetRepository.GetBudget(parameter.Id, cancellationToken);
-        if (budget == null)
-        {
-            throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.Id} not found");
-        }
+        var budget = await budgetRepository.GetBudget(parameter.Id, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter.Id} not found");
 
         budget.Amount = parameter.Amount;
 

@@ -16,11 +16,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
     {
         protected override async Task<SingleBudgetOutputModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var budget = await budgetRepository.GetBudget(parameter, cancellationToken);
-            if (budget == null)
-            {
-                throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter} not found");
-            }
+            var budget = await budgetRepository.GetBudget(parameter, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.BudgetNotFound, $"Budget with id {parameter} not found");
 
             var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();

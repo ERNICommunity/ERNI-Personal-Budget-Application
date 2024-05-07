@@ -21,11 +21,7 @@ public class GetInvoiceImagesQuery(
 {
     protected override async Task<IEnumerable<ImageOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {
-        var request = await requestRepository.GetRequest(parameter, cancellationToken);
-        if (request == null)
-        {
-            throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
-        }
+        var request = await requestRepository.GetRequest(parameter, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
 
         var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
                    ?? throw AppExceptions.AuthorizationException();

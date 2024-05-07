@@ -25,11 +25,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
         {
             var userId = principal.GetId();
 
-            var request = await requestRepository.GetRequest(parameter.Id, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
-            }
+            var request = await requestRepository.GetRequest(parameter.Id, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
 
             if (request.State != RequestState.Pending)
             {
