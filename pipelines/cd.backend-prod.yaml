@@ -1,0 +1,75 @@
+name: PBA BE PROD CD $(date:yyyyMMdd).$(BuildID)
+resources:
+  - repo: self
+    clean: true
+
+trigger: none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  majorVersion: 1
+  minorVersion: 0
+
+steps:
+  - task: NuGetToolInstaller@1
+    displayName: "Install latest nuget"
+    inputs:
+      checkLatest: true
+
+  - task: UseDotNet@2
+    displayName: "Use .NET SDK"
+    inputs:
+      useGlobalJson: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Install 'reportgenerator' global tool
+    inputs:
+      command: "custom"
+      custom: "tool"
+      arguments: "install --global dotnet-reportgenerator-globaltool"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Run tests and collect coverage"
+    inputs:
+      command: "test"
+      # Include integration tests in the future
+      projects: 'server/**/*UnitTest*.csproj'
+      publishWebProjects: false
+      arguments: '--collect:"XPlat Code Coverage" --settings ./coverletArgs.runsettings'
+      zipAfterPublish: false
+      modifyOutputPath: false
+      workingDirectory: "./server"
+
+  - task: PowerShell@2
+    displayName: "Merge coverage reports"
+    inputs:
+      targetType: inline
+      pwsh: true
+      script: reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Agent.TempDirectory)/coveragereport -reporttypes:Cobertura
+
+  - task: PublishCodeCoverageResults@1
+    displayName: "Publish code coverage"
+    inputs:
+      codeCoverageTool: "Cobertura"
+      summaryFileLocation: "$(Agent.TempDirectory)/coveragereport/Cobertura.xml"
+      failIfCoverageEmpty: true
+
+  - task: DotNetCoreCLI@2
+    displayName: "Publish"
+    inputs:
+      command: "publish"
+      publishWebProjects: false
+      arguments: "-r linux-x64 -c Release -o ./publish --self-contained ./ERNI.PBA.Server.Host/ERNI.PBA.Server.Host.csproj"
+      zipAfterPublish: false
+      modifyOutputPath: false
+      workingDirectory: "./server"
+
+  - task: AzureRmWebAppDeployment@4
+    inputs:
+      ConnectionType: "AzureRM"
+      azureSubscription: "$(Subscription)"
+      appType: "webAppLinux"
+      WebAppName: "$(WebAppName)"
+      packageForLinux: "./server/publish"
