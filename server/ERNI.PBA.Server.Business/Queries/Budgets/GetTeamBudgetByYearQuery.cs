@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,7 +50,7 @@ namespace ERNI.PBA.Server.Business.Queries.Budgets
                 })
             };
 
-            return new[] { model };
+            return [model];
         }
     }
 }

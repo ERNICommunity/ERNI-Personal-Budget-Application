@@ -30,7 +30,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 
             return new TeamRequestModel
             {
-                Transactions = _.Transactions.Select(t =>
+                Transactions = [.. _.Transactions.Select(t =>
                     new TeamRequestModel.TransactionModel
                     {
                         FirstName = t.Budget.User.FirstName,
@@ -39,7 +39,7 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                         Amount = t.Amount,
                         EmployeeId = t.Budget.UserId
                     }
-                ).OrderBy(u => u.LastName).ThenBy(u => u.FirstName).ToArray(),
+                ).OrderBy(u => u.LastName).ThenBy(u => u.FirstName)],
                 Id = _.Id,
                 TotalAmount = _.Amount,
                 Title = _.Title,

@@ -81,7 +81,7 @@ namespace ERNI.PBA.Server.Host.Controllers
             var getRequestsModel = new GetRequestsModel
             {
                 Year = year,
-                RequestStates = new[] { requestState },
+                RequestStates = [requestState],
                 BudgetTypeId = budgetTypeId
             };
 

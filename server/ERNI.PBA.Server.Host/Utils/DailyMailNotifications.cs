@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,42 +9,41 @@ using ERNI.PBA.Server.Host.Services;
 using Microsoft.Extensions.Configuration;
 using Quartz;
 
-namespace ERNI.PBA.Server.Host.Utils
+namespace ERNI.PBA.Server.Host.Utils;
+
+[DisallowConcurrentExecution]
+public class DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration) : IJob
 {
-    [DisallowConcurrentExecution]
-    public class DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration) : IJob
+    private readonly MailService _mailService = new MailService(configuration);
+    private readonly string[] _notificationEmails =
+            (configuration["NotificationEmails"] ??
+             throw new InvalidOperationException("Missing 'NotificationEmails' configuration")).Split(";");
+
+    public async Task Execute(IJobExecutionContext context) =>
+        await SendNotificationsToAdmins(context.CancellationToken);
+
+    private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
     {
-        private readonly MailService _mailService = new MailService(configuration);
-        private readonly string[] _notificationEmails =
-                (configuration["NotificationEmails"] ??
-                 throw new InvalidOperationException("Missing 'NotificationEmails' configuration")).Split(";");
+        var pendingRequests = await requestRepository.GetRequests(
+            _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
 
-        public async Task Execute(IJobExecutionContext context) =>
-            await SendNotificationsToAdmins(context.CancellationToken);
-
-        private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
+        if (pendingRequests.Length == 0)
         {
-            var pendingRequests = await requestRepository.GetRequests(
-                _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
+            return;
+        }
 
-            if (pendingRequests.Length == 0)
+        foreach (var mail in _notificationEmails)
+        {
+            var msg = new StringBuilder("You have new requests to handle");
+            msg.AppendLine();
+            msg.AppendLine();
+
+            foreach (var request in pendingRequests)
             {
-                return;
+                msg.AppendLine(CultureInfo.InvariantCulture, $"   {request}");
             }
 
-            foreach (var mail in _notificationEmails)
-            {
-                var msg = new StringBuilder("You have new requests to handle");
-                msg.AppendLine();
-                msg.AppendLine();
-
-                foreach (var request in pendingRequests)
-                {
-                    msg.AppendLine(CultureInfo.InvariantCulture, $"   {request}");
-                }
-
-                _mailService.SendMail(msg.ToString(), mail);
-            }
+            _mailService.SendMail(msg.ToString(), mail);
         }
     }
 }

@@ -20,7 +20,7 @@ public class SyncUserObjectIdCommand(GraphFacade graphFacade, IUserRepository us
 
         foreach (var u in adUsers)
         {
-            if (string.IsNullOrEmpty(u.UserPrincipalName))
+            if (string.IsNullOrEmpty(u.UserPrincipalName) || string.IsNullOrEmpty(u.Id))
             {
                 continue;
             }

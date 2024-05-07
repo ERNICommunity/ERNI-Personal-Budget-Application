@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace ERNI.PBA.Server.Host.Auth
+﻿namespace ERNI.PBA.Server.Host.Auth
 {
     public static class ScopeRequirementExtensions
     {

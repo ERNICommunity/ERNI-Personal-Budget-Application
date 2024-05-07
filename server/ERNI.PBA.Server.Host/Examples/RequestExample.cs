@@ -8,8 +8,7 @@ namespace ERNI.PBA.Server.Host.Examples
     {
         public RequestModel[] GetExamples()
         {
-            return new[]
-            {
+            return [
                 new RequestModel
                 {
                     Id = 1,
@@ -36,7 +35,7 @@ namespace ERNI.PBA.Server.Host.Examples
                         LastName = "Gruber"
                     },
                 },
-            };
+            ];
         }
     }
 }

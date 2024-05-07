@@ -47,8 +47,10 @@ namespace ERNI.PBA.Server.IntegrationTests.Utils
                 }
                 catch (Exception ex)
                 {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                     logger.LogError(ex, "An error occurred seeding the " +
                                         "database with test messages. Error: {Message}", ex.Message);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
                     throw;
                 }
             });
