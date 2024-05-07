@@ -11,12 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
-    public class InvoiceImageController : Controller
+    public class InvoiceImageController(IDownloadTokenManager downloadTokenManager) : Controller
     {
-        private readonly IDownloadTokenManager _downloadTokenManager;
-
-        public InvoiceImageController(IDownloadTokenManager downloadTokenManager) => _downloadTokenManager = downloadTokenManager;
-
         [HttpGet("images/{requestId}")]
         [Authorize]
         public async Task<IActionResult> GetInvoiceImages(int requestId, [FromServices] IGetInvoiceImagesQuery query, CancellationToken cancellationToken)
@@ -36,7 +32,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("image/{token}/{imageId}")]
         public async Task<IActionResult> GetInvoiceImageFile(Guid token, int imageId, [FromServices] GetInvoiceImageFileQuery query, CancellationToken cancellationToken)
         {
-            if (!_downloadTokenManager.ValidateToken(token, DownloadTokenCategory.Invoice))
+            if (!downloadTokenManager.ValidateToken(token, DownloadTokenCategory.Invoice))
             {
                 throw new InvalidOperationException("Invalid download token");
             }

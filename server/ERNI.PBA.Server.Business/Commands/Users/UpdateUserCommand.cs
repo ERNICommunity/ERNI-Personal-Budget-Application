@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
@@ -11,25 +10,16 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class UpdateUserCommand : Command<UpdateUserCommand.UpdateUserModel>
+    public class UpdateUserCommand(
+        IUserRepository userRepository,
+        IUnitOfWork unitOfWork,
+        ILogger<UpdateUserCommand> logger) : Command<UpdateUserCommand.UpdateUserModel>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
-
-        public UpdateUserCommand(
-            IUserRepository userRepository,
-            IUnitOfWork unitOfWork,
-            ILogger<UpdateUserCommand> logger)
-        {
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
-            _logger = logger;
-        }
+        private readonly ILogger _logger = logger;
 
         protected override async Task Execute(UpdateUserModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(parameter.Id, cancellationToken);
+            var user = await userRepository.GetUser(parameter.Id, cancellationToken);
 
             if (user == null)
             {
@@ -42,7 +32,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
             user.LastName = parameter.LastName;
             user.Username = parameter.Email;
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
 
         public class UpdateUserModel

@@ -9,29 +9,20 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetBudgetLeftQuery : Query<GetBudgetLeftQuery.UserModel[]>
+    public class GetBudgetLeftQuery(
+        IBudgetRepository budgetRepository,
+        IUserRepository userRepository) : Query<GetBudgetLeftQuery.UserModel[]>
     {
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly IUserRepository _userRepository;
-
-        public GetBudgetLeftQuery(
-            IBudgetRepository budgetRepository,
-            IUserRepository userRepository)
-        {
-            _budgetRepository = budgetRepository;
-            _userRepository = userRepository;
-        }
-
         protected override async Task<UserModel[]> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var year = DateTime.Now.Year;
 
-            var budgetAmount = (await _budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
+            var budgetAmount = (await budgetRepository.GetTotalAmountsByYear(year, cancellationToken))
                 .ToDictionary(_ => _.BudgetId, _ => _.Amount);
 
-            var budgets = await _budgetRepository.GetBudgets(year, BudgetTypeEnum.PersonalBudget, cancellationToken);
+            var budgets = await budgetRepository.GetBudgets(year, BudgetTypeEnum.PersonalBudget, cancellationToken);
 
-            var users = (await _userRepository.GetAllUsers(cancellationToken))
+            var users = (await userRepository.GetAllUsers(cancellationToken))
                 .ToDictionary(_ => _.Id);
 
             return budgets

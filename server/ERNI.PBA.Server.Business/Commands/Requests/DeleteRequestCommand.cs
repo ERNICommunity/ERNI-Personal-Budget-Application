@@ -10,47 +10,31 @@ using ERNI.PBA.Server.Domain.Interfaces.Commands.Requests;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Security;
 
-namespace ERNI.PBA.Server.Business.Commands.Requests
+namespace ERNI.PBA.Server.Business.Commands.Requests;
+
+public class DeleteRequestCommand(
+    IRequestRepository requestRepository,
+    IUserRepository userRepository,
+    IUnitOfWork unitOfWork) : Command<int>, IDeleteRequestCommand
 {
-    public class DeleteRequestCommand : Command<int>, IDeleteRequestCommand
+    protected override async Task Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {
-        private readonly IRequestRepository _requestRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        var request = await requestRepository.GetRequest(parameter, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
 
-        public DeleteRequestCommand(
-            IRequestRepository requestRepository,
-            IUserRepository userRepository,
-            IUnitOfWork unitOfWork)
+        var user = await userRepository.GetUser(principal.GetId(), cancellationToken);
+
+        if (!principal.IsInRole(Roles.Admin) && user?.Id != request.UserId)
         {
-            _requestRepository = requestRepository;
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
+            throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
         }
 
-        protected override async Task Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        if (request.State == RequestState.Approved)
         {
-            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
-            }
-
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-
-            if (!principal.IsInRole(Roles.Admin) && user?.Id != request.UserId)
-            {
-                throw new OperationErrorException(ErrorCodes.AccessDenied, "Access denied");
-            }
-
-            if (request.State == RequestState.Approved)
-            {
-                throw new OperationErrorException(ErrorCodes.CannotDeleteCompletedRequest, "Cannot delete approved request");
-            }
-
-            await _requestRepository.DeleteRequest(request);
-
-            await _unitOfWork.SaveChanges(cancellationToken);
+            throw new OperationErrorException(ErrorCodes.CannotDeleteCompletedRequest, "Cannot delete approved request");
         }
+
+        await requestRepository.DeleteRequest(request);
+
+        await unitOfWork.SaveChanges(cancellationToken);
     }
 }

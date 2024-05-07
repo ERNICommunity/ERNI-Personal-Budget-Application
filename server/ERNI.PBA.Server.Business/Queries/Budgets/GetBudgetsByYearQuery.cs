@@ -11,15 +11,11 @@ using ERNI.PBA.Server.Domain.Models.Responses.Budgets;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetBudgetsByYearQuery : Query<int, IEnumerable<SingleBudgetOutputModel>>, IGetBudgetsByYearQuery
+    public class GetBudgetsByYearQuery(IBudgetRepository budgetRepository) : Query<int, IEnumerable<SingleBudgetOutputModel>>, IGetBudgetsByYearQuery
     {
-        private readonly IBudgetRepository _budgetRepository;
-
-        public GetBudgetsByYearQuery(IBudgetRepository budgetRepository) => _budgetRepository = budgetRepository;
-
         protected override async Task<IEnumerable<SingleBudgetOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var budgets = await _budgetRepository.GetBudgetsByYear(parameter, cancellationToken);
+            var budgets = await budgetRepository.GetBudgetsByYear(parameter, cancellationToken);
 
             return budgets.Select(_ => new SingleBudgetOutputModel
             {

@@ -5,6 +5,7 @@ using ERNI.PBA.Server.Domain.Interfaces.Infrastructure;
 
 namespace ERNI.PBA.Server.Business.Infrastructure
 {
+#pragma warning disable CA1724 // Type names should not match namespaces
     public abstract class Query<T, TResult> : IQuery<T, TResult>
     {
         protected abstract Task<TResult> Execute(T parameter, ClaimsPrincipal principal,
@@ -22,3 +23,4 @@ namespace ERNI.PBA.Server.Business.Infrastructure
             await Execute(principal, cancellationToken);
     }
 }
+#pragma warning restore CA1724 // Type names should not match namespaces

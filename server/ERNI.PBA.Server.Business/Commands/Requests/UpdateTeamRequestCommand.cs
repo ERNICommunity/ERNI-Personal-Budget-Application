@@ -15,41 +15,24 @@ using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Business.Commands.Requests
 {
-    public class UpdateTeamRequestCommand : Command<UpdateRequestModel>, IUpdateTeamRequestCommand
+    public class UpdateTeamRequestCommand(
+        IUserRepository userRepository,
+        IRequestRepository requestRepository,
+        IBudgetRepository budgetRepository,
+        IUnitOfWork unitOfWork) : Command<UpdateRequestModel>, IUpdateTeamRequestCommand
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRequestRepository _requestRepository;
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public UpdateTeamRequestCommand(
-            IUserRepository userRepository,
-            IRequestRepository requestRepository,
-            IBudgetRepository budgetRepository,
-            IUnitOfWork unitOfWork)
-        {
-            _userRepository = userRepository;
-            _requestRepository = requestRepository;
-            _budgetRepository = budgetRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         protected override async Task Execute(UpdateRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
 
-            var request = await _requestRepository.GetRequest(parameter.Id, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
-            }
+            var request = await requestRepository.GetRequest(parameter.Id, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, $"Request with id {parameter.Id} not found.");
 
             if (request.State != RequestState.Pending)
             {
                 throw new OperationErrorException(ErrorCodes.CannotUpdateRequest, "Only pending requests can be updated.");
             }
 
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+            var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
 
             if (user.Id != request.UserId)
@@ -57,7 +40,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
             }
 
-            var teamBudgets = await _budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
+            var teamBudgets = await budgetRepository.GetTeamBudgets(userId, DateTime.Now.Year, cancellationToken);
             if (teamBudgets.Any(x => x.BudgetType != BudgetTypeEnum.TeamBudget))
             {
                 throw new OperationErrorException(ErrorCodes.AccessDenied, "No Access for request!");
@@ -74,9 +57,9 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
             var transactions = TransactionCalculator.Create(budgets, parameter.Amount);
             request.Title = parameter.Title;
             request.Amount = parameter.Amount;
-            await _requestRepository.AddOrUpdateTransactions(request.Id, transactions);
+            await requestRepository.AddOrUpdateTransactions(request.Id, transactions);
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
     }
 }

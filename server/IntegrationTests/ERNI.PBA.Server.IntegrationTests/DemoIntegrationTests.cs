@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Models;
 using ERNI.PBA.Server.Host;
@@ -12,7 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ERNI.PBA.Server.IntegrationTests
 {
     [TestClass]
-    public class DemoIntegrationTests
+    public sealed class DemoIntegrationTests : IDisposable
     {
         private readonly CustomWebApplicationFactory<Startup> _factory;
 
@@ -31,7 +32,7 @@ namespace ERNI.PBA.Server.IntegrationTests
                 });
             }).CreateClient(new WebApplicationFactoryClientOptions());
 
-            var response = await client.GetAsync("/api/budget/types");
+            var response = await client.GetAsync(new Uri("/api/budget/types"));
 
             var result = await response.Deserialize<BudgetType[]>();
 
@@ -46,9 +47,11 @@ namespace ERNI.PBA.Server.IntegrationTests
             using var client = _factory.CreateClient(
                 new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
-            var response = await client.GetAsync("/api/version");
+            var response = await client.GetAsync(new Uri("/api/version"));
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
+
+        public void Dispose() => _factory.Dispose();
     }
 }

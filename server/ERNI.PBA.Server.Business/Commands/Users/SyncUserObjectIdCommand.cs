@@ -5,50 +5,32 @@ using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Graph;
-using Microsoft.Extensions.Configuration;
 
-namespace ERNI.PBA.Server.Business.Commands.Users
+namespace ERNI.PBA.Server.Business.Commands.Users;
+
+public class SyncUserObjectIdCommand(GraphFacade graphFacade, IUserRepository userRepository, IUnitOfWork unitOfWork)
 {
-    public class SyncUserObjectIdCommand
+    public async Task Execute()
     {
-        private readonly IConfiguration _configuration;
-        private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        var dbUsers = await userRepository.GetAllUsers(CancellationToken.None);
 
-        public SyncUserObjectIdCommand(IConfiguration configuration, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        var adUsers = await graphFacade.GetUsers(CancellationToken.None);
+
+        var userDict = dbUsers.ToDictionary(_ => _.Username.ToUpperInvariant());
+
+        foreach (var u in adUsers)
         {
-            _configuration = configuration;
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
-        }
-
-        public async Task Execute()
-        {
-            var config = new GraphConfiguration(
-                _configuration["Graph:ClientId"],
-                _configuration["Graph:TenantId"],
-                _configuration["Graph:ClientSecret"]);
-
-
-            var dbUsers = await _userRepository.GetAllUsers(CancellationToken.None);
-
-
-
-            var f = new GraphFacade(config);
-
-            var adUsers = await f.GetUsers();
-
-            var userDict = dbUsers.ToDictionary(_ => _.Username.ToUpperInvariant());
-
-            foreach (var u in adUsers)
+            if (string.IsNullOrEmpty(u.UserPrincipalName) || string.IsNullOrEmpty(u.Id))
             {
-                if (userDict.TryGetValue(u.UserPrincipalName.ToUpperInvariant(), out var dbUser) && dbUser.ObjectId != Guid.Parse(u.Id))
-                {
-                    dbUser.ObjectId = Guid.Parse(u.Id);
-                }
+                continue;
             }
 
-            await _unitOfWork.SaveChanges(CancellationToken.None);
+            if (userDict.TryGetValue(u.UserPrincipalName.ToUpperInvariant(), out var dbUser) && dbUser.ObjectId != Guid.Parse(u.Id))
+            {
+                dbUser.ObjectId = Guid.Parse(u.Id);
+            }
         }
+
+        await unitOfWork.SaveChanges(CancellationToken.None);
     }
 }

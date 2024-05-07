@@ -3,56 +3,43 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Business.Infrastructure;
-using ERNI.PBA.Server.Business.Queries.Requests;
 using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
-using Microsoft.Extensions.Logging;
 
-namespace ERNI.PBA.Server.Business.Queries
+namespace ERNI.PBA.Server.Business.Queries;
+
+public class GetStatisticsQuery(
+    IBudgetRepository budgetRepository) : Query<int, GetStatisticsQuery.StatisticsModel>
 {
-    public class GetStatisticsQuery : Query<int, GetStatisticsQuery.StatisticsModel>
+    protected override async Task<StatisticsModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly ILogger _logger;
+        var stats = await budgetRepository.GetBudgetStats(parameter);
 
-        public GetStatisticsQuery(
-            IBudgetRepository budgetRepository,
-            ILogger<GetRequestQuery> logger)
+        return new StatisticsModel
         {
-            _budgetRepository = budgetRepository;
-            _logger = logger;
-        }
-
-        protected override async Task<StatisticsModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
-        {
-            var stats = await _budgetRepository.GetBudgetStats(parameter);
-
-            return new StatisticsModel
+            Budgets = stats.Select(_ => new BudgetStatisticsModel
             {
-                Budgets = stats.Select(_ => new BudgetStatisticsModel
-                {
-                    BudgetType = _.type,
-                    BudgetCount = _.count,
-                    TotalAmount = _.total,
-                    TotalSpentAmount = _.totalSpent,
-                }).ToArray(),
-            };
-        }
+                BudgetType = _.type,
+                BudgetCount = _.count,
+                TotalAmount = _.total,
+                TotalSpentAmount = _.totalSpent,
+            }).ToArray(),
+        };
+    }
 
-        public class BudgetStatisticsModel
-        {
-            public BudgetTypeEnum BudgetType { get; init; }
+    public class BudgetStatisticsModel
+    {
+        public BudgetTypeEnum BudgetType { get; init; }
 
-            public int BudgetCount { get; init; }
+        public int BudgetCount { get; init; }
 
-            public decimal TotalAmount { get; init; }
+        public decimal TotalAmount { get; init; }
 
-            public decimal TotalSpentAmount { get; init; }
-        }
+        public decimal TotalSpentAmount { get; init; }
+    }
 
-        public class StatisticsModel
-        {
-            public BudgetStatisticsModel[] Budgets { get; init; } = null!;
-        }
+    public class StatisticsModel
+    {
+        public BudgetStatisticsModel[] Budgets { get; init; } = null!;
     }
 }

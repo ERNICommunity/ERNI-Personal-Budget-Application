@@ -4,12 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERNI.PBA.Server.DataAccess
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext(DbContextOptions options) : DbContext(options)
     {
-        public DatabaseContext(DbContextOptions options) : base(options)
-        {
-        }
-
         public DbSet<Budget> Budgets => Set<Budget>();
 
         public DbSet<RequestCategory> RequestCategories => Set<RequestCategory>();

@@ -1,46 +1,35 @@
 ﻿using Microsoft.Graph;
-using Microsoft.Graph.Auth;
-using Microsoft.Identity.Client;
+using Microsoft.Graph.Models;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ERNI.PBA.Server.Graph
 {
-    public class GraphFacade
+    public class GraphFacade(GraphServiceClient graphClient)
     {
-        private readonly GraphServiceClient _graphClient;
-
-        public GraphFacade(GraphConfiguration config)
-        {
-            var confidentialClientApplication = ConfidentialClientApplicationBuilder
-                .Create(config.ClientId)
-                .WithTenantId(config.TenantId)
-                .WithClientSecret(config.ClientSecret)
-                .Build();
-
-            var authProvider = new ClientCredentialProvider(confidentialClientApplication);
-
-            _graphClient = new GraphServiceClient(authProvider);
-        }
-
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<IEnumerable<User>> GetUsers(CancellationToken cancellationToken)
         {
             var allUsers = new List<User>();
 
-            var users = await _graphClient.Users.Request().Filter("country eq 'Slovakia'").GetAsync();
+            var usersResponse = await graphClient.Users
+                .GetAsync(_ => _.QueryParameters.Filter = "country eq 'Slovakia'", cancellationToken);
 
-            while (users.Count > 0)
+            if (usersResponse is null)
             {
-                allUsers.AddRange(users);
-                if (users.NextPageRequest != null)
-                {
-                    users = await users.NextPageRequest.GetAsync();
-                }
-                else
-                {
-                    break;
-                }
+                return allUsers;
             }
+
+            var pageIterator = PageIterator<User, UserCollectionResponse>.CreatePageIterator(
+            graphClient,
+            usersResponse,
+            user =>
+            {
+                allUsers.Add(user);
+                return true;
+            });
+
+            await pageIterator.IterateAsync(cancellationToken);
 
             return allUsers;
         }

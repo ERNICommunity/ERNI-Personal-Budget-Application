@@ -16,31 +16,14 @@ namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class RequestController : Controller
+    public class RequestController(
+        Lazy<IGetRequestsQuery> getRequestsQuery,
+        Lazy<ISetRequestStateCommand> approveRequestCommand,
+        Lazy<IAddMassRequestCommand> addMassRequestCommand,
+        Lazy<IUpdateRequestCommand> updateRequestCommand,
+        Lazy<IUpdateTeamRequestCommand> updateTeamRequestCommand,
+        Lazy<IDeleteRequestCommand> deleteRequestCommand) : Controller
     {
-        private readonly Lazy<IGetRequestsQuery> _getRequestsQuery;
-        private readonly Lazy<ISetRequestStateCommand> _setRequestStateCommand;
-        private readonly Lazy<IAddMassRequestCommand> _addMassRequestCommand;
-        private readonly Lazy<IUpdateRequestCommand> _updateRequestCommand;
-        private readonly Lazy<IUpdateTeamRequestCommand> _updateTeamRequestCommand;
-        private readonly Lazy<IDeleteRequestCommand> _deleteRequestCommand;
-
-        public RequestController(
-            Lazy<IGetRequestsQuery> getRequestsQuery,
-            Lazy<ISetRequestStateCommand> approveRequestCommand,
-            Lazy<IAddMassRequestCommand> addMassRequestCommand,
-            Lazy<IUpdateRequestCommand> updateRequestCommand,
-            Lazy<IUpdateTeamRequestCommand> updateTeamRequestCommand,
-            Lazy<IDeleteRequestCommand> deleteRequestCommand)
-        {
-            _getRequestsQuery = getRequestsQuery;
-            _setRequestStateCommand = approveRequestCommand;
-            _addMassRequestCommand = addMassRequestCommand;
-            _updateRequestCommand = updateRequestCommand;
-            _updateTeamRequestCommand = updateTeamRequestCommand;
-            _deleteRequestCommand = deleteRequestCommand;
-        }
-
         [HttpGet("{id}")]
 #pragma warning disable CA1721 // Property names should not match get methods
         public async Task<IActionResult> GetRequest([FromServices] IGetRequestQuery query, int id, CancellationToken cancellationToken)
@@ -55,7 +38,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> ApproveRequest(int id, CancellationToken cancellationToken)
         {
-            await _setRequestStateCommand.Value.ExecuteAsync((id, RequestState.Approved), HttpContext.User, cancellationToken);
+            await approveRequestCommand.Value.ExecuteAsync((id, RequestState.Approved), HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -64,7 +47,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> RejectRequest(int id, CancellationToken cancellationToken)
         {
-            await _setRequestStateCommand.Value.ExecuteAsync((id, RequestState.Rejected), HttpContext.User, cancellationToken);
+            await approveRequestCommand.Value.ExecuteAsync((id, RequestState.Rejected), HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -86,7 +69,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> AddMassRequest([FromBody] MassRequestModel payload, CancellationToken cancellationToken)
         {
-            await _addMassRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await addMassRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -98,17 +81,17 @@ namespace ERNI.PBA.Server.Host.Controllers
             var getRequestsModel = new GetRequestsModel
             {
                 Year = year,
-                RequestStates = new[] { requestState },
+                RequestStates = [requestState],
                 BudgetTypeId = budgetTypeId
             };
 
-            return await _getRequestsQuery.Value.ExecuteAsync(getRequestsModel, HttpContext.User, cancellationToken);
+            return await getRequestsQuery.Value.ExecuteAsync(getRequestsModel, HttpContext.User, cancellationToken);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
-            await _updateRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await updateRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -116,7 +99,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpPut("team")]
         public async Task<IActionResult> UpdateTeamRequest([FromBody] UpdateRequestModel payload, CancellationToken cancellationToken)
         {
-            await _updateTeamRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await updateTeamRequestCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -124,7 +107,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(int id, CancellationToken cancellationToken)
         {
-            await _deleteRequestCommand.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
+            await deleteRequestCommand.Value.ExecuteAsync(id, HttpContext.User, cancellationToken);
 
             return Ok();
         }

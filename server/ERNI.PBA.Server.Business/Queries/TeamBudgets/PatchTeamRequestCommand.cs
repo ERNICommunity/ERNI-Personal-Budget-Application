@@ -14,33 +14,20 @@ using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 {
-    public class PatchTeamRequestCommand : Command<(int RequestId, PatchTeamRequestCommand.PatchTeamRequestModel Payload)>
+    public class PatchTeamRequestCommand(
+        IUserRepository userRepository,
+        ITeamBudgetFacade teamBudgetFacade,
+        IRequestRepository requestRepository,
+        IUnitOfWork unitOfWork) : Command<(int RequestId, PatchTeamRequestCommand.PatchTeamRequestModel Payload)>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ITeamBudgetFacade _teamBudgetFacade;
-        private readonly IRequestRepository _requestRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public PatchTeamRequestCommand(
-            IUserRepository userRepository,
-            ITeamBudgetFacade teamBudgetFacade,
-            IRequestRepository requestRepository,
-            IUnitOfWork unitOfWork)
-        {
-            _userRepository = userRepository;
-            _teamBudgetFacade = teamBudgetFacade;
-            _requestRepository = requestRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         protected override async Task Execute((int RequestId, PatchTeamRequestModel Payload) parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
 
-            var user = await _userRepository.GetUser(userId, cancellationToken)
+            var user = await userRepository.GetUser(userId, cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
 
-            var request = await _requestRepository.GetRequest(parameter.RequestId, cancellationToken)
+            var request = await requestRepository.GetRequest(parameter.RequestId, cancellationToken)
                           ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
 
             if (!principal.IsInRole(Roles.Admin))
@@ -56,11 +43,11 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             }
 
             var allBudgets =
-                await _teamBudgetFacade.GetTeamBudgets(user.Id, DateTime.Now.Year, cancellationToken);
+                await teamBudgetFacade.GetTeamBudgets(user.Id, DateTime.Now.Year, cancellationToken);
             var dict = allBudgets.ToDictionary(_ => _.Employee.Id);
             var unknownUsers = parameter.Payload.Employees.Where(id => !dict.ContainsKey(id)).ToList();
 
-            if (unknownUsers.Any())
+            if (unknownUsers.Count != 0)
             {
                 throw new OperationErrorException(ErrorCodes.ValidationError, $"Employees not found: {string.Join(",", unknownUsers)}");
             }
@@ -84,9 +71,9 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             request.Title = parameter.Payload.Title;
             request.Amount = parameter.Payload.Amount;
 
-            await _requestRepository.AddOrUpdateTransactions(parameter.RequestId, transactions);
+            await requestRepository.AddOrUpdateTransactions(parameter.RequestId, transactions);
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
 
         public class PatchTeamRequestModel

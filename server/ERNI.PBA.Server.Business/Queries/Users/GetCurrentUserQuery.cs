@@ -11,15 +11,11 @@ using ERNI.PBA.Server.Domain.Models.Responses;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetCurrentUserQuery : Query<UserModel>, IGetCurrentUserQuery
+    public class GetCurrentUserQuery(IUserRepository userRepository) : Query<UserModel>, IGetCurrentUserQuery
     {
-        private readonly IUserRepository _userRepository;
-
-        public GetCurrentUserQuery(IUserRepository userRepository) => _userRepository = userRepository;
-
         protected override async Task<UserModel> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+            var user = await userRepository.GetUser(principal.GetId(), cancellationToken);
             return user != null ? user.ToModel() : throw AppExceptions.AuthorizationException();
         }
     }

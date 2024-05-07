@@ -8,32 +8,15 @@ using ERNI.PBA.Server.Domain;
 
 namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
-    public class GetInvoiceImageFileQuery : Query<int, GetInvoiceImageFileQuery.InvoiceModel>
+    public class GetInvoiceImageFileQuery(
+        IInvoiceImageRepository invoiceImageRepository,
+        IRequestRepository requestRepository) : Query<int, GetInvoiceImageFileQuery.InvoiceModel>
     {
-        private readonly IInvoiceImageRepository _invoiceImageRepository;
-        private readonly IRequestRepository _requestRepository;
-
-        public GetInvoiceImageFileQuery(
-            IInvoiceImageRepository invoiceImageRepository,
-            IRequestRepository requestRepository)
-        {
-            _invoiceImageRepository = invoiceImageRepository;
-            _requestRepository = requestRepository;
-        }
-
         protected override async Task<InvoiceModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var image = await _invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken);
-            if (image == null)
-            {
-                throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
-            }
+            var image = await invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
 
-            var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
-            }
+            var request = await requestRepository.GetRequest(image.RequestId, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
 
             // var provider = new FileExtensionContentTypeProvider();
             // if (!provider.TryGetContentType(image.Name, out var contentType))
@@ -41,7 +24,7 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
             //    contentType = "application/octet-stream";
             // }
 
-            var data = await _invoiceImageRepository
+            var data = await invoiceImageRepository
                 .DownloadImageDataBlob(image.BlobPath, cancellationToken)
                 .NotNullAsync(ErrorCodes.AttachmentDataNotFound, "Unable to load the specified attachment data");
 

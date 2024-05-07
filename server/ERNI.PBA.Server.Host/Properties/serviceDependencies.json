@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "azureBlobStorage": {
+      "type": "storage",
+      "connectionId": "Storage:ConnectionString",
+      "dynamicId": null
+    }
+  }
+}

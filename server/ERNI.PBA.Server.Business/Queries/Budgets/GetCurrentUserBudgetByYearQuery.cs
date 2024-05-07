@@ -16,34 +16,25 @@ using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetCurrentUserBudgetByYearQuery : Query<int, IEnumerable<BudgetOutputModel>>, IGetCurrentUserBudgetByYearQuery
+    public class GetCurrentUserBudgetByYearQuery(IBudgetRepository budgetRepository, IUserRepository userRepository) : Query<int, IEnumerable<BudgetOutputModel>>, IGetCurrentUserBudgetByYearQuery
     {
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly IUserRepository _userRepository;
-
-        public GetCurrentUserBudgetByYearQuery(IBudgetRepository budgetRepository, IUserRepository userRepository)
-        {
-            _budgetRepository = budgetRepository;
-            _userRepository = userRepository;
-        }
-
         protected override async Task<IEnumerable<BudgetOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+            var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
 
             IEnumerable<Budget> budgets;
 
             if (principal.IsInRole(Roles.CommunityLeader))
             {
-                budgets = await _budgetRepository.GetBudgets(user.Id, parameter, new[] { BudgetTypeEnum.TeamBudget, BudgetTypeEnum.CommunityBudget }, cancellationToken);
+                budgets = await budgetRepository.GetBudgets(user.Id, parameter, [BudgetTypeEnum.TeamBudget, BudgetTypeEnum.CommunityBudget], cancellationToken);
 
-                budgets = budgets.Concat(await _budgetRepository.GetBudgets(parameter, BudgetTypeEnum.CommunityBudget,
+                budgets = budgets.Concat(await budgetRepository.GetBudgets(parameter, BudgetTypeEnum.CommunityBudget,
                     cancellationToken));
             }
             else
             {
-                budgets = await _budgetRepository.GetBudgets(user.Id, parameter, cancellationToken);
+                budgets = await budgetRepository.GetBudgets(user.Id, parameter, cancellationToken);
             }
 
             return budgets.Select(budget => new BudgetOutputModel

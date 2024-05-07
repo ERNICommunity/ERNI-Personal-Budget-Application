@@ -6,6 +6,7 @@ using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using ERNI.PBA.Server.Domain.Interfaces.Export;
 using ERNI.PBA.Server.Domain.Interfaces.Services;
+using ERNI.PBA.Server.Host.Configuration;
 using ERNI.PBA.Server.Host.Filters;
 using ERNI.PBA.Server.Host.Services;
 using ERNI.PBA.Server.Host.Utils;
@@ -25,11 +26,9 @@ using Constants = ERNI.PBA.Server.Domain.Constants;
 
 namespace ERNI.PBA.Server.Host
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration) => Configuration = configuration;
-
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; } = configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -57,6 +56,11 @@ namespace ERNI.PBA.Server.Host
             services.AddQuartz(typeof(DailyMailNotifications),
                 Configuration["Crons:EmailCron"] ??
                 throw new InvalidOperationException("Missing 'Crons:EmailCron' configuration"));
+
+            services.AddSingleton(new MicrosoftGraphConfiguration(
+                Configuration["Graph:ClientId"]!,
+                Configuration["Graph:TenantId"]!,
+                Configuration["Graph:ClientSecret"]!));
 
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
             services.AddSwaggerGen(c =>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ERNI.PBA.Server.Domain.Models.Payloads
+﻿namespace ERNI.PBA.Server.Domain.Models.Payloads
 {
     public class UpdateRequestModel
     {

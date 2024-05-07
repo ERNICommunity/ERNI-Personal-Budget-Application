@@ -10,22 +10,13 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class CreateUserCommand : Command<CreateUserCommand.CreateUserModel>
+    public class CreateUserCommand(
+        IUserRepository userRepository,
+        IUnitOfWork unitOfWork) : Command<CreateUserCommand.CreateUserModel>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CreateUserCommand(
-            IUserRepository userRepository,
-            IUnitOfWork unitOfWork)
-        {
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         protected override async Task Execute(CreateUserModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var userExists = await _userRepository.ExistsAsync(parameter.Email);
+            var userExists = await userRepository.ExistsAsync(parameter.Email);
             if (userExists)
             {
                 throw new OperationErrorException(ErrorCodes.UnknownError, $"User with email '{parameter.Email}' already exists");
@@ -45,9 +36,9 @@ namespace ERNI.PBA.Server.Business.Commands.Users
                 State = parameter.State
             };
 
-            await _userRepository.AddUserAsync(user);
+            await userRepository.AddUserAsync(user);
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
 
         public class CreateUserModel
