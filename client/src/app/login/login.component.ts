@@ -1,36 +1,21 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { UserInfo } from '../model/userInfo';
-import { AuthenticationService } from '../services/authentication.service';
+import { MsalService } from '@azure/msal-angular';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'rmt-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+    selector: 'rmt-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, OnDestroy {
-  private subscription: Subscription;
+export class LoginComponent {
+    constructor(
+        private readonly msalService: MsalService,
+        private readonly router: Router
+    ) {}
 
-  constructor(private readonly auth: AuthenticationService, private readonly router: Router) { }
-
-  ngOnInit(): void {
-    this.subscription = this.auth.userInfo$.subscribe(_ => this.handleUser(_));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  async login(): Promise<void> {
-    this.auth.login();
-  }
-
-  private handleUser(userInfo: UserInfo | undefined): void {
-    if (userInfo === undefined) {
-      return;
+    async login(): Promise<void> {
+        await lastValueFrom(this.msalService.loginPopup());
+        this.router.navigate(['my-budget']);
     }
-
-    this.router.navigate(['/my-budget']);
-  }
 }

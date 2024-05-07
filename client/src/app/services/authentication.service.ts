@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { MsalService } from '@azure/msal-angular';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { lastValueFrom, Observable, ReplaySubject } from 'rxjs';
 import { UserInfo } from '../model/userInfo';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
@@ -11,7 +11,7 @@ import { ServiceHelper } from './service.helper';
 export class AuthenticationService {
     url = 'Authorization/';
 
-    public userInfo$ = new BehaviorSubject<UserInfo>(null);
+    public userInfo$ = new ReplaySubject<UserInfo>(1);
 
     constructor(
         private http: HttpClient,
@@ -36,16 +36,7 @@ export class AuthenticationService {
         );
     }
 
-    async login(): Promise<boolean> {
-        try {
-            await this.msalService.loginPopup().toPromise();
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
-
     async logout() {
-        await this.msalService.logout().toPromise();
+        await lastValueFrom(this.msalService.logoutPopup());
     }
 }

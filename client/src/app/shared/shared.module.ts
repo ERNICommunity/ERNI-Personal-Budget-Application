@@ -12,10 +12,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { StepsModule } from 'primeng/steps';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PanelModule } from 'primeng/panel';
 import { TabMenuModule } from 'primeng/tabmenu';
-import { BrowserModule } from '@angular/platform-browser';
 import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
 import { MessageService } from 'primeng/api';
@@ -37,8 +35,6 @@ import { AuthDirective } from './directives/authDirective';
         CommonModule,
         FormsModule,
         DividerModule,
-        BrowserModule,
-        BrowserAnimationsModule,
         ProgressBarModule,
         ButtonModule,
         ProgressSpinnerModule,

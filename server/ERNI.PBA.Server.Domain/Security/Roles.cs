@@ -7,5 +7,7 @@ namespace ERNI.PBA.Server.Domain.Security
         public const string Finance = "PBA.Finance";
 
         public const string Superior = "PBA.Superior";
+
+        public const string CommunityLeader = "PBA.CommunityLeader";
     }
 }

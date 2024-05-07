@@ -25,6 +25,7 @@
     <PackageReference Include="Autofac" Version="6.5.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
@@ -56,4 +57,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+	<Content Remove="Resources/carlito/Carlito-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="Resources/carlito/Carlito-Regular.ttf" />
+  </ItemGroup>
 </Project>

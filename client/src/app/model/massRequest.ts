@@ -1,7 +1,5 @@
-import { User } from './user';
-
 export class MassRequest {
     amount: number;
-    users: number[];
+    employees: number[];
     title: string;
 }

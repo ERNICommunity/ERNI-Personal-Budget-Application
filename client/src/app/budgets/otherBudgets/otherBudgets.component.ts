@@ -71,7 +71,7 @@ export class OtherBudgetsComponent implements OnInit {
         this.years$ = this.selectedBudgetType$.pipe(
             map((budgetType) =>
                 MenuHelper.getYearMenu((year) => [
-                    '/other-budgets/',
+                    '/budgets/',
                     year,
                     budgetType
                 ])
@@ -104,7 +104,7 @@ export class OtherBudgetsComponent implements OnInit {
             map(([types, year]) =>
                 types.map((type) => ({
                     label: type.name,
-                    routerLink: ['/other-budgets/', year, type.id]
+                    routerLink: ['/budgets/', year, type.id]
                 }))
             )
         );

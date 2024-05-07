@@ -59,6 +59,6 @@ export class UserListComponent implements OnInit {
     }
 
     create() {
-        this.router.navigate(['/users/create']);
+        this.router.navigate(['/employees/create']);
     }
 }

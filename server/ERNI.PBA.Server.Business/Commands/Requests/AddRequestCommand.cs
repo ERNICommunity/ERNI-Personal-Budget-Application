@@ -33,6 +33,13 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
 
         protected override async Task<int> Execute(PostRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
+            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
+
+            if (user is null)
+            {
+                throw AppExceptions.AuthorizationException();
+            }
+
             if (string.IsNullOrWhiteSpace(parameter.Title))
             {
                 throw new OperationErrorException(ErrorCodes.InvalidTitle, $"Title must not be empty");
@@ -63,9 +70,7 @@ namespace ERNI.PBA.Server.Business.Commands.Requests
                 throw new OperationErrorException(ErrorCodes.InvalidAmount, $"Requested amount {parameter.Amount} exceeds the limit.");
             }
 
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken);
-
-            if (user is null)
+            if (user.Id != budget.UserId)
             {
                 throw AppExceptions.AuthorizationException();
             }

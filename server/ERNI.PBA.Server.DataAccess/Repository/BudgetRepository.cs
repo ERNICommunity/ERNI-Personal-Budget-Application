@@ -6,6 +6,7 @@ using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 using ERNI.PBA.Server.Domain.Models.Entities;
 using System;
+using System.Linq.Expressions;
 
 namespace ERNI.PBA.Server.DataAccess.Repository
 {
@@ -24,14 +25,12 @@ namespace ERNI.PBA.Server.DataAccess.Repository
                 .ThenInclude(_ => _.Request)
                 .SingleOrDefaultAsync(_ => _.Id == budgetId, cancellationToken);
 
-        public async Task<Budget[]> GetSingleBudgets(Guid userId, int year, CancellationToken cancellationToken)
-        {
-            return await _context.Budgets
+        public async Task<Budget[]> GetBudgets(int userId, int year, BudgetTypeEnum[] excludedTypes, CancellationToken cancellationToken) =>
+            await _context.Budgets
                 .Include(_ => _.Transactions).ThenInclude(_ => _.Request)
-                .Where(_ => _.BudgetType != BudgetTypeEnum.TeamBudget)
-                .Where(_ => _.User.ObjectId == userId && _.Year == year)
+                .Where(_ => !excludedTypes.Contains(_.BudgetType))
+                .Where(_ => _.UserId == userId && _.Year == year)
                 .ToArrayAsync(cancellationToken);
-        }
 
         public async Task<Budget[]> GetTeamBudgets(Guid userId, int year, CancellationToken cancellationToken)
         {
@@ -78,6 +77,16 @@ namespace ERNI.PBA.Server.DataAccess.Repository
         public Task<decimal> GetTotalRequestedAmount(int budgetId, CancellationToken cancellationToken) =>
             _context.Transactions.Where(r => r.BudgetId == budgetId && r.Request.State != RequestState.Rejected)
                 .SumAsync(r => r.Amount, cancellationToken);
+
+        public async Task<(Budget Budget, decimal AmountSpent)[]> GetBudgetsWithRequestedAmounts(
+            Expression<Func<Budget, bool>> filter, CancellationToken cancellationToken)
+        {
+            var budgets = await _context.Budgets.Where(filter)
+                .Select(budget => new { budget, amount = budget.Transactions.Where(t => t.Request.State != RequestState.Rejected).Sum(t => t.Amount) })
+                .ToArrayAsync(cancellationToken);
+
+            return budgets.Select(_ => (Budget: _.budget, AmountSpent: _.amount)).ToArray();
+        }
 
         public async Task<(int BudgetId, decimal Amount)[]> GetTotalAmountsByYear(int year, CancellationToken cancellationToken)
         {

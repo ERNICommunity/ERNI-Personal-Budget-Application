@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { Budget } from '../model/budget';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
 import { BudgetType } from '../model/budgetType';
 import { User } from '../model/user';
+import { CurrentUsersBudget } from '../model/current-users-budget';
 
 @Injectable()
 export class BudgetService {
@@ -27,8 +28,10 @@ export class BudgetService {
         );
     }
 
-    public getCurrentUserBudgets(year: number): Observable<Budget[]> {
-        return this.http.get<Budget[]>(
+    public getCurrentUserBudgets(
+        year: number
+    ): Observable<CurrentUsersBudget[]> {
+        return this.http.get<CurrentUsersBudget[]>(
             this.configService.apiUrlBase +
                 this.url +
                 'user/current/year/' +

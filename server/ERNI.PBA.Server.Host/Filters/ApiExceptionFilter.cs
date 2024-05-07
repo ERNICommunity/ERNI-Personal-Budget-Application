@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +11,7 @@ namespace ERNI.PBA.Server.Host.Filters
     public sealed class ApiExceptionFilter : ExceptionFilterAttribute
     {
         private static readonly Action<ILogger, Exception?> _logError = LoggerMessage.Define(
-            LogLevel.Information,
+            LogLevel.Error,
             new EventId(1, nameof(UpdateUserCommand)),
             "Something went wrong");
 
@@ -32,8 +32,9 @@ namespace ERNI.PBA.Server.Host.Filters
                     Status = StatusCodes.Status500InternalServerError,
                     Detail = "Operation failed"
                 });
-                _logError(Logger, context.Exception);
             }
+
+            _logError(Logger, context.Exception);
 
             base.OnException(context);
         }

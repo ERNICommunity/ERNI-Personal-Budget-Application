@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Enums;
 
 namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
@@ -40,7 +41,9 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
             var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
 
-            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId)
+            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId &&
+                !(request.RequestType == BudgetTypeEnum.CommunityBudget &&
+                  principal.IsInRole(Roles.CommunityLeader)))
             {
                 throw AppExceptions.AuthorizationException();
             }

@@ -26,7 +26,7 @@ export class RequestMassComponent implements OnInit {
 
     title: string;
     amount: number;
-    maximumAmount: number;
+    maximumAmount: number = 0;
 
     constructor(
         private requestService: RequestService,
@@ -41,10 +41,14 @@ export class RequestMassComponent implements OnInit {
     }
 
     onAttendeesChanges(): void {
-        this.maximumAmount = this.selectedUsers.reduce(
-            (prev, user) => (prev > user.budgetLeft ? prev : user.budgetLeft),
-            0
-        );
+        this.maximumAmount =
+            this.selectedUsers.length > 0
+                ? this.selectedUsers.reduce(
+                      (prev, user) =>
+                          prev < user.budgetLeft ? prev : user.budgetLeft,
+                      Number.MAX_SAFE_INTEGER
+                  )
+                : 0;
     }
 
     save(): void {
@@ -54,7 +58,7 @@ export class RequestMassComponent implements OnInit {
         let requestData = {
             title: this.title,
             amount: this.amount,
-            users: users.map((_) => _.id)
+            employees: users.map((_) => _.id)
         } as MassRequest;
 
         this.requestService

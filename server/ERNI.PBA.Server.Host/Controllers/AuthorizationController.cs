@@ -20,7 +20,7 @@ namespace ERNI.PBA.Server.Host.Controllers
 
         private IEnumerable<string> GetRoles()
         {
-            var roles = new[] { Roles.Admin, Roles.Finance, Roles.Superior };
+            var roles = new[] { Roles.Admin, Roles.Finance, Roles.Superior, Roles.CommunityLeader };
 
             return roles.Where(HttpContext.User.IsInRole);
         }

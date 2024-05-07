@@ -15,6 +15,8 @@ namespace ERNI.PBA.Server.Domain.Models.Responses
 
         public decimal AmountLeft { get; init; }
 
+        public bool IsEditable { get; set; }
+
         public BudgetTypeEnum Type { get; init; }
 
         public UserOutputModel User { get; init; } = null!;

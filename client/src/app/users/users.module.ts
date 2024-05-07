@@ -8,7 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AdminRoleGuard } from '../services/guards/admin-role.guard';
 import { UserState } from '../model/userState';
-import { MsalGuard } from '@azure/msal-angular';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -25,7 +24,7 @@ import { SharedModule } from '../shared/shared.module';
         SharedModule,
         RouterModule.forChild([
             {
-                path: 'users',
+                path: '',
                 component: UsersComponent,
                 canActivate: [AdminRoleGuard],
                 children: [
@@ -33,30 +32,25 @@ import { SharedModule } from '../shared/shared.module';
                     {
                         path: 'active',
                         component: UserListComponent,
-                        data: { filter: UserState.Active },
-                        canActivate: [MsalGuard]
+                        data: { filter: UserState.Active }
                     },
                     {
                         path: 'new',
                         component: UserListComponent,
-                        data: { filter: UserState.New },
-                        canActivate: [MsalGuard]
+                        data: { filter: UserState.New }
                     },
                     {
                         path: 'inactive',
                         component: UserListComponent,
-                        data: { filter: UserState.Inactive },
-                        canActivate: [MsalGuard]
+                        data: { filter: UserState.Inactive }
                     },
                     {
                         path: 'detail/:id',
-                        component: UserDetailComponent,
-                        canActivate: [MsalGuard]
+                        component: UserDetailComponent
                     },
                     {
                         path: 'create',
-                        component: CreateUserComponent,
-                        canActivate: [MsalGuard]
+                        component: CreateUserComponent
                     }
                 ]
             }
