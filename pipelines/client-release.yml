@@ -16,17 +16,17 @@ steps:
     versionSpec: '16.x'
 
 - task: Npm@1
-    displayName: "Install packages"
-    inputs:
-      command: "ci"
-      workingDir: client/
+  displayName: "Install packages"
+  inputs:
+    command: "ci"
+    workingDir: client/
 
 - task: Npm@1
-    displayName: "Build"
-    inputs:
-      command: "custom"
-      workingDir: ./client
-      customCommand: "run build -- --configuration production"
+  displayName: "Build"
+  inputs:
+    command: "custom"
+    workingDir: ./client
+    customCommand: "run build -- --configuration production"
 
 - task: PublishPipelineArtifact@1
   displayName: 'Publish artifact - prod'
