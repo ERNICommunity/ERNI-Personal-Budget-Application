@@ -1,0 +1,36 @@
+name: PBA FE PROD CD $(date:yyyyMMdd).$(BuildID)
+resources:
+  - repo: self
+    clean: true
+
+trigger: none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+  - task: NodeTool@0
+    displayName: "Use Node 18.x"
+    inputs:
+      versionSpec: "18.x"
+
+  - task: Npm@1
+    displayName: "Install packages"
+    inputs:
+      command: "ci"
+      workingDir: ./client
+
+  - task: Npm@1
+    displayName: "Build"
+    inputs:
+      command: "custom"
+      workingDir: ./client
+      customCommand: "run build -- --configuration production"
+
+  - task: AzureStaticWebApp@0
+    displayName: Deploy Static Web App
+    inputs:
+      workingDirectory: "./client/dist"
+      skip_app_build: true
+      skip_api_build: true
+      azure_static_web_apps_api_token: "$(DeploymentToken)"
