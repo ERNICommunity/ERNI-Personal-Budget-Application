@@ -13,30 +13,22 @@ using Quartz;
 namespace ERNI.PBA.Server.Host.Utils
 {
     [DisallowConcurrentExecution]
-    public class DailyMailNotifications : IJob
+    public class DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration) : IJob
     {
-        private readonly IRequestRepository _requestRepository;
-        private readonly MailService _mailService;
-        private readonly string[] _notificationEmails;
-
-        public DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration)
-        {
-            _requestRepository = requestRepository;
-            _mailService = new MailService(configuration);
-            _notificationEmails =
+        private readonly MailService _mailService = new MailService(configuration);
+        private readonly string[] _notificationEmails =
                 (configuration["NotificationEmails"] ??
                  throw new InvalidOperationException("Missing 'NotificationEmails' configuration")).Split(";");
-        }
 
         public async Task Execute(IJobExecutionContext context) =>
             await SendNotificationsToAdmins(context.CancellationToken);
 
         private async Task SendNotificationsToAdmins(CancellationToken cancellationToken)
         {
-            var pendingRequests = await _requestRepository.GetRequests(
+            var pendingRequests = await requestRepository.GetRequests(
                 _ => _.Year == DateTime.Now.Year && _.State == RequestState.Pending, cancellationToken);
 
-            if (!pendingRequests.Any())
+            if (pendingRequests.Length == 0)
             {
                 return;
             }

@@ -10,22 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Queries
 {
-    public class GetStatisticsQuery : Query<int, GetStatisticsQuery.StatisticsModel>
+    public class GetStatisticsQuery(
+        IBudgetRepository budgetRepository,
+        ILogger<GetRequestQuery> logger) : Query<int, GetStatisticsQuery.StatisticsModel>
     {
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly ILogger _logger;
-
-        public GetStatisticsQuery(
-            IBudgetRepository budgetRepository,
-            ILogger<GetRequestQuery> logger)
-        {
-            _budgetRepository = budgetRepository;
-            _logger = logger;
-        }
+        private readonly ILogger _logger = logger;
 
         protected override async Task<StatisticsModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var stats = await _budgetRepository.GetBudgetStats(parameter);
+            var stats = await budgetRepository.GetBudgetStats(parameter);
 
             return new StatisticsModel
             {

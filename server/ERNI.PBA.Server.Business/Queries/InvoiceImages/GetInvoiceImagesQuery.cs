@@ -12,48 +12,36 @@ using System.Threading;
 using System.Threading.Tasks;
 using ERNI.PBA.Server.Domain.Enums;
 
-namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
+namespace ERNI.PBA.Server.Business.Queries.InvoiceImages;
+
+public class GetInvoiceImagesQuery(
+    IUserRepository userRepository,
+    IRequestRepository requestRepository,
+    IInvoiceImageRepository invoiceImageRepository) : Query<int, IEnumerable<ImageOutputModel>>, IGetInvoiceImagesQuery
 {
-    public class GetInvoiceImagesQuery : Query<int, IEnumerable<ImageOutputModel>>, IGetInvoiceImagesQuery
+    protected override async Task<IEnumerable<ImageOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRequestRepository _requestRepository;
-        private readonly IInvoiceImageRepository _invoiceImageRepository;
-
-        public GetInvoiceImagesQuery(
-            IUserRepository userRepository,
-            IRequestRepository requestRepository,
-            IInvoiceImageRepository invoiceImageRepository)
+        var request = await requestRepository.GetRequest(parameter, cancellationToken);
+        if (request == null)
         {
-            _userRepository = userRepository;
-            _requestRepository = requestRepository;
-            _invoiceImageRepository = invoiceImageRepository;
+            throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
         }
 
-        protected override async Task<IEnumerable<ImageOutputModel>> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
+        var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
+                   ?? throw AppExceptions.AuthorizationException();
+
+        if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId &&
+            !(request.RequestType == BudgetTypeEnum.CommunityBudget &&
+              principal.IsInRole(Roles.CommunityLeader)))
         {
-            var request = await _requestRepository.GetRequest(parameter, cancellationToken);
-            if (request == null)
-            {
-                throw new OperationErrorException(ErrorCodes.RequestNotFound, "Not a valid id");
-            }
-
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
-                       ?? throw AppExceptions.AuthorizationException();
-
-            if (!principal.IsInRole(Roles.Admin) && !principal.IsInRole(Roles.Finance) && user.Id != request.UserId &&
-                !(request.RequestType == BudgetTypeEnum.CommunityBudget &&
-                  principal.IsInRole(Roles.CommunityLeader)))
-            {
-                throw AppExceptions.AuthorizationException();
-            }
-
-            var imagesName = await _invoiceImageRepository.GetInvoiceImages(parameter, cancellationToken);
-            return imagesName.Select(image => new ImageOutputModel
-            {
-                Id = image.Id,
-                Name = image.Name
-            });
+            throw AppExceptions.AuthorizationException();
         }
+
+        var imagesName = await invoiceImageRepository.GetInvoiceImages(parameter, cancellationToken);
+        return imagesName.Select(image => new ImageOutputModel
+        {
+            Id = image.Id,
+            Name = image.Name
+        });
     }
 }

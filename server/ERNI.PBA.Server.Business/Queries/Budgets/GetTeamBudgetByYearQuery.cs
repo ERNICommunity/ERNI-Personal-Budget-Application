@@ -13,28 +13,19 @@ using ERNI.PBA.Server.Domain.Models.Responses;
 
 namespace ERNI.PBA.Server.Business.Queries.Budgets
 {
-    public class GetTeamBudgetByYearQuery : Query<int, BudgetOutputModel[]>, IGetTeamBudgetByYearQuery
+    public class GetTeamBudgetByYearQuery(
+        IUserRepository userRepository,
+        IBudgetRepository budgetRepository) : Query<int, BudgetOutputModel[]>, IGetTeamBudgetByYearQuery
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IBudgetRepository _budgetRepository;
-
-        public GetTeamBudgetByYearQuery(
-            IUserRepository userRepository,
-            IBudgetRepository budgetRepository)
-        {
-            _userRepository = userRepository;
-            _budgetRepository = budgetRepository;
-        }
-
         protected override async Task<BudgetOutputModel[]> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+            var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
 
-            var budgets = await _budgetRepository.GetTeamBudgets(principal.GetId(), parameter, cancellationToken);
-            if (!budgets.Any())
+            var budgets = await budgetRepository.GetTeamBudgets(principal.GetId(), parameter, cancellationToken);
+            if (budgets.Length == 0)
             {
-                return Array.Empty<BudgetOutputModel>();
+                return [];
             }
 
             var masterBudget = budgets.SingleOrDefault(x => x.UserId == user.Id);

@@ -8,17 +8,9 @@ namespace ERNI.PBA.Server.Business.Utils
     {
         public static Guid GetId(this ClaimsPrincipal principal)
         {
-            if (principal == null)
-            {
-                throw new ArgumentNullException(nameof(principal));
-            }
+            ArgumentNullException.ThrowIfNull(principal);
 
-            var claim = principal.FindFirst(c => c.Type == UserClaims.Id);
-
-            if (claim == null)
-            {
-                throw new InvalidOperationException("No Id claim found");
-            }
+            var claim = principal.FindFirst(c => c.Type == UserClaims.Id) ?? throw new InvalidOperationException("No Id claim found");
 
             if (!Guid.TryParse(claim.Value, out var id))
             {

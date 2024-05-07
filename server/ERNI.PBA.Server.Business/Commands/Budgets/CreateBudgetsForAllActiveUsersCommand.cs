@@ -15,33 +15,22 @@ using ERNI.PBA.Server.Domain.Models.Payloads;
 
 namespace ERNI.PBA.Server.Business.Commands.Budgets
 {
-    public class CreateBudgetsForAllActiveUsersCommand : Command<CreateBudgetsForAllActiveUsersRequest>, ICreateBudgetsForAllActiveUsersCommand
+    public class CreateBudgetsForAllActiveUsersCommand(
+        IUserRepository userRepository,
+        IBudgetRepository budgetRepository,
+        IUnitOfWork unitOfWork) : Command<CreateBudgetsForAllActiveUsersRequest>, ICreateBudgetsForAllActiveUsersCommand
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IBudgetRepository _budgetRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CreateBudgetsForAllActiveUsersCommand(
-            IUserRepository userRepository,
-            IBudgetRepository budgetRepository,
-            IUnitOfWork unitOfWork)
-        {
-            _userRepository = userRepository;
-            _budgetRepository = budgetRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         protected override async Task Execute(CreateBudgetsForAllActiveUsersRequest parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var currentYear = DateTime.Now.Year;
-            IEnumerable<User> users = await _userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
+            IEnumerable<User> users = await userRepository.GetAllUsers(_ => _.State == UserState.Active, cancellationToken);
 
             var budgetType = BudgetType.Types.Single(_ => _.Id == parameter.BudgetType);
 
             if (budgetType.SinglePerUser)
             {
                 var budgets =
-                    (await _budgetRepository.GetBudgetsByYear(DateTime.Now.Year, cancellationToken)).Where(_ =>
+                    (await budgetRepository.GetBudgetsByYear(DateTime.Now.Year, cancellationToken)).Where(_ =>
                         _.BudgetType == budgetType.Id).Select(_ => _.UserId).ToHashSet();
                 users = users.Where(_ => !budgets.Contains(_.Id));
             }
@@ -57,10 +46,10 @@ namespace ERNI.PBA.Server.Business.Commands.Budgets
                     Title = parameter.Title
                 };
 
-                await _budgetRepository.AddBudgetAsync(budget);
+                await budgetRepository.AddBudgetAsync(budget);
             }
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
     }
 }

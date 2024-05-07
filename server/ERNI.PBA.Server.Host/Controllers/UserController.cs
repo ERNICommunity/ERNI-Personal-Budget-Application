@@ -13,19 +13,10 @@ namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController : Controller
+    public class UserController(
+        Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
+        Lazy<IGetActiveUsersQuery> getActiveUsersQuery) : Controller
     {
-        private readonly Lazy<IGetCurrentUserQuery> _getCurrentUserQuery;
-        private readonly Lazy<IGetActiveUsersQuery> _getActiveUsersQuery;
-
-        public UserController(
-            Lazy<IGetCurrentUserQuery> getCurrentUserQuery,
-            Lazy<IGetActiveUsersQuery> getActiveUsersQuery)
-        {
-            _getCurrentUserQuery = getCurrentUserQuery;
-            _getActiveUsersQuery = getActiveUsersQuery;
-        }
-
         [HttpPost("create")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand.CreateUserModel payload,
@@ -50,7 +41,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
         {
-            var userModel = await _getCurrentUserQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
+            var userModel = await getCurrentUserQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModel);
         }
@@ -94,7 +85,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetActiveUsers(CancellationToken cancellationToken)
         {
-            var userModels = await _getActiveUsersQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
+            var userModels = await getActiveUsersQuery.Value.ExecuteAsync(HttpContext.User, cancellationToken);
 
             return Ok(userModels);
         }

@@ -12,19 +12,15 @@ using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetSubordinateUsersQuery : Query<IEnumerable<GetSubordinateUsersQuery.UserModel>>
+    public class GetSubordinateUsersQuery(IUserRepository userRepository) : Query<IEnumerable<GetSubordinateUsersQuery.UserModel>>
     {
-        private readonly IUserRepository _userRepository;
-
-        public GetSubordinateUsersQuery(IUserRepository userRepository) => _userRepository = userRepository;
-
         protected override async Task<IEnumerable<UserModel>> Execute(ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+            var user = await userRepository.GetUser(principal.GetId(), cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
             var users = principal.IsInRole(Roles.Admin)
-                ? await _userRepository.GetAllUsers(cancellationToken)
-                : await _userRepository.GetSubordinateUsers(user.Id, cancellationToken);
+                ? await userRepository.GetAllUsers(cancellationToken)
+                : await userRepository.GetSubordinateUsers(user.Id, cancellationToken);
 
             return users.Select(_ => new UserModel
             {

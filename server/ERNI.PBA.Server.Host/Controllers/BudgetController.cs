@@ -15,45 +15,22 @@ namespace ERNI.PBA.Server.Host.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Policy = Constants.ClientPolicy)]
-    public class BudgetController : Controller
+    public class BudgetController(
+        Lazy<IGetBudgetQuery> getBudgetQuery,
+        Lazy<IGetCurrentUserBudgetByYearQuery> getCurrentUserBudgetByYearQuery,
+        Lazy<IGetActiveUsersBudgetsByYearQuery> getActiveUsersBudgetsByYearQuery,
+        Lazy<IGetBudgetsByYearQuery> getBudgetsByYearQuery,
+        Lazy<IGetUsersAvailableForBudgetQuery> getUsersAvailableForBudgetQuery,
+        Lazy<ICreateBudgetsForAllActiveUsersCommand> createBudgetsForAllActiveUsersCommand,
+        Lazy<ICreateBudgetCommand> createBudgetCommand,
+        Lazy<IUpdateBudgetCommand> updateBudgetCommand,
+        Lazy<ITransferBudgetCommand> transferBudgetCommand) : Controller
     {
-        private readonly Lazy<IGetBudgetQuery> _getBudgetQuery;
-        private readonly Lazy<IGetCurrentUserBudgetByYearQuery> _getCurrentUserBudgetByYearQuery;
-        private readonly Lazy<IGetActiveUsersBudgetsByYearQuery> _getActiveUsersBudgetsByYearQuery;
-        private readonly Lazy<IGetBudgetsByYearQuery> _getBudgetsByYearQuery;
-        private readonly Lazy<IGetUsersAvailableForBudgetQuery> _getUsersAvailableForBudgetQuery;
-        private readonly Lazy<ICreateBudgetsForAllActiveUsersCommand> _createBudgetsForAllActiveUsersCommand;
-        private readonly Lazy<ICreateBudgetCommand> _createBudgetCommand;
-        private readonly Lazy<IUpdateBudgetCommand> _updateBudgetCommand;
-        private readonly Lazy<ITransferBudgetCommand> _transferBudgetCommand;
-
-        public BudgetController(
-            Lazy<IGetBudgetQuery> getBudgetQuery,
-            Lazy<IGetCurrentUserBudgetByYearQuery> getCurrentUserBudgetByYearQuery,
-            Lazy<IGetActiveUsersBudgetsByYearQuery> getActiveUsersBudgetsByYearQuery,
-            Lazy<IGetBudgetsByYearQuery> getBudgetsByYearQuery,
-            Lazy<IGetUsersAvailableForBudgetQuery> getUsersAvailableForBudgetQuery,
-            Lazy<ICreateBudgetsForAllActiveUsersCommand> createBudgetsForAllActiveUsersCommand,
-            Lazy<ICreateBudgetCommand> createBudgetCommand,
-            Lazy<IUpdateBudgetCommand> updateBudgetCommand,
-            Lazy<ITransferBudgetCommand> transferBudgetCommand)
-        {
-            _getBudgetQuery = getBudgetQuery;
-            _getCurrentUserBudgetByYearQuery = getCurrentUserBudgetByYearQuery;
-            _getActiveUsersBudgetsByYearQuery = getActiveUsersBudgetsByYearQuery;
-            _getBudgetsByYearQuery = getBudgetsByYearQuery;
-            _getUsersAvailableForBudgetQuery = getUsersAvailableForBudgetQuery;
-            _createBudgetsForAllActiveUsersCommand = createBudgetsForAllActiveUsersCommand;
-            _createBudgetCommand = createBudgetCommand;
-            _updateBudgetCommand = updateBudgetCommand;
-            _transferBudgetCommand = transferBudgetCommand;
-        }
-
         [HttpGet("{budgetId}")]
         [Authorize(Policy = Constants.ClientPolicy)]
         public async Task<IActionResult> GetBudget(int budgetId, CancellationToken cancellationToken)
         {
-            var outputModel = await _getBudgetQuery.Value.ExecuteAsync(budgetId, HttpContext.User, cancellationToken);
+            var outputModel = await getBudgetQuery.Value.ExecuteAsync(budgetId, HttpContext.User, cancellationToken);
 
             return Ok(outputModel);
         }
@@ -62,7 +39,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Policy = Constants.ClientPolicy)]
         public async Task<IActionResult> GetCurrentUserBudgetByYear(int year, CancellationToken cancellationToken)
         {
-            var outputModels = await _getCurrentUserBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
+            var outputModels = await getCurrentUserBudgetByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -71,7 +48,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + ", " + Roles.Finance)]
         public async Task<IActionResult> GetActiveUsersBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var outputModels = await _getActiveUsersBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
+            var outputModels = await getActiveUsersBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -80,7 +57,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin + ", " + Roles.Finance)]
         public async Task<IActionResult> GetBudgetsByYear(int year, CancellationToken cancellationToken)
         {
-            var outputModels = await _getBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
+            var outputModels = await getBudgetsByYearQuery.Value.ExecuteAsync(year, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -89,7 +66,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetUsersAvailableForBudget(BudgetTypeEnum budgetTypeId, CancellationToken cancellationToken)
         {
-            var outputModels = await _getUsersAvailableForBudgetQuery.Value.ExecuteAsync(budgetTypeId, HttpContext.User, cancellationToken);
+            var outputModels = await getUsersAvailableForBudgetQuery.Value.ExecuteAsync(budgetTypeId, HttpContext.User, cancellationToken);
 
             return Ok(outputModels);
         }
@@ -98,7 +75,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudgetsForAllActiveUsers([FromBody] CreateBudgetsForAllActiveUsersRequest payload, CancellationToken cancellationToken)
         {
-            await _createBudgetsForAllActiveUsersCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await createBudgetsForAllActiveUsersCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -107,7 +84,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateBudget([FromBody] CreateBudgetRequest payload, CancellationToken cancellationToken)
         {
-            await _createBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await createBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -116,7 +93,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> UpdateBudget([FromBody] UpdateBudgetRequest payload, CancellationToken cancellationToken)
         {
-            await _updateBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await updateBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }
@@ -125,7 +102,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> TransferBudget(TransferBudgetModel payload, CancellationToken cancellationToken)
         {
-            await _transferBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
+            await transferBudgetCommand.Value.ExecuteAsync(payload, HttpContext.User, cancellationToken);
 
             return Ok();
         }

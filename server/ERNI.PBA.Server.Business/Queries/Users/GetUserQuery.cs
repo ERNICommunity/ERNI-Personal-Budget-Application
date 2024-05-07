@@ -8,15 +8,11 @@ using ERNI.PBA.Server.Domain.Interfaces.Repositories;
 
 namespace ERNI.PBA.Server.Business.Queries.Users
 {
-    public class GetUserQuery : Query<int, GetUserQuery.UserModel>
+    public class GetUserQuery(IUserRepository userRepository) : Query<int, GetUserQuery.UserModel>
     {
-        private readonly IUserRepository _userRepository;
-
-        public GetUserQuery(IUserRepository userRepository) => _userRepository = userRepository;
-
         protected override async Task<UserModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(parameter, CancellationToken.None)
+            var user = await userRepository.GetUser(parameter, CancellationToken.None)
                        ?? throw AppExceptions.AuthorizationException();
 
             return new UserModel

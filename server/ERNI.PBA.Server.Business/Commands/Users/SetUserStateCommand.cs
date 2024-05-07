@@ -11,25 +11,16 @@ using Microsoft.Extensions.Logging;
 
 namespace ERNI.PBA.Server.Business.Commands.Users
 {
-    public class SetUserStateCommand : Command<(int Id, UserState State)>
+    public class SetUserStateCommand(
+        IUserRepository userRepository,
+        IUnitOfWork unitOfWork,
+        ILogger<UpdateUserCommand> logger) : Command<(int Id, UserState State)>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
-
-        public SetUserStateCommand(
-            IUserRepository userRepository,
-            IUnitOfWork unitOfWork,
-            ILogger<UpdateUserCommand> logger)
-        {
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
-            _logger = logger;
-        }
+        private readonly ILogger _logger = logger;
 
         protected override async Task Execute((int Id, UserState State) parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUser(parameter.Id, cancellationToken);
+            var user = await userRepository.GetUser(parameter.Id, cancellationToken);
 
             if (user == null)
             {
@@ -40,7 +31,7 @@ namespace ERNI.PBA.Server.Business.Commands.Users
 
             user.State = parameter.State;
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
         }
     }
 }

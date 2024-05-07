@@ -12,34 +12,20 @@ using ERNI.PBA.Server.Domain.Security;
 
 namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
-    public class GetInvoiceDownloadTokenQuery : Query<int, Guid>
+    public class GetInvoiceDownloadTokenQuery(IDownloadTokenManager downloadTokenManager, IInvoiceImageRepository invoiceImageRepository, IRequestRepository requestRepository, IUserRepository userRepository) : Query<int, Guid>
     {
-        private readonly IInvoiceImageRepository _invoiceImageRepository;
-        private readonly IRequestRepository _requestRepository;
-        private readonly IDownloadTokenManager _downloadTokenManager;
-        private readonly IUserRepository _userRepository;
-
-        public GetInvoiceDownloadTokenQuery(IDownloadTokenManager downloadTokenManager, IInvoiceImageRepository invoiceImageRepository, IRequestRepository requestRepository, IUserRepository userRepository)
-        {
-            _downloadTokenManager = downloadTokenManager;
-            _invoiceImageRepository = invoiceImageRepository;
-            _requestRepository = requestRepository;
-            _userRepository = userRepository;
-        }
-
-
         protected override async Task<Guid> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             if (!principal.IsInRole(Roles.Admin))
             {
-                var image = await _invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken)
+                var image = await invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken)
                             ??
                             throw new OperationErrorException(ErrorCodes.InvalidId, "Invoice not found");
 
-                var request = await _requestRepository.GetRequest(image.RequestId, cancellationToken)
+                var request = await requestRepository.GetRequest(image.RequestId, cancellationToken)
                               ?? throw new OperationErrorException(ErrorCodes.RequestNotFound, "Request not found");
 
-                var currentUser = await _userRepository.GetUser(principal.GetId(), cancellationToken)
+                var currentUser = await userRepository.GetUser(principal.GetId(), cancellationToken)
                     ?? throw AppExceptions.AuthorizationException();
 
                 if (request.UserId != currentUser.Id && !(request.RequestType == BudgetTypeEnum.CommunityBudget &&
@@ -49,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                 }
             }
 
-            return _downloadTokenManager.GenerateToken(DateTime.Now.AddSeconds(10), DownloadTokenCategory.Invoice);
+            return downloadTokenManager.GenerateToken(DateTime.Now.AddSeconds(10), DownloadTokenCategory.Invoice);
         }
     }
 }

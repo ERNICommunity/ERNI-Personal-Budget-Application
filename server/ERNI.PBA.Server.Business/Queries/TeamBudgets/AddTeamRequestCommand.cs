@@ -14,29 +14,16 @@ using ERNI.PBA.Server.Domain.Models.Entities;
 
 namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
 {
-    public class CreateTeamRequestCommand : Command<CreateTeamRequestCommand.NewTeamRequestModel, int>
+    public class CreateTeamRequestCommand(
+        IUserRepository userRepository,
+        ITeamBudgetFacade teamBudgetFacade,
+        IRequestRepository requestRepository,
+        IUnitOfWork unitOfWork) : Command<CreateTeamRequestCommand.NewTeamRequestModel, int>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ITeamBudgetFacade _teamBudgetFacade;
-        private readonly IRequestRepository _requestRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public CreateTeamRequestCommand(
-            IUserRepository userRepository,
-            ITeamBudgetFacade teamBudgetFacade,
-            IRequestRepository requestRepository,
-            IUnitOfWork unitOfWork)
-        {
-            _userRepository = userRepository;
-            _teamBudgetFacade = teamBudgetFacade;
-            _requestRepository = requestRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         protected override async Task<int> Execute(NewTeamRequestModel parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var userId = principal.GetId();
-            var user = await _userRepository.GetUser(userId, cancellationToken)
+            var user = await userRepository.GetUser(userId, cancellationToken)
                        ?? throw AppExceptions.AuthorizationException();
 
             var currentYear = DateTime.Now.Year;
@@ -47,11 +34,11 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
             }
 
             var allBudgets =
-                await _teamBudgetFacade.GetTeamBudgets(user.Id, DateTime.Now.Year, cancellationToken);
+                await teamBudgetFacade.GetTeamBudgets(user.Id, DateTime.Now.Year, cancellationToken);
             var dict = allBudgets.ToDictionary(_ => _.Employee.Id);
             var unknownUsers = parameter.Employees.Where(id => !dict.ContainsKey(id)).ToList();
 
-            if (unknownUsers.Any())
+            if (unknownUsers.Count != 0)
             {
                 throw new OperationErrorException(ErrorCodes.ValidationError, $"Employees not found: {string.Join(",", unknownUsers)}");
             }
@@ -88,9 +75,9 @@ namespace ERNI.PBA.Server.Business.Queries.TeamBudgets
                 Transactions = transactions
             };
 
-            await _requestRepository.AddRequest(request);
+            await requestRepository.AddRequest(request);
 
-            await _unitOfWork.SaveChanges(cancellationToken);
+            await unitOfWork.SaveChanges(cancellationToken);
 
             return request.Id;
         }
