@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "azureBlobStorage": {
+      "type": "storage.emulator",
+      "connectionId": "Storage:ConnectionString",
+      "dynamicId": null
+    }
+  }
+}
