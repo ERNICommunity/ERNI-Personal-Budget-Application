@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ERNI.PBA.Server.Domain.Enums;
 using ERNI.PBA.Server.Domain.Interfaces;
 using ERNI.PBA.Server.Domain.Interfaces.Repositories;
+using ERNI.PBA.Server.Domain.Models.Entities;
 using ERNI.PBA.Server.Graph;
 
 namespace ERNI.PBA.Server.Business.Commands.Users;
@@ -25,7 +27,21 @@ public class SyncUserObjectIdCommand(GraphFacade graphFacade, IUserRepository us
                 continue;
             }
 
-            if (userDict.TryGetValue(u.UserPrincipalName.ToUpperInvariant(), out var dbUser) && dbUser.ObjectId != Guid.Parse(u.Id))
+            if (!userDict.TryGetValue(u.UserPrincipalName.ToUpperInvariant(), out var dbUser))
+            {
+                var user = new User
+                {
+                    Username = u.UserPrincipalName,
+                    ObjectId = Guid.Parse(u.Id),
+                    FirstName = u.GivenName ?? "",
+                    LastName = u.Surname ?? "",
+                    State = UserState.New,
+                    UniqueIdentifier = u.UserPrincipalName
+                };
+
+                await userRepository.AddUserAsync(user);
+            }
+            else if (dbUser.ObjectId != Guid.Parse(u.Id))
             {
                 dbUser.ObjectId = Guid.Parse(u.Id);
             }
