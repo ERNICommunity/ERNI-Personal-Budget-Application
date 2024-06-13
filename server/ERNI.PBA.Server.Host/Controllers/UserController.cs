@@ -28,6 +28,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         }
 
         [HttpPost("sync")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> ExecuteSync([FromServices] SyncUserObjectIdCommand command)
         {
             await command.Execute();
