@@ -18,7 +18,9 @@ public class SyncUserObjectIdCommand(GraphFacade graphFacade, IUserRepository us
 
         var adUsers = await graphFacade.GetUsers(CancellationToken.None);
 
-        var userDict = dbUsers.ToDictionary(_ => _.Username.ToUpperInvariant());
+        var userDict = dbUsers
+            .Where(_ => _.ObjectId != null)
+            .ToDictionary(_ => _.ObjectId!.Value);
 
         foreach (var u in adUsers)
         {
@@ -27,7 +29,9 @@ public class SyncUserObjectIdCommand(GraphFacade graphFacade, IUserRepository us
                 continue;
             }
 
-            if (!userDict.TryGetValue(u.UserPrincipalName.ToUpperInvariant(), out var dbUser))
+            var objectId = Guid.Parse(u.Id);
+
+            if (!userDict.TryGetValue(objectId, out var dbUser))
             {
                 var user = new User
                 {

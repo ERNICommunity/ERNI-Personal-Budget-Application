@@ -27,6 +27,13 @@ namespace ERNI.PBA.Server.Host.Controllers
             return Ok();
         }
 
+        [HttpPost("sync")]
+        public async Task<IActionResult> ExecuteSync([FromServices] SyncUserObjectIdCommand command)
+        {
+            await command.Execute();
+            return Ok();
+        }
+
         [HttpPut]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand.UpdateUserModel payload,

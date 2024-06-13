@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using Azure.Storage.Blobs;
 using ClosedXML.Excel;
 using ClosedXML.Graphics;
-using ERNI.PBA.Server.Business.Commands.Users;
 using ERNI.PBA.Server.DataAccess;
 using ERNI.PBA.Server.DataAccess.Repository;
 using Microsoft.AspNetCore.Hosting;
@@ -40,8 +39,6 @@ namespace ERNI.PBA.Server.Host
                 {
                     blobService.CreateBlobContainer(blobStorageSettings.Value.AttachmentDataContainerName);
                 }
-                var cmd = serviceScope.ServiceProvider.GetRequiredService<SyncUserObjectIdCommand>();
-                cmd.Execute().Wait();
             }
 
             host.Run();
