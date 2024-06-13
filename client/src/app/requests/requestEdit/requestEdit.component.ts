@@ -77,9 +77,16 @@ export class RequestEditComponent implements OnInit {
   }
 
   private createNewRequest(): Request {
-    var request = new Request();
-    request.state = RequestApprovalState.Pending;
-    return request;
+    return {
+      state: RequestApprovalState.Pending,
+      amount: 0,
+      budget: null,
+      createDate: new Date(),
+      id: 0,
+      title: "",
+      user: null,
+      invoiceCount: 0,
+    };
   }
 
   public loadRequest(requestId: number): void {
