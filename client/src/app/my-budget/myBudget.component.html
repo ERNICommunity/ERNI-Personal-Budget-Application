@@ -11,7 +11,7 @@
   </div>
 </div>
 <ng-container *ngIf="!isBusy">
-  <div *ngFor="let budget of budgets" style="margin-top: 10px">
+  <div *ngFor="let budget of budgets | async" style="margin-top: 10px">
     <app-budget [budget]="budget"></app-budget>
   </div>
 </ng-container>
