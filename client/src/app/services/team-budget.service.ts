@@ -52,19 +52,19 @@ export class TeamBudgetService {
       .toPromise();
   }
 
-  public createTeamRequest(model: NewTeamRequestModel): Promise<number> {
-    return this.http
-      .post<number>(this.configService.apiUrlBase + this.url + "requests",
+  public createTeamRequest(model: NewTeamRequestModel) {
+    return this.http.post<number>(
+      this.configService.apiUrlBase + this.url + "requests",
       model,
-      this.serviceHelper.getHttpOptions())
-      .toPromise();
+      this.serviceHelper.getHttpOptions()
+    );
   }
 
-  public updateTeamRequest(requestId: number, model: NewTeamRequestModel): Promise<void> {
-    return this.http
-      .patch<void>(this.configService.apiUrlBase + this.url + "request/" + requestId,
+  public updateTeamRequest(requestId: number, model: NewTeamRequestModel) {
+    return this.http.patch<void>(
+      this.configService.apiUrlBase + this.url + "request/" + requestId,
       model,
-      this.serviceHelper.getHttpOptions())
-      .toPromise();
+      this.serviceHelper.getHttpOptions()
+    );
   }
 }

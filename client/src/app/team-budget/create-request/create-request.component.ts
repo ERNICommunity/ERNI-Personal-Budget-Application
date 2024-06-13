@@ -94,11 +94,10 @@ export class CreateRequestComponent implements OnInit {
       id: request.id,
       state: request.state,
       title: request.title,
-      isReadonly: true
+      isReadonly: true,
     } as RequestViewModel;
     console.log(request);
     console.log(this.request);
-
   }
 
   trimTitle(): void {
@@ -122,7 +121,6 @@ export class CreateRequestComponent implements OnInit {
 
   async save() {
     try {
-
       if (this.request.state == null) {
         await this.createRequest();
       } else {
@@ -134,41 +132,42 @@ export class CreateRequestComponent implements OnInit {
   }
 
   async createRequest(): Promise<void> {
-    var id = await this.teamBudgetService.createTeamRequest({
-      employees: this.list2.map((_) => _.employee.id),
-      title: this.request.title,
-      amount: this.request.amount,
-      date: this.request.date,
-    });
+    this.teamBudgetService
+      .createTeamRequest({
+        employees: this.list2.map((_) => _.employee.id),
+        title: this.request.title,
+        amount: this.request.amount,
+        date: this.request.date,
+      })
+      .subscribe((id) => {
+        this.request.state = RequestApprovalState.Approved;
 
-    this.request.state = RequestApprovalState.Approved;
+        this.dataChangeNotificationService.notify();
 
-    this.dataChangeNotificationService.notify();
+        this.router.navigate([
+          "team-budget/" + new Date().getFullYear() + "/request/" + id,
+        ]);
 
-    this.router.navigate([
-      "team-budget/" + new Date().getFullYear() + "/request/" + id,
-    ]);
-
-    this.alertService.success(
-      "Request created. You can upload invoice now.",
-      "addRequestError"
-    );
+        this.alertService.success(
+          "Request created. You can upload invoice now.",
+          "addRequestError"
+        );
+      });
   }
 
   async updateRequest(): Promise<void> {
-    await this.teamBudgetService.updateTeamRequest(this.requestId, {
-      employees: this.list2.map((_) => _.employee.id),
-      title: this.request.title,
-      amount: this.request.amount,
-      date: this.request.date,
-    });
+    this.teamBudgetService
+      .updateTeamRequest(this.requestId, {
+        employees: this.list2.map((_) => _.employee.id),
+        title: this.request.title,
+        amount: this.request.amount,
+        date: this.request.date,
+      })
+      .subscribe(() => {
+        this.dataChangeNotificationService.notify();
 
-    this.dataChangeNotificationService.notify();
-
-    this.alertService.success(
-      "Request updated.",
-      "addRequestError"
-    );
+        this.alertService.success("Request updated.", "addRequestError");
+      });
   }
 
   onHide() {
