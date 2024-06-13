@@ -1,4 +1,4 @@
-export class BudgetLeft {
-    year: number;
-    amount: number;
-  } 
+export interface BudgetLeft {
+  year: number;
+  amount: number;
+}
