@@ -7,10 +7,16 @@ import { ServiceHelper } from "./service.helper";
 import { switchMap } from "rxjs/operators";
 import { UserUpdateModel } from "../model/userUpdateModel";
 
+export interface NewUserModel {
+  firstName: string;
+  lastName: string;
+  email: string;
+  superior: number;
+  state: number;
+}
+
 @Injectable()
 export class UserService {
-  private currentUser: string = "currentUser";
-
   url = "User";
 
   constructor(
@@ -19,7 +25,7 @@ export class UserService {
     private configService: ConfigService
   ) {}
 
-  public createUser(data) {
+  public createUser(data: NewUserModel) {
     return this.http.post(
       this.configService.apiUrlBase + this.url + "/create",
       data,
