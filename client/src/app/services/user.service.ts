@@ -8,7 +8,7 @@ import { UserUpdateModel } from '../model/userUpdateModel';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-    private currentUser: string = 'currentUser';
+    private currentUser = 'currentUser';
 
     url = 'User';
 
@@ -18,7 +18,13 @@ export class UserService {
         private configService: ConfigService
     ) {}
 
-    public createUser(data) {
+    public createUser(data: {
+        firstName: string,
+        lastName: string,
+        email: string,
+        superior: number,
+        state: number
+    }) {
         return this.http.post(
             this.configService.apiUrlBase + this.url + '/create',
             data,
@@ -40,14 +46,14 @@ export class UserService {
         );
     }
 
-    public getUser(id): Observable<User> {
+    public getUser(id: string): Observable<User> {
         return this.http.get<User>(
             this.configService.apiUrlBase + this.url + '/' + id,
             this.serviceHelper.getHttpOptions()
         );
     }
 
-    public updateUser(user: UserUpdateModel): Observable<any> {
+    public updateUser(user: UserUpdateModel): Observable<void> {
         return this.http.put(
             this.configService.apiUrlBase + this.url,
             user,
@@ -55,14 +61,14 @@ export class UserService {
         );
     }
 
-    public activateUser(id: number): Observable<any> {
+    public activateUser(id: number): Observable<void> {
         return this.http.post(
             `${this.configService.apiUrlBase}${this.url}/${id}/activate`,
             this.serviceHelper.getHttpOptions()
         );
     }
 
-    public deactivateUser(id: number): Observable<any> {
+    public deactivateUser(id: number): Observable<void> {
         return this.http.post(
             `${this.configService.apiUrlBase}${this.url}/${id}/deactivate`,
             this.serviceHelper.getHttpOptions()

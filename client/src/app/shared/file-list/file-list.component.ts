@@ -6,10 +6,10 @@ export type InvoiceStatus =
     | { code: 'in-progress'; progress?: number }
     | { code: 'saved'; id: number };
 
-export type Invoice = {
+export interface Invoice {
     status: InvoiceStatus;
     name: string;
-};
+}
 
 @Component({
     selector: 'app-file-list',
@@ -23,20 +23,20 @@ export class FileListComponent {
     public images: Invoice[];
 
     @Output()
-    public onNewImageAdded = new EventEmitter<FileList>();
+    public newImageAdded = new EventEmitter<FileList>();
 
     constructor(private invoiceImageService: InvoiceImageService) {}
 
-    download(imageId: number, imageName: string) {
+    download(imageId: number) {
         this.invoiceImageService.getInvoiceImage(imageId);
     }
 
     public onImageAdded(files: FileList) {
-        this.onNewImageAdded.emit(files);
+        this.newImageAdded.emit(files);
     }
 
     public onButtonClick() {
-        let element: HTMLElement = document.getElementById(
+        const element: HTMLElement = document.getElementById(
             'fileDialog'
         ) as HTMLElement;
         element.click();

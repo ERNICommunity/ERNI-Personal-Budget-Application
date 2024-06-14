@@ -1,4 +1,4 @@
-import { BudgetType } from "../budgetType";
+import { BudgetType } from '../budgetType';
 export class Budget {
     id: number;
     title: string;

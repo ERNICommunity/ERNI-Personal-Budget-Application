@@ -13,9 +13,9 @@ export class ExportService {
         private configService: ConfigService
     ) {}
 
-    public getDownloadToken(): Promise<any> {
+    public getDownloadToken(): Promise<string> {
         return this.http
-            .get<any>(
+            .get<string>(
                 `${this.configService.apiUrlBase}${this.serviceUrl}/token`,
                 this.serviceHelper.getHttpOptions()
             )

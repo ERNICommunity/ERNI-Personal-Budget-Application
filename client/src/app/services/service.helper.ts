@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import { HttpHeaders, HttpParams } from "@angular/common/http";
+import { Injectable } from '@angular/core';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceHelper {
@@ -10,12 +10,12 @@ export class ServiceHelper {
         headers?: HttpHeaders | {
             [header: string]: string | string[];
         };
-        observe?: "body";
+        observe?: 'body';
         params?: HttpParams | {
             [param: string]: string | string[];
         };
         reportProgress?: boolean;
-        responseType?: "json";
+        responseType?: 'json';
         withCredentials?: boolean;
     } {
         return {

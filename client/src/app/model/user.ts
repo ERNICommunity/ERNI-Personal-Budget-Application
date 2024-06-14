@@ -1,4 +1,4 @@
-import { UserState } from "./userState";
+import { UserState } from './userState';
 
 export class User {
   id: number;
@@ -7,4 +7,4 @@ export class User {
   email: string;
   superior: User;
   state: UserState;
-} 
+}

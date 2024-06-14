@@ -1,5 +1,3 @@
-import { UserState } from "./userState";
-
 export class UserUpdateModel {
   id: number;
   firstName: string;

@@ -1,4 +1,4 @@
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from './services/user.service';
 import { Router, NavigationStart, NavigationCancel, NavigationError, NavigationEnd } from '@angular/router';
 import { BusyIndicatorService } from './services/busy-indicator.service';

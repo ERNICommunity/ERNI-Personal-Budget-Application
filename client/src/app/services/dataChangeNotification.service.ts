@@ -1,8 +1,7 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { Request } from "../model/request/request";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
-export class Unit {  
+export class Unit {
 }
 
 @Injectable({ providedIn: 'root' })

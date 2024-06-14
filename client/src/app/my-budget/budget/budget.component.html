@@ -11,7 +11,7 @@
 
     <a
       pButton
-      *ngIf="budget.year == currentYear"
+      *ngIf="budget.year === currentYear"
       class="p-button-sm"
       routerLink="new-request/{{ budget.id }}"
       [state]="{ budget: budget }"
@@ -53,7 +53,7 @@
           <button
             pButton
             (click)="openDeleteConfirmationModal(request)"
-            *ngIf="request.state == requestStateType.Pending"
+            *ngIf="request.state === requestStateType.Pending"
             class="p-button-sm"
           >
             Delete

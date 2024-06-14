@@ -6,7 +6,7 @@ export class ConfigService {
     constructor() {
     }
 
-    public get apiUrlBase(): any {
+    public get apiUrlBase(): string {
         return environment.apiBaseUrl;
     }
 

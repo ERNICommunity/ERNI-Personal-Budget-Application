@@ -5,7 +5,6 @@ import {
     OnInit,
     SimpleChanges
 } from '@angular/core';
-import { BudgetType } from '../../model/budgetType';
 import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 import { User } from '../../model/user';
 import { AlertService } from '../../services/alert.service';
@@ -19,7 +18,7 @@ import { DataChangeNotificationService } from '../../services/dataChangeNotifica
 })
 export class CreateBudgetsComponent implements OnInit, OnChanges {
     @Input()
-    public year: Number;
+    public year: number;
 
     @Input()
     public budgetType: BudgetTypeEnum;
@@ -37,7 +36,7 @@ export class CreateBudgetsComponent implements OnInit, OnChanges {
     ) {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.year !== undefined || changes.budgetType !== undefined) {
+        if (changes['year'] !== undefined || changes['budgetType'] !== undefined) {
             this.ngOnInit();
         }
     }
@@ -49,7 +48,7 @@ export class CreateBudgetsComponent implements OnInit, OnChanges {
     }
 
     setBudgetsForYear(): void {
-        var task = !this.selectedEmployee
+        const task = !this.selectedEmployee
             ? this.budgetService.createBudgetsForAllActiveUsers(
                   this.budgetTitle,
                   this.amount,

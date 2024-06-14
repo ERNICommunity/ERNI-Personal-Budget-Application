@@ -8,26 +8,26 @@
     <li
       class="nav-item"
       [routerLinkActive]="['active']"
-      *auth="'canAccessMyBudget'"
+      *pbaAuth="'canAccessMyBudget'"
     >
       <a class="nav-link" routerLink="/my-budget"> My budget </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isSuperior'">
+    <li [routerLinkActive]="['active']" *pbaAuth="'isSuperior'">
       <a routerLink="/team-budget"> Team budget </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
       <a routerLink="/other-budgets"> Other Budgets </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'canReadRequests'">
+    <li [routerLinkActive]="['active']" *pbaAuth="'canReadRequests'">
       <a routerLink="/requests"> Requests </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
       <a routerLink="/mass-request"> Mass Request </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
       <a routerLink="/users"> Employees </a>
     </li>
-    <li [routerLinkActive]="['active']" *auth="'isAdmin'">
+    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
       <a routerLink="/statistics"> Statistics </a>
     </li>
     <li>

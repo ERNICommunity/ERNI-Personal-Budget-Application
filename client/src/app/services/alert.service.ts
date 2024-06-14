@@ -9,7 +9,7 @@ import { Alert, AlertType } from '../model/alert.model';
 })
 export class AlertService {
     private subject: Subject<Alert> = new Subject<Alert>();
-    private keepAfterRouteChange: boolean = false;
+    private keepAfterRouteChange = false;
 
     constructor(private router: Router) {
         // clear alert messages on route change unless 'keepAfterRouteChange' flag is true
@@ -48,7 +48,7 @@ export class AlertService {
         this.alert(new Alert({ message, type: AlertType.Warning, alertId }));
     }
 
-    // main alert method    
+    // main alert method
     alert(alert: Alert) {
         this.keepAfterRouteChange = alert.keepAfterRouteChange;
         this.subject.next(alert);

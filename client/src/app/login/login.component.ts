@@ -5,7 +5,7 @@ import { UserInfo } from '../model/userInfo';
 import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
-  selector: 'rmt-login',
+  selector: 'pba-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

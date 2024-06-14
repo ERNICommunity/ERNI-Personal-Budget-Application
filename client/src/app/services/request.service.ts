@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Request } from '../model/request/request';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { ServiceHelper } from './service.helper';
@@ -33,7 +33,7 @@ export class RequestService {
         );
     }
 
-    public getRequest(id): Observable<Request> {
+    public getRequest(id: number): Observable<Request> {
         return this.http.get<Request>(
             this.configService.apiUrlBase + this.requestUrl + id,
             this.serviceHelper.getHttpOptions()
@@ -70,35 +70,35 @@ export class RequestService {
         );
     }
 
-    public addMassRequest(request: MassRequest): Observable<any> {
+    public addMassRequest(request: MassRequest): Observable<void> {
         return this.http.post<MassRequest>(
             this.configService.apiUrlBase + this.requestUrl + 'mass',
             request,
             this.serviceHelper.getHttpOptions()
-        );
+        ).pipe(void 0);
     }
 
-    public updateRequest(request: PatchRequest): Observable<any> {
+    public updateRequest(request: PatchRequest): Observable<void> {
         return this.http.put(
             this.configService.apiUrlBase + this.requestUrl,
             request,
             this.serviceHelper.getHttpOptions()
-        );
+        ).pipe(void 0);
     }
 
-    public updateTeamRequest(request: PatchRequest): Observable<any> {
+    public updateTeamRequest(request: PatchRequest): Observable<void> {
         return this.http.put(
             this.configService.apiUrlBase + this.requestUrl + 'team',
             request,
             this.serviceHelper.getHttpOptions()
-        );
+        ).pipe(void 0);
     }
 
-    public deleteRequest(id: number): Observable<any> {
+    public deleteRequest(id: number): Observable<void> {
         return this.http.delete<Request>(
             this.configService.apiUrlBase + this.requestUrl + id,
             this.serviceHelper.getHttpOptions()
-        );
+        ).pipe(void 0);
     }
 
     public getRemainingBudgets(): Observable<

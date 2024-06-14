@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { User } from '../../model/user';
 import { UserService } from '../../services/user.service';
-import { ConfigService } from '../../services/config.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { Router } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
@@ -16,7 +15,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class CreateUserComponent implements OnInit {
     superiors: User[];
     createForm: UntypedFormGroup;
-    submitted: boolean = false;
+    submitted = false;
     errorMessage: string;
 
     constructor(
@@ -61,7 +60,7 @@ export class CreateUserComponent implements OnInit {
 
         this.busyIndicatorService.start();
 
-        let userData = {
+        const userData = {
             firstName: this.controls.firstName.value,
             lastName: this.controls.lastName.value,
             email: this.controls.email.value,
@@ -78,7 +77,9 @@ export class CreateUserComponent implements OnInit {
                 },
                 (err: HttpErrorResponse) => {
                     let error = 'User was not created.';
-                    if (err.status === 409) error = 'User is already exists.';
+                    if (err.status === 409) {
+error = 'User is already exists.';
+}
 
                     this.alertService.error(error);
                 }

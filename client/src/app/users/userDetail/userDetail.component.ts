@@ -19,7 +19,7 @@ export class UserDetailComponent implements OnInit {
   user: User;
   users: User[];
   form: UntypedFormGroup;
-  submitted: boolean = false;
+  submitted = false;
 
 
 
@@ -83,7 +83,7 @@ export class UserDetailComponent implements OnInit {
 
     this.busyIndicatorService.start();
 
-    let userData = {
+    const userData = {
       id: this.id,
       firstName: this.form.controls.firstName.value,
       lastName: this.form.controls.lastName.value,
@@ -94,18 +94,19 @@ export class UserDetailComponent implements OnInit {
 
     this.userService.updateUser(userData).subscribe(
       () => {
-        this.alertService.success("User successfully was created.");
+        this.alertService.success('User successfully was created.');
         this.router.navigate(['/users']);
       },
       (err: HttpErrorResponse) => {
-        let error = "User was not created.";
-        if (err.status === 409)
-          error = "User is already exists.";
+        let error = 'User was not created.';
+        if (err.status === 409) {
+error = 'User is already exists.';
+}
 
         this.alertService.error(error);
       }
     ).add(() => {
-      this.busyIndicatorService.end()
+      this.busyIndicatorService.end();
     });
   }
 
