@@ -1,4 +1,4 @@
-import { RequestApprovalState } from "../requestState";
+import { RequestApprovalState } from '../requestState';
 
 export class TransactionModel {
   employeeId: number;

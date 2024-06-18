@@ -3,6 +3,7 @@
     <label for="title" class="block">Title</label>
     <input
       id="title"
+      aria-describedby="title-desc title-error"
       type="text"
       pInputText
       required
@@ -10,15 +11,12 @@
       [(ngModel)]="request.title"
       [disabled]="isReadonly"
     />
-    <small id="username1-help" class="block"
-      >Short summary of what you are going to buy.</small
-    >
+    <small id="title-desc" class="block">Short summary of what you are going to buy.</small>
     <small
       *ngIf="title.invalid && (title.dirty || title.touched)"
-      id="username2-help"
+      id="title-error"
       class="p-error block"
-      >Title is required.</small
-    >
+      >Title is required.</small>
   </div>
 
   <div class="field">
@@ -29,7 +27,6 @@
       currency="EUR"
       inputId="amount"
       [disabled]="isReadonly"
-    >
-    </p-inputNumber>
+    ></p-inputNumber>
   </div>
 </div>

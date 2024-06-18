@@ -13,12 +13,12 @@ import {
     PolicyNames
 } from '../../services/authorization-policy';
 
-@Directive({ selector: '[auth]' })
+@Directive({ selector: '[pbaAuth]' })
 export class AuthDirective implements OnDestroy {
     subscription: Subscription;
 
     constructor(
-        private templateRef: TemplateRef<any>,
+        private templateRef: TemplateRef<unknown>,
         private viewContainer: ViewContainerRef,
         authService: AuthenticationService
     ) {

@@ -1,19 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BudgetService } from '../../services/budget.service';
 import { Budget } from '../../model/budget';
-import { ActivatedRoute, Params } from '@angular/router';
-import { ConfigService } from '../../services/config.service';
+import { ActivatedRoute } from '@angular/router';
 import { MenuItem } from 'primeng/api/menuitem';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import {
     distinctUntilChanged,
     map,
     switchMap,
-    takeUntil
 } from 'rxjs/operators';
 import { MenuHelper } from '../../shared/menu-helper';
-import { BudgetType } from '../../model/budgetType';
 
 @Component({
     selector: 'app-other-budgets',
@@ -58,7 +55,7 @@ export class OtherBudgetsComponent implements OnInit {
             distinctUntilChanged()
         );
 
-        var currentYear = new Date().getFullYear();
+        const currentYear = new Date().getFullYear();
 
         this.disableSetOrEditBudgets$ = this.selectedYear$.pipe(
             map(

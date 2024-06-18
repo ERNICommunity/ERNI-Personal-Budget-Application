@@ -30,8 +30,8 @@
     </div>
 
     <div class="form-group">
-      <label>Attendees</label>
-      <p-pickList [disabled]="request.isReadonly" [source]="list1" [target]="list2" [dragdrop]="false" [showSourceControls]="false"
+      <label for="attendees-picklist">Attendees</label>
+      <p-pickList id="attendees-picklist" [disabled]="request.isReadonly" [source]="list1" [target]="list2" [dragdrop]="false" [showSourceControls]="false"
         [showTargetControls]="false" (onMoveToTarget)="onAttendeesChanges()" (onMoveToSource)="onAttendeesChanges()"
         [sourceStyle]="{'height':'30rem'}" [targetStyle]="{'height':'30rem'}"
         sourceHeader="Employees" targetHeader="Attendees">

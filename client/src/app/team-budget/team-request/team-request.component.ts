@@ -17,7 +17,7 @@ export class TeamRequestComponent implements OnInit {
   constructor(private route: ActivatedRoute, private teamBudgetService: TeamBudgetService, private notificationService: DataChangeNotificationService) { }
 
   async ngOnInit(): Promise<void> {
-    combineLatest([ this.route.params, this.notificationService.notifications$]).subscribe(async ([params, _]) => {
+    combineLatest([ this.route.params, this.notificationService.notifications$]).subscribe(async ([params]) => {
       this.requests = await this.teamBudgetService.getTeamRequests(Number(params['year']));
     });
   }

@@ -7,7 +7,7 @@ import { ServiceHelper } from "./service.helper";
 import { switchMap } from "rxjs/operators";
 import { UserUpdateModel } from "../model/userUpdateModel";
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UserService {
   private currentUser: string = "currentUser";
 

@@ -1,4 +1,4 @@
-import { BudgetTypeEnum } from "./budgetTypeEnum";
+import { BudgetTypeEnum } from './budgetTypeEnum';
 
 export class BudgetStatisticsModel {
     budgetType: BudgetTypeEnum;
@@ -9,5 +9,5 @@ export class BudgetStatisticsModel {
 }
 
 export class StatisticsModel {
-    budgets: BudgetStatisticsModel;    
+    budgets: BudgetStatisticsModel;
 }

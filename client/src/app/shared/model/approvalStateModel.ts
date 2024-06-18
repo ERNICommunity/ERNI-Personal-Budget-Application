@@ -1,4 +1,4 @@
-import { RequestApprovalState } from "../../model/requestState";
+import { RequestApprovalState } from '../../model/requestState';
 
 export class ApprovalStateModel {
     state: RequestApprovalState;

@@ -1,4 +1,6 @@
-export const environment = {
+import { Environment } from "./environment.type";
+
+export const environment: Environment = {
     production: true,
     apiBaseUrl: 'https://ernipbaserver-prod.azurewebsites.net/api/',
     protectedResourceMap: {

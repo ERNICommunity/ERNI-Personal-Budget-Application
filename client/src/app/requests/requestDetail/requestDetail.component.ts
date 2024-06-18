@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Request } from '../../model/request/request';
 import { RequestService } from '../../services/request.service';
-import { UntypedFormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { InvoiceImageService } from '../../services/invoice-image.service';
 
 @Component({
@@ -17,7 +16,7 @@ export class RequestDetailComponent implements OnInit {
     createDate: Date;
     requestForm: UntypedFormGroup;
     httpResponseError: string;
-    images: { id: number, name: string}[];
+    images: { id: number; name: string}[];
     isVisible: boolean;
 
     constructor(
@@ -35,7 +34,7 @@ export class RequestDetailComponent implements OnInit {
         });
     }
 
-    download(imageId: number, imageName: string) {
+    download(imageId: number) {
         this.invoiceImageService.getInvoiceImage(imageId);
     }
 

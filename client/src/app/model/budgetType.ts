@@ -3,4 +3,4 @@ export class BudgetType {
     name: string;
     key: string;
     singlePerUser: boolean;
-} 
+}

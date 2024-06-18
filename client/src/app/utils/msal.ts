@@ -6,7 +6,7 @@ import {
   LogLevel,
   PublicClientApplication,
 } from '@azure/msal-browser';
-import { environment } from "../../environments/environment";
+import { environment } from '../../environments/environment';
 
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
@@ -21,9 +21,11 @@ export function MSALInstanceFactory(): IPublicClientApplication {
       storeAuthStateInCookie: false
     },
     system: {
+      asyncPopups: true,
+      allowNativeBroker: false,
       loggerOptions: {
         logLevel: LogLevel.Verbose,
-        loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
+        loggerCallback: (level: LogLevel, message: string) => {
           if (level === LogLevel.Error) {
             console.error(message);
           }
@@ -39,8 +41,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 
   Object
     .keys(environment.protectedResourceMap)
-    .forEach(key => protectedResourceMap
-    .set(key, environment.protectedResourceMap[key]));
+    .forEach(key => protectedResourceMap.set(key, environment.protectedResourceMap[key]));
 
   return {
     interactionType: InteractionType.Popup,

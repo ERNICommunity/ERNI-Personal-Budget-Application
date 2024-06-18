@@ -1,13 +1,13 @@
 import { Observable } from 'rxjs';
 import { scan } from 'rxjs/operators';
 
-export type ResetEvent<T extends { id: number }> = {
+export interface ResetEvent<T extends { id: number }> {
     list: T[];
-};
+}
 
-export type RemoveEvent = {
+export interface RemoveEvent {
     id: number;
-};
+}
 
 export function maintainList<T extends { id: number }>(
     opstream: Observable<ResetEvent<T> | RemoveEvent>
