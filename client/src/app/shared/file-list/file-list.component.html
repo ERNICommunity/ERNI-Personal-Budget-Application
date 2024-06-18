@@ -12,6 +12,7 @@
       ></p-progressSpinner>
 
       <button
+        *ngIf="image.status.id"
         pButton
         [disabled]="!image.status.id"
         class="p-button-sm p-button-text"
