@@ -29,7 +29,7 @@ import { SharedModule } from "./shared/shared.module";
 import { AuthenticatedComponent } from "./authenticated/authenticated.component";
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, AuthenticatedComponent],
+  declarations: [AppComponent, LoginComponent],
   imports: [
     FormsModule,
     HttpClientModule,
@@ -38,6 +38,7 @@ import { AuthenticatedComponent } from "./authenticated/authenticated.component"
     RouterModule.forRoot(rootRouterConfig),
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    AuthenticatedComponent,
   ],
   providers: [
     {

@@ -1,22 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthenticationService } from '../services/authentication.service';
+import { Component } from "@angular/core";
+import { Router } from "@angular/router";
+import { AuthenticationService } from "../services/authentication.service";
+import { SharedModule } from "../shared/shared.module";
 
 @Component({
-    selector: 'authenticated',
-    templateUrl: './authenticated.component.html',
-    styleUrls: ['./authenticated.component.scss']
+  selector: "authenticated",
+  templateUrl: "./authenticated.component.html",
+  styleUrls: ["./authenticated.component.scss"],
+  standalone: true,
+  imports: [SharedModule],
 })
-export class AuthenticatedComponent implements OnInit {
-    constructor(
-        public authService: AuthenticationService,
-        public router: Router
-    ) {}
+export class AuthenticatedComponent {
+  constructor(
+    public authService: AuthenticationService,
+    public router: Router
+  ) {}
 
-    ngOnInit(): void {}
-
-    async logout(): Promise<void> {
-        await this.authService.logout();
-        this.router.navigate(['/login']);
-    }
+  async logout(): Promise<void> {
+    await this.authService.logout();
+    this.router.navigate(["/login"]);
+  }
 }
