@@ -26,26 +26,12 @@ export class UserListComponent implements OnInit {
     this.filteredUsers = this.filterUsers(value);
   }
 
-  filterUsers(searchString: string) {
-    searchString = searchString
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+    filterUsers(searchString: string) {
+        searchString = searchString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    return this.users.filter(
-      (user) =>
-        user.firstName
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .indexOf(searchString) !== -1 ||
-        user.lastName
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .indexOf(searchString) !== -1
-    );
-  }
+        return this.users.filter(user => user.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(searchString) !== -1 ||
+            user.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(searchString) !== -1);
+    }
 
   constructor(
     private userService: UserService,
@@ -58,24 +44,30 @@ export class UserListComponent implements OnInit {
     this.getUsers(this.userState);
   }
 
-  getUsers(filter: UserState): void {
-    this.userService.getAllUsers().subscribe((users) => {
-      (this.users = users.filter((u) => u.state == filter)),
-        (this.filteredUsers = this.users);
-    });
-  }
+    getUsers(filter: UserState): void {
+        this.userService.getAllUsers().subscribe(users => {
+            this.users = users.filter(u => u.state == filter),
+            this.filteredUsers = this.users;
+        });
+    }
 
+    activateEmployee(user: User): void {
+        user.state = UserState.Active;
+        this.userService.activateUser(user.id).subscribe(() => {
+ this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users;
+});
+    }
+    
   syncUsers(): void {
     this.userService.syncUsers().subscribe(() => this.getUsers(this.userState));
   }
 
-  activateEmployee(user: User): void {
-    user.state = UserState.Active;
-    this.userService.activateUser(user.id).subscribe(() => {
-      (this.users = this.users.filter((u) => u.id !== user.id)),
-        (this.filteredUsers = this.users);
-    });
-  }
+    deactivateEmployee(user: User): void {
+        user.state = UserState.Inactive;
+        this.userService.deactivateUser(user.id).subscribe(() => {
+ this.users = this.users.filter(u => u.id !== user.id), this.filteredUsers = this.users;
+});
+    }
 
   deactivateEmployee(user: User): void {
     user.state = UserState.Inactive;

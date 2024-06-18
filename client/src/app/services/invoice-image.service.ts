@@ -3,14 +3,15 @@ import {
     HttpClient,
     HttpRequest,
     HttpEventType,
-    HttpResponse
+    HttpResponse,
+    HttpEvent,
 } from '@angular/common/http';
 import { ConfigService } from './config.service';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ServiceHelper } from './service.helper';
 import { InvoiceImage } from '../model/InvoiceImage';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class InvoiceImageService {
     requestUrl = 'InvoiceImage';
 
@@ -32,9 +33,9 @@ export class InvoiceImageService {
         );
     }
 
-    public getDownloadToken(imageId: number): Promise<any> {
+    public getDownloadToken(imageId: number): Promise<string> {
         return this.http
-            .get<any>(
+            .get<string>(
                 `${this.configService.apiUrlBase}${this.requestUrl}/image/${imageId}/token`,
                 this.serviceHelper.getHttpOptions()
             )
@@ -42,8 +43,8 @@ export class InvoiceImageService {
     }
 
     public async getInvoiceImage(imageId: number) {
-        var token = await this.getDownloadToken(imageId);
-        var downloadLink =
+        const token = await this.getDownloadToken(imageId);
+        const downloadLink =
             this.configService.apiUrlBase +
             this.requestUrl +
             '/image/' +
@@ -73,13 +74,13 @@ export class InvoiceImageService {
         );
 
         request.headers.set('Content-Type', 'multipart/form-data');
-        let progress = new Subject<number>();
-        let id = new Subject<number>();
-        this.http.request(request).subscribe(
-            (event) => {
+        const progress = new Subject<number>();
+        const id = new Subject<number>();
+        this.http.request<unknown>(request).subscribe(
+            (event: HttpEvent<unknown>) => {
                 if (event.type === HttpEventType.UploadProgress) {
-                    let percentDone = Math.round(
-                        (100 * event.loaded) / event.total
+                    const percentDone = Math.round(
+                        (100 * event.loaded) / (event.total ?? 0)
                     );
                     progress.next(percentDone);
                 } else if (event instanceof HttpResponse) {
@@ -88,7 +89,7 @@ export class InvoiceImageService {
                     progress.complete();
                 }
             },
-            (error) => {
+            (error: unknown) => {
                 progress.error(error);
             }
         );

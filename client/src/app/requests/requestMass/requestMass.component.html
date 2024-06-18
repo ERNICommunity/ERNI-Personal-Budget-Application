@@ -45,8 +45,9 @@
 >
 
 <div class="form-group">
-  <label>Attendees</label>
+  <label for="attendees-picklist">Attendees</label>
   <p-pickList
+    id="attendees-picklist"
     [source]="availableUsers"
     [target]="selectedUsers"
     [dragdrop]="false"

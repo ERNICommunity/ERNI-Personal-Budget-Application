@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
@@ -9,7 +9,7 @@ import { Message } from 'primeng/api/message';
     templateUrl: './alert.component.html',
     styleUrls: ['./alert.component.css']
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent implements OnInit, OnDestroy {
     @Input() id: string;
 
     alerts: Message[] = [];
@@ -31,7 +31,7 @@ export class AlertComponent implements OnInit {
                     {
                         severity: this.cssClass(alert),
                         summary: alert.message
-                        //detail: alert.message
+                        // detail: alert.message
                     }
                 ];
             });
@@ -48,7 +48,7 @@ export class AlertComponent implements OnInit {
 
     cssClass(alert: Alert) {
         if (!alert) {
-            return;
+            return undefined;
         }
 
         // return css class based on alert type

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Request } from '../model/request/request';
 import { RequestService } from '../services/request.service';
 
@@ -7,14 +7,14 @@ import { RequestService } from '../services/request.service';
   templateUrl: './requests.component.html',
   styleUrls: ['./requests.component.css']
 })
-export class RequestsComponent implements OnInit {
+export class RequestsComponent {
   requests: Request[];
 
   constructor(private valueService: RequestService) { }
 
-  ngOnInit() {
-    // this.getPendingRequests();
-  }
+  // ngOnInit() {
+  //   this.getPendingRequests();
+  // }
 
   // getPendingRequests(): void {
   //   this.valueService.getPendingRequests()

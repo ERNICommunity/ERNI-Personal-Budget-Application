@@ -6,9 +6,9 @@ import { DataChangeNotificationService } from '../../services/dataChangeNotifica
 import { TeamBudgetService } from '../../services/team-budget.service';
 
 @Component({
-  selector: "app-team-budget-state",
-  templateUrl: "./team-budget-state.component.html",
-  styleUrls: ["./team-budget-state.component.css"],
+  selector: 'app-team-budget-state',
+  templateUrl: './team-budget-state.component.html',
+  styleUrls: ['./team-budget-state.component.css'],
 })
 export class TeamBudgetStateComponent implements OnInit {
   teamBudgets: TeamBudgetModel[];
@@ -24,7 +24,7 @@ export class TeamBudgetStateComponent implements OnInit {
       this.route.params,
       this.dataChangeNotificationService.notifications$,
     ]).subscribe(async ([params]) => {
-      var yearParam = params["year"];
+      const yearParam = params['year'];
 
       this.teamBudgets = await this.teamBudgetService.getDefaultTeamBudget(
         yearParam

@@ -77,7 +77,7 @@ export class RequestEditComponent implements OnInit {
     }
 
     private createNewRequest(): Request {
-        var request = new Request();
+        const request = new Request();
         request.state = RequestApprovalState.Pending;
         return request;
     }
@@ -112,7 +112,7 @@ export class RequestEditComponent implements OnInit {
     }
 
     public onNewImageAdded(files: FileList) {
-        for (var i = 0; i < files.length; i++) {
+        for (let i = 0; i < files.length; i++) {
             const selectedFile = files[i];
 
             const im: Invoice & { file: File } = {
@@ -128,7 +128,7 @@ export class RequestEditComponent implements OnInit {
         }
     }
 
-    private uploadInvoices(requestId: number): Observable<any> {
+    private uploadInvoices(requestId: number): Observable<number | null> {
         const invoices = this.images;
         const uploads = invoices
             .filter((_) => _.status.code === 'new')
@@ -171,17 +171,17 @@ export class RequestEditComponent implements OnInit {
 
                 invoice.status = status;
 
-                var uploadInfo =
+                const uploadInfo =
                     this.invoiceImageService.addInvoiceImage(payload);
 
                 uploadInfo.progress.subscribe(
                     (progress) => (status.progress = progress)
                 );
-                uploadInfo.id.subscribe((id) => {
-                    const status: InvoiceStatus = (invoice.status = {
-                        code: 'saved',
-                        id: id
-                    });
+                uploadInfo.id.subscribe(() => {
+                    // const status: InvoiceStatus = (invoice.status = {
+                    //     code: 'saved',
+                    //     id: id
+                    // });
                 });
 
                 uploadInfo.id.subscribe(result.id);
@@ -201,10 +201,10 @@ export class RequestEditComponent implements OnInit {
     }
 
     private saveBasicInfo() {
-        let budgetId = this.budgetId;
-        let id = this.requestId;
-        let title: string = this.request.title;
-        let amount: number = this.request.amount;
+        const budgetId = this.budgetId;
+        const id = this.requestId;
+        const title: string = this.request.title;
+        const amount: number = this.request.amount;
 
         if (this.newRequest) {
             this.saveNewRequest({
@@ -222,7 +222,7 @@ export class RequestEditComponent implements OnInit {
     }
 
     private saveNewRequest(payload: NewRequest): void {
-        let request =
+        const request =
             this.budgetType == BudgetTypeEnum.TeamBudget
                 ? this.requestService.addTeamRequest(payload)
                 : this.requestService.addRequest(payload);
@@ -258,7 +258,7 @@ export class RequestEditComponent implements OnInit {
     }
 
     private editExistingRequest(payload: PatchRequest): void {
-        let request =
+        const request =
             this.budgetType == BudgetTypeEnum.TeamBudget
                 ? this.requestService.updateTeamRequest(payload)
                 : this.requestService.updateRequest(payload);

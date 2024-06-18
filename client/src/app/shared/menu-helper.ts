@@ -8,7 +8,7 @@ export class MenuHelper {
 
         const years = [];
 
-        for (var year = currentYear; year >= 2015; year--) {
+        for (let year = currentYear; year >= 2015; year--) {
             years.push({
                 label: year.toString(),
                 routerLink: linkBuilder(year)

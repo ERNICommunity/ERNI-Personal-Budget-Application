@@ -1,5 +1,5 @@
-<label>Uploaded files</label>
-<div class="fileLists">
+<label for="file-list">Uploaded files</label>
+<div class="fileLists" id="file-list">
   <ul class="pl-0">
     <li *ngFor="let image of images">
       <p-progressSpinner
@@ -15,7 +15,7 @@
         pButton
         [disabled]="!image.status.id"
         class="p-button-sm p-button-text"
-        (click)="download(image.status.id, image.name)"
+        (click)="download(image.status.id)"
       >
         {{ image.name }}
       </button>

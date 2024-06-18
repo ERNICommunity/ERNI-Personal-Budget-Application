@@ -1,21 +1,16 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import {
-    ActivatedRouteSnapshot,
-    CanActivate,
-    RouterStateSnapshot,
-    UrlTree
-} from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ViewerGuard implements CanActivate {
     constructor(private auth: AuthenticationService) {}
 
     canActivate(
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        _route: ActivatedRouteSnapshot,
+        _state: RouterStateSnapshot
     ):
         | Observable<boolean | UrlTree>
         | Promise<boolean | UrlTree>

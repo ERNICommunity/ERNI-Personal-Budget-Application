@@ -34,10 +34,10 @@ import {
     providers: [ConfirmationService]
 })
 export class RequestListComponent implements OnInit, OnDestroy {
-    pendingRoute: string = '/requests/pending';
-    approvedRoute: string = '/requests/approved';
-    completedRoute: string = '/requests/completed';
-    rejectedRoute: string = '/requests/rejected';
+    pendingRoute = '/requests/pending';
+    approvedRoute = '/requests/approved';
+    completedRoute = '/requests/completed';
+    rejectedRoute = '/requests/rejected';
 
     requests$: Observable<Request[]>;
 
@@ -248,7 +248,7 @@ export class RequestListComponent implements OnInit, OnDestroy {
         }
         this.requestService
             .approveRequest(request.id)
-            .subscribe((_) => this.removeEvent$.next({ id: request.id }));
+            .subscribe(() => this.removeEvent$.next({ id: request.id }));
     }
 
     export(month: number, year: number) {
@@ -263,7 +263,7 @@ export class RequestListComponent implements OnInit, OnDestroy {
             accept: () => {
                 this.requestService
                     .deleteRequest(request.id)
-                    .subscribe((_) =>
+                    .subscribe(() =>
                         this.removeEvent$.next({ id: request.id })
                     );
             }
@@ -278,7 +278,7 @@ export class RequestListComponent implements OnInit, OnDestroy {
             accept: () => {
                 this.requestService
                     .rejectRequest(request.id)
-                    .subscribe((_) =>
+                    .subscribe(() =>
                         this.removeEvent$.next({ id: request.id })
                     );
             }

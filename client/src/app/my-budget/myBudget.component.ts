@@ -9,7 +9,7 @@ import { MenuHelper } from '../shared/menu-helper';
 import { CurrentUsersBudget } from '../model/current-users-budget';
 
 @Component({
-    selector: 'app-my-Budget',
+    selector: 'app-my-budget',
     templateUrl: './myBudget.component.html',
     styleUrls: ['./myBudget.component.css']
 })

@@ -4,7 +4,7 @@ import { MsalService } from '@azure/msal-angular';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
-    selector: 'rmt-login',
+  selector: 'pba-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

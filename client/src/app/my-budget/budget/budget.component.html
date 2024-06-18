@@ -53,9 +53,7 @@
           <button
             pButton
             (click)="openDeleteConfirmationModal(request)"
-            *ngIf="
-              request.state == requestStateType.Pending && budget.isEditable
-            "
+            *ngIf="request.state === requestStateType.Pending && budget.isEditable"
             class="p-button-sm"
           >
             Delete

@@ -25,7 +25,7 @@ export class StatisticsComponent implements OnInit {
         this.years = [];
         this.currentYear = new Date().getFullYear();
         for (
-            var year = this.currentYear;
+            let year = this.currentYear;
             year >= config.getOldestYear;
             year--
         ) {

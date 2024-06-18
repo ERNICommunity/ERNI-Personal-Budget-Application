@@ -52,10 +52,10 @@ export class RequestMassComponent implements OnInit {
     }
 
     save(): void {
-        var users = this.selectedUsers;
+        const users = this.selectedUsers;
         this.busyIndicatorService.start();
 
-        let requestData = {
+        const requestData = {
             title: this.title,
             amount: this.amount,
             employees: users.map((_) => _.id)
