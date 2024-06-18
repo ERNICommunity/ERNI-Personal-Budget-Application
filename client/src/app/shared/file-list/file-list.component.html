@@ -12,7 +12,7 @@
       ></p-progressSpinner>
 
       <button
-        *ngIf="image.status.id"
+        *ngIf="image.status.code === 'saved'"
         pButton
         [disabled]="!image.status.id"
         class="p-button-sm p-button-text"
@@ -36,6 +36,6 @@
   id="fileDialog"
   type="file"
   #file
-  (change)="onImageAdded($event.target.files)"
+  (change)="onImageAdded($event.target)"
   style="display: none"
 />
