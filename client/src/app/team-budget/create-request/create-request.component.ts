@@ -64,7 +64,13 @@ export class CreateRequestComponent implements OnInit {
         // this.request = this.createNewRequest();
         this.newRequest = true;
 
-        this.request = new RequestViewModel();
+        // TODO: check default values
+        this.request = {
+          title: "",
+          date: new Date(),
+          amount: 0,
+          isReadonly: false,
+        };
       } else {
         console.log("Loading request");
         this.popupTitle = "Request details";

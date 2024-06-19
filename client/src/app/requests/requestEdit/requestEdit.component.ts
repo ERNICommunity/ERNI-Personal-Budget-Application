@@ -8,7 +8,7 @@ import { Request } from "../../model/request/request";
 import { PatchRequest } from "../../model/PatchRequest";
 import { BusyIndicatorService } from "../../services/busy-indicator.service";
 import { NewRequest } from "../../model/newRequest";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Params } from "@angular/router";
 import { RequestApprovalState } from "../../model/requestState";
 import { InvoiceImageService } from "../../services/invoice-image.service";
 import {
@@ -18,6 +18,7 @@ import {
 import { concatMap, defaultIfEmpty } from "rxjs/operators";
 import { forkJoin, Observable, Subject } from "rxjs";
 import { InvoiceImage } from "../../model/InvoiceImage";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-request-edit",
@@ -77,8 +78,16 @@ export class RequestEditComponent implements OnInit {
   }
 
   private createNewRequest(): Request {
-    const request = new Request();
-    request.state = RequestApprovalState.Pending;
+    const request: Request = {
+      state: RequestApprovalState.Pending,
+      id: 0,
+      amount: 0,
+      invoiceCount: 0,
+      user: undefined!,
+      budget: undefined!,
+      title: "",
+      createDate: undefined!,
+    };
     return request;
   }
 
@@ -232,13 +241,13 @@ export class RequestEditComponent implements OnInit {
         (_) => {
           this.dataChangeNotificationService.notify();
           this.isSaveInProgress = false;
-          this.alertService.alert(
-            new Alert({
-              message: "Request created successfully",
-              type: AlertType.Success,
-              keepAfterRouteChange: true,
-            })
-          );
+          this.alertService.alert({
+            // TODO: check alerId
+            alertId: "",
+            message: "Request created successfully",
+            type: AlertType.Success,
+            keepAfterRouteChange: true,
+          });
 
           this.router.navigate(["../../"], {
             relativeTo: this.route,
@@ -266,13 +275,13 @@ export class RequestEditComponent implements OnInit {
       () => {
         this.dataChangeNotificationService.notify();
         this.isSaveInProgress = false;
-        this.alertService.alert(
-          new Alert({
-            message: "Request updated",
-            type: AlertType.Success,
-            keepAfterRouteChange: true,
-          })
-        );
+        this.alertService.alert({
+          // TODO: check alerId
+          alertId: "",
+          message: "Request updated",
+          type: AlertType.Success,
+          keepAfterRouteChange: true,
+        });
         this.dataChangeNotificationService.notify();
       },
       (err) => {
