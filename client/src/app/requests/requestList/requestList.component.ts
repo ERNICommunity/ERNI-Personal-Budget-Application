@@ -26,6 +26,7 @@ import {
   RemoveEvent,
   ResetEvent,
 } from "../../shared/utils/observableUtils";
+import { filterRequests } from "../../utils/filters";
 
 @Component({
   selector: "app-request-list",
@@ -83,27 +84,6 @@ export class RequestListComponent implements OnInit, OnDestroy {
 
   set searchTerm(value: string) {
     this._searchTerm$.next(value);
-  }
-
-  filterRequests(requests: Request[], searchString: string): Request[] {
-    searchString = searchString
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-
-    return requests.filter(
-      (request) =>
-        request.user.firstName
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .indexOf(searchString) !== -1 ||
-        request.user.lastName
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .indexOf(searchString.toLowerCase()) !== -1
-    );
   }
 
   constructor(
@@ -222,9 +202,7 @@ export class RequestListComponent implements OnInit, OnDestroy {
       maintainedRequests,
       this._searchTerm$,
     ]).pipe(
-      map(([requests, searchString]) =>
-        this.filterRequests(requests, searchString)
-      )
+      map(([requests, searchString]) => filterRequests(requests, searchString))
     );
   }
 
