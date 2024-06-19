@@ -10,12 +10,12 @@ import { UserState } from "../../model/userState";
   styleUrls: ["./userList.component.css"],
 })
 export class UserListComponent implements OnInit {
-  users: User[];
-  filteredUsers: User[];
-  userState: UserState;
+  users: User[] = [];
+  filteredUsers: User[] = [];
+  userState: UserState = UserState.Active;
   userStateType = UserState;
 
-  private _searchTerm: string;
+  private _searchTerm: string = "";
 
   get searchTerm(): string {
     return this._searchTerm;

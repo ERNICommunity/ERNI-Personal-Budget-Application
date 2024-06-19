@@ -17,17 +17,17 @@ import { DataChangeNotificationService } from "../../services/dataChangeNotifica
   styleUrls: ["./create-budgets.component.css"],
 })
 export class CreateBudgetsComponent implements OnInit, OnChanges {
-  @Input()
-  public year: number;
+  @Input({ required: true })
+  public year!: number;
 
-  @Input()
-  public budgetType: BudgetTypeEnum;
+  @Input({ required: true })
+  public budgetType!: BudgetTypeEnum;
 
-  budgetTitle: string;
+  budgetTitle = "";
   amount: number | undefined;
 
-  availableUsers: User[];
-  selectedEmployee: User | null;
+  availableUsers: User[] = [];
+  selectedEmployee: User | null = null;
 
   constructor(
     private budgetService: BudgetService,
