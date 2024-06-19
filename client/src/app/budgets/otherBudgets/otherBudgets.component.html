@@ -1,15 +1,15 @@
 <h2>Other Budgets - {{ selectedYear$ | async }}</h2>
 
-<p-tabMenu [model]="(years$ | async) ?? []"></p-tabMenu>
+<p-tabMenu [model]="years()"></p-tabMenu>
 <p-tabMenu [model]="(budgetTypes$ | async) ?? []"></p-tabMenu>
 
 <p-accordion>
   <p-accordionTab header="Create budgets">
     <ng-container *ngIf="selectedYear$ | async as year">
-      <ng-container *ngIf="selectedBudgetType$ | async as budgetType">
+      <ng-container *ngIf="selectedBudgetType() as selectedBudgetType">
         <app-create-budgets
           [year]="year"
-          [budgetType]="budgetType"
+          [budgetType]="selectedBudgetType"
         ></app-create-budgets>
       </ng-container>
     </ng-container>
@@ -31,7 +31,7 @@
 <br />
 
 <p-table
-  [value]="(budgets$ | async) ?? []"
+  [value]="budgets()"
   styleClass="p-datatable-gridlines p-datatable-striped"
   responsiveLayout="scroll"
 >
