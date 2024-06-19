@@ -6,7 +6,7 @@ import { AlertService } from "../../services/alert.service";
 import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
 import { RequestApprovalState } from "../../model/requestState";
 
-export class RequestViewModel {
+export interface RequestViewModel {
   title: string;
   date: Date;
   state?: RequestApprovalState;
