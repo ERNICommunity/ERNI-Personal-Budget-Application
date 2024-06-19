@@ -43,7 +43,7 @@ export class AuthDirective implements OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  policy = new BehaviorSubject<PolicyNames | null>(undefined);
+  policy = new BehaviorSubject<PolicyNames | null | undefined>(undefined);
 
   @Input() set pbaAuth(name: PolicyNames | null | undefined) {
     this.policy.next(name);

@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../model/user';
-import { UserService } from '../../services/user.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { AlertService } from '../../services/alert.service';
-import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from "@angular/core";
+import { User } from "../../model/user";
+import { UserService } from "../../services/user.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Location } from "@angular/common";
+import {
+  AbstractControl,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
+import { AlertService } from "../../services/alert.service";
+import { BusyIndicatorService } from "../../services/busy-indicator.service";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './userDetail.component.html',
-  styleUrls: ['./userDetail.component.css']
+  selector: "app-users",
+  templateUrl: "./userDetail.component.html",
+  styleUrls: ["./userDetail.component.css"],
 })
-
 export class UserDetailComponent implements OnInit {
   id: number;
   user: User;
@@ -21,47 +25,51 @@ export class UserDetailComponent implements OnInit {
   form: UntypedFormGroup;
   submitted = false;
 
-
-
-  constructor(private userService: UserService,
+  constructor(
+    private userService: UserService,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: UntypedFormBuilder,
     private alertService: AlertService,
-    private busyIndicatorService: BusyIndicatorService) {
-  }
+    private busyIndicatorService: BusyIndicatorService
+  ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
 
     //    this.userService.getUser(Number(id)).subscribe(user => this.user = user);
 
-      this.form = this.formBuilder.group({
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        superior: [''],
-        state: ['', [Validators.required]]
+    this.form = this.formBuilder.group({
+      firstName: ["", Validators.required],
+      lastName: ["", Validators.required],
+      email: ["", [Validators.required, Validators.email]],
+      superior: [""],
+      state: ["", [Validators.required]],
     });
 
-    this.userService.getUser(Number(id)).subscribe(user => {
+    this.userService.getUser(Number(id)).subscribe((user) => {
       this.id = user.id;
       this.form = this.formBuilder.group({
         firstName: [user.firstName, Validators.required],
         lastName: [user.lastName, Validators.required],
         email: [user.email, [Validators.required, Validators.email]],
         superior: [user.superior.id],
-        state: [user.state, [Validators.required]]
+        state: [user.state, [Validators.required]],
       });
     });
 
-
-
-    this.userService.getAllUsers().subscribe(users => this.users = users.sort((first, second) => first.lastName.localeCompare(second.lastName)));
+    this.userService
+      .getAllUsers()
+      .subscribe(
+        (users) =>
+          (this.users = users.sort((first, second) =>
+            first.lastName.localeCompare(second.lastName)
+          ))
+      );
   }
 
-  trimControlValue(control) {
+  trimControlValue(control: AbstractControl) {
     control.setValue(control.value.trim());
   }
 
@@ -89,25 +97,27 @@ export class UserDetailComponent implements OnInit {
       lastName: this.form.controls.lastName.value,
       email: this.form.controls.email.value,
       superior: Number(this.form.controls.superior.value),
-      state: Number(this.form.controls.state.value)
+      state: Number(this.form.controls.state.value),
     };
 
-    this.userService.updateUser(userData).subscribe(
-      () => {
-        this.alertService.success('User successfully was created.');
-        this.router.navigate(['/users']);
-      },
-      (err: HttpErrorResponse) => {
-        let error = 'User was not created.';
-        if (err.status === 409) {
-error = 'User is already exists.';
-}
+    this.userService
+      .updateUser(userData)
+      .subscribe(
+        () => {
+          this.alertService.success("User successfully was created.");
+          this.router.navigate(["/users"]);
+        },
+        (err: HttpErrorResponse) => {
+          let error = "User was not created.";
+          if (err.status === 409) {
+            error = "User is already exists.";
+          }
 
-        this.alertService.error(error);
-      }
-    ).add(() => {
-      this.busyIndicatorService.end();
-    });
+          this.alertService.error(error);
+        }
+      )
+      .add(() => {
+        this.busyIndicatorService.end();
+      });
   }
-
 }

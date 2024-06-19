@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { TeamBudgetModel } from '../../model/teamBudget';
-import { TeamBudgetService } from '../../services/team-budget.service';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { AlertService } from '../../services/alert.service';
-import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
-import { RequestApprovalState } from '../../model/requestState';
+import { Component, OnInit } from "@angular/core";
+import { TeamBudgetModel } from "../../model/teamBudget";
+import { TeamBudgetService } from "../../services/team-budget.service";
+import { ActivatedRoute, Params, Router } from "@angular/router";
+import { AlertService } from "../../services/alert.service";
+import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
+import { RequestApprovalState } from "../../model/requestState";
 
 export class RequestViewModel {
   title: string;
@@ -15,9 +15,9 @@ export class RequestViewModel {
 }
 
 @Component({
-  selector: 'app-create-request',
-  templateUrl: './create-request.component.html',
-  styleUrls: ['./create-request.component.css'],
+  selector: "app-create-request",
+  templateUrl: "./create-request.component.html",
+  styleUrls: ["./create-request.component.css"],
 })
 export class CreateRequestComponent implements OnInit {
   isVisible: boolean;
@@ -53,21 +53,21 @@ export class CreateRequestComponent implements OnInit {
     );
 
     this.route.params.subscribe(async (params: Params) => {
-      this.requestId = Number(params['requestId']);
+      this.requestId = Number(params["requestId"]);
       this.list1 = this.teamBudgets.filter((_) => !_.employee.isTeamMember);
       this.list2 = this.teamBudgets.filter((_) => _.employee.isTeamMember);
       this.maxAmount = this.getMaxAmount();
 
       if (isNaN(this.requestId)) {
-        console.log('Creating request');
-        this.popupTitle = 'Create new request';
+        console.log("Creating request");
+        this.popupTitle = "Create new request";
         // this.request = this.createNewRequest();
         this.newRequest = true;
 
         this.request = new RequestViewModel();
       } else {
-        console.log('Loading request');
-        this.popupTitle = 'Request details';
+        console.log("Loading request");
+        this.popupTitle = "Request details";
         await this.loadRequest(this.requestId);
         this.newRequest = false;
       }
@@ -77,7 +77,9 @@ export class CreateRequestComponent implements OnInit {
   public async loadRequest(requestId: number): Promise<void> {
     this.requestId = requestId;
 
-    const request = await this.teamBudgetService.getSingleTeamRequest(requestId);
+    const request = await this.teamBudgetService.getSingleTeamRequest(
+      requestId
+    );
 
     this.list1 = this.teamBudgets.filter(
       (_) => !request.transactions.find((t) => t.employeeId == _.employee.id)
@@ -94,18 +96,17 @@ export class CreateRequestComponent implements OnInit {
       id: request.id,
       state: request.state,
       title: request.title,
-      isReadonly: true
+      isReadonly: true,
     } as RequestViewModel;
     console.log(request);
     console.log(this.request);
-
   }
 
   trimTitle(): void {
     this.request.title = this.request.title.trim();
   }
   close() {
-    this.router.navigate(['team-budget']);
+    this.router.navigate(["team-budget"]);
   }
 
   open() {
@@ -122,14 +123,13 @@ export class CreateRequestComponent implements OnInit {
 
   async save() {
     try {
-
       if (this.request.state == null) {
         await this.createRequest();
       } else {
         await this.updateRequest();
       }
     } catch (error) {
-      this.alertService.error(JSON.stringify(error.error), 'addRequestError');
+      this.alertService.error("Save failed", "addRequestError");
     }
   }
 
@@ -146,12 +146,12 @@ export class CreateRequestComponent implements OnInit {
     this.dataChangeNotificationService.notify();
 
     this.router.navigate([
-      'team-budget/' + new Date().getFullYear() + '/request/' + id,
+      "team-budget/" + new Date().getFullYear() + "/request/" + id,
     ]);
 
     this.alertService.success(
-      'Request created. You can upload invoice now.',
-      'addRequestError'
+      "Request created. You can upload invoice now.",
+      "addRequestError"
     );
   }
 
@@ -165,13 +165,10 @@ export class CreateRequestComponent implements OnInit {
 
     this.dataChangeNotificationService.notify();
 
-    this.alertService.success(
-      'Request updated.',
-      'addRequestError'
-    );
+    this.alertService.success("Request updated.", "addRequestError");
   }
 
   onHide() {
-    this.router.navigate(['team-budget']);
+    this.router.navigate(["team-budget"]);
   }
 }

@@ -56,9 +56,8 @@ export class BudgetComponent implements OnInit {
       .getBudgetsTypes()
       .subscribe(
         (types) =>
-          (this.budgetTypeName = types.find(
-            (type) => type.id == this.budget.type
-          ).name)
+          (this.budgetTypeName =
+            types.find((type) => type.id == this.budget.type)?.name ?? "")
       );
   }
 
