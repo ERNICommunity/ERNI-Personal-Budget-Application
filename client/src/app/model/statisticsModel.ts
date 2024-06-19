@@ -1,6 +1,6 @@
 import { BudgetTypeEnum } from "./budgetTypeEnum";
 
-export class BudgetStatisticsModel {
+export interface BudgetStatisticsModel {
   budgetType: BudgetTypeEnum;
   budgetCount: number;
 
@@ -8,6 +8,6 @@ export class BudgetStatisticsModel {
   totalSpentAmount: number;
 }
 
-export class StatisticsModel {
+export interface StatisticsModel {
   budgets: BudgetStatisticsModel[];
 }

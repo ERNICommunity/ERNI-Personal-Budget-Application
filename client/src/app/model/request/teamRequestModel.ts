@@ -1,6 +1,6 @@
-import { RequestApprovalState } from '../requestState';
+import { RequestApprovalState } from "../requestState";
 
-export class TransactionModel {
+export interface TransactionModel {
   employeeId: number;
   firstName: string;
   lastName: string;
@@ -8,7 +8,7 @@ export class TransactionModel {
   isSubordinate: boolean;
 }
 
-export class TeamRequestModel {
+export interface TeamRequestModel {
   id: number;
   transactions: TransactionModel[];
   title: string;

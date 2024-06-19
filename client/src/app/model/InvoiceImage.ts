@@ -1,4 +1,4 @@
-export class InvoiceImage {
+export interface InvoiceImage {
   requestId: number;
   data: string;
   filename: string;

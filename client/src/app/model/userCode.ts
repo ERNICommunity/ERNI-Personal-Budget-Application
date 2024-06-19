@@ -1,6 +1,6 @@
-export class UserCode {
-    firstName: string;
-    lastName: string;
-    displayName: string;
-    code: string;
+export interface UserCode {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  code: string;
 }

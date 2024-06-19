@@ -1,11 +1,11 @@
-export class EmployeeModel {
+export interface EmployeeModel {
   id: number;
   firstName: string;
   lastName: string;
   isTeamMember: boolean;
 }
 
-export class TeamBudgetModel {
+export interface TeamBudgetModel {
   employee: EmployeeModel;
   budgetTotal: number;
   budgetLeft: number;
