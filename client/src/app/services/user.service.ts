@@ -7,7 +7,7 @@ import { ServiceHelper } from "./service.helper";
 import { switchMap } from "rxjs/operators";
 import { UserUpdateModel } from "../model/userUpdateModel";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class UserService {
   private currentUser: string = "currentUser";
 
@@ -19,7 +19,13 @@ export class UserService {
     private configService: ConfigService
   ) {}
 
-  public createUser(data) {
+  public createUser(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    superior: number;
+    state: number;
+  }) {
     return this.http.post(
       this.configService.apiUrlBase + this.url + "/create",
       data,
@@ -49,30 +55,30 @@ export class UserService {
     );
   }
 
-  public getUser(id): Observable<User> {
+  public getUser(id: number): Observable<User> {
     return this.http.get<User>(
       this.configService.apiUrlBase + this.url + "/" + id,
       this.serviceHelper.getHttpOptions()
     );
   }
 
-  public updateUser(user: UserUpdateModel): Observable<any> {
-    return this.http.put(
+  public updateUser(user: UserUpdateModel) {
+    return this.http.put<void>(
       this.configService.apiUrlBase + this.url,
       user,
       this.serviceHelper.getHttpOptions()
     );
   }
 
-  public activateUser(id: number): Observable<any> {
-    return this.http.post(
+  public activateUser(id: number) {
+    return this.http.post<void>(
       `${this.configService.apiUrlBase}${this.url}/${id}/activate`,
       this.serviceHelper.getHttpOptions()
     );
   }
 
-  public deactivateUser(id: number): Observable<any> {
-    return this.http.post(
+  public deactivateUser(id: number) {
+    return this.http.post<void>(
       `${this.configService.apiUrlBase}${this.url}/${id}/deactivate`,
       this.serviceHelper.getHttpOptions()
     );

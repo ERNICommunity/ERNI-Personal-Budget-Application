@@ -31,8 +31,12 @@ export class FileListComponent {
     this.invoiceImageService.getInvoiceImage(imageId);
   }
 
-  public onImageAdded(element: EventTarget) {
-    this.newImageAdded.emit((element as HTMLInputElement).files);
+  public onImageAdded(element: Event) {
+    const files = (element.target as HTMLInputElement).files;
+
+    if (files) {
+      this.newImageAdded.emit();
+    }
   }
 
   public onButtonClick() {
