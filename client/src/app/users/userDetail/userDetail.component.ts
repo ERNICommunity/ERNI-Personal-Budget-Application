@@ -22,7 +22,13 @@ export class UserDetailComponent implements OnInit {
   id: number;
   user: User;
   users: User[];
-  form: UntypedFormGroup;
+  form: UntypedFormGroup = this.formBuilder.group({
+    firstName: ["", Validators.required],
+    lastName: ["", Validators.required],
+    email: ["", [Validators.required, Validators.email]],
+    superior: [""],
+    state: ["", [Validators.required]],
+  });
   submitted = false;
 
   constructor(
@@ -37,16 +43,6 @@ export class UserDetailComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get("id");
-
-    //    this.userService.getUser(Number(id)).subscribe(user => this.user = user);
-
-    this.form = this.formBuilder.group({
-      firstName: ["", Validators.required],
-      lastName: ["", Validators.required],
-      email: ["", [Validators.required, Validators.email]],
-      superior: [""],
-      state: ["", [Validators.required]],
-    });
 
     this.userService.getUser(Number(id)).subscribe((user) => {
       this.id = user.id;
