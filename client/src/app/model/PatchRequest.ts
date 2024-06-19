@@ -1,5 +1,5 @@
-export class PatchRequest {
-    id: number;
-    amount: number;
-    title: string;
+export interface PatchRequest {
+  id: number;
+  amount: number;
+  title: string;
 }

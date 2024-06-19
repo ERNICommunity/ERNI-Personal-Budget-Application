@@ -1,4 +1,4 @@
-export class UserUpdateModel {
+export interface UserUpdateModel {
   id: number;
   firstName: string;
   lastName: string;

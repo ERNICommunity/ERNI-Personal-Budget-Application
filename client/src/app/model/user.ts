@@ -1,6 +1,6 @@
-import { UserState } from './userState';
+import { UserState } from "./userState";
 
-export class User {
+export interface User {
   id: number;
   firstName: string;
   lastName: string;
