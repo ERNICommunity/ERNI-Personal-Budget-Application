@@ -6,7 +6,7 @@ import { AppComponent } from "./app.component";
 import { RouterModule } from "@angular/router";
 import { LoginComponent } from "./login/login.component";
 import { rootRouterConfig } from "./app.routes";
-import { HttpClientModule } from "@angular/common/http";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -28,39 +28,33 @@ import {
 import { SharedModule } from "./shared/shared.module";
 import { AuthenticatedComponent } from "./authenticated/authenticated.component";
 
-@NgModule({
-  declarations: [AppComponent, LoginComponent],
-  imports: [
-    FormsModule,
-    HttpClientModule,
-    BrowserModule,
-    SharedModule,
-    RouterModule.forRoot(rootRouterConfig),
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    AuthenticatedComponent,
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true,
-    },
-    {
-      provide: MSAL_INSTANCE,
-      useFactory: MSALInstanceFactory,
-    },
-    {
-      provide: MSAL_GUARD_CONFIG,
-      useFactory: MSALGuardConfigFactory,
-    },
-    {
-      provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: MSALInterceptorConfigFactory,
-    },
-    MsalService,
-    MsalBroadcastService,
-  ],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [AppComponent, LoginComponent],
+    bootstrap: [AppComponent], imports: [FormsModule,
+        BrowserModule,
+        SharedModule,
+        RouterModule.forRoot(rootRouterConfig),
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        AuthenticatedComponent], providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: MsalInterceptor,
+            multi: true,
+        },
+        {
+            provide: MSAL_INSTANCE,
+            useFactory: MSALInstanceFactory,
+        },
+        {
+            provide: MSAL_GUARD_CONFIG,
+            useFactory: MSALGuardConfigFactory,
+        },
+        {
+            provide: MSAL_INTERCEPTOR_CONFIG,
+            useFactory: MSALInterceptorConfigFactory,
+        },
+        MsalService,
+        MsalBroadcastService,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule {}

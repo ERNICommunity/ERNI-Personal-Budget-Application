@@ -1,11 +1,5 @@
 import { Injectable } from "@angular/core";
-import {
-  HttpClient,
-  HttpRequest,
-  HttpEventType,
-  HttpResponse,
-  HttpEvent,
-} from "@angular/common/http";
+import { HttpClient, HttpRequest, HttpEventType, HttpResponse, HttpEvent } from "@angular/common/http";
 import { ConfigService } from "./config.service";
 import { Observable, Subject, firstValueFrom } from "rxjs";
 import { ServiceHelper } from "./service.helper";
