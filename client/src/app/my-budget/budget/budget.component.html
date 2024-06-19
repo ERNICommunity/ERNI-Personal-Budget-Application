@@ -6,31 +6,33 @@
 <p-panel>
   <ng-template pTemplate="icons">
     <span class="mr-2"
-      >{{ budget.amountLeft }} € left out of {{ budget.amount }}</span
+      >{{ budget().amountLeft }} € left out of {{ budget().amount }}</span
     >
 
     <a
       pButton
-      *ngIf="budget.isEditable"
+      *ngIf="budget().isEditable"
       class="p-button-sm"
-      routerLink="new-request/{{ budget.id }}"
+      routerLink="new-request/{{ budget().id }}"
       [state]="{ budget: budget }"
     >
       Create new request
     </a>
   </ng-template>
   <ng-template pTemplate="header">
-    <div *ngIf="budget.title">{{ budget.title }} - {{ budgetTypeName }}</div>
-    <div *ngIf="!budget.title">{{ budgetTypeName }}</div>
+    <div *ngIf="budget().title">
+      {{ budget().title }} - {{ budgetTypeName() }}
+    </div>
+    <div *ngIf="!budget().title">{{ budgetTypeName() }}</div>
   </ng-template>
 
   <p-progressBar
-    [value]="(100 * budget.amountLeft) / budget.amount"
+    [value]="(100 * budget().amountLeft) / budget().amount"
     [showValue]="false"
   ></p-progressBar>
 
   <p-table
-    [value]="budget.requests"
+    [value]="budget().requests"
     styleClass="p-datatable-gridlines p-datatable-striped mt-3"
     responsiveLayout="scroll"
   >
@@ -46,14 +48,16 @@
     <ng-template pTemplate="body" let-request>
       <tr>
         <td>{{ request.title }}</td>
-        <td>{{ request.amount | number : '1.2-2' }}</td>
-        <td>{{ request.createDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ request.amount | number : "1.2-2" }}</td>
+        <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
         <td>{{ requestStateType[request.state] }}</td>
         <td class="button-table-cell">
           <button
             pButton
             (click)="openDeleteConfirmationModal(request)"
-            *ngIf="request.state === requestStateType.Pending && budget.isEditable"
+            *ngIf="
+              request.state === requestStateType.Pending && budget().isEditable
+            "
             class="p-button-sm"
           >
             Delete

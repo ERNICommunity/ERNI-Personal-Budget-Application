@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, input, computed, inject } from "@angular/core";
 import { RequestService } from "../../services/request.service";
 import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
 import { BudgetService } from "../../services/budget.service";
@@ -7,6 +7,7 @@ import { ConfirmationService } from "primeng/api";
 import { Request } from "../../model/request/request";
 import { BudgetTypeEnum } from "../../model/budgetTypeEnum";
 import { UserState } from "../../model/userState";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 export interface UserModel {
   id: number;
@@ -35,31 +36,24 @@ export interface BudgetModel {
   styleUrls: ["./budget.component.css"],
   providers: [ConfirmationService],
 })
-export class BudgetComponent implements OnInit {
-  @Input() budget: BudgetModel;
-  percentageLeft: number;
+export class BudgetComponent {
+  requestService = inject(RequestService);
+  budgetService = inject(BudgetService);
+  confirmationService = inject(ConfirmationService);
+  dataChangeNotificationService = inject(DataChangeNotificationService);
+
+  budget = input.required<BudgetModel>();
+
+  budgetTypes = toSignal(this.budgetService.getBudgetsTypes());
+
   requestStateType = RequestApprovalState;
-  public currentYear: number;
-  budgetTypeName: string;
+  currentYear = new Date().getFullYear();
 
-  constructor(
-    private requestService: RequestService,
-    private budgetService: BudgetService,
-    private confirmationService: ConfirmationService,
-    private dataChangeNotificationService: DataChangeNotificationService
-  ) {
-    this.currentYear = new Date().getFullYear();
-  }
-
-  ngOnInit() {
-    this.budgetService
-      .getBudgetsTypes()
-      .subscribe(
-        (types) =>
-          (this.budgetTypeName =
-            types.find((type) => type.id == this.budget.type)?.name ?? "")
-      );
-  }
+  budgetTypeName = computed(
+    () =>
+      this.budgetTypes()?.find((type) => type.id == this.budget().type)?.name ??
+      ""
+  );
 
   openDeleteConfirmationModal(request: Request) {
     this.confirmationService.confirm({
