@@ -1,32 +1,28 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  model,
+  signal,
+} from "@angular/core";
 import { Request } from "../../model/request/request";
 import { RequestService } from "../../services/request.service";
 import { ActivatedRoute } from "@angular/router";
-import {
-  BehaviorSubject,
-  combineLatest,
-  merge,
-  Observable,
-  ReplaySubject,
-  Subject,
-  Subscription,
-} from "rxjs";
+import { firstValueFrom, Subject, Subscription } from "rxjs";
 import { RequestApprovalState } from "../../model/requestState";
 import { ExportService } from "../../services/export.service";
 import { AuthenticationService } from "../../services/authentication.service";
 import { AlertService } from "../../services/alert.service";
-import { BudgetType } from "../../model/budgetType";
 import { BudgetService } from "../../services/budget.service";
-import { MenuItem } from "primeng/api/menuitem";
 import { ConfirmationService } from "primeng/api";
-import { distinctUntilChanged, map, switchMap } from "rxjs/operators";
+import { distinctUntilChanged, map } from "rxjs/operators";
 import { MenuHelper } from "../../shared/menu-helper";
-import {
-  maintainList,
-  RemoveEvent,
-  ResetEvent,
-} from "../../shared/utils/observableUtils";
+import { RemoveEvent, ResetEvent } from "../../shared/utils/observableUtils";
 import { filterRequests } from "../../utils/filters";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-request-list",
@@ -35,17 +31,18 @@ import { filterRequests } from "../../utils/filters";
   providers: [ConfirmationService],
 })
 export class RequestListComponent implements OnInit, OnDestroy {
+  authService = inject(AuthenticationService);
+  budgetService = inject(BudgetService);
+  requestService = inject(RequestService);
+  route = inject(ActivatedRoute);
+  confirmationService = inject(ConfirmationService);
+  exportService = inject(ExportService);
+  alertService = inject(AlertService);
+
   pendingRoute = "/requests/pending";
   approvedRoute = "/requests/approved";
   completedRoute = "/requests/completed";
   rejectedRoute = "/requests/rejected";
-
-  requests$: Observable<Request[]>;
-
-  years$: Observable<MenuItem[]>;
-  budgetTypeMenuItems$: Observable<MenuItem[]>;
-  approvalStateMenuItems$: Observable<MenuItem[]>;
-  exportMenuItems$: Observable<MenuItem[]>;
 
   approvalStates = RequestApprovalState;
 
@@ -73,28 +70,139 @@ export class RequestListComponent implements OnInit, OnDestroy {
     },
   ];
 
+  #selectedYear = toSignal(
+    this.route.params.pipe(
+      map((params) => +params["year"]),
+      distinctUntilChanged()
+    )
+  );
+
+  #selectedBudgetType = toSignal(
+    this.route.params.pipe(
+      map((params) => +params["budgetType"]),
+      distinctUntilChanged()
+    )
+  );
+
+  #selectedRequestState = toSignal(
+    this.route.params.pipe(
+      map((params) => "" + params["requestState"]),
+      distinctUntilChanged()
+    )
+  );
+
+  #budgetTypes = toSignal(this.budgetService.getBudgetsTypes());
+
+  exportMenuItems = computed(() => {
+    const selectedYear = this.#selectedYear();
+
+    if (!selectedYear) {
+      return [];
+    }
+    const list = [];
+    for (let i = 1; i <= 12; i++) {
+      list.push({
+        label: i.toString(),
+        command: () => this.export(i, selectedYear),
+      });
+    }
+    return list;
+  });
+
+  yearMenuItems = computed(() => {
+    const selectedBudgetType = this.#selectedBudgetType();
+    const selectedRequestState = this.#selectedRequestState();
+
+    if (!selectedBudgetType || !selectedRequestState) {
+      return [];
+    }
+
+    return MenuHelper.getYearMenu((year) => [
+      "/requests/",
+      selectedBudgetType,
+      selectedRequestState,
+      year,
+    ]);
+  });
+
+  approvalStateMenuItems = computed(() => {
+    const selectedBudgetType = this.#selectedBudgetType();
+    const selectedYear = this.#selectedYear();
+
+    if (!selectedBudgetType || !selectedYear) {
+      return [];
+    }
+    return this.states.map((approvalState) => ({
+      id: approvalState.key,
+      label: approvalState.name,
+      routerLink: [
+        "/requests/",
+        selectedBudgetType,
+        approvalState.key,
+        selectedYear,
+      ],
+    }));
+  });
+
+  budgetTypeMenuItems = computed(() => {
+    const selectedRequestState = this.#selectedRequestState();
+    const selectedYear = this.#selectedYear();
+
+    const budgetTypes = this.#budgetTypes();
+
+    if (!selectedRequestState || !selectedYear || !budgetTypes) {
+      return [];
+    }
+
+    return budgetTypes.map((budgetType) => ({
+      id: budgetType.key,
+      label: budgetType.name,
+      routerLink: [
+        "/requests/",
+        budgetType.id,
+        selectedRequestState,
+        selectedYear,
+      ],
+    }));
+  });
+
+  requests = signal<Request[]>([]);
+
+  requestsEffect = effect(async () => {
+    const selectedYear = this.#selectedYear();
+    const selectedRequestState = this.#selectedRequestState();
+    const selectedBudgetType = this.#selectedBudgetType();
+
+    if (!selectedYear || !selectedRequestState || !selectedBudgetType) {
+      return;
+    }
+
+    const requests = await firstValueFrom(
+      this.requestService
+        .getRequests(
+          selectedYear,
+          this.states.find((_) => _.key === selectedRequestState)!.key,
+          selectedBudgetType
+        )
+        .pipe(
+          map((requests) =>
+            requests.sort((a, b) => b.invoiceCount - a.invoiceCount)
+          )
+        )
+    );
+
+    this.requests.set(requests);
+  });
+
+  filteredRequests = computed(() =>
+    filterRequests(this.requests(), this.searchTerm())
+  );
+
   removeEvent$ = new Subject<ResetEvent<Request> | RemoveEvent>();
 
-  private _searchTerm$ = new BehaviorSubject<string>("");
   subscription: Subscription;
 
-  get searchTerm(): string {
-    return this._searchTerm$.value;
-  }
-
-  set searchTerm(value: string) {
-    this._searchTerm$.next(value);
-  }
-
-  constructor(
-    private authService: AuthenticationService,
-    private budgetService: BudgetService,
-    private requestService: RequestService,
-    private route: ActivatedRoute,
-    private confirmationService: ConfirmationService,
-    private exportService: ExportService,
-    private alertService: AlertService
-  ) {}
+  searchTerm = model("");
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -103,106 +211,6 @@ export class RequestListComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.subscription = this.authService.userInfo$.subscribe(
       (_) => (this.isAdmin = !!_ && _.isAdmin)
-    );
-
-    const selectedYear$ = this.route.params.pipe(
-      map((params) => +params["year"]),
-      distinctUntilChanged()
-    );
-
-    const selectedBudgetType$ = this.route.params.pipe(
-      map((params) => +params["budgetType"]),
-      distinctUntilChanged()
-    );
-
-    const requestState$ = this.route.params.pipe(
-      map((params) => "" + params["requestState"]),
-      distinctUntilChanged()
-    );
-
-    const budgetTypes$ = new ReplaySubject<BudgetType[]>();
-    this.budgetService.getBudgetsTypes().subscribe(budgetTypes$);
-
-    this.exportMenuItems$ = selectedYear$.pipe(
-      map((year) => {
-        const list = [];
-        for (let i = 1; i <= 12; i++) {
-          list.push({
-            label: i.toString(),
-            command: () => this.export(i, year),
-          });
-        }
-        return list;
-      })
-    );
-
-    this.years$ = combineLatest([selectedBudgetType$, requestState$]).pipe(
-      map(([budgetType, requestState]) =>
-        MenuHelper.getYearMenu((year) => [
-          "/requests/",
-          budgetType,
-          requestState,
-          year,
-        ])
-      )
-    );
-
-    this.approvalStateMenuItems$ = combineLatest([
-      selectedBudgetType$,
-      selectedYear$,
-    ]).pipe(
-      map(([budgetType, year]) =>
-        this.states.map((approvalState) => ({
-          id: approvalState.key,
-          label: approvalState.name,
-          routerLink: ["/requests/", budgetType, approvalState.key, year],
-        }))
-      )
-    );
-
-    this.budgetTypeMenuItems$ = combineLatest([
-      budgetTypes$,
-      selectedYear$,
-      requestState$,
-    ]).pipe(
-      map(([budgetTypes, selectedYear, requestState]) =>
-        budgetTypes.map((budgetType) => ({
-          id: budgetType.key,
-          label: budgetType.name,
-          routerLink: ["/requests/", budgetType.id, requestState, selectedYear],
-        }))
-      )
-    );
-
-    const requests$ = combineLatest([
-      selectedBudgetType$,
-      selectedYear$,
-      requestState$,
-    ]).pipe(
-      switchMap(([budgetType, year, state]) =>
-        this.requestService.getRequests(
-          year,
-          this.states.find((_) => _.key === state)!.key,
-          budgetType
-        )
-      ),
-      map((requests) =>
-        requests.sort((a, b) => b.invoiceCount - a.invoiceCount)
-      ),
-      map(
-        (requests) => ({ list: requests } as ResetEvent<Request> | RemoveEvent)
-      )
-    );
-
-    const maintainedRequests = maintainList(
-      merge(requests$, this.removeEvent$.asObservable())
-    );
-
-    this.requests$ = combineLatest([
-      maintainedRequests,
-      this._searchTerm$,
-    ]).pipe(
-      map(([requests, searchString]) => filterRequests(requests, searchString))
     );
   }
 
