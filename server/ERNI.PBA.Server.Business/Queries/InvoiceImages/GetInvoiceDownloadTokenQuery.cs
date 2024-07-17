@@ -35,7 +35,7 @@ namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
                 }
             }
 
-            return downloadTokenManager.GenerateToken(DateTime.Now.AddSeconds(10), DownloadTokenCategory.Invoice);
+            return downloadTokenManager.GenerateToken(DateTime.Now.AddSeconds(10), $"{DownloadTokenCategory.Invoice}-{parameter}");
         }
     }
 }

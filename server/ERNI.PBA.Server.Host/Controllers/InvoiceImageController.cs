@@ -32,7 +32,7 @@ namespace ERNI.PBA.Server.Host.Controllers
         [HttpGet("image/{token}/{imageId}")]
         public async Task<IActionResult> GetInvoiceImageFile(Guid token, int imageId, [FromServices] GetInvoiceImageFileQuery query, CancellationToken cancellationToken)
         {
-            if (!downloadTokenManager.ValidateToken(token, DownloadTokenCategory.Invoice))
+            if (!downloadTokenManager.ValidateToken(token, $"{DownloadTokenCategory.Invoice}-{imageId}"))
             {
                 throw new InvalidOperationException("Invalid download token");
             }
