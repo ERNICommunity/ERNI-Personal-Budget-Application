@@ -9,14 +9,11 @@ using ERNI.PBA.Server.Domain;
 namespace ERNI.PBA.Server.Business.Queries.InvoiceImages
 {
     public class GetInvoiceImageFileQuery(
-        IInvoiceImageRepository invoiceImageRepository,
-        IRequestRepository requestRepository) : Query<int, GetInvoiceImageFileQuery.InvoiceModel>
+        IInvoiceImageRepository invoiceImageRepository) : Query<int, GetInvoiceImageFileQuery.InvoiceModel>
     {
         protected override async Task<InvoiceModel> Execute(int parameter, ClaimsPrincipal principal, CancellationToken cancellationToken)
         {
             var image = await invoiceImageRepository.GetInvoiceImage(parameter, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
-
-            var request = await requestRepository.GetRequest(image.RequestId, cancellationToken) ?? throw new OperationErrorException(ErrorCodes.InvalidId, "Not a valid id");
 
             // var provider = new FileExtensionContentTypeProvider();
             // if (!provider.TryGetContentType(image.Name, out var contentType))
