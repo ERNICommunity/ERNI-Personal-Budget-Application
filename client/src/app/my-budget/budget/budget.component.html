@@ -14,7 +14,6 @@
       *ngIf="budget().isEditable"
       class="p-button-sm"
       routerLink="new-request/{{ budget().id }}"
-      [state]="{ budget: budget() }"
     >
       Create new request
     </a>
