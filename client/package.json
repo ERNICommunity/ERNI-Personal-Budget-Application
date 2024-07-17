@@ -24,6 +24,7 @@
     "@angular/router": "18.1.1",
     "@azure/msal-angular": "^3.0.22",
     "@azure/msal-browser": "^3.19.1",
+    "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.4",
     "rxjs": "^7.4.0",
