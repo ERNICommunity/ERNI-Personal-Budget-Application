@@ -14,7 +14,7 @@ namespace ERNI.PBA.Server.Host.Utils;
 [DisallowConcurrentExecution]
 public class DailyMailNotifications(IRequestRepository requestRepository, IConfiguration configuration) : IJob
 {
-    private readonly MailService _mailService = new MailService(configuration);
+    private readonly MailService _mailService = new(configuration);
     private readonly string[] _notificationEmails =
             (configuration["NotificationEmails"] ??
              throw new InvalidOperationException("Missing 'NotificationEmails' configuration")).Split(";");
