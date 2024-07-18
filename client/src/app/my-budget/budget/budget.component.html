@@ -14,7 +14,7 @@
       *ngIf="budget().isEditable"
       class="p-button-sm"
       routerLink="new-request/{{ budget().id }}"
-      [state]="{ budget: budget }"
+      [state]="{ budget: budget() }"
     >
       Create new request
     </a>
@@ -66,7 +66,7 @@
             pButton
             class="p-button-sm"
             routerLink="request/{{ request.id }}"
-            [state]="{ budget: budget }"
+            [state]="{ budget: budget() }"
           >
             Open
           </a>
