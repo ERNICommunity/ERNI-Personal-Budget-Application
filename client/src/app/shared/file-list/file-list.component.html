@@ -1,41 +1,38 @@
 <label for="file-list">Uploaded files</label>
 <div class="fileLists" id="file-list">
   <ul class="pl-0">
-    <li *ngFor="let image of images">
-      <p-progressSpinner
-        *ngIf="image.status.code === 'in-progress'"
-        [style]="{ width: '20px', height: '20px' }"
-        styleClass="custom-spinner"
-        strokeWidth="5"
-        fill="var(--surface-ground)"
-        animationDuration=".5s"
-      ></p-progressSpinner>
+    <li *ngFor="let image of images()">
+      @let status = image.status();
+
+      <p-progressBar
+        *ngIf="status.code === 'in-progress'"
+        [style]="{ width: '200px', height: '20px' }"
+        [value]="status.progress()"
+      />
 
       <button
-        *ngIf="image.status.code === 'saved'"
+        *ngIf="status.code === 'saved'"
         pButton
-        [disabled]="!image.status.id"
+        [disabled]="!status.id"
         class="p-button-sm p-button-text"
-        (click)="download(image.status.id)"
+        (click)="download(status.id)"
       >
         {{ image.name }}
       </button>
     </li>
   </ul>
 </div>
-<button
-  pButton
-  *ngIf="uploadEnabled"
-  (click)="onButtonClick()"
-  class="p-button-sm"
->
-  Add file
-</button>
 
-<input
-  id="fileDialog"
-  type="file"
-  #file
-  (change)="onImageAdded($event)"
-  style="display: none"
-/>
+<p-fileUpload
+  accept="image/png, image/jpeg, image/gif, application/pdf"
+  chooseIcon="si si-upload-image"
+  chooseStyleClass="p-button-secondary"
+  chooseLabel="Upload file"
+  [showUploadButton]="false"
+  [showCancelButton]="false"
+  [maxFileSize]="2000000"
+  [customUpload]="true"
+  (onSelect)="onFileSelect($event)"
+>
+  <ng-template let-file pTemplate="file"></ng-template>
+</p-fileUpload>

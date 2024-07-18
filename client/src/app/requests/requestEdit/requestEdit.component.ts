@@ -1,7 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { RequestService } from "../../services/request.service";
 import { AlertService } from "../../services/alert.service";
-import { Alert, AlertType } from "../../model/alert.model";
+import { AlertType } from "../../model/alert.model";
 import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
 import { BudgetTypeEnum } from "../../model/budgetTypeEnum";
 import { Request } from "../../model/request/request";
@@ -12,6 +12,7 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { RequestApprovalState } from "../../model/requestState";
 import { InvoiceImageService } from "../../services/invoice-image.service";
 import {
+  FileListComponent,
   Invoice,
   InvoiceStatus,
 } from "../../shared/file-list/file-list.component";
@@ -19,11 +20,15 @@ import { concatMap, defaultIfEmpty } from "rxjs/operators";
 import { forkJoin, Observable, Subject } from "rxjs";
 import { InvoiceImage } from "../../model/InvoiceImage";
 import { Router } from "@angular/router";
+import { SharedModule } from "../../shared/shared.module";
+import { BasicRequestInfoEditorComponent } from "./basic-request-info-editor/basic-request-info-editor.component";
 
 @Component({
   selector: "app-request-edit",
   templateUrl: "requestEdit.component.html",
   styleUrls: ["requestEdit.component.css"],
+  standalone: true,
+  imports: [SharedModule, BasicRequestInfoEditorComponent, FileListComponent],
 })
 export class RequestEditComponent implements OnInit {
   httpResponseError: string;
@@ -43,7 +48,7 @@ export class RequestEditComponent implements OnInit {
   public isSaveInProgress = false;
 
   public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
-  public images: (Invoice & { file?: File })[];
+  public images: Invoice[];
 
   constructor(
     private requestService: RequestService,
@@ -115,19 +120,18 @@ export class RequestEditComponent implements OnInit {
       (names) =>
         (this.images = names.map((invoice) => ({
           name: invoice.name,
-          status: { code: "saved", id: invoice.id },
+          status: signal({ code: "saved", id: invoice.id } as InvoiceStatus),
         })))
     );
   }
 
-  public onNewImageAdded(files: FileList) {
+  public onNewImageAdded(files: File[]) {
     for (let i = 0; i < files.length; i++) {
       const selectedFile = files[i];
 
-      const im: Invoice & { file: File } = {
-        status: { code: "new" },
+      const im: Invoice = {
+        status: signal({ code: "new", file: selectedFile }),
         name: selectedFile.name,
-        file: selectedFile,
       };
       this.images.push(im);
 
@@ -140,8 +144,15 @@ export class RequestEditComponent implements OnInit {
   private uploadInvoices(requestId: number): Observable<number[] | null> {
     const invoices = this.images;
     const uploads = invoices
-      .filter((_) => _.status.code === "new")
-      .map((_) => this.uploadInvoice(requestId, _, _.file!).id);
+      .map((_) => {
+        const status = _.status();
+        if (status.code === "new") {
+          return this.uploadInvoice(requestId, _, status.file).id;
+        } else {
+          return null;
+        }
+      })
+      .filter((_) => _ !== null);
 
     return forkJoin(uploads).pipe(defaultIfEmpty(null));
   }
@@ -175,22 +186,22 @@ export class RequestEditComponent implements OnInit {
 
         const status: InvoiceStatus = {
           code: "in-progress",
-          progress: 0,
+          progress: signal(0),
         };
 
-        invoice.status = status;
+        invoice.status.set(status);
 
         const uploadInfo = this.invoiceImageService.addInvoiceImage(payload);
 
-        uploadInfo.progress.subscribe(
-          (progress) => (status.progress = progress)
+        uploadInfo.progress.subscribe((progress) =>
+          status.progress.set(progress)
         );
-        uploadInfo.id.subscribe(() => {
-          // const status: InvoiceStatus = (invoice.status = {
-          //     code: 'saved',
-          //     id: id
-          // });
-        });
+        uploadInfo.id.subscribe((id) =>
+          invoice.status.set({
+            code: "saved",
+            id: id,
+          })
+        );
 
         uploadInfo.id.subscribe(result.id);
         uploadInfo.progress.subscribe(result.progress);
