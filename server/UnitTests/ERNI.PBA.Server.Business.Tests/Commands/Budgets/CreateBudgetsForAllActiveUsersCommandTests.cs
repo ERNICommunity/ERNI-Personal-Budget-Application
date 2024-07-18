@@ -20,7 +20,7 @@ namespace ERNI.PBA.Server.Business.UnitTests.Commands.Budgets
         {
             var userRepositoryMock = new Mock<IUserRepository>();
             userRepositoryMock.Setup(_ => _.GetAllUsers(It.IsAny<Expression<Func<User, bool>>>(), CancellationToken.None))
-            .Returns(Task.FromResult(new User[]
+            .Returns(Task.FromResult(new[]
             {
                 new User() { Id = 1, FirstName = "Joe"}
             }));
