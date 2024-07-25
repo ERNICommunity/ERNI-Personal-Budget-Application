@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Budget } from '../model/budget';
 import { ConfigService } from './config.service';
@@ -91,11 +91,15 @@ export class BudgetService {
         );
     }
 
+    #budgetTypes: Observable<BudgetType[]> | null = null;
     public getBudgetsTypes(): Observable<BudgetType[]> {
-        return this.http.get<BudgetType[]>(
-            this.configService.apiUrlBase + this.url + 'types',
-            this.serviceHelper.getHttpOptions()
-        );
+        if (!this.#budgetTypes) {
+            this.#budgetTypes = this.http.get<BudgetType[]>(
+                this.configService.apiUrlBase + this.url + 'types',
+                this.serviceHelper.getHttpOptions()
+            ).pipe(shareReplay(1));
+        }
+        return this.#budgetTypes;
     }
 
     public getUsersAvailableForBudgetType(budgetType: number): Observable<User[]> {
