@@ -6,7 +6,6 @@ import { DataChangeNotificationService } from "../../services/dataChangeNotifica
 import { BudgetTypeEnum } from "../../model/budgetTypeEnum";
 import { Request } from "../../model/request/request";
 import { PatchRequest } from "../../model/PatchRequest";
-import { BusyIndicatorService } from "../../services/busy-indicator.service";
 import { NewRequest } from "../../model/newRequest";
 import { ActivatedRoute, Params } from "@angular/router";
 import { RequestApprovalState } from "../../model/requestState";
@@ -40,7 +39,7 @@ export class RequestEditComponent implements OnInit {
   budgetId: number;
   budgetType: BudgetTypeEnum;
   newRequest: boolean;
-  request: Request;
+  request: Request | null = null;
 
   title: string;
   amount: number;
@@ -48,7 +47,7 @@ export class RequestEditComponent implements OnInit {
   public isSaveInProgress = false;
 
   public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
-  public images: Invoice[];
+  public files: Invoice[] = [];
 
   constructor(
     private requestService: RequestService,
@@ -56,7 +55,6 @@ export class RequestEditComponent implements OnInit {
     private route: ActivatedRoute,
     private alertService: AlertService,
     private dataChangeNotificationService: DataChangeNotificationService,
-    private busyIndicatorService: BusyIndicatorService,
     private invoiceImageService: InvoiceImageService
   ) {}
 
@@ -71,7 +69,7 @@ export class RequestEditComponent implements OnInit {
         this.popupTitle = "Create new request";
         this.request = this.createNewRequest();
         this.newRequest = true;
-        this.images = [];
+        this.files = [];
       } else if (!isNaN(this.requestId)) {
         this.popupTitle = "Request details";
         this.loadRequest(this.requestId);
@@ -118,7 +116,7 @@ export class RequestEditComponent implements OnInit {
 
     this.invoiceImageService.getInvoiceImages(this.requestId).subscribe(
       (names) =>
-        (this.images = names.map((invoice) => ({
+        (this.files = names.map((invoice) => ({
           name: invoice.name,
           status: signal({ code: "saved", id: invoice.id } as InvoiceStatus),
         })))
@@ -133,7 +131,7 @@ export class RequestEditComponent implements OnInit {
         status: signal({ code: "new", file: selectedFile }),
         name: selectedFile.name,
       };
-      this.images.push(im);
+      this.files.push(im);
 
       if (!this.newRequest) {
         this.uploadInvoice(this.requestId, im, selectedFile);
@@ -142,8 +140,7 @@ export class RequestEditComponent implements OnInit {
   }
 
   private uploadInvoices(requestId: number): Observable<number[] | null> {
-    const invoices = this.images;
-    const uploads = invoices
+    const uploads = this.files
       .map((_) => {
         const status = _.status();
         if (status.code === "new") {
@@ -212,6 +209,10 @@ export class RequestEditComponent implements OnInit {
   }
 
   public async save() {
+    if (!this.request?.title) {
+      return;
+    }
+
     this.isSaveInProgress = true;
 
     if (this.request.state == RequestApprovalState.Pending) {
@@ -220,6 +221,10 @@ export class RequestEditComponent implements OnInit {
   }
 
   private saveBasicInfo() {
+    if (!this.request) {
+      return;
+    }
+
     const budgetId = this.budgetId;
     const id = this.requestId;
     const title: string = this.request.title;
@@ -306,15 +311,7 @@ export class RequestEditComponent implements OnInit {
     );
   }
 
-  public trimTitle(): void {
-    this.title = this.title.trim();
-  }
-
   public onHide(): void {
-    this.router.navigate(["my-budget"]);
-  }
-
-  public close(): void {
     this.router.navigate(["my-budget"]);
   }
 }

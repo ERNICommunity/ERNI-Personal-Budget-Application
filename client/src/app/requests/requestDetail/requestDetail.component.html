@@ -1,5 +1,5 @@
 <p-dialog
-  [header]="request?.title"
+  [header]="request.title"
   [(visible)]="isVisible"
   [style]="{ width: '50vw' }"
   [draggable]="false"
@@ -12,7 +12,7 @@
     <p>{{ createDate | date : "shortDate" }}</p>
 
     <h5>Amount</h5>
-    <p>{{ request?.amount }}</p>
+    <p>{{ request.amount }}</p>
 
     <div *ngIf="httpResponseError">
       <font color="red" size="4">

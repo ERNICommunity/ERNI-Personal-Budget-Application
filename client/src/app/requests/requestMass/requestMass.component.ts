@@ -3,7 +3,7 @@ import { RequestService } from "../../services/request.service";
 import { BusyIndicatorService } from "../../services/busy-indicator.service";
 import { MassRequest } from "../../model/massRequest";
 import { AlertService } from "../../services/alert.service";
-import { Alert, AlertType } from "../../model/alert.model";
+import { AlertType } from "../../model/alert.model";
 
 @Component({
   selector: "app-request-mass",

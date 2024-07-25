@@ -6,7 +6,7 @@ export class MenuHelper {
   ): MenuItem[] {
     const currentYear = new Date().getFullYear();
 
-    const years = [];
+    const years: MenuItem[] = [];
 
     for (let year = currentYear; year >= 2015; year--) {
       years.push({

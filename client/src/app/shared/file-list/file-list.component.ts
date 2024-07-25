@@ -32,7 +32,7 @@ export interface Invoice {
 export class FileListComponent {
   uploadEnabled = input.required<boolean>();
 
-  images = input.required<Invoice[]>();
+  files = input.required<Invoice[]>();
 
   @Output()
   public newImageAdded = new EventEmitter<File[]>();
@@ -45,12 +45,5 @@ export class FileListComponent {
 
   onFileSelect(e: FileSelectEvent) {
     this.newImageAdded.emit(e.currentFiles);
-  }
-
-  public onButtonClick() {
-    const element: HTMLElement = document.getElementById(
-      "fileDialog"
-    ) as HTMLElement;
-    element.click();
   }
 }

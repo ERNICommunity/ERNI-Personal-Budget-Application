@@ -1,8 +1,8 @@
-<label for="file-list">Uploaded files</label>
-<div class="fileLists" id="file-list">
-  <ul class="pl-0">
-    <li *ngFor="let image of images()">
-      @let status = image.status();
+<label class="block mb-2" for="file-list">Uploaded files</label>
+<div *ngIf="files().length > 0" class="fileLists mb-2" id="file-list">
+  <ul class="no-bullets">
+    <li *ngFor="let file of files()">
+      @let status = file.status();
 
       <p-progressBar
         *ngIf="status.code === 'in-progress'"
@@ -17,7 +17,7 @@
         class="p-button-sm p-button-text"
         (click)="download(status.id)"
       >
-        {{ image.name }}
+        {{ file.name }}
       </button>
     </li>
   </ul>
@@ -25,9 +25,9 @@
 
 <p-fileUpload
   accept="image/png, image/jpeg, image/gif, application/pdf"
-  chooseIcon="si si-upload-image"
+  chooseIcon="pi pi-upload"
   chooseStyleClass="p-button-secondary"
-  chooseLabel="Upload file"
+  chooseLabel="Upload File"
   [showUploadButton]="false"
   [showCancelButton]="false"
   [maxFileSize]="2000000"
