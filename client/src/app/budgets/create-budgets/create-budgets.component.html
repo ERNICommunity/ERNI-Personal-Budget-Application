@@ -22,11 +22,11 @@
 <div class="field">
   <label for="title" class="block">Amount</label>
   <p-inputNumber
+    inputId="amount"
     #budgetAmount="ngModel"
     [(ngModel)]="amount"
     mode="currency"
     currency="EUR"
-    inputId="amount"
     required
   >
   </p-inputNumber>

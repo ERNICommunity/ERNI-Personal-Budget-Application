@@ -10,13 +10,13 @@
       [routerLinkActive]="['active']"
       *pbaAuth="'canAccessMyBudget'"
     >
-      <a class="nav-link" routerLink="/my-budget">My budget</a>
+      <a class="nav-link" routerLink="/my-budget">My Budget</a>
     </li>
     <li [routerLinkActive]="['active']" *pbaAuth="'isSuperior'">
-      <a routerLink="/team-budget">Team budget</a>
+      <a routerLink="/team-budget">Team Budget</a>
     </li>
     <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
-      <a routerLink="/budgets">Manage budgets</a>
+      <a routerLink="/budgets">Manage Budgets</a>
     </li>
     <li [routerLinkActive]="['active']" *pbaAuth="'canReadRequests'">
       <a routerLink="/requests">Requests</a>
@@ -36,6 +36,7 @@
         target="_blank"
         class="nav-link"
       >
+        <i class="pi pi-file mr-1"></i>
         Conditions of use
       </a>
     </li>
@@ -43,10 +44,7 @@
 
   <ul class="user" *ngIf="authService.userInfo$ | async">
     <li>
-      <a
-        ><i class="pi pi-user"></i
-        >{{ (authService.userInfo$ | async)?.name }}</a
-      >
+      <a class="pointer-events-none"><i class="pi pi-user"></i>{{ (authService.userInfo$ | async)?.name }}</a>
     </li>
     <li>
       <a href="#" (click)="logout(); $event.preventDefault()">

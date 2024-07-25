@@ -1,32 +1,33 @@
-<div *ngIf="request">
-  <div class="field">
-    <label for="title" class="block">Title</label>
-    <input
-      id="title"
-      aria-describedby="title-desc title-error"
-      type="text"
-      pInputText
-      required
-      #title="ngModel"
-      [(ngModel)]="request.title"
-      [disabled]="isReadonly"
-    />
-    <small id="title-desc" class="block">Short summary of what you are going to buy.</small>
-    <small
-      *ngIf="title.invalid && (title.dirty || title.touched)"
-      id="title-error"
-      class="p-error block"
-      >Title is required.</small>
-  </div>
+<div class="field">
+  <label for="title">Title</label>
+  <input
+    id="title"
+    class="w-full"
+    [class.ng-dirty]="title.invalid && (title.dirty || title.touched)"
+    aria-describedby="title-desc title-error"
+    type="text"
+    pInputText
+    required
+    #title="ngModel"
+    [(ngModel)]="request.title"
+    [disabled]="isReadonly"
+  />
+  <small id="title-desc" class="block">Short summary of what you are going to buy.</small>
+  <small
+    *ngIf="title.invalid && (title.dirty || title.touched)"
+    id="title-error"
+    class="p-error block"
+    >Title is required.</small>
+</div>
 
-  <div class="field">
-    <label for="amount" class="block">Amount</label>
-    <p-inputNumber
-      [(ngModel)]="request.amount"
-      mode="currency"
-      currency="EUR"
-      inputId="amount"
-      [disabled]="isReadonly"
-    ></p-inputNumber>
-  </div>
+<div class="field">
+  <label for="amount">Amount</label>
+  <p-inputNumber
+    inputId="amount"
+    class="w-full"
+    [(ngModel)]="request.amount"
+    mode="currency"
+    currency="EUR"
+    [disabled]="isReadonly"
+  ></p-inputNumber>
 </div>

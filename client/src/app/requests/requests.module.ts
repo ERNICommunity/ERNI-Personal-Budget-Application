@@ -10,6 +10,9 @@ import { FormsModule } from "@angular/forms";
 import { SharedModule } from "../shared/shared.module";
 import { RequestMassComponent } from "./requestMass/requestMass.component";
 import { AdminRoleGuard } from "../services/guards/admin-role.guard";
+import {
+  BasicRequestInfoEditorComponent
+} from "./requestEdit/basic-request-info-editor/basic-request-info-editor.component";
 
 @NgModule({
   declarations: [
@@ -19,6 +22,7 @@ import { AdminRoleGuard } from "../services/guards/admin-role.guard";
     RequestMassComponent,
   ],
   imports: [
+    BasicRequestInfoEditorComponent,
     CommonModule,
     FormsModule,
     SharedModule,

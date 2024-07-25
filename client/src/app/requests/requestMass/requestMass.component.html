@@ -27,13 +27,13 @@
 <div class="field">
   <label for="amount" class="block">Amount (max {{ maximumAmount }} €)</label>
   <p-inputNumber
+    inputId="amount"
     [(ngModel)]="amount"
     mode="currency"
     currency="EUR"
     required
     #inputAmount="ngModel"
     [max]="maximumAmount"
-    inputId="amount"
   >
   </p-inputNumber>
 </div>
@@ -70,7 +70,7 @@
 </div>
 
 <p-button
-  icon="pi pi-save"
+  icon="pi pi-plus"
   (click)="save()"
   label="Create request"
   styleClass="p-button-success"

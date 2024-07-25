@@ -34,8 +34,8 @@
       <label for="requestDate">Date of occasion</label>
 
       <p-calendar
-        [(ngModel)]="request.date"
         inputId="requestDate"
+        [(ngModel)]="request.date"
         #requestDate="ngModel"
         [showIcon]="true"
         [disabled]="request.isReadonly"
