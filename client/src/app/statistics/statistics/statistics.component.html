@@ -1,8 +1,8 @@
 <p-tabMenu [model]="years" [activeItem]="selectedYear"></p-tabMenu>
 <hr>
-<h1>{{selectedYear?.label}}</h1>
+<h1>{{selectedYear.label}}</h1>
 
-<div *ngFor="let budget of statistics?.budgets">
+<div *ngFor="let budget of statistics.budgets">
     <h1>{{budget.budgetType}}</h1>
     <p>Count: {{budget.budgetCount}}</p>
     <p>Total amount: {{budget.totalAmount}}</p>
