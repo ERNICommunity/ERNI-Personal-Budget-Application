@@ -5,67 +5,77 @@
 ></p-confirmDialog>
 <p-panel>
   <ng-template pTemplate="icons">
-    <span class="mr-2"
-      >{{ budget().amountLeft }} € left out of {{ budget().amount }}</span
-    >
+    <div class="flex align-items-center">
+      <span class="mr-2">{{ budget().amountLeft }} € left out of {{ budget().amount }}</span>
 
-    <a
-      pButton
-      *ngIf="budget().isEditable"
-      class="p-button-sm"
-      routerLink="new-request/{{ budget().id }}"
-    >
-      Create new request
-    </a>
+      <a
+        *ngIf="budget().isEditable"
+        routerLink="new-request/{{ budget().id }}"
+      >
+        <button
+          pButton
+          class="btn btn-primary"
+          icon="pi pi-plus"
+          label="Create Request"
+        ></button>
+      </a>
+    </div>
+
   </ng-template>
   <ng-template pTemplate="header">
-    <div *ngIf="budget().title">
-      {{ budget().title }} - {{ budgetTypeName() }}
-    </div>
-    <div *ngIf="!budget().title">{{ budgetTypeName() }}</div>
+    @if (budget().title) {
+      <div>
+        @if (budgetIcon()) {
+          <span>{{budgetIcon()}} </span>
+        }
+        <span class="font-bold">{{ budget().title }}</span>
+        @if (budgetTypeName()) {
+          <span> - {{ budgetTypeName() }}</span>
+        }
+      </div>
+    } @else if (budgetTypeName()) {
+      <div>{{ budgetTypeName() }}</div>
+    }
   </ng-template>
 
-  <p-progressBar
-    [value]="(100 * budget().amountLeft) / budget().amount"
-    [showValue]="false"
-  ></p-progressBar>
+  <p-progressBar [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
+    <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
+  </p-progressBar>
 
-  <p-table
-    [value]="budget().requests"
-    styleClass="p-datatable-gridlines p-datatable-striped mt-3"
-    responsiveLayout="scroll"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th scope="col">Title</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Create date</th>
-        <th scope="col">Request State</th>
-        <th scope="col"></th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-request>
-      <tr>
-        <td>{{ request.title }}</td>
-        <td>{{ request.amount | number : "1.2-2" }}</td>
-        <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
-        <td>{{ requestStateType[request.state] }}</td>
-        <td class="button-table-cell">
-          <button
-            pButton
-            (click)="openDeleteConfirmationModal(request)"
-            *ngIf="
-              request.state === requestStateType.Pending && budget().isEditable
-            "
-            class="p-button-sm"
-          >
-            Delete
-          </button>
-          <a pButton class="p-button-sm" routerLink="request/{{ request.id }}">
-            Open
-          </a>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  @if (budget().requests.length > 0) {
+    <p-table
+      [value]="budget().requests"
+      styleClass="p-datatable-gridlines p-datatable-striped mt-3"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th>Title</th>
+          <th>Amount</th>
+          <th>Create date</th>
+          <th>Request State</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-request>
+        <tr>
+          <td>{{ request.title }}</td>
+          <td>{{ request.amount | number : "1.2-2" }}</td>
+          <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
+          <td>{{ requestStateType[request.state] }}</td>
+          <td class="button-table-cell">
+            <button
+              *ngIf="request.state === requestStateType.Pending && budget().isEditable"
+              pButton
+              label="Delete"
+              class="p-button-sm p-button-danger"
+              (click)="openDeleteConfirmationModal(request)">
+            </button>
+            <a routerLink="request/{{ request.id }}">
+              <button pButton label="Open" class="p-button-sm p-button-secondary"></button>
+            </a>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
 </p-panel>

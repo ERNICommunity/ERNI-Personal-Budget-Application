@@ -44,16 +44,37 @@ export class BudgetComponent {
 
   budget = input.required<BudgetModel>();
 
-  budgetTypes = toSignal(this.budgetService.getBudgetsTypes());
+  budgetTypes = toSignal(this.budgetService.getBudgetsTypes(), { initialValue: [] });
+  budgetTypeName = computed(
+    () => this.budgetTypes().find((type) => type.id == this.budget().type)?.name
+  );
+  budgetAmountPercentage = computed(() => (100 * this.budget().amountLeft) / this.budget().amount);
+  budgetAmountProgressColor = computed(() => {
+    if (this.budgetAmountPercentage() < 25) {
+      return '#D03E35';
+    }
+    if (this.budgetAmountPercentage() < 50) {
+      return '#D0A335';
+    }
+    return '#55AB55';
+  });
+  budgetIcon = computed(() => {
+    const budgetTypeName = this.budgetTypeName();
+
+    if (!budgetTypeName) {
+      return null;
+    }
+
+    if (this.budget().type === BudgetTypeEnum.PersonalBudget) {
+      return '💸';
+    }
+    if (this.budget().type === BudgetTypeEnum.RecreationBudget) {
+      return '🏖️';
+    }
+    return null;
+  });
 
   requestStateType = RequestApprovalState;
-  currentYear = new Date().getFullYear();
-
-  budgetTypeName = computed(
-    () =>
-      this.budgetTypes()?.find((type) => type.id == this.budget().type)?.name ??
-      ""
-  );
 
   openDeleteConfirmationModal(request: Request) {
     this.confirmationService.confirm({
