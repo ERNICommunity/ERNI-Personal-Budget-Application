@@ -5,11 +5,7 @@
     </li>
   </ul>
   <ul class="menu">
-    <li
-      class="nav-item"
-      [routerLinkActive]="['active']"
-      *pbaAuth="'canAccessMyBudget'"
-    >
+    <li class="nav-item" [routerLinkActive]="['active']" *pbaAuth="'canAccessMyBudget'">
       <a class="nav-link" routerLink="/my-budget">My Budget</a>
     </li>
     <li [routerLinkActive]="['active']" *pbaAuth="'isSuperior'">
@@ -36,15 +32,16 @@
         target="_blank"
         class="nav-link"
       >
-        <i class="pi pi-file mr-1"></i>
-        Conditions of use
+        <i class="pi pi-file mr-1"></i>Conditions of use
       </a>
     </li>
   </ul>
 
   <ul class="user" *ngIf="authService.userInfo$ | async">
     <li>
-      <a class="pointer-events-none"><i class="pi pi-user"></i>{{ (authService.userInfo$ | async)?.name }}</a>
+      <a class="pointer-events-none">
+        <i class="pi pi-user"></i>{{ (authService.userInfo$ | async)?.name }}
+      </a>
     </li>
     <li>
       <a href="#" (click)="logout(); $event.preventDefault()">

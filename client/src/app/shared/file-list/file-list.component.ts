@@ -1,11 +1,9 @@
 import {
   Component,
-  Output,
-  EventEmitter,
   input,
   inject,
   ChangeDetectionStrategy,
-  WritableSignal,
+  output,
 } from "@angular/core";
 import { InvoiceImageService } from "../../services/invoice-image.service";
 import { SharedModule } from "../shared.module";
@@ -13,11 +11,11 @@ import { FileSelectEvent } from "primeng/fileupload";
 
 export type InvoiceStatus =
   | { code: "new"; file: File }
-  | { code: "in-progress"; progress: WritableSignal<number> }
+  | { code: "in-progress"; progress: number }
   | { code: "saved"; id: number };
 
 export interface Invoice {
-  status: WritableSignal<InvoiceStatus>;
+  status: InvoiceStatus;
   name: string;
 }
 
@@ -31,11 +29,9 @@ export interface Invoice {
 })
 export class FileListComponent {
   uploadEnabled = input.required<boolean>();
-
   files = input.required<Invoice[]>();
 
-  @Output()
-  public newImageAdded = new EventEmitter<File[]>();
+  newImageAdded = output<File[]>();
 
   #invoiceImageService = inject(InvoiceImageService);
 

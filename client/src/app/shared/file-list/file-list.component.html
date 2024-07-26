@@ -1,25 +1,34 @@
 <label class="block mb-2" for="file-list">Uploaded files</label>
 <div *ngIf="files().length > 0" class="fileLists mb-2" id="file-list">
   <ul class="no-bullets">
-    <li *ngFor="let file of files()">
-      @let status = file.status();
-
-      <p-progressBar
-        *ngIf="status.code === 'in-progress'"
-        [style]="{ width: '200px', height: '20px' }"
-        [value]="status.progress()"
-      />
-
-      <button
-        *ngIf="status.code === 'saved'"
-        pButton
-        [disabled]="!status.id"
-        class="p-button-sm p-button-text"
-        (click)="download(status.id)"
-      >
-        {{ file.name }}
-      </button>
-    </li>
+    @for (file of files(); track file.name) {
+      <li>
+      @switch (file.status.code) {
+        @case ('new') {
+          <button
+            pButton
+            disabled
+            class="p-button-sm p-button-text"
+          >
+            {{ file.name }}
+          </button>
+        }
+        @case ('in-progress') {
+          <p-progressBar [style]="{ width: '200px', height: '20px' }" [value]="file.status.progress"/>
+        }
+        @case ('saved') {
+          <button
+            pButton
+            [disabled]="!file.status.id"
+            class="p-button-sm p-button-text"
+            (click)="download(file.status.id)"
+          >
+            {{ file.name }}
+          </button>
+        }
+      }
+      </li>
+    }
   </ul>
 </div>
 

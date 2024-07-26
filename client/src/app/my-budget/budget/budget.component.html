@@ -63,16 +63,22 @@
           <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
           <td>{{ requestStateType[request.state] }}</td>
           <td class="button-table-cell">
-            <button
-              *ngIf="request.state === requestStateType.Pending && budget().isEditable"
-              pButton
-              label="Delete"
-              class="p-button-sm p-button-danger"
-              (click)="openDeleteConfirmationModal(request)">
-            </button>
-            <a routerLink="request/{{ request.id }}">
-              <button pButton label="Open" class="p-button-sm p-button-secondary"></button>
+            <a routerLink="request/{{ request.id }}" class="p-button p-button-sm p-button-secondary no-underline">
+              @if (request.state === requestStateType.Approved) {
+                <i class="pi pi-file mr-2"></i>Open
+              } @else {
+                <i class="pi pi-file-edit mr-2"></i>Edit
+              }
             </a>
+
+            <p-button
+              *ngIf="request.state === requestStateType.Pending && budget().isEditable"
+              icon="pi pi-trash"
+              label="Delete"
+              [size]="'small'"
+              [severity]="'danger'"
+              (click)="openDeleteConfirmationModal(request)">
+            </p-button>
           </td>
         </tr>
       </ng-template>
