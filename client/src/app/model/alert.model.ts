@@ -2,6 +2,7 @@ export interface Alert {
   type: AlertType;
   message: string;
   alertId?: string;
+  life?: number;
   keepAfterRouteChange: boolean;
 }
 

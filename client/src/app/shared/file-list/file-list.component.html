@@ -3,45 +3,36 @@
   <ul class="no-bullets">
     @for (file of files(); track file.name) {
       <li>
-      @switch (file.status.code) {
-        @case ('new') {
-          <button
-            pButton
-            disabled
-            class="p-button-sm p-button-text"
-          >
-            {{ file.name }}
-          </button>
+        @if (file.status.code === 'new' || file.status.code === 'in-progress') {
+          <button pButton disabled class="p-button-sm p-button-text">{{ file.name }}</button>
         }
-        @case ('in-progress') {
-          <p-progressBar [style]="{ width: '200px', height: '20px' }" [value]="file.status.progress"/>
+        @if (file.status.code === 'in-progress') {
+          <p-progressBar [style]="{ height: '20px' }" [showValue]="false" [value]="file.status.progress"/>
         }
-        @case ('saved') {
-          <button
-            pButton
+        @if (file.status.code === 'saved') {
+          <button pButton
             [disabled]="!file.status.id"
             class="p-button-sm p-button-text"
             (click)="download(file.status.id)"
-          >
-            {{ file.name }}
-          </button>
+          >{{ file.name }}</button>
         }
-      }
       </li>
     }
   </ul>
 </div>
 
-<p-fileUpload
-  accept="image/png, image/jpeg, image/gif, application/pdf"
-  chooseIcon="pi pi-upload"
-  chooseStyleClass="p-button-secondary"
-  chooseLabel="Upload File"
-  [showUploadButton]="false"
-  [showCancelButton]="false"
-  [maxFileSize]="2000000"
-  [customUpload]="true"
-  (onSelect)="onFileSelect($event)"
->
-  <ng-template let-file pTemplate="file"></ng-template>
-</p-fileUpload>
+@if (uploadEnabled()) {
+  <p-fileUpload
+    accept="image/png, image/jpeg, image/gif, application/pdf"
+    chooseIcon="pi pi-upload"
+    chooseStyleClass="p-button-secondary"
+    chooseLabel="Upload File"
+    [showUploadButton]="false"
+    [showCancelButton]="false"
+    [maxFileSize]="2000000"
+    [customUpload]="true"
+    (onSelect)="onFileSelect($event)"
+  >
+    <ng-template let-file pTemplate="file"></ng-template>
+  </p-fileUpload>
+}

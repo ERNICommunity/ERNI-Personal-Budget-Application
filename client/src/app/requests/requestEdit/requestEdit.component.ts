@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from "@angular/core";
+import {Component, computed, DestroyRef, effect, inject, input, signal, untracked} from "@angular/core";
 import { RequestService } from "../../services/request.service";
 import { AlertService } from "../../services/alert.service";
 import { AlertType } from "../../model/alert.model";
@@ -7,47 +7,44 @@ import { BudgetTypeEnum } from "../../model/budgetTypeEnum";
 import { Request } from "../../model/request/request";
 import { PatchRequest } from "../../model/PatchRequest";
 import { NewRequest } from "../../model/newRequest";
-import { ActivatedRoute, Params } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { RequestApprovalState } from "../../model/requestState";
 import { InvoiceImageService } from "../../services/invoice-image.service";
 import {
   FileListComponent,
   Invoice,
-  InvoiceStatus,
+  NewInvoiceStatus,
 } from "../../shared/file-list/file-list.component";
-import { concatMap, defaultIfEmpty } from "rxjs/operators";
+import { concatMap, defaultIfEmpty, map } from "rxjs/operators";
 import { forkJoin, Observable, Subject } from "rxjs";
 import { InvoiceImage } from "../../model/InvoiceImage";
 import { Router } from "@angular/router";
 import { SharedModule } from "../../shared/shared.module";
 import { BasicRequestInfoEditorComponent } from "./basic-request-info-editor/basic-request-info-editor.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-request-edit",
   templateUrl: "requestEdit.component.html",
-  styleUrls: ["requestEdit.component.css"],
   standalone: true,
   imports: [SharedModule, BasicRequestInfoEditorComponent, FileListComponent],
 })
-export class RequestEditComponent implements OnInit {
-  httpResponseError: string;
-  requestId: number;
+export class RequestEditComponent {
+  // route params as inputs
+  budgetId = input<number>();
+  requestId = input<number>();
 
-  popupTitle: string;
-  isVisible: boolean;
+  showDialog = signal(true);
+  budgetType = signal<BudgetTypeEnum | null>(null);
+  request = signal<Request | null>(null);
+  isSaveInProgress = signal(false);
+  files = signal<Invoice[]>([]);
 
-  budgetId: number;
-  budgetType: BudgetTypeEnum;
-  newRequest: boolean;
-  request: Request | null = null;
-
-  title: string;
-  amount: number;
-
-  public isSaveInProgress = false;
+  isNewRequest = computed(() => !!this.budgetId());
 
   public RequestState = RequestApprovalState; // this is required to be possible to use enum in view
-  public files: Invoice[] = [];
+
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private requestService: RequestService,
@@ -56,32 +53,26 @@ export class RequestEditComponent implements OnInit {
     private alertService: AlertService,
     private dataChangeNotificationService: DataChangeNotificationService,
     private invoiceImageService: InvoiceImageService
-  ) {}
+  ) {
+    effect(() => {
+      const budgetId = this.budgetId();
+      const requestId = this.requestId();
 
-  ngOnInit() {
-    this.isVisible = true;
-
-    this.route.params.subscribe((params: Params) => {
-      this.budgetId = Number(params["budgetId"]);
-      this.requestId = Number(params["requestId"]);
-
-      if (!isNaN(this.budgetId)) {
-        this.popupTitle = "Create new request";
-        this.request = this.createNewRequest();
-        this.newRequest = true;
-        this.files = [];
-      } else if (!isNaN(this.requestId)) {
-        this.popupTitle = "Request details";
-        this.loadRequest(this.requestId);
-        this.newRequest = false;
-      } else {
-        this.router.navigate(["my-budget"]);
-      }
+      untracked(() => {
+        if (budgetId && !isNaN(budgetId)) {
+          this.request.set(this.createNewRequest());
+          this.files.set([]);
+        } else if (requestId && !isNaN(requestId)) {
+          this.loadRequest(requestId);
+        } else {
+          this.router.navigate(["my-budget"]);
+        }
+      })
     });
   }
 
   private createNewRequest(): Request {
-    const request: Request = {
+    return {
       state: RequestApprovalState.Pending,
       id: 0,
       amount: 0,
@@ -91,36 +82,22 @@ export class RequestEditComponent implements OnInit {
       title: "",
       createDate: undefined!,
     };
-    return request;
   }
 
-  public loadRequest(requestId: number): void {
-    this.requestId = requestId;
-    this.requestService.getRequest(requestId).subscribe(
-      (request) => {
-        this.request = {
-          amount: request.amount,
-          budget: request.budget,
-          createDate: request.createDate,
-          id: request.id,
-          state: request.state,
-          title: request.title,
-          user: request.user,
-          invoiceCount: request.invoiceCount,
-        };
-      },
-      (err) => {
-        this.httpResponseError = err.error;
-      }
-    );
+  private loadRequest(requestId: number): void {
+    this.requestService.getRequest(requestId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((request) => this.request.set(request));
 
-    this.invoiceImageService.getInvoiceImages(this.requestId).subscribe(
-      (names) =>
-        (this.files = names.map((invoice) => ({
+    this.invoiceImageService.getInvoiceImages(requestId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map(names => names.map<Invoice>((invoice) => ({
           name: invoice.name,
-          status: signal({ code: "saved", id: invoice.id } as InvoiceStatus),
+          status: { code: "saved", id: invoice.id },
         })))
-    );
+      )
+      .subscribe((files) => this.files.set(files));
   }
 
   public onNewImageAdded(files: File[]) {
@@ -128,44 +105,32 @@ export class RequestEditComponent implements OnInit {
       const selectedFile = files[i];
 
       const im: Invoice = {
-        status: signal({ code: "new", file: selectedFile }),
+        status: { code: "new", file: selectedFile },
         name: selectedFile.name,
       };
-      this.files.push(im);
+      this.files.update(files => ([...files, im]));
 
-      if (!this.newRequest) {
-        this.uploadInvoice(this.requestId, im, selectedFile);
+      const requestId = this.requestId();
+      if (requestId) {
+        this.uploadInvoice(requestId, im, selectedFile);
       }
     }
   }
 
   private uploadInvoices(requestId: number): Observable<number[] | null> {
-    const uploads = this.files
-      .map((_) => {
-        const status = _.status();
-        if (status.code === "new") {
-          return this.uploadInvoice(requestId, _, status.file).id;
-        } else {
-          return null;
-        }
-      })
-      .filter((_) => _ !== null);
+    const uploads$ = this.files()
+      .filter((invoice): invoice is { status: NewInvoiceStatus; name: string; } => invoice.status.code === "new")
+      .map((invoice) => this.uploadInvoice(requestId, invoice, invoice.status.file))
 
-    return forkJoin(uploads).pipe(defaultIfEmpty(null));
+    return forkJoin(uploads$).pipe(defaultIfEmpty(null));
   }
 
   private uploadInvoice(
     requestId: number,
     invoice: Invoice,
     file: File
-  ): {
-    progress: Observable<number>;
-    id: Observable<number>;
-  } {
-    const result = {
-      progress: new Subject<number>(),
-      id: new Subject<number>(),
-    };
+  ): Observable<number> {
+    const result = new Subject<number>();
 
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
@@ -181,64 +146,61 @@ export class RequestEditComponent implements OnInit {
           mimeType: file.type,
         };
 
-        const status: InvoiceStatus = {
-          code: "in-progress",
-          progress: signal(0),
-        };
-
-        invoice.status.set(status);
+        this.updateFiles({
+          ...invoice,
+          status: { code: "in-progress", progress: 0 }
+        });
 
         const uploadInfo = this.invoiceImageService.addInvoiceImage(payload);
 
         uploadInfo.progress.subscribe((progress) =>
-          status.progress.set(progress)
+          this.updateFiles({
+            ...invoice,
+            status: { code: "in-progress", progress }
+          })
         );
         uploadInfo.id.subscribe((id) =>
-          invoice.status.set({
-            code: "saved",
-            id: id,
+          this.updateFiles({
+            ...invoice,
+            status: { code: "saved", id }
           })
         );
 
-        uploadInfo.id.subscribe(result.id);
-        uploadInfo.progress.subscribe(result.progress);
+        uploadInfo.id.subscribe(result);
       }
     };
 
     return result;
   }
 
-  public async save() {
-    if (!this.request?.title) {
+  public save() {
+    const request = this.request();
+    if (!request || !request.title) {
       return;
     }
 
-    this.isSaveInProgress = true;
-
-    if (this.request.state == RequestApprovalState.Pending) {
-      this.saveBasicInfo();
+    if (request.state == RequestApprovalState.Pending) {
+      this.saveBasicInfo(request);
     }
   }
 
-  private saveBasicInfo() {
-    if (!this.request) {
-      return;
-    }
+  private saveBasicInfo(request: Request) {
+    const budgetId = this.budgetId();
+    const requestId = this.requestId();
+    const title: string = request.title;
+    const amount: number = request.amount;
 
-    const budgetId = this.budgetId;
-    const id = this.requestId;
-    const title: string = this.request.title;
-    const amount: number = this.request.amount;
+    this.isSaveInProgress.set(true);
 
-    if (this.newRequest) {
+    if (budgetId) {
       this.saveNewRequest({
         budgetId,
         title,
         amount,
       });
-    } else if (this.request.state == RequestApprovalState.Pending) {
+    } else if (requestId && request.state == RequestApprovalState.Pending) {
       this.editExistingRequest({
-        id,
+        id: requestId,
         title,
         amount,
       });
@@ -246,72 +208,72 @@ export class RequestEditComponent implements OnInit {
   }
 
   private saveNewRequest(payload: NewRequest): void {
-    const request =
-      this.budgetType == BudgetTypeEnum.TeamBudget
+    const request$ =
+      // FIXME when is budgetType set? I don't see any assignment anywhere?
+      this.budgetType() == BudgetTypeEnum.TeamBudget
         ? this.requestService.addTeamRequest(payload)
         : this.requestService.addRequest(payload);
 
-    request
+    request$
       .pipe(concatMap((requestId) => this.uploadInvoices(requestId)))
-      .subscribe(
-        (_) => {
+      .subscribe({
+        next: (_) => {
+          this.isSaveInProgress.set(false);
           this.dataChangeNotificationService.notify();
-          this.isSaveInProgress = false;
           this.alertService.alert({
-            // TODO: check alerId
-            alertId: "",
             message: "Request created successfully",
             type: AlertType.Success,
+            life: 3_000,
             keepAfterRouteChange: true,
           });
 
-          this.router.navigate(["../../"], {
-            relativeTo: this.route,
-          });
+          this.router.navigate(["../../"], { relativeTo: this.route });
         },
-
-        (err) => {
+        error: (err) => {
           this.dataChangeNotificationService.notify();
-          this.isSaveInProgress = false;
+          this.isSaveInProgress.set(false);
           this.alertService.error(
             "Error while creating request: " + JSON.stringify(err),
             "addRequestError"
           );
         }
-      );
+      });
   }
 
   private editExistingRequest(payload: PatchRequest): void {
-    const request =
-      this.budgetType == BudgetTypeEnum.TeamBudget
+    const request$ =
+      this.budgetType() == BudgetTypeEnum.TeamBudget
         ? this.requestService.updateTeamRequest(payload)
         : this.requestService.updateRequest(payload);
 
-    request.subscribe(
-      () => {
+    request$.subscribe({
+      next: () => {
+        this.isSaveInProgress.set(false);
         this.dataChangeNotificationService.notify();
-        this.isSaveInProgress = false;
         this.alertService.alert({
-          // TODO: check alerId
-          alertId: "",
           message: "Request updated",
           type: AlertType.Success,
+          life: 3_000,
           keepAfterRouteChange: true,
         });
-        this.dataChangeNotificationService.notify();
+        this.router.navigate(["../../"], { relativeTo: this.route });
       },
-      (err) => {
+      error: (err) => {
         this.dataChangeNotificationService.notify();
-        this.isSaveInProgress = false;
+        this.isSaveInProgress.set(false);
         this.alertService.error(
           "Error while creating request: " + JSON.stringify(err.error),
           "addRequestError"
         );
       }
-    );
+    });
   }
 
   public onHide(): void {
     this.router.navigate(["my-budget"]);
+  }
+
+  private updateFiles(fileToUpdate: Invoice): void {
+    this.files.update(files => ([...files.map(file => file.name !== fileToUpdate.name ? file : fileToUpdate)]))
   }
 }

@@ -9,10 +9,20 @@ import { InvoiceImageService } from "../../services/invoice-image.service";
 import { SharedModule } from "../shared.module";
 import { FileSelectEvent } from "primeng/fileupload";
 
-export type InvoiceStatus =
-  | { code: "new"; file: File }
-  | { code: "in-progress"; progress: number }
-  | { code: "saved"; id: number };
+export type InvoiceStatus = NewInvoiceStatus | InProgressInvoiceStatus | SavedInvoiceStatus;
+
+export interface NewInvoiceStatus {
+  code: "new";
+  file: File
+}
+export interface InProgressInvoiceStatus {
+  code: "in-progress";
+  progress: number
+}
+export interface SavedInvoiceStatus {
+  code: "saved";
+  id: number
+}
 
 export interface Invoice {
   status: InvoiceStatus;
@@ -28,7 +38,7 @@ export interface Invoice {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileListComponent {
-  uploadEnabled = input.required<boolean>();
+  uploadEnabled = input<boolean>(true);
   files = input.required<Invoice[]>();
 
   newImageAdded = output<File[]>();
