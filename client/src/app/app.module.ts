@@ -32,7 +32,7 @@ import { AuthenticatedComponent } from "./authenticated/authenticated.component"
     bootstrap: [AppComponent], imports: [FormsModule,
         BrowserModule,
         SharedModule,
-        RouterModule.forRoot(rootRouterConfig),
+        RouterModule.forRoot(rootRouterConfig, { bindToComponentInputs: true }),
         ReactiveFormsModule,
         BrowserAnimationsModule,
         AuthenticatedComponent], providers: [

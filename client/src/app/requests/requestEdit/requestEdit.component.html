@@ -1,6 +1,6 @@
 <p-dialog
-  [header]="popupTitle"
-  [(visible)]="isVisible"
+  [header]="isNewRequest() ? 'Create New Request' : 'Request Details'"
+  [(visible)]="showDialog"
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
   [style]="{ width: '50vw' }"
   [draggable]="false"
@@ -8,45 +8,39 @@
   [resizable]="false"
   (onHide)="onHide()"
 >
-  <div class="modal-body">
-    <app-alert id="addRequestError"></app-alert>
+  <app-alert id="addRequestError"></app-alert>
 
-    <div class="grid">
+  <div class="grid">
+    @if (request(); as request) {
       <div class="col">
         <app-basic-request-info-editor
-          *ngIf="request"
           [request]="request"
-          [isReadonly]="
-            !request ||
-            request.state !== RequestState.Pending ||
-            isSaveInProgress
-          "
+          [isReadonly]="request.state !== RequestState.Pending || isSaveInProgress()"
         ></app-basic-request-info-editor>
       </div>
-      <div class="col">
-        <app-file-list
-          [uploadEnabled]="request?.state === RequestState.Pending && !isSaveInProgress"
-          [files]="files"
-          (newImageAdded)="onNewImageAdded($event)"
-        >
-        </app-file-list>
-      </div>
+    }
+    <div class="col">
+      <app-file-list
+        [uploadEnabled]="this.request()?.state === RequestState.Pending && !isSaveInProgress()"
+        [files]="files()"
+        (newImageAdded)="onNewImageAdded($event)"
+      ></app-file-list>
     </div>
+  </div>
 
+  <div class="flex justify-content-end">
     <p-button
-      *ngIf="request && request.state === RequestState.Pending"
+      *ngIf="request()?.state === RequestState.Pending"
       class="block mt-2"
       styleClass="p-button-success"
-      [icon]="requestId ? 'pi pi-save' : ''"
-      [disabled]="isSaveInProgress"
-      [label]="requestId ? 'Update Request' : 'Create Request'"
+      [icon]="isNewRequest() ? '' : 'pi pi-save'"
+      [loading]="isSaveInProgress()"
+      [label]="isNewRequest() ? 'Create Request' : 'Update Request'"
       (click)="save()"
     ></p-button>
 
-    <!-- Closed -->
-    <div *ngIf="request && request.state === RequestState.Approved">
-      <p-divider></p-divider>
-      <p class="text-green-600 font-bold"><i class="pi pi-check"></i> Request was approved</p>
+    <div *ngIf="request()?.state === RequestState.Approved">
+      <p class="text-green-600 font-bold mb-0"><i class="pi pi-check mr-2"></i>Request Approved</p>
     </div>
   </div>
 </p-dialog>

@@ -1,57 +1,45 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { AlertService } from '../../services/alert.service';
 import { Alert, AlertType } from '../../model/alert.model';
 import { Message } from 'primeng/api/message';
+import { map } from "rxjs/operators";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-alert',
     templateUrl: './alert.component.html',
-    styleUrls: ['./alert.component.css']
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AlertComponent implements OnInit, OnDestroy {
-    @Input() id: string;
+export class AlertComponent implements OnInit {
+    id = input<string>();
 
-    alerts: Message[] = [];
-    subscription: Subscription;
-
-    constructor(private alertService: AlertService) {}
+    #alertService = inject(AlertService);
+    #destroyRef = inject(DestroyRef);
+    alerts = signal<Message[]>([]);
 
     ngOnInit() {
-        this.subscription = this.alertService
-            .onAlert(this.id)
-            .subscribe((alert) => {
-                if (!alert.message) {
-                    // clear alerts when an empty alert is received
-                    this.alerts = [];
-                    return;
-                }
-                this.alerts = [
-                    ...this.alerts,
-                    {
-                        severity: this.cssClass(alert),
-                        summary: alert.message
-                        // detail: alert.message
-                    }
-                ];
-            });
+      this.#alertService.onAlert(this.id()).pipe(
+        map(alert => {
+          if (!alert.message) {
+            // clear alerts when an empty alert is received
+            this.alerts.set([]);
+            return;
+          }
+
+          this.alerts.update(alerts => ([
+            ...alerts,
+            {
+              severity: this.getSeverity(alert),
+              summary: alert.message,
+              life: alert.life
+            }
+          ]));
+        }),
+        takeUntilDestroyed(this.#destroyRef)
+      ).subscribe();
     }
 
-    ngOnDestroy() {
-        // unsubscribe to avoid memory leaks
-        this.subscription.unsubscribe();
-    }
-
-    hide() {
-        this.alerts = [];
-    }
-
-    cssClass(alert: Alert) {
-        if (!alert) {
-            return undefined;
-        }
-
-        // return css class based on alert type
+    private getSeverity(alert: Alert) {
         switch (alert.type) {
             case AlertType.Success:
                 return 'success';

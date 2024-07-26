@@ -35,13 +35,7 @@ export class InvoiceImageService {
 
   public async getInvoiceImage(imageId: number) {
     const token = await this.getDownloadToken(imageId);
-    const downloadLink =
-      this.configService.apiUrlBase +
-      this.requestUrl +
-      "/image/" +
-      token +
-      "/" +
-      imageId;
+    const downloadLink = `${this.configService.apiUrlBase}${this.requestUrl}/image/${token}/${imageId}`;
 
     window.open(downloadLink, "_blank");
   }
@@ -50,11 +44,6 @@ export class InvoiceImageService {
     progress: Observable<number>;
     id: Observable<number>;
   } {
-    // // if(invoiceImage.file.size > 1048576)
-    // // {
-    // //   return throwError("Payload is too large - 413");
-    // // }
-
     const request = new HttpRequest(
       "POST",
       this.configService.apiUrlBase + this.requestUrl,
