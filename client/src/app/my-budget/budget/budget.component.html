@@ -59,15 +59,15 @@
       <ng-template pTemplate="body" let-request>
         <tr>
           <td>{{ request.title }}</td>
-          <td>{{ request.amount | number : "1.2-2" }}</td>
+          <td class="text-right">{{ request.amount | number : '1.2-2' }}&nbsp;€</td>
           <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
           <td>{{ requestStateType[request.state] }}</td>
           <td class="button-table-cell">
             <a routerLink="request/{{ request.id }}" class="p-button p-button-sm p-button-secondary no-underline">
-              @if (request.state === requestStateType.Approved) {
-                <i class="pi pi-file mr-2"></i>Open
-              } @else {
+              @if (request.state === requestStateType.Pending) {
                 <i class="pi pi-file-edit mr-2"></i>Edit
+              } @else {
+                <i class="pi pi-file mr-2"></i>Open
               }
             </a>
 
