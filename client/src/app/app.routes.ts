@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
 import { LoginComponent } from './login/login.component';
-import { RequestMassComponent } from './requests/requestMass/requestMass.component';
-import { AdminRoleGuard } from './services/guards/admin-role.guard';
 import { AutheticatedGuard } from './services/guards/authenticated.guard';
 
 export const rootRouterConfig: Routes = [

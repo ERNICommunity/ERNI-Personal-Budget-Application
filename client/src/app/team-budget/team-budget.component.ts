@@ -4,8 +4,7 @@ import { MenuHelper } from '../shared/menu-helper';
 
 @Component({
     selector: 'app-team-budget',
-    templateUrl: './team-budget.component.html',
-    styleUrls: ['./team-budget.component.css']
+    templateUrl: './team-budget.component.html'
 })
 export class TeamBudgetComponent {
     years: MenuItem[];

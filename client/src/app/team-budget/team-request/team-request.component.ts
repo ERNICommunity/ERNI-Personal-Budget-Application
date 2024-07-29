@@ -7,8 +7,7 @@ import { TeamBudgetService } from '../../services/team-budget.service';
 
 @Component({
   selector: 'app-team-request',
-  templateUrl: './team-request.component.html',
-  styleUrls: ['./team-request.component.css']
+  templateUrl: './team-request.component.html'
 })
 export class TeamRequestComponent implements OnInit {
 
