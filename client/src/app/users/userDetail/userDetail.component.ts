@@ -12,11 +12,11 @@ import {
 import { AlertService } from "../../services/alert.service";
 import { BusyIndicatorService } from "../../services/busy-indicator.service";
 import { HttpErrorResponse } from "@angular/common/http";
+import { finalize } from "rxjs";
 
 @Component({
   selector: "app-users",
-  templateUrl: "./userDetail.component.html",
-  styleUrls: ["./userDetail.component.css"],
+  templateUrl: "./userDetail.component.html"
 })
 export class UserDetailComponent implements OnInit {
   id: number;
@@ -57,20 +57,13 @@ export class UserDetailComponent implements OnInit {
 
     this.userService
       .getAllUsers()
-      .subscribe(
-        (users) =>
-          (this.users = users.sort((first, second) =>
-            first.lastName.localeCompare(second.lastName)
-          ))
-      );
+      .subscribe((users) => {
+        this.users = users.sort((first, second) => first.lastName.localeCompare(second.lastName));
+      });
   }
 
   trimControlValue(control: AbstractControl) {
     control.setValue(control.value.trim());
-  }
-
-  compareUsers(user1: User, user2: User) {
-    return user1 && user2 ? user1.id === user2.id : user1 === user2;
   }
 
   goBack(): void {
@@ -85,8 +78,6 @@ export class UserDetailComponent implements OnInit {
       return;
     }
 
-    this.busyIndicatorService.start();
-
     const userData = {
       id: this.id,
       firstName: this.form.controls.firstName.value,
@@ -96,11 +87,16 @@ export class UserDetailComponent implements OnInit {
       state: Number(this.form.controls.state.value),
     };
 
+    this.busyIndicatorService.start();
+
     this.userService
       .updateUser(userData)
+      .pipe(
+        finalize(() => this.busyIndicatorService.end())
+      )
       .subscribe(
         () => {
-          this.alertService.success("User successfully was created.");
+          this.alertService.success("User successfully created");
           this.router.navigate(["/users"]);
         },
         (err: HttpErrorResponse) => {
@@ -111,9 +107,6 @@ export class UserDetailComponent implements OnInit {
 
           this.alertService.error(error);
         }
-      )
-      .add(() => {
-        this.busyIndicatorService.end();
-      });
+      );
   }
 }

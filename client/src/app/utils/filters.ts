@@ -1,25 +1,15 @@
 import { Request } from "../model/request/request";
+import { normalize } from "./normalizer.util";
 
 export const filterRequests = (
   requests: Request[],
   searchString: string
 ): Request[] => {
-  searchString = searchString
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  searchString = normalize(searchString);
 
   return requests.filter(
     (request) =>
-      request.user.firstName
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .indexOf(searchString) !== -1 ||
-      request.user.lastName
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .indexOf(searchString.toLowerCase()) !== -1
+      normalize(request.user.firstName).indexOf(searchString) !== -1 ||
+      normalize(request.user.lastName).indexOf(searchString.toLowerCase()) !== -1
   );
 };

@@ -7,6 +7,7 @@ import { combineLatest } from "rxjs";
 import { distinctUntilChanged, map, switchMap } from "rxjs/operators";
 import { MenuHelper } from "../../shared/menu-helper";
 import { toSignal } from "@angular/core/rxjs-interop";
+import {normalize} from "../../utils/normalizer.util";
 
 @Component({
   selector: "app-other-budgets",
@@ -81,27 +82,14 @@ export class OtherBudgetsComponent {
   searchTerm = model("");
 
   filterBudgets(budgets: Budget[], searchString: string, budgetType: number) {
-    searchString = searchString ?? "";
-
-    searchString = searchString
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+    searchString = normalize(searchString ?? "");
 
     return budgets
       .filter((b) => b.type == budgetType)
       .filter(
         (budget) =>
-          budget.user.firstName
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .indexOf(searchString) !== -1 ||
-          budget.user.lastName
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .indexOf(searchString) !== -1
+          normalize(budget.user.firstName).indexOf(searchString) !== -1 ||
+          normalize(budget.user.lastName).indexOf(searchString) !== -1
       );
   }
 }

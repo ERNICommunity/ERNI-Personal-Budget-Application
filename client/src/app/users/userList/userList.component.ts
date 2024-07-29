@@ -3,11 +3,11 @@ import { UserService } from "../../services/user.service";
 import { User } from "../../model/user";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UserState } from "../../model/userState";
+import {normalize} from "../../utils/normalizer.util";
 
 @Component({
   selector: "app-users-list",
-  templateUrl: "./userList.component.html",
-  styleUrls: ["./userList.component.css"],
+  templateUrl: "./userList.component.html"
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
@@ -27,23 +27,12 @@ export class UserListComponent implements OnInit {
   }
 
   filterUsers(searchString: string) {
-    searchString = searchString
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+    searchString = normalize(searchString);
 
     return this.users.filter(
       (user) =>
-        user.firstName
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .indexOf(searchString) !== -1 ||
-        user.lastName
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .indexOf(searchString) !== -1
+        normalize(user.firstName).indexOf(searchString) !== -1 ||
+        normalize(user.lastName).indexOf(searchString) !== -1
     );
   }
 
