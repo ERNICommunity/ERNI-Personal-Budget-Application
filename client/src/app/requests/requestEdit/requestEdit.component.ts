@@ -270,7 +270,7 @@ export class RequestEditComponent {
   }
 
   public onHide(): void {
-    this.router.navigate(["my-budget"]);
+    this.router.navigate(["../../"], { relativeTo: this.route });
   }
 
   private updateFiles(fileToUpdate: Invoice): void {
