@@ -17,43 +17,32 @@ export const rootRouterConfig: Routes = [
         children: [
             {
                 path: 'my-budget',
-                loadChildren: () =>
-                    import('./my-budget/my-budget.module').then(
-                        (m) => m.MyBudgetModule
-                    )
+                loadChildren: () => import('./my-budget/my-budget.module').then((m) => m.MyBudgetModule)
             },
             {
                 path: 'budgets',
-                loadChildren: () =>
-                    import('./budgets/budgets.module').then(
-                        (m) => m.BudgetsModule
-                    )
+                title: 'Budgets | PBA',
+                loadChildren: () => import('./budgets/budgets.module').then((m) => m.BudgetsModule)
             },
             {
                 path: 'requests',
-                loadChildren: () =>
-                    import('./requests/requests.module').then(
-                        (m) => m.RequestsModule
-                    )
+                title: 'Requests | PBA',
+                loadChildren: () => import('./requests/requests.module').then((m) => m.RequestsModule)
             },
             {
                 path: 'employees',
-                loadChildren: () =>
-                    import('./users/users.module').then((m) => m.UsersModule)
+                title: 'Employees | PBA',
+                loadChildren: () => import('./users/users.module').then((m) => m.UsersModule)
             },
             {
                 path: 'statistics',
-                loadChildren: () =>
-                    import('./statistics/statistics.module').then(
-                        (m) => m.StatisticsModule
-                    )
+                title: 'Statistics | PBA',
+                loadChildren: () => import('./statistics/statistics.module').then((m) => m.StatisticsModule)
             },
             {
                 path: 'team-budget',
-                loadChildren: () =>
-                    import('./team-budget/team-budget.module').then(
-                        (m) => m.TeamBudgetModule
-                    )
+                title: 'Team Budget | PBA',
+                loadChildren: () => import('./team-budget/team-budget.module').then((m) => m.TeamBudgetModule)
             }
         ]
     },
