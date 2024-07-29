@@ -17,6 +17,13 @@
           [request]="request"
           [isReadonly]="request.state !== RequestState.Pending || isSaveInProgress()"
         ></app-basic-request-info-editor>
+
+        @if (request.state === RequestState.Approved) {
+          <div class="field mb-0">
+            <label for="requestState">State</label>
+            <div id="requestState" class="text-green-600 font-bold">Request Approved</div>
+          </div>
+        }
       </div>
     }
     <div class="col">
@@ -32,15 +39,10 @@
     <p-button
       *ngIf="request()?.state === RequestState.Pending"
       class="block mt-2"
-      styleClass="p-button-success"
       [icon]="isNewRequest() ? '' : 'pi pi-save'"
       [loading]="isSaveInProgress()"
       [label]="isNewRequest() ? 'Create Request' : 'Update Request'"
       (click)="save()"
     ></p-button>
-
-    <div *ngIf="request()?.state === RequestState.Approved">
-      <p class="text-green-600 font-bold mb-0"><i class="pi pi-check mr-2"></i>Request Approved</p>
-    </div>
   </div>
 </p-dialog>

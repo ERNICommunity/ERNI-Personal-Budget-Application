@@ -50,6 +50,9 @@ export class BudgetComponent {
   );
   budgetAmountPercentage = computed(() => (100 * this.budget().amountLeft) / this.budget().amount);
   budgetAmountProgressColor = computed(() => {
+    if (!this.budget().isEditable) {
+      return '#828282';
+    }
     if (this.budgetAmountPercentage() < 25) {
       return '#D03E35';
     }
@@ -66,10 +69,13 @@ export class BudgetComponent {
     }
 
     if (this.budget().type === BudgetTypeEnum.PersonalBudget) {
-      return '💸';
+      return '💰';
     }
     if (this.budget().type === BudgetTypeEnum.RecreationBudget) {
       return '🏖️';
+    }
+    if (this.budget().type === BudgetTypeEnum.CommunityBudget) {
+      return '️🚴';
     }
     return null;
   });

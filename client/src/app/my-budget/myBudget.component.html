@@ -1,13 +1,15 @@
-<p-tabMenu [model]="years"></p-tabMenu>
+<p-tabMenu [model]="years" [scrollable]="true"></p-tabMenu>
 
-@if (isBusy()) {
+@if (loadingData()) {
   <div class="flex align-items-center justify-content-center h-10rem">
     <p-progressSpinner></p-progressSpinner>
   </div>
 } @else {
-  @for (budget of budgets(); track budget.id) {
-    <app-budget class="block mt-3" [budget]="budget"></app-budget>
-  }
+  <div class="flex flex-column gap-3 mt-3">
+    @for (budget of budgets(); track budget.id) {
+      <app-budget [budget]="budget"></app-budget>
+    }
+  </div>
 }
 
 <router-outlet></router-outlet>
