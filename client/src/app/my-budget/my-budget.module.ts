@@ -19,6 +19,7 @@ import { RequestEditComponent } from '../requests/requestEdit/requestEdit.compon
             },
             {
                 path: ':year',
+                title: (route) => `My Budget - ${route.paramMap.get('year')} | PBA`,
                 component: MyBudgetComponent,
                 children: [
                     {
