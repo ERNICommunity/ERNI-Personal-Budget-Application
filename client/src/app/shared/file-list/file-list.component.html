@@ -1,4 +1,4 @@
-<label class="block mb-2" for="file-list">Uploaded files</label>
+<label class="block mb-2" for="file-list">Attachments</label>
 <div *ngIf="files().length > 0" class="fileLists mb-2" id="file-list">
   <ul class="no-bullets">
     @for (file of files(); track file.name) {

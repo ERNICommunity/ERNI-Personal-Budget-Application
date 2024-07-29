@@ -16,7 +16,7 @@ export class MyBudgetComponent {
   #route = inject(ActivatedRoute);
   #dataChangeNotificationService = inject(DataChangeNotificationService);
 
-  isBusy = signal(false);
+  loadingData = signal(false);
   budgets = toSignal(
     combineLatest([
       this.#route.params,
@@ -24,9 +24,9 @@ export class MyBudgetComponent {
     ]).pipe(
       map(([params]) => Number(params["year"])),
       filter((year) => !isNaN(year)),
-      tap((_) => (this.isBusy.set(true))),
+      tap((_) => (this.loadingData.set(true))),
       switchMap((year) => this.#budgetService.getCurrentUserBudgets(year)),
-      tap((_) => (this.isBusy.set(false)))
+      tap((_) => (this.loadingData.set(false)))
     ),
     { initialValue: [] }
   );

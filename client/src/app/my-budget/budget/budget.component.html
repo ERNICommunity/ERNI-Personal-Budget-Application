@@ -3,82 +3,103 @@
   [baseZIndex]="10000"
   rejectButtonStyleClass="p-button-text"
 ></p-confirmDialog>
-<p-panel>
-  <ng-template pTemplate="icons">
-    <div class="flex align-items-center">
-      <span class="mr-2">{{ budget().amountLeft }} € left out of {{ budget().amount }}</span>
 
-      <a
-        *ngIf="budget().isEditable"
-        routerLink="new-request/{{ budget().id }}"
-      >
-        <button
-          pButton
-          class="btn btn-primary"
-          icon="pi pi-plus"
-          label="Create Request"
-        ></button>
-      </a>
+<p-panel [iconPos]="'end'">
+  <ng-template pTemplate="header">
+    <div class="flex flex-wrap w-full gap-2">
+      <div class="flex w-full gap-3">
+        <div class="flex-grow-1 flex flex-column md:flex-row gap-3">
+          <div class="flex flex-column" style="min-width: 15rem;">
+            <h1 class="budget-title text-xl font-bold m-0">{{ budget().title }}</h1>
+
+            @if (budgetTypeName()) {
+              <div class="font-light">
+                @if (budgetIcon()) {
+                  <span class="text-lg mr-1">{{ budgetIcon() }}</span>
+                }
+                <span>{{ budgetTypeName() }}</span>
+              </div>
+            }
+          </div>
+          <div class="flex-grow-1 hidden md:block">
+            <p-progressBar [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
+              <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
+            </p-progressBar>
+            @if (budget().amountLeft < budget().amount) {
+              <div class="text-sm font-light font-italic text-right mt-1">{{ budget().amountLeft }}€ left out of {{ budget().amount }}€</div>
+            }
+          </div>
+        </div>
+
+        @if (budget().isEditable) {
+          <a
+            class="block"
+            pTooltip="Create new request"
+            routerLink="new-request/{{ budget().id }}"
+          >
+            <p-button
+              icon="pi pi-plus"
+              [rounded]="true"
+            ></p-button>
+          </a>
+        }
+      </div>
+
+      <div class="w-full md:hidden">
+        <p-progressBar [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
+          <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
+        </p-progressBar>
+        @if (budget().amountLeft < budget().amount) {
+          <div class="text-sm font-light font-italic text-right mt-1">{{ budget().amountLeft }}€ left out of {{ budget().amount }}€</div>
+        }
+      </div>
     </div>
 
   </ng-template>
-  <ng-template pTemplate="header">
-    @if (budget().title) {
-      <div>
-        @if (budgetIcon()) {
-          <span>{{budgetIcon()}} </span>
-        }
-        <span class="font-bold">{{ budget().title }}</span>
-        @if (budgetTypeName()) {
-          <span> - {{ budgetTypeName() }}</span>
-        }
-      </div>
-    } @else if (budgetTypeName()) {
-      <div>{{ budgetTypeName() }}</div>
-    }
-  </ng-template>
 
-  <p-progressBar [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
-    <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
-  </p-progressBar>
+
 
   @if (budget().requests.length > 0) {
     <p-table
       [value]="budget().requests"
-      styleClass="p-datatable-gridlines p-datatable-striped mt-3"
+      styleClass="mt-3 p-datatable-gridlines p-datatable-striped p-datatable-sm"
+      responsiveLayout="stack"
+      [breakpoint]="'650px'"
     >
       <ng-template pTemplate="header" let-columns>
         <tr>
           <th>Title</th>
           <th>Amount</th>
-          <th>Create date</th>
+          <th>Create Date</th>
           <th>Request State</th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-request>
         <tr>
-          <td>{{ request.title }}</td>
-          <td class="text-right">{{ request.amount | number : '1.2-2' }}&nbsp;€</td>
-          <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
-          <td>{{ requestStateType[request.state] }}</td>
-          <td class="button-table-cell">
-            <a routerLink="request/{{ request.id }}" class="p-button p-button-sm p-button-secondary no-underline">
-              @if (request.state === requestStateType.Pending) {
-                <i class="pi pi-file-edit mr-2"></i>Edit
-              } @else {
-                <i class="pi pi-file mr-2"></i>Open
-              }
-            </a>
+          <td><span class="p-column-title font-semibold">Title</span>{{ request.title }}</td>
+          <td class="text-right"><span class="p-column-title font-semibold">Amount</span>{{ request.amount | number : '1.2-2' }}&nbsp;€</td>
+          <td><span class="p-column-title font-semibold">Create date</span>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
+          <td><span class="p-column-title font-semibold">State</span>{{ requestStateType[request.state] }}</td>
+          <td>
+            <div class="button-table-cell">
+              <a routerLink="request/{{ request.id }}" class="p-button p-button-sm p-button-secondary no-underline">
+                @if (request.state === requestStateType.Pending) {
+                  <i class="pi pi-file-edit mr-2"></i>Edit
+                } @else {
+                  <i class="pi pi-file mr-2"></i>Open
+                }
+              </a>
 
-            <p-button
-              *ngIf="request.state === requestStateType.Pending && budget().isEditable"
-              icon="pi pi-trash"
-              label="Delete"
-              [size]="'small'"
-              [severity]="'danger'"
-              (click)="openDeleteConfirmationModal(request)">
-            </p-button>
+              <p-button
+                *ngIf="request.state === requestStateType.Pending && budget().isEditable"
+                icon="pi pi-trash"
+                label="Delete"
+                [size]="'small'"
+                [severity]="'danger'"
+                (click)="openDeleteConfirmationModal(request)">
+              </p-button>
+            </div>
           </td>
         </tr>
       </ng-template>
