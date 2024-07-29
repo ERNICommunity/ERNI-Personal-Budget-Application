@@ -1,4 +1,4 @@
-<p-menubar [model]="items()">
+<p-menubar [model]="mainNavItems()">
   <ng-template pTemplate="start">
     <a class="p-menuitem-link font-bold mr-2" routerLink="/">
       <span class="mr-1 text-xl">💰</span>
@@ -24,16 +24,28 @@
     </ng-template>
   </ng-template>
   <ng-template pTemplate="end">
-    <div class="flex align-items-center gap-2">
-      @if (authService.userInfo$ | async; as userInfo) {
-        <div class="p-menuitem-link">
-          <i class="pi pi-user mr-2" [pTooltip]="userInfo.name" tooltipPosition="bottom"></i>
+    <p-menu #menu [popup]="true" [model]="userMenuItems" styleClass="w-15rem">
+      <ng-template pTemplate="end">
+        <div class="flex align-items-center p-2 pl-3">
+          <p-avatar image="/assets/avatar.svg" class="mr-2" shape="circle" />
+          @if (authService.userInfo$ | async; as userInfo) {
+            <div class="flex flex-column">
+              <div class="font-bold">{{ userInfo.name }}</div>
+              @if (userInfo.isAdmin) {
+                <div class="text-sm">[Admin]</div>
+              }
+              @if (userInfo.isFinance) {
+                <div class="text-sm">[Finance]</div>
+              }
+              @if (userInfo.isSuperior) {
+                <div class="text-sm">[Superior]</div>
+              }
+            </div>
+          }
         </div>
-      }
-      <a class="p-menuitem-link" href="#" (click)="logout(); $event.preventDefault()">
-        <i class="pi pi-sign-out mr-2"></i>Logout
-      </a>
-    </div>
+      </ng-template>
+    </p-menu>
+    <p-button (click)="menu.toggle($event)" [text]="true" severity="secondary" icon="pi pi-user" [size]="'large'"/>
   </ng-template>
 </p-menubar>
 
