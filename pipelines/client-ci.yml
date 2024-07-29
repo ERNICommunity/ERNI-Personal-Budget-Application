@@ -6,15 +6,23 @@ pool:
 
 steps:
 - task: NodeTool@0
-  displayName: 'Use Node 10.x'
+  displayName: "Use Node 18.x"
   inputs:
-    versionSpec: '16.x'
+    versionSpec: "18.x"
 
 - task: Npm@1
   displayName: 'npm ci'
   inputs:
     command: 'ci'
     workingDir: 'client/'
+
+# TODO fix "Missing X server or $DISPLAY" error
+#- task: Npm@1
+#  displayName: 'npm test'
+#  inputs:
+#    command: 'custom'
+#    workingDir: 'client/'
+#    customCommand: 'run test'
 
 # - task: Npm@1
 #   displayName: 'npm lint'
