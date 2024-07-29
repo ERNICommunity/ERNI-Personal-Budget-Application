@@ -69,7 +69,7 @@ export class BudgetComponent {
     }
 
     if (this.budget().type === BudgetTypeEnum.PersonalBudget) {
-      return '💰';
+      return '💵';
     }
     if (this.budget().type === BudgetTypeEnum.RecreationBudget) {
       return '🏖️';

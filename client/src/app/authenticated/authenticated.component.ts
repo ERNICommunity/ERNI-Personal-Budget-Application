@@ -3,12 +3,13 @@ import { Router } from "@angular/router";
 import { AuthenticationService } from "../services/authentication.service";
 import { SharedModule } from "../shared/shared.module";
 import { MenubarModule } from "primeng/menubar";
-import { MenuItem } from "primeng/api";
+import { MenuItem, MenuItemCommandEvent } from "primeng/api";
 import { Ripple } from "primeng/ripple";
 import { AuthorizationPolicy, PolicyNames } from "../services/authorization-policy";
 import { filter, map } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NgOptimizedImage } from "@angular/common";
+import {AvatarModule} from "primeng/avatar";
 
 @Component({
   selector: "authenticated",
@@ -16,13 +17,29 @@ import { NgOptimizedImage } from "@angular/common";
   styleUrls: ["./authenticated.component.scss"],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SharedModule, MenubarModule, Ripple, NgOptimizedImage],
+  imports: [SharedModule, MenubarModule, Ripple, NgOptimizedImage, AvatarModule],
 })
 export class AuthenticatedComponent {
 
-  #items: (MenuItem & { accessRight?: PolicyNames })[] = [
+  public userMenuItems: MenuItem[] = [
+    {
+      label: 'Log out',
+      icon: 'pi pi-sign-out',
+      url: '#',
+      command: (event: MenuItemCommandEvent) => {
+        this.logout();
+        event.originalEvent?.preventDefault();
+      }
+    },
+    {
+      separator: true
+    },
+  ]
+
+  #mainNavItems: (MenuItem & { accessRight?: PolicyNames })[] = [
     {
       label: 'My Budget',
+      icon: 'pi pi-wallet',
       accessRight: 'canAccessMyBudget',
       route: "/my-budget",
     },
@@ -66,10 +83,10 @@ export class AuthenticatedComponent {
     },
   ];
 
-  public items: Signal<(MenuItem & { policy?: PolicyNames })[]> = toSignal(
+  public mainNavItems: Signal<(MenuItem & { policy?: PolicyNames })[]> = toSignal(
     this.authService.userInfo$.pipe(
       filter(userInfo => !!userInfo),
-      map((userInfo) => this.#items.map(item => {
+      map((userInfo) => this.#mainNavItems.map(item => {
         return {
           ...item,
           visible: !item.accessRight ||  AuthorizationPolicy.evaluate(item.accessRight, userInfo)
