@@ -1,55 +1,41 @@
-<nav>
-  <ul class="home">
-    <li>
-      <a routerLink="/"> PBA </a>
-    </li>
-  </ul>
-  <ul class="menu">
-    <li class="nav-item" [routerLinkActive]="['active']" *pbaAuth="'canAccessMyBudget'">
-      <a class="nav-link" routerLink="/my-budget">My Budget</a>
-    </li>
-    <li [routerLinkActive]="['active']" *pbaAuth="'isSuperior'">
-      <a routerLink="/team-budget">Team Budget</a>
-    </li>
-    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
-      <a routerLink="/budgets">Manage Budgets</a>
-    </li>
-    <li [routerLinkActive]="['active']" *pbaAuth="'canReadRequests'">
-      <a routerLink="/requests">Requests</a>
-    </li>
-    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
-      <a routerLink="/requests/mass-request">Mass Request</a>
-    </li>
-    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
-      <a routerLink="/employees">Employees</a>
-    </li>
-    <li [routerLinkActive]="['active']" *pbaAuth="'isAdmin'">
-      <a routerLink="/statistics">Statistics</a>
-    </li>
-    <li>
-      <a
-        href="https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx"
-        target="_blank"
-        class="nav-link"
-      >
-        <i class="pi pi-file mr-1"></i>Conditions of use
+<p-menubar [model]="items()">
+  <ng-template pTemplate="start">
+    <a class="p-menuitem-link font-bold mr-2" routerLink="/">
+      <span class="mr-1 text-xl">💰</span>
+      <span>PBA</span>
+    </a>
+  </ng-template>
+  <ng-template pTemplate="item" let-item>
+    <ng-container *ngIf="item.route; else urlRef">
+      <a pRipple class="p-menuitem-link" [routerLink]="item.route" [routerLinkActive]="['p-menuitem-active']">
+        @if (item.icon) {
+          <i class="mr-2" [class]="item.icon"></i>
+        }
+        <span>{{ item.label }}</span>
       </a>
-    </li>
-  </ul>
-
-  <ul class="user" *ngIf="authService.userInfo$ | async">
-    <li>
-      <a class="pointer-events-none">
-        <i class="pi pi-user"></i>{{ (authService.userInfo$ | async)?.name }}
+    </ng-container>
+    <ng-template #urlRef>
+      <a *ngIf="item.url" [href]="item.url" [target]="item.target" class="p-menuitem-link">
+        @if (item.icon) {
+          <i class="mr-2" [class]="item.icon"></i>
+        }
+        <span>{{ item.label }}</span>
       </a>
-    </li>
-    <li>
-      <a href="#" (click)="logout(); $event.preventDefault()">
-        <i class="pi pi-sign-out"></i> Logout
+    </ng-template>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="flex align-items-center gap-2">
+      @if (authService.userInfo$ | async; as userInfo) {
+        <div class="p-menuitem-link">
+          <i class="pi pi-user mr-2" [pTooltip]="userInfo.name" tooltipPosition="bottom"></i>
+        </div>
+      }
+      <a class="p-menuitem-link" href="#" (click)="logout(); $event.preventDefault()">
+        <i class="pi pi-sign-out mr-2"></i>Logout
       </a>
-    </li>
-  </ul>
-</nav>
+    </div>
+  </ng-template>
+</p-menubar>
 
 <main>
   <div class="grid justify-content-center">
