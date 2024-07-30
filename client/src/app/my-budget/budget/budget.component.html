@@ -63,43 +63,58 @@
   @if (budget().requests.length > 0) {
     <p-table
       [value]="budget().requests"
-      styleClass="mt-3 p-datatable-gridlines p-datatable-striped p-datatable-sm"
+      styleClass="p-datatable-gridlines p-datatable-striped p-datatable-sm"
       responsiveLayout="stack"
       [breakpoint]="'650px'"
     >
       <ng-template pTemplate="header" let-columns>
         <tr>
           <th>Title</th>
-          <th>Amount</th>
-          <th>Create Date</th>
-          <th>Request State</th>
-          <th></th>
+          <th class="w-10rem text-right">Amount</th>
+          <th class="w-10rem text-center">Create Date</th>
+          <th class="w-10rem text-center">Request State</th>
+          <th class="w-9rem">Action</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-request>
         <tr>
-          <td><span class="p-column-title font-semibold">Title</span>{{ request.title }}</td>
-          <td class="text-right"><span class="p-column-title font-semibold">Amount</span>{{ request.amount | number : '1.2-2' }}&nbsp;€</td>
-          <td><span class="p-column-title font-semibold">Create date</span>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
-          <td><span class="p-column-title font-semibold">State</span>{{ requestStateType[request.state] }}</td>
           <td>
-            <div class="button-table-cell">
-              <a routerLink="request/{{ request.id }}" class="p-button p-button-sm p-button-secondary no-underline">
-                @if (request.state === requestStateType.Pending) {
-                  <i class="pi pi-file-edit mr-2"></i>Edit
-                } @else {
-                  <i class="pi pi-file mr-2"></i>Open
-                }
-              </a>
-
+            <span class="p-column-title font-semibold">Title</span>
+            <span>{{ request.title }}</span>
+          </td>
+          <td class="text-right">
+            <span class="p-column-title font-semibold">Amount</span>
+            <span>{{ request.amount | number : '1.2-2' }}&nbsp;€</span>
+          </td>
+          <td class="text-center">
+            <span class="p-column-title font-semibold">Create date</span>
+            <span>{{ request.createDate | date : "dd/MM/yyyy" }}</span>
+          </td>
+          <td class="text-center">
+            <span class="p-column-title font-semibold">State</span>
+            <p-chip [label]="requestStateType[request.state]" [styleClass]="getRequestStateChipColor(request.state)"/>
+          </td>
+          <td>
+            <span class="p-column-title font-semibold">Action</span>
+            <div class="flex gap-2">
               <p-button
-                *ngIf="request.state === requestStateType.Pending && budget().isEditable"
-                icon="pi pi-trash"
-                label="Delete"
-                [size]="'small'"
-                [severity]="'danger'"
-                (click)="openDeleteConfirmationModal(request)">
-              </p-button>
+                [icon]="request.state === requestStateType.Pending ? 'pi pi-file-edit' : 'pi pi-eye'"
+                [rounded]="true"
+                severity="secondary"
+                routerLink="request/{{ request.id }}"
+                [pTooltip]="request.state === requestStateType.Pending ? 'Edit request' : 'Open request'"
+                [showDelay]="300"
+              />
+              @if (request.state === requestStateType.Pending && budget().isEditable) {
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [severity]="'danger'"
+                  pTooltip="Delete request"
+                  [showDelay]="300"
+                  (click)="openDeleteConfirmationModal(request)"
+                />
+              }
             </div>
           </td>
         </tr>

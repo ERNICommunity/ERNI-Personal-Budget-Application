@@ -80,6 +80,16 @@ export class BudgetComponent {
     return null;
   });
 
+  getRequestStateChipColor(state: RequestApprovalState): string | undefined {
+    const requestStateChipColor: Record<RequestApprovalState, string | undefined> = {
+      [RequestApprovalState.Approved]: 'bg-green-100',
+      [RequestApprovalState.Pending]: undefined,
+      [RequestApprovalState.Rejected]: 'bg-red-100',
+    };
+
+    return requestStateChipColor[state];
+  }
+
   requestStateType = RequestApprovalState;
 
   openDeleteConfirmationModal(request: Request) {
