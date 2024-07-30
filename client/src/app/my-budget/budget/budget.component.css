@@ -1,0 +1,5 @@
+/* Hides panel's body if there is no content */
+/* Issue is with p-panel where empty content still applies some padding. */
+:host ::ng-deep .p-panel-content:empty {
+    display: none !important;
+}

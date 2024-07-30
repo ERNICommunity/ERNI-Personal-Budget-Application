@@ -18,10 +18,15 @@
           [isReadonly]="request.state !== RequestState.Pending || isSaveInProgress()"
         ></app-basic-request-info-editor>
 
-        @if (request.state === RequestState.Approved) {
+        @if (request.state === RequestState.Approved || request.state === RequestState.Rejected ) {
           <div class="field mb-0">
             <label for="requestState">State</label>
-            <div id="requestState" class="text-green-600 font-bold">Request Approved</div>
+            <div
+              id="requestState"
+              class="font-bold"
+              [ngClass]="request.state === RequestState.Approved ? 'text-green-600' : 'text-red-600'">
+              <span>{{ request.state === RequestState.Approved ? 'Request Approved' : 'Request Rejected' }}</span>
+            </div>
           </div>
         }
       </div>

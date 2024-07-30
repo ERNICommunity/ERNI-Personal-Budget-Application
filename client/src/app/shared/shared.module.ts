@@ -28,6 +28,7 @@ import { MessageModule } from "primeng/message";
 import { PickListModule } from "primeng/picklist";
 import { AuthDirective } from "./directives/authDirective";
 import { FileUploadModule } from "primeng/fileupload";
+import {ChipModule} from "primeng/chip";
 
 @NgModule({
   declarations: [AlertComponent, AuthDirective],
@@ -72,6 +73,7 @@ import { FileUploadModule } from "primeng/fileupload";
     PickListModule,
     AuthDirective,
     FileUploadModule,
+    ChipModule,
   ],
   providers: [MessageService],
 })
