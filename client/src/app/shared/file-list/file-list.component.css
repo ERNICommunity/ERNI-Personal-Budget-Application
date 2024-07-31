@@ -1,7 +1,7 @@
 .fileLists {
-    display: block;
-    overflow-y: auto;
-    overflow-x: hidden;
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 ul.no-bullets {

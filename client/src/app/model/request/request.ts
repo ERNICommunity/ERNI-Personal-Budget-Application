@@ -1,6 +1,6 @@
-import { User } from "../user";
-import { RequestApprovalState } from "../requestState";
-import { Budget } from "./budget";
+import { User } from '../user';
+import { RequestApprovalState } from '../requestState';
+import { Budget } from './budget';
 
 export interface Request {
   id: number;

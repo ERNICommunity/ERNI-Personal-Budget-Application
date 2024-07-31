@@ -11,50 +11,45 @@ import { UserState } from '../model/userState';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-    declarations: [
-        UsersComponent,
-        UserListComponent,
-        UserDetailComponent,
-        CreateUserComponent
-    ],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        CommonModule,
-        SharedModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: UsersComponent,
-                canActivate: [AdminRoleGuard],
-                children: [
-                    { path: '', redirectTo: 'active', pathMatch: 'full' },
-                    {
-                        path: 'active',
-                        component: UserListComponent,
-                        data: { filter: UserState.Active }
-                    },
-                    {
-                        path: 'new',
-                        component: UserListComponent,
-                        data: { filter: UserState.New }
-                    },
-                    {
-                        path: 'inactive',
-                        component: UserListComponent,
-                        data: { filter: UserState.Inactive }
-                    },
-                    {
-                        path: 'detail/:id',
-                        component: UserDetailComponent
-                    },
-                    {
-                        path: 'create',
-                        component: CreateUserComponent
-                    }
-                ]
-            }
-        ])
-    ]
+  declarations: [UsersComponent, UserListComponent, UserDetailComponent, CreateUserComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    SharedModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        component: UsersComponent,
+        canActivate: [AdminRoleGuard],
+        children: [
+          { path: '', redirectTo: 'active', pathMatch: 'full' },
+          {
+            path: 'active',
+            component: UserListComponent,
+            data: { filter: UserState.Active },
+          },
+          {
+            path: 'new',
+            component: UserListComponent,
+            data: { filter: UserState.New },
+          },
+          {
+            path: 'inactive',
+            component: UserListComponent,
+            data: { filter: UserState.Inactive },
+          },
+          {
+            path: 'detail/:id',
+            component: UserDetailComponent,
+          },
+          {
+            path: 'create',
+            component: CreateUserComponent,
+          },
+        ],
+      },
+    ]),
+  ],
 })
 export class UsersModule {}

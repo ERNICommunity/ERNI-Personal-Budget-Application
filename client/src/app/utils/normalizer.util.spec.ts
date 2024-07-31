@@ -1,4 +1,4 @@
-import { normalize } from "./normalizer.util";
+import { normalize } from './normalizer.util';
 
 describe('Normalizer util', () => {
   it('normalize string', () => {

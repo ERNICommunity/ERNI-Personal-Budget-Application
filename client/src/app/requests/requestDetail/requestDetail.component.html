@@ -5,11 +5,10 @@
   [draggable]="false"
   [modal]="true"
   [resizable]="false"
-  (onHide)="onHide()"
->
+  (onHide)="onHide()">
   <div class="modal-body">
     <h5>Created</h5>
-    <p>{{ createDate | date : "shortDate" }}</p>
+    <p>{{ createDate | date: 'shortDate' }}</p>
 
     <h5>Amount</h5>
     <p>{{ request.amount }}</p>
@@ -26,12 +25,7 @@
         <li *ngFor="let image of images">
           <div class="row mt-2">
             <div class="col-md-8">{{ image.name }}</div>
-            <button
-              class="col-md-3 btn btn-outline-primary"
-              (click)="download(image.id)"
-            >
-              Download
-            </button>
+            <button class="col-md-3 btn btn-outline-primary" (click)="download(image.id)">Download</button>
             <a #downloadLink></a>
           </div>
         </li>
@@ -44,7 +38,6 @@
       icon="pi pi-times"
       (click)="close()"
       label="Close"
-      styleClass="p-button-secondary p-button-text"
-    ></p-button>
+      styleClass="p-button-secondary p-button-text"></p-button>
   </ng-template>
 </p-dialog>

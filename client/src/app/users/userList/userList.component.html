@@ -5,69 +5,30 @@
   <div class="p-toolbar-group-left">
     <span class="p-input-icon-left">
       <i class="pi pi-search"></i>
-      <input
-        type="text"
-        pInputText
-        placeholder="Search employee"
-        [(ngModel)]="searchTerm"
-      />
+      <input type="text" pInputText placeholder="Search employee" [(ngModel)]="searchTerm" />
     </span>
   </div>
 
   <div class="p-toolbar-group-right flex gap-3">
-    <button
-      type="button"
-      pButton
-      icon="pi pi-bars"
-      label="Sync Users"
-      (click)="syncUsers()"
-    ></button>
+    <button type="button" pButton icon="pi pi-bars" label="Sync Users" (click)="syncUsers()"></button>
 
-    <button
-      type="button"
-      pButton
-      icon="pi pi-bars"
-      label="Add New"
-      (click)="create()"
-    ></button>
+    <button type="button" pButton icon="pi pi-bars" label="Add New" (click)="create()"></button>
   </div>
 </p-toolbar>
 
 <ul class="nav nav-tabs">
   <li class="nav-item">
-    <a
-      class="nav-link"
-      [routerLinkActive]="['active']"
-      routerLink="/employees/active"
-    >
-      Active
-    </a>
+    <a class="nav-link" [routerLinkActive]="['active']" routerLink="/employees/active"> Active </a>
   </li>
   <li class="nav-item">
-    <a
-      class="nav-link"
-      [routerLinkActive]="['active']"
-      routerLink="/employees/new"
-    >
-      New
-    </a>
+    <a class="nav-link" [routerLinkActive]="['active']" routerLink="/employees/new"> New </a>
   </li>
   <li class="nav-item">
-    <a
-      class="nav-link"
-      [routerLinkActive]="['active']"
-      routerLink="/employees/inactive"
-    >
-      Inactive
-    </a>
+    <a class="nav-link" [routerLinkActive]="['active']" routerLink="/employees/inactive"> Inactive </a>
   </li>
 </ul>
 
-<p-table
-  [value]="filteredUsers"
-  styleClass="p-datatable-gridlines p-datatable-striped"
-  responsiveLayout="scroll"
->
+<p-table [value]="filteredUsers" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
   <ng-template pTemplate="header">
     <tr>
       <th scope="col">#</th>
@@ -84,35 +45,17 @@
       <td>{{ user.firstName }}</td>
 
       <td *ngIf="userState !== userStateType.Active">
-        <button
-          pButton
-          class="btn btn-success float-right"
-          title="activate employee"
-          (click)="activateEmployee(user)"
-        >
+        <button pButton class="btn btn-success float-right" title="activate employee" (click)="activateEmployee(user)">
           Activate
         </button>
       </td>
 
       <td *ngIf="userState !== userStateType.Inactive">
-        <button
-          pButton
-          title="deactivate employee"
-          (click)="deactivateEmployee(user)"
-        >
-          Deactivate
-        </button>
+        <button pButton title="deactivate employee" (click)="deactivateEmployee(user)">Deactivate</button>
       </td>
 
       <td>
-        <a
-          pButton
-          href="#"
-          role="button"
-          routerLink="/employees/detail/{{ user.id }}"
-        >
-          Detail
-        </a>
+        <a pButton href="#" role="button" routerLink="/employees/detail/{{ user.id }}"> Detail </a>
       </td>
     </tr>
   </ng-template>

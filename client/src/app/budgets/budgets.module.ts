@@ -9,38 +9,34 @@ import { SharedModule } from '../shared/shared.module';
 import { CreateBudgetsComponent } from './create-budgets/create-budgets.component';
 
 @NgModule({
-    declarations: [
-        OtherBudgetsComponent,
-        OtherBudgetsDetailComponent,
-        CreateBudgetsComponent
-    ],
-    imports: [
-        CommonModule,
-        FormsModule,
-        SharedModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                canActivate: [AdminRoleGuard],
-                children: [
-                    {
-                        path: '',
-                        redirectTo: new Date().getFullYear().toString() + '/1',
-                        pathMatch: 'full'
-                    },
-                    {
-                        path: 'edit/:id',
-                        component: OtherBudgetsDetailComponent,
-                        canActivate: [AdminRoleGuard]
-                    },
-                    {
-                        path: ':year/:budgetType',
-                        component: OtherBudgetsComponent,
-                        canActivate: [AdminRoleGuard]
-                    }
-                ]
-            }
-        ])
-    ]
+  declarations: [OtherBudgetsComponent, OtherBudgetsDetailComponent, CreateBudgetsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SharedModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        canActivate: [AdminRoleGuard],
+        children: [
+          {
+            path: '',
+            redirectTo: new Date().getFullYear().toString() + '/1',
+            pathMatch: 'full',
+          },
+          {
+            path: 'edit/:id',
+            component: OtherBudgetsDetailComponent,
+            canActivate: [AdminRoleGuard],
+          },
+          {
+            path: ':year/:budgetType',
+            component: OtherBudgetsComponent,
+            canActivate: [AdminRoleGuard],
+          },
+        ],
+      },
+    ]),
+  ],
 })
 export class BudgetsModule {}

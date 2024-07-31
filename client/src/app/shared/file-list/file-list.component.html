@@ -7,14 +7,16 @@
           <button pButton disabled class="p-button-sm p-button-text">{{ file.name }}</button>
         }
         @if (file.status.code === 'in-progress') {
-          <p-progressBar [style]="{ height: '20px' }" [showValue]="false" [value]="file.status.progress"/>
+          <p-progressBar [style]="{ height: '20px' }" [showValue]="false" [value]="file.status.progress" />
         }
         @if (file.status.code === 'saved') {
-          <button pButton
+          <button
+            pButton
             [disabled]="!file.status.id"
             class="p-button-sm p-button-text"
-            (click)="download(file.status.id)"
-          >{{ file.name }}</button>
+            (click)="download(file.status.id)">
+            {{ file.name }}
+          </button>
         }
       </li>
     }
@@ -31,8 +33,7 @@
     [showCancelButton]="false"
     [maxFileSize]="2000000"
     [customUpload]="true"
-    (onSelect)="onFileSelect($event)"
-  >
+    (onSelect)="onFileSelect($event)">
     <ng-template let-file pTemplate="file"></ng-template>
   </p-fileUpload>
 }

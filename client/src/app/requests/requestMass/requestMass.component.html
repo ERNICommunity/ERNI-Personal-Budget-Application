@@ -5,22 +5,10 @@
 
 <div class="field">
   <label for="title" class="block">Title</label>
-  <input
-    id="title"
-    type="text"
-    pInputText
-    required
-    #inputTitle="ngModel"
-    [(ngModel)]="title"
-  />
-  <small id="username1-help" class="block"
-    >Short summary of what you are going to buy.</small
-  >
+  <input id="title" type="text" pInputText required #inputTitle="ngModel" [(ngModel)]="title" />
+  <small id="username1-help" class="block">Short summary of what you are going to buy.</small>
 </div>
-<small
-  *ngIf="inputTitle.invalid && (inputTitle.dirty || inputTitle.touched)"
-  id="username2-help"
-  class="p-error block"
+<small *ngIf="inputTitle.invalid && (inputTitle.dirty || inputTitle.touched)" id="username2-help" class="p-error block"
   >Title is required.</small
 >
 
@@ -33,14 +21,11 @@
     currency="EUR"
     required
     #inputAmount="ngModel"
-    [max]="maximumAmount"
-  >
+    [max]="maximumAmount">
   </p-inputNumber>
 </div>
 
-<small
-  *ngIf="inputAmount.invalid && (inputAmount.dirty || inputAmount.touched)"
-  class="p-error block"
+<small *ngIf="inputAmount.invalid && (inputAmount.dirty || inputAmount.touched)" class="p-error block"
   >Amount is required.</small
 >
 
@@ -59,8 +44,7 @@
     [targetStyle]="{ height: '30rem' }"
     sourceHeader="Employees"
     targetHeader="Attendees"
-    filterBy="firstName"
-  >
+    filterBy="firstName">
     <ng-template let-car pTemplate="item">
       <div style="font-size: 14px; float: right; margin: 0px 0px 0 0">
         {{ car.firstName }} - {{ car.lastName }} ({{ car.budgetLeft }} €)
@@ -69,9 +53,4 @@
   </p-pickList>
 </div>
 
-<p-button
-  icon="pi pi-plus"
-  (click)="save()"
-  label="Create request"
-  styleClass="p-button-success"
-></p-button>
+<p-button icon="pi pi-plus" (click)="save()" label="Create request" styleClass="p-button-success"></p-button>

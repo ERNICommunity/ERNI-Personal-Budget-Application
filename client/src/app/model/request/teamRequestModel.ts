@@ -1,4 +1,4 @@
-import { RequestApprovalState } from "../requestState";
+import { RequestApprovalState } from '../requestState';
 
 export interface TransactionModel {
   employeeId: number;

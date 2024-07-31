@@ -1,15 +1,11 @@
-<p-confirmDialog
-  [style]="{ width: '50vw' }"
-  [baseZIndex]="10000"
-  rejectButtonStyleClass="p-button-text"
-></p-confirmDialog>
+<p-confirmDialog [style]="{ width: '50vw' }" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text" />
 
 <p-panel [iconPos]="'end'">
   <ng-template pTemplate="header">
     <div class="flex flex-wrap w-full gap-2">
       <div class="flex w-full gap-3">
         <div class="flex-grow-1 flex flex-column md:flex-row gap-3">
-          <div class="flex flex-column" style="min-width: 15rem;">
+          <div class="flex flex-column" style="min-width: 15rem">
             <h1 class="budget-title text-xl font-bold m-0">{{ budget().title }}</h1>
 
             @if (budgetTypeName()) {
@@ -27,16 +23,8 @@
         </div>
 
         @if (budget().isEditable) {
-          <a
-            class="block"
-            pTooltip="Create new request"
-            [showDelay]="300"
-            routerLink="new-request/{{ budget().id }}"
-          >
-            <p-button
-              icon="pi pi-plus"
-              [rounded]="true"
-            ></p-button>
+          <a class="block" pTooltip="Create new request" [showDelay]="300" routerLink="new-request/{{ budget().id }}">
+            <p-button icon="pi pi-plus" [rounded]="true"></p-button>
           </a>
         }
       </div>
@@ -50,22 +38,20 @@
           <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
         </p-progressBar>
         @if (budget().amountLeft < budget().amount) {
-          <div class="text-sm font-light font-italic text-right mt-1">{{ budget().amountLeft }}€ left out of {{ budget().amount }}€</div>
+          <div class="text-sm font-light font-italic text-right mt-1">
+            {{ budget().amountLeft }}€ left out of {{ budget().amount }}€
+          </div>
         }
       </ng-template>
     </div>
-
   </ng-template>
-
-
 
   @if (budget().requests.length > 0) {
     <p-table
       [value]="budget().requests"
       styleClass="p-datatable-gridlines p-datatable-striped p-datatable-sm"
       responsiveLayout="stack"
-      [breakpoint]="'650px'"
-    >
+      [breakpoint]="'650px'">
       <ng-template pTemplate="header" let-columns>
         <tr>
           <th>Title</th>
@@ -83,15 +69,15 @@
           </td>
           <td class="text-right">
             <span class="p-column-title font-semibold">Amount</span>
-            <span>{{ request.amount | number : '1.2-2' }}&nbsp;€</span>
+            <span>{{ request.amount | number: '1.2-2' }}&nbsp;€</span>
           </td>
           <td class="text-center">
             <span class="p-column-title font-semibold">Create date</span>
-            <span>{{ request.createDate | date : "dd/MM/yyyy" }}</span>
+            <span>{{ request.createDate | date: 'dd/MM/yyyy' }}</span>
           </td>
           <td class="text-center">
             <span class="p-column-title font-semibold">State</span>
-            <p-chip [label]="requestStateType[request.state]" [styleClass]="getRequestStateChipColor(request.state)"/>
+            <p-chip [label]="requestStateType[request.state]" [styleClass]="getRequestStateChipColor(request.state)" />
           </td>
           <td>
             <span class="p-column-title font-semibold">Action</span>
@@ -102,8 +88,7 @@
                 severity="secondary"
                 routerLink="request/{{ request.id }}"
                 [pTooltip]="request.state === requestStateType.Pending ? 'Edit request' : 'Open request'"
-                [showDelay]="300"
-              />
+                [showDelay]="300" />
               @if (request.state === requestStateType.Pending && budget().isEditable) {
                 <p-button
                   icon="pi pi-trash"
@@ -111,8 +96,7 @@
                   [severity]="'danger'"
                   pTooltip="Delete request"
                   [showDelay]="300"
-                  (click)="openDeleteConfirmationModal(request)"
-                />
+                  (click)="openDeleteConfirmationModal(request)" />
               }
             </div>
           </td>

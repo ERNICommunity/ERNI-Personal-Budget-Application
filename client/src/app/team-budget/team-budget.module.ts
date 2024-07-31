@@ -11,46 +11,41 @@ import { SharedModule } from '../shared/shared.module';
 import { SuperiorGuard } from '../services/guards/superior.guard';
 
 @NgModule({
-    declarations: [
-        TeamBudgetComponent,
-        TeamBudgetStateComponent,
-        TeamRequestComponent,
-        CreateRequestComponent
-    ],
-    imports: [
-        SharedModule,
-        FormsModule,
-        CommonModule,
-        RouterModule,
-        InputNumberModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                canActivate: [SuperiorGuard],
-                children: [
-                    {
-                        path: '',
-                        redirectTo: new Date().getFullYear().toString(),
-                        pathMatch: 'full'
-                    },
-                    {
-                        path: ':year',
-                        component: TeamBudgetComponent,
-                        children: [
-                            {
-                                path: 'create-request',
-                                component: CreateRequestComponent
-                            },
-                            {
-                                path: 'request/:requestId',
-                                component: CreateRequestComponent
-                            }
-                        ]
-                    }
-                ]
-            }
-        ])
-    ],
-    exports: [TeamBudgetComponent]
+  declarations: [TeamBudgetComponent, TeamBudgetStateComponent, TeamRequestComponent, CreateRequestComponent],
+  imports: [
+    SharedModule,
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    InputNumberModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        canActivate: [SuperiorGuard],
+        children: [
+          {
+            path: '',
+            redirectTo: new Date().getFullYear().toString(),
+            pathMatch: 'full',
+          },
+          {
+            path: ':year',
+            component: TeamBudgetComponent,
+            children: [
+              {
+                path: 'create-request',
+                component: CreateRequestComponent,
+              },
+              {
+                path: 'request/:requestId',
+                component: CreateRequestComponent,
+              },
+            ],
+          },
+        ],
+      },
+    ]),
+  ],
+  exports: [TeamBudgetComponent],
 })
 export class TeamBudgetModule {}

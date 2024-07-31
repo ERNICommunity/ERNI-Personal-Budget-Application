@@ -1,8 +1,7 @@
 <p-confirmDialog
   [style]="{ width: '50vw' }"
   [baseZIndex]="10000"
-  rejectButtonStyleClass="p-button-text"
-></p-confirmDialog>
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 <p-tabMenu [model]="yearMenuItems()"></p-tabMenu>
 
@@ -14,32 +13,17 @@
   <div class="p-toolbar-group-left">
     <span class="p-input-icon-left">
       <i class="pi pi-search"></i>
-      <input
-        type="text"
-        pInputText
-        placeholder="Search employee"
-        [(ngModel)]="searchTerm"
-      />
+      <input type="text" pInputText placeholder="Search employee" [(ngModel)]="searchTerm" />
     </span>
   </div>
 
   <div class="p-toolbar-group-right">
-    <button
-      type="button"
-      pButton
-      icon="pi pi-bars"
-      label="Export"
-      (click)="menu.toggle($event)"
-    ></button>
+    <button type="button" pButton icon="pi pi-bars" label="Export" (click)="menu.toggle($event)"></button>
 
     <p-menu #menu [popup]="true" [model]="exportMenuItems()"></p-menu>
   </div>
 </p-toolbar>
-<p-table
-  [value]="filteredRequests()"
-  styleClass="p-datatable-gridlines p-datatable-striped"
-  responsiveLayout="scroll"
->
+<p-table [value]="filteredRequests()" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
   <ng-template pTemplate="header">
     <tr>
       <th scope="col">Employee</th>
@@ -60,55 +44,28 @@
       <td>{{ request.amount }}</td>
       <td>
         <p-badge
-          [value]="
-            request.invoiceCount > 0
-              ? request.invoiceCount + ' invoice(s)'
-              : 'Missing invoice'
-          "
-          [severity]="request.invoiceCount > 0 ? 'success' : 'warning'"
-        ></p-badge>
+          [value]="request.invoiceCount > 0 ? request.invoiceCount + ' invoice(s)' : 'Missing invoice'"
+          [severity]="request.invoiceCount > 0 ? 'success' : 'warning'"></p-badge>
       </td>
       <td>{{ request.budget.title }}</td>
-      <td>{{ request.createDate | date : "dd/MM/yyyy" }}</td>
+      <td>{{ request.createDate | date: 'dd/MM/yyyy' }}</td>
 
       <td>
-        <a pButton class="p-button-sm" routerLink="detail/{{ request.id }}">
-          Detail
-        </a>
+        <a pButton class="p-button-sm" routerLink="detail/{{ request.id }}"> Detail </a>
       </td>
       <td>
         <div *ngIf="isAdmin">
           <div *ngIf="request.state === approvalStates.Pending">
-            <button
-              pButton
-              type="button"
-              (click)="completeRequest(request)"
-              class="p-button-sm"
-            >
-              Approve
-            </button>
+            <button pButton type="button" (click)="completeRequest(request)" class="p-button-sm">Approve</button>
           </div>
         </div>
       </td>
-      <td
-        *ngIf="request.state !== approvalStates.Rejected"
-        class="button-table-cell"
-      >
+      <td *ngIf="request.state !== approvalStates.Rejected" class="button-table-cell">
         <div *ngIf="isAdmin && request.state !== approvalStates.Rejected">
-          <button
-            pButton
-            type="button"
-            class="p-button-sm"
-            (click)="openRejectConfirmationModal(request)"
-          >
+          <button pButton type="button" class="p-button-sm" (click)="openRejectConfirmationModal(request)">
             Reject
           </button>
-          <button
-            pButton
-            type="button"
-            class="p-button-sm"
-            (click)="openDeleteConfirmationModal(request)"
-          >
+          <button pButton type="button" class="p-button-sm" (click)="openDeleteConfirmationModal(request)">
             Delete
           </button>
         </div>

@@ -3,32 +3,15 @@
 
 <div class="field">
   <label for="title" class="block">Budget title</label>
-  <input
-    id="title"
-    type="text"
-    pInputText
-    required
-    #title="ngModel"
-    [(ngModel)]="budgetTitle"
-  />
-  <small
-    *ngIf="title.invalid && (title.dirty || title.touched)"
-    id="username2-help"
-    class="p-error block"
+  <input id="title" type="text" pInputText required #title="ngModel" [(ngModel)]="budgetTitle" />
+  <small *ngIf="title.invalid && (title.dirty || title.touched)" id="username2-help" class="p-error block"
     >Title is required.</small
   >
 </div>
 
 <div class="field">
   <label for="title" class="block">Amount</label>
-  <p-inputNumber
-    inputId="amount"
-    #budgetAmount="ngModel"
-    [(ngModel)]="amount"
-    mode="currency"
-    currency="EUR"
-    required
-  >
+  <p-inputNumber inputId="amount" #budgetAmount="ngModel" [(ngModel)]="amount" mode="currency" currency="EUR" required>
   </p-inputNumber>
   <small
     *ngIf="budgetAmount.invalid && (budgetAmount.dirty || budgetAmount.touched)"
@@ -45,24 +28,13 @@
     [options]="availableUsers"
     placeholder="All employees"
     [showClear]="true"
-    [(ngModel)]="selectedEmployee"
-  >
+    [(ngModel)]="selectedEmployee">
     <ng-template pTemplate="selectedItem">
-      <div *ngIf="selectedEmployee">
-        {{ selectedEmployee.lastName }} {{ selectedEmployee.firstName }}
-      </div>
+      <div *ngIf="selectedEmployee">{{ selectedEmployee.lastName }} {{ selectedEmployee.firstName }}</div>
     </ng-template>
 
-    <ng-template let-employee pTemplate="item">
-      {{ employee.lastName }} {{ employee.firstName }}
-    </ng-template>
+    <ng-template let-employee pTemplate="item"> {{ employee.lastName }} {{ employee.firstName }} </ng-template>
   </p-dropdown>
 </div>
 
-<button
-  pButton
-  [disabled]="title.invalid || budgetAmount.invalid"
-  (click)="setBudgetsForYear()"
->
-  Set
-</button>
+<button pButton [disabled]="title.invalid || budgetAmount.invalid" (click)="setBudgetsForYear()">Set</button>

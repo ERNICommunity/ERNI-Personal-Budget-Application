@@ -1,14 +1,11 @@
-import {
-  Directive,
-  inject,
-} from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { Directive, inject } from '@angular/core';
+import { ProgressBar } from 'primeng/progressbar';
 
 @Directive({
-  selector: "p-progressBar[pbaMoneyConfetti]",
+  selector: 'p-progressBar[pbaMoneyConfetti]',
   standalone: true,
   host: {
-    "(click)": "onClick($event)"
+    '(click)': 'onClick($event)',
   },
 })
 export class MoneyConfettiDirective {
@@ -16,7 +13,7 @@ export class MoneyConfettiDirective {
 
   onClick(event: MouseEvent): void {
     const progressValue = this.#progressBar.value ?? 0;
-    const confettiCount = 20 * progressValue / 100;
+    const confettiCount = (20 * progressValue) / 100;
     if (confettiCount <= 0) {
       return;
     }
@@ -27,19 +24,19 @@ export class MoneyConfettiDirective {
     this.createConfettiElements(container, confettiCount);
 
     // attach elements to the DOM and remove them after some delay
-    document.body.appendChild(container)
-    setTimeout(() => container.remove(), 700)
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), 700);
   }
 
   private createConfettiElements(container: HTMLDivElement, confettiCount: number) {
     for (let i = 0; i < confettiCount; i++) {
       const styles = `
         transform: translate3d(${this.random(500) - 250}px, ${this.random(200) - 150}px, 0) rotate(${this.random(360)}deg);
-      `
-      const confettiEl = document.createElement("div");
-      confettiEl.textContent = '💵'
+      `;
+      const confettiEl = document.createElement('div');
+      confettiEl.textContent = '💵';
       confettiEl.style.cssText = styles;
-      confettiEl.classList.add('confetti')
+      confettiEl.classList.add('confetti');
       container.appendChild(confettiEl);
     }
   }
@@ -82,7 +79,7 @@ export class MoneyConfettiDirective {
     headEl.appendChild(styleEl);
   }
 
-  private random(max: number): number{
+  private random(max: number): number {
     return Math.random() * max;
   }
 }

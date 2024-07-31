@@ -1,13 +1,6 @@
 <p-panel header="{{ request.title }}" *ngFor="let request of requests">
   <ng-template pTemplate="icons">
-    <a
-      class="btn btn-success float-right mr-1"
-      href="#"
-      role="button"
-      routerLink="request/{{ request.id }}"
-    >
-      Open
-    </a>
+    <a class="btn btn-success float-right mr-1" href="#" role="button" routerLink="request/{{ request.id }}"> Open </a>
   </ng-template>
 
   <p><b>Amount:</b> {{ request.totalAmount }}</p>
@@ -16,8 +9,7 @@
   <p-table
     [value]="request.transactions"
     styleClass="p-datatable-gridlines p-datatable-striped"
-    responsiveLayout="scroll"
-  >
+    responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
         <th scope="col">Name</th>
@@ -25,9 +17,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-transaction>
-      <tr
-        [ngClass]="transaction.isTeamMember ? 'table-success' : 'table-primary'"
-      >
+      <tr [ngClass]="transaction.isTeamMember ? 'table-success' : 'table-primary'">
         <td>{{ transaction.lastName }} {{ transaction.firstName }}</td>
         <td>{{ transaction.amount }}</td>
       </tr>

@@ -3,13 +3,13 @@ import { MenuItem } from 'primeng/api/menuitem';
 import { MenuHelper } from '../shared/menu-helper';
 
 @Component({
-    selector: 'app-team-budget',
-    templateUrl: './team-budget.component.html'
+  selector: 'app-team-budget',
+  templateUrl: './team-budget.component.html',
 })
 export class TeamBudgetComponent {
-    years: MenuItem[];
+  years: MenuItem[];
 
-    constructor() {
-        this.years = MenuHelper.getYearMenu((year) => ['/team-budget', year]);
-    }
+  constructor() {
+    this.years = MenuHelper.getYearMenu((year) => ['/team-budget', year]);
+  }
 }

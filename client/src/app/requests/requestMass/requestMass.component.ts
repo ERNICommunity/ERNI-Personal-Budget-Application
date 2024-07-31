@@ -1,14 +1,14 @@
-import { Component, OnInit } from "@angular/core";
-import { RequestService } from "../../services/request.service";
-import { BusyIndicatorService } from "../../services/busy-indicator.service";
-import { MassRequest } from "../../model/massRequest";
-import { AlertService } from "../../services/alert.service";
-import { AlertType } from "../../model/alert.model";
+import { Component, OnInit } from '@angular/core';
+import { RequestService } from '../../services/request.service';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
+import { MassRequest } from '../../model/massRequest';
+import { AlertService } from '../../services/alert.service';
+import { AlertType } from '../../model/alert.model';
 
 @Component({
-  selector: "app-request-mass",
-  templateUrl: "./requestMass.component.html",
-  styleUrls: ["./requestMass.component.css"],
+  selector: 'app-request-mass',
+  templateUrl: './requestMass.component.html',
+  styleUrls: ['./requestMass.component.css'],
 })
 export class RequestMassComponent implements OnInit {
   availableUsers: {
@@ -31,13 +31,11 @@ export class RequestMassComponent implements OnInit {
   constructor(
     private requestService: RequestService,
     private alertService: AlertService,
-    private busyIndicatorService: BusyIndicatorService
+    private busyIndicatorService: BusyIndicatorService,
   ) {}
 
   ngOnInit() {
-    this.requestService
-      .getRemainingBudgets()
-      .subscribe((u) => (this.availableUsers = u));
+    this.requestService.getRemainingBudgets().subscribe((u) => (this.availableUsers = u));
   }
 
   onAttendeesChanges(): void {
@@ -45,7 +43,7 @@ export class RequestMassComponent implements OnInit {
       this.selectedUsers.length > 0
         ? this.selectedUsers.reduce(
             (prev, user) => (prev < user.budgetLeft ? prev : user.budgetLeft),
-            Number.MAX_SAFE_INTEGER
+            Number.MAX_SAFE_INTEGER,
           )
         : 0;
   }
@@ -65,18 +63,16 @@ export class RequestMassComponent implements OnInit {
       .subscribe(
         () => {
           this.alertService.alert({
-            message: "Multiple requests created",
+            message: 'Multiple requests created',
             type: AlertType.Success,
             keepAfterRouteChange: true,
           });
           this.busyIndicatorService.end();
         },
         (err) => {
-          this.alertService.error(
-            "Error while creating request: " + JSON.stringify(err.error)
-          );
+          this.alertService.error('Error while creating request: ' + JSON.stringify(err.error));
           this.busyIndicatorService.end();
-        }
+        },
       )
       .add(() => this.busyIndicatorService.end());
   }

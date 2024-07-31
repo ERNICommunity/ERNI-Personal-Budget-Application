@@ -10,14 +10,11 @@
     required
     #title="ngModel"
     [(ngModel)]="request.title"
-    [disabled]="isReadonly"
-  />
+    [disabled]="isReadonly" />
   <small id="title-desc" class="block">Short summary of what you are going to buy.</small>
-  <small
-    *ngIf="title.invalid && (title.dirty || title.touched)"
-    id="title-error"
-    class="p-error block"
-    >Title is required.</small>
+  <small *ngIf="title.invalid && (title.dirty || title.touched)" id="title-error" class="p-error block"
+    >Title is required.</small
+  >
 </div>
 
 <div class="field">
@@ -28,6 +25,5 @@
     [(ngModel)]="request.amount"
     mode="currency"
     currency="EUR"
-    [disabled]="isReadonly"
-  ></p-inputNumber>
+    [disabled]="isReadonly"></p-inputNumber>
 </div>
