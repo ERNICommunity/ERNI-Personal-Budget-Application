@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { BudgetComponent } from './budget/budget.component';
 import { SharedModule } from '../shared/shared.module';
 import { RequestEditComponent } from '../requests/requestEdit/requestEdit.component';
+import { MoneyConfettiDirective } from "../shared/directives/money-confetti.directive";
 
 @NgModule({
     declarations: [BudgetComponent, MyBudgetComponent],
@@ -32,7 +33,8 @@ import { RequestEditComponent } from '../requests/requestEdit/requestEdit.compon
                     }
                 ]
             }
-        ])
+        ]),
+        MoneyConfettiDirective
     ]
 })
 export class MyBudgetModule {}

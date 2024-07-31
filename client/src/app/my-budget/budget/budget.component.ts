@@ -104,4 +104,8 @@ export class BudgetComponent {
       },
     });
   }
+
+  onClick() {
+    console.log('click')
+  }
 }

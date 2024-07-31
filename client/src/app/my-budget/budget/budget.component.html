@@ -22,7 +22,7 @@
             }
           </div>
           <div class="flex-grow-1 hidden md:block">
-            <p-progressBar [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
+            <p-progressBar pbaMoneyConfetti [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
               <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
             </p-progressBar>
             @if (budget().amountLeft < budget().amount) {
@@ -47,7 +47,7 @@
       </div>
 
       <div class="w-full md:hidden">
-        <p-progressBar [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
+        <p-progressBar pbaMoneyConfetti [value]="budgetAmountPercentage()" [color]="budgetAmountProgressColor()">
           <ng-template pTemplate="content" let-value>{{ budget().amountLeft }} €</ng-template>
         </p-progressBar>
         @if (budget().amountLeft < budget().amount) {
