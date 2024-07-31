@@ -1,11 +1,13 @@
-import {MenuHelper} from "./menu-helper";
+import { MenuHelper } from "./menu-helper";
 
 describe('Menu Helper', () => {
   describe('getYearMenu', () => {
-    it('getYearMenu', () => {
+    beforeEach(() => {
       jasmine.clock().install();
       jasmine.clock().mockDate(new Date(2024, 8, 10));
+    })
 
+    it('should return correct menu items', () => {
       const result = MenuHelper.getYearMenu((year) => ["/my-budget", year]);
       expect(result).toEqual([
         { label: '2024', routerLink: ['/my-budget', 2024 ]},
@@ -20,9 +22,9 @@ describe('Menu Helper', () => {
         { label: '2015', routerLink: ['/my-budget', 2015 ]},
       ]);
     });
-  });
 
-  afterEach(() => {
-    jasmine.clock().uninstall();
-  })
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    })
+  });
 });

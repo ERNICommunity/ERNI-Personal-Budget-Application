@@ -28,7 +28,9 @@ import { MessageModule } from "primeng/message";
 import { PickListModule } from "primeng/picklist";
 import { AuthDirective } from "./directives/authDirective";
 import { FileUploadModule } from "primeng/fileupload";
-import {ChipModule} from "primeng/chip";
+import { ChipModule } from "primeng/chip";
+import { AvatarModule } from "primeng/avatar";
+import { MenubarModule } from "primeng/menubar";
 
 @NgModule({
   declarations: [AlertComponent, AuthDirective],
@@ -74,6 +76,8 @@ import {ChipModule} from "primeng/chip";
     AuthDirective,
     FileUploadModule,
     ChipModule,
+    AvatarModule,
+    MenubarModule
   ],
   providers: [MessageService],
 })
