@@ -1,0 +1,7 @@
+.button-table-cell {
+  min-width: 180px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
