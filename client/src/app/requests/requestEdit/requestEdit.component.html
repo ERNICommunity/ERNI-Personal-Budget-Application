@@ -6,8 +6,7 @@
   [draggable]="false"
   [modal]="true"
   [resizable]="false"
-  (onHide)="onHide()"
->
+  (onHide)="onHide()">
   <app-alert id="addRequestError"></app-alert>
 
   <div class="grid">
@@ -15,10 +14,9 @@
       <div class="col">
         <app-basic-request-info-editor
           [request]="request"
-          [isReadonly]="request.state !== RequestState.Pending || isSaveInProgress()"
-        ></app-basic-request-info-editor>
+          [isReadonly]="request.state !== RequestState.Pending || isSaveInProgress()"></app-basic-request-info-editor>
 
-        @if (request.state === RequestState.Approved || request.state === RequestState.Rejected ) {
+        @if (request.state === RequestState.Approved || request.state === RequestState.Rejected) {
           <div class="field mb-0">
             <label for="requestState">State</label>
             <div
@@ -35,8 +33,7 @@
       <app-file-list
         [uploadEnabled]="this.request()?.state === RequestState.Pending && !isSaveInProgress()"
         [files]="files()"
-        (newImageAdded)="onNewImageAdded($event)"
-      ></app-file-list>
+        (newImageAdded)="onNewImageAdded($event)"></app-file-list>
     </div>
   </div>
 
@@ -47,7 +44,6 @@
       [icon]="isNewRequest() ? '' : 'pi pi-save'"
       [loading]="isSaveInProgress()"
       [label]="isNewRequest() ? 'Create Request' : 'Update Request'"
-      (click)="save()"
-    ></p-button>
+      (click)="save()"></p-button>
   </div>
 </p-dialog>

@@ -1,19 +1,11 @@
-import {
-  Directive,
-  TemplateRef,
-  ViewContainerRef,
-  Input,
-} from "@angular/core";
-import { BehaviorSubject, combineLatest } from "rxjs";
-import { distinctUntilChanged, map } from "rxjs/operators";
-import { AuthenticationService } from "../../services/authentication.service";
-import {
-  AuthorizationPolicy,
-  PolicyNames,
-} from "../../services/authorization-policy";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Directive, TemplateRef, ViewContainerRef, Input } from '@angular/core';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthenticationService } from '../../services/authentication.service';
+import { AuthorizationPolicy, PolicyNames } from '../../services/authorization-policy';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-@Directive({ selector: "[pbaAuth]" })
+@Directive({ selector: '[pbaAuth]' })
 export class AuthDirective {
   constructor(
     private templateRef: TemplateRef<unknown>,
@@ -23,11 +15,9 @@ export class AuthDirective {
     combineLatest([this.policy, this.authService.userInfo$])
       .pipe(
         distinctUntilChanged(),
-        map(([policy, userInfo]) =>
-          !policy ? true : AuthorizationPolicy.evaluate(policy, userInfo)
-        ),
+        map(([policy, userInfo]) => (!policy ? true : AuthorizationPolicy.evaluate(policy, userInfo))),
         distinctUntilChanged(),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe((visible) => {
         if (visible) {

@@ -9,15 +9,9 @@
         formControlName="firstName"
         class="form-control"
         [ngClass]="{ 'is-invalid': submitted && controls.firstName.errors }"
-        (blur)="trimControlValue(controls.firstName)"
-      />
-      <div
-        *ngIf="submitted && controls.firstName.errors"
-        class="invalid-feedback"
-      >
-        <div *ngIf="controls.firstName.errors.required">
-          First name is required
-        </div>
+        (blur)="trimControlValue(controls.firstName)" />
+      <div *ngIf="submitted && controls.firstName.errors" class="invalid-feedback">
+        <div *ngIf="controls.firstName.errors.required">First name is required</div>
       </div>
     </div>
 
@@ -28,15 +22,9 @@
         formControlName="lastName"
         class="form-control"
         [ngClass]="{ 'is-invalid': submitted && controls.lastName.errors }"
-        (blur)="trimControlValue(controls.lastName)"
-      />
-      <div
-        *ngIf="submitted && controls.lastName.errors"
-        class="invalid-feedback"
-      >
-        <div *ngIf="controls.lastName.errors.required">
-          Last name is required
-        </div>
+        (blur)="trimControlValue(controls.lastName)" />
+      <div *ngIf="submitted && controls.lastName.errors" class="invalid-feedback">
+        <div *ngIf="controls.lastName.errors.required">Last name is required</div>
       </div>
     </div>
 
@@ -46,13 +34,10 @@
         type="text"
         formControlName="email"
         class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && controls.email.errors }"
-      />
+        [ngClass]="{ 'is-invalid': submitted && controls.email.errors }" />
       <div *ngIf="submitted && controls.email.errors" class="invalid-feedback">
         <div *ngIf="controls.email.errors.required">Email is required</div>
-        <div *ngIf="controls.email.errors.email">
-          Wrong email address format
-        </div>
+        <div *ngIf="controls.email.errors.email">Wrong email address format</div>
       </div>
     </div>
 
@@ -60,10 +45,7 @@
       <label for="superior">Superior</label>
       <select formControlName="superior" class="custom-select browser-default">
         <option value="">--Select--</option>
-        <option
-          *ngFor="let superiorItem of superiors"
-          [value]="superiorItem.id"
-        >
+        <option *ngFor="let superiorItem of superiors" [value]="superiorItem.id">
           {{ superiorItem.lastName }} {{ superiorItem.firstName }}
         </option>
       </select>
@@ -74,8 +56,7 @@
       <select
         formControlName="state"
         class="custom-select browser-default"
-        [ngClass]="{ 'is-invalid': submitted && controls.state.errors }"
-      >
+        [ngClass]="{ 'is-invalid': submitted && controls.state.errors }">
         <option value="">--Select--</option>
         <option [value]="1">Active</option>
         <option [value]="2">Inactive</option>
@@ -86,12 +67,7 @@
     </div>
 
     <div class="form-group">
-      <button
-        [disabled]="busyIndicatorService.isBusy"
-        class="btn btn-success mr-2"
-      >
-        Save
-      </button>
+      <button [disabled]="busyIndicatorService.isBusy" class="btn btn-success mr-2">Save</button>
     </div>
   </form>
 </div>

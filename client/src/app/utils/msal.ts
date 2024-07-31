@@ -14,11 +14,11 @@ export function MSALInstanceFactory(): IPublicClientApplication {
       clientId: environment.clientId,
       redirectUri: environment.msalLoginRedirectUri,
       postLogoutRedirectUri: environment.msalLogoutRedirectUri,
-      authority: 'https://login.microsoftonline.com/eb25818e-5bd5-49bf-99de-53e3e7b42630'
+      authority: 'https://login.microsoftonline.com/eb25818e-5bd5-49bf-99de-53e3e7b42630',
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
-      storeAuthStateInCookie: false
+      storeAuthStateInCookie: false,
     },
     system: {
       asyncPopups: true,
@@ -30,18 +30,18 @@ export function MSALInstanceFactory(): IPublicClientApplication {
             console.error(message);
           }
         },
-        piiLoggingEnabled: false
-      }
-    }
+        piiLoggingEnabled: false,
+      },
+    },
   });
 }
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
 
-  Object
-    .keys(environment.protectedResourceMap)
-    .forEach(key => protectedResourceMap.set(key, environment.protectedResourceMap[key]));
+  Object.keys(environment.protectedResourceMap).forEach((key) =>
+    protectedResourceMap.set(key, environment.protectedResourceMap[key]),
+  );
 
   return {
     interactionType: InteractionType.Popup,

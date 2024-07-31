@@ -5,17 +5,13 @@ import { map } from 'rxjs/operators';
 import { AuthenticationService } from '../authentication.service';
 
 @Injectable({ providedIn: 'root' })
-export class AdminRoleGuard  {
-    constructor(private auth: AuthenticationService) {}
+export class AdminRoleGuard {
+  constructor(private auth: AuthenticationService) {}
 
-    canActivate(
-        _route: ActivatedRouteSnapshot,
-        _state: RouterStateSnapshot
-    ):
-        | Observable<boolean | UrlTree>
-        | Promise<boolean | UrlTree>
-        | boolean
-        | UrlTree {
-        return this.auth.userInfo$.pipe(map((_) => !!_ && _.isAdmin));
-    }
+  canActivate(
+    _route: ActivatedRouteSnapshot,
+    _state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.auth.userInfo$.pipe(map((_) => !!_ && _.isAdmin));
+  }
 }

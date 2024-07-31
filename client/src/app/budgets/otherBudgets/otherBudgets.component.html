@@ -7,10 +7,7 @@
   <p-accordionTab header="Create budgets">
     <ng-container *ngIf="selectedYear$ | async as year">
       <ng-container *ngIf="selectedBudgetType() as selectedBudgetType">
-        <app-create-budgets
-          [year]="year"
-          [budgetType]="selectedBudgetType"
-        ></app-create-budgets>
+        <app-create-budgets [year]="year" [budgetType]="selectedBudgetType"></app-create-budgets>
       </ng-container>
     </ng-container>
   </p-accordionTab>
@@ -19,22 +16,13 @@
 <div class="p-toolbar-group-left">
   <span class="p-input-icon-left">
     <i class="pi pi-search"></i>
-    <input
-      type="text"
-      pInputText
-      placeholder="Search employee"
-      [(ngModel)]="searchTerm"
-    />
+    <input type="text" pInputText placeholder="Search employee" [(ngModel)]="searchTerm" />
   </span>
 </div>
 
 <br />
 
-<p-table
-  [value]="budgets()"
-  styleClass="p-datatable-gridlines p-datatable-striped"
-  responsiveLayout="scroll"
->
+<p-table [value]="budgets()" styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
   <ng-template pTemplate="header">
     <tr>
       <th scope="col">Last</th>
@@ -59,8 +47,7 @@
           class="btn btn-primary float-right"
           href="#"
           role="button"
-          routerLink="/budgets/edit/{{ budget.id }}"
-        >
+          routerLink="/budgets/edit/{{ budget.id }}">
           Edit
         </a>
       </td>

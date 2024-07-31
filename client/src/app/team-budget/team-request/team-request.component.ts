@@ -7,16 +7,19 @@ import { TeamBudgetService } from '../../services/team-budget.service';
 
 @Component({
   selector: 'app-team-request',
-  templateUrl: './team-request.component.html'
+  templateUrl: './team-request.component.html',
 })
 export class TeamRequestComponent implements OnInit {
-
   requests: TeamRequestModel[];
 
-  constructor(private route: ActivatedRoute, private teamBudgetService: TeamBudgetService, private notificationService: DataChangeNotificationService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private teamBudgetService: TeamBudgetService,
+    private notificationService: DataChangeNotificationService,
+  ) {}
 
   async ngOnInit(): Promise<void> {
-    combineLatest([ this.route.params, this.notificationService.notifications$]).subscribe(async ([params]) => {
+    combineLatest([this.route.params, this.notificationService.notifications$]).subscribe(async ([params]) => {
       this.requests = await this.teamBudgetService.getTeamRequests(Number(params['year']));
     });
   }

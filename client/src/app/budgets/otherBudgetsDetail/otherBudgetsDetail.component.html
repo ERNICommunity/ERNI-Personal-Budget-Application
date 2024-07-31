@@ -1,33 +1,32 @@
 <div *ngIf="budget">
-    <h2>
-        Budget Edit - {{budget.year}} - {{budget.user.firstName}} {{budget.user.lastName}}
-    </h2>
-    <form> 
-        <div class="form-group">
-            <label for="otherBudgetsDetailAmount">
-                Amount:
-            </label>
-            <br>
-            <input type="number" name="otherBudgetsDetailAmount" [(ngModel)]="budget.amount" placeholder="0.00" id="otherBudgetsDetailAmount">
-        </div>
-        <div *ngIf="budget.type === 2" class="form-group">
-            <label for="otherBudgetsDetailUser">
-                Assigned user:
-            </label>
-            <select class="form-control" [(ngModel)]="selectedUserId" id="otherBudgetsDetailUser" name="otherBudgetsDetailUser">
-                <option *ngFor="let user of availableUsers" [ngValue]="user.id">
-                    {{user.lastName}} {{user.firstName}}
-                </option>
-            </select>
-        </div>
-        <br>
-        <div class="form-group">
-            <button class="btn btn-primary mr-1" (click)="goBack()">
-                back
-            </button>
-            <button class="btn btn-success" (click)="save()">
-                save
-            </button>
-        </div>
-    </form>
+  <h2>Budget Edit - {{ budget.year }} - {{ budget.user.firstName }} {{ budget.user.lastName }}</h2>
+  <form>
+    <div class="form-group">
+      <label for="otherBudgetsDetailAmount"> Amount: </label>
+      <br />
+      <input
+        type="number"
+        name="otherBudgetsDetailAmount"
+        [(ngModel)]="budget.amount"
+        placeholder="0.00"
+        id="otherBudgetsDetailAmount" />
+    </div>
+    <div *ngIf="budget.type === 2" class="form-group">
+      <label for="otherBudgetsDetailUser"> Assigned user: </label>
+      <select
+        class="form-control"
+        [(ngModel)]="selectedUserId"
+        id="otherBudgetsDetailUser"
+        name="otherBudgetsDetailUser">
+        <option *ngFor="let user of availableUsers" [ngValue]="user.id">
+          {{ user.lastName }} {{ user.firstName }}
+        </option>
+      </select>
+    </div>
+    <br />
+    <div class="form-group">
+      <button class="btn btn-primary mr-1" (click)="goBack()">back</button>
+      <button class="btn btn-success" (click)="save()">save</button>
+    </div>
+  </form>
 </div>

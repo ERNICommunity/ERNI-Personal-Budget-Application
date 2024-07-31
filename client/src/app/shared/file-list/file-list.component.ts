@@ -1,27 +1,21 @@
-import {
-  Component,
-  input,
-  inject,
-  ChangeDetectionStrategy,
-  output,
-} from "@angular/core";
-import { InvoiceImageService } from "../../services/invoice-image.service";
-import { SharedModule } from "../shared.module";
-import { FileSelectEvent } from "primeng/fileupload";
+import { Component, input, inject, ChangeDetectionStrategy, output } from '@angular/core';
+import { InvoiceImageService } from '../../services/invoice-image.service';
+import { SharedModule } from '../shared.module';
+import { FileSelectEvent } from 'primeng/fileupload';
 
 export type InvoiceStatus = NewInvoiceStatus | InProgressInvoiceStatus | SavedInvoiceStatus;
 
 export interface NewInvoiceStatus {
-  code: "new";
-  file: File
+  code: 'new';
+  file: File;
 }
 export interface InProgressInvoiceStatus {
-  code: "in-progress";
-  progress: number
+  code: 'in-progress';
+  progress: number;
 }
 export interface SavedInvoiceStatus {
-  code: "saved";
-  id: number
+  code: 'saved';
+  id: number;
 }
 
 export interface Invoice {
@@ -30,9 +24,9 @@ export interface Invoice {
 }
 
 @Component({
-  selector: "app-file-list",
-  templateUrl: "./file-list.component.html",
-  styleUrls: ["./file-list.component.css"],
+  selector: 'app-file-list',
+  templateUrl: './file-list.component.html',
+  styleUrls: ['./file-list.component.css'],
   standalone: true,
   imports: [SharedModule],
   changeDetection: ChangeDetectionStrategy.OnPush,

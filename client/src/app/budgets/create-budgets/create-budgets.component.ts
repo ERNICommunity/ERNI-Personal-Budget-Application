@@ -1,20 +1,14 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
-import { BudgetTypeEnum } from "../../model/budgetTypeEnum";
-import { User } from "../../model/user";
-import { AlertService } from "../../services/alert.service";
-import { BudgetService } from "../../services/budget.service";
-import { DataChangeNotificationService } from "../../services/dataChangeNotification.service";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
+import { User } from '../../model/user';
+import { AlertService } from '../../services/alert.service';
+import { BudgetService } from '../../services/budget.service';
+import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 
 @Component({
-  selector: "app-create-budgets",
-  templateUrl: "./create-budgets.component.html",
-  styleUrls: ["./create-budgets.component.css"],
+  selector: 'app-create-budgets',
+  templateUrl: './create-budgets.component.html',
+  styleUrls: ['./create-budgets.component.css'],
 })
 export class CreateBudgetsComponent implements OnInit, OnChanges {
   @Input({ required: true })
@@ -23,7 +17,7 @@ export class CreateBudgetsComponent implements OnInit, OnChanges {
   @Input({ required: true })
   public budgetType!: BudgetTypeEnum;
 
-  budgetTitle = "";
+  budgetTitle = '';
   amount: number | undefined;
 
   availableUsers: User[] = [];
@@ -32,11 +26,11 @@ export class CreateBudgetsComponent implements OnInit, OnChanges {
   constructor(
     private budgetService: BudgetService,
     private alertService: AlertService,
-    private notificationService: DataChangeNotificationService
+    private notificationService: DataChangeNotificationService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["year"] !== undefined || changes["budgetType"] !== undefined) {
+    if (changes['year'] !== undefined || changes['budgetType'] !== undefined) {
       this.ngOnInit();
     }
   }
@@ -53,32 +47,20 @@ export class CreateBudgetsComponent implements OnInit, OnChanges {
     }
 
     const task = !this.selectedEmployee
-      ? this.budgetService.createBudgetsForAllActiveUsers(
-          this.budgetTitle,
-          this.amount,
-          this.budgetType
-        )
-      : this.budgetService.createBudget(
-          this.budgetTitle,
-          this.amount,
-          this.selectedEmployee.id,
-          this.budgetType
-        );
+      ? this.budgetService.createBudgetsForAllActiveUsers(this.budgetTitle, this.amount, this.budgetType)
+      : this.budgetService.createBudget(this.budgetTitle, this.amount, this.selectedEmployee.id, this.budgetType);
 
     task.subscribe({
       next: () => {
-        this.alertService.success("Budget created", "addOtherBudget");
+        this.alertService.success('Budget created', 'addOtherBudget');
         this.notificationService.notify();
 
         this.amount = undefined;
-        this.budgetTitle = "";
+        this.budgetTitle = '';
         this.selectedEmployee = null;
       },
       error: (err) => {
-        this.alertService.error(
-          "Error while creating budget: " + JSON.stringify(err.error),
-          "addOtherBudget"
-        );
+        this.alertService.error('Error while creating budget: ' + JSON.stringify(err.error), 'addOtherBudget');
       },
     });
   }

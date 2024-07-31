@@ -1,10 +1,10 @@
-import { Component, Input } from "@angular/core";
-import { Request } from "../../../model/request/request";
-import { SharedModule } from "../../../shared/shared.module";
+import { Component, Input } from '@angular/core';
+import { Request } from '../../../model/request/request';
+import { SharedModule } from '../../../shared/shared.module';
 
 @Component({
-  selector: "app-basic-request-info-editor",
-  templateUrl: "./basic-request-info-editor.component.html",
+  selector: 'app-basic-request-info-editor',
+  templateUrl: './basic-request-info-editor.component.html',
   standalone: true,
   imports: [SharedModule],
 })

@@ -16,19 +16,16 @@ export class TeamBudgetStateComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private teamBudgetService: TeamBudgetService,
-    private dataChangeNotificationService: DataChangeNotificationService
+    private dataChangeNotificationService: DataChangeNotificationService,
   ) {}
 
   async ngOnInit(): Promise<void> {
-    combineLatest([
-      this.route.params,
-      this.dataChangeNotificationService.notifications$,
-    ]).subscribe(async ([params]) => {
-      const yearParam = params['year'];
+    combineLatest([this.route.params, this.dataChangeNotificationService.notifications$]).subscribe(
+      async ([params]) => {
+        const yearParam = params['year'];
 
-      this.teamBudgets = await this.teamBudgetService.getDefaultTeamBudget(
-        yearParam
-      );
-    });
+        this.teamBudgets = await this.teamBudgetService.getDefaultTeamBudget(yearParam);
+      },
+    );
   }
 }

@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
-import { Subject, Observable } from "rxjs";
-import { Router, NavigationStart } from "@angular/router";
-import { filter } from "rxjs/operators";
-import { Alert, AlertType } from "../model/alert.model";
+import { Injectable } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
+import { Router, NavigationStart } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Alert, AlertType } from '../model/alert.model';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AlertService {
   private subject: Subject<Alert> = new Subject<Alert>();
@@ -28,9 +28,7 @@ export class AlertService {
 
   // enable subscribing to alerts observable
   onAlert(alertId?: string): Observable<Alert> {
-    return this.subject
-      .asObservable()
-      .pipe(filter((x) => x && x.alertId === alertId));
+    return this.subject.asObservable().pipe(filter((x) => x && x.alertId === alertId));
   }
 
   // convenience methods
@@ -81,7 +79,7 @@ export class AlertService {
     this.subject.next({
       alertId: alertId,
       type: AlertType.Success,
-      message: "",
+      message: '',
       keepAfterRouteChange: false,
     });
   }

@@ -1,18 +1,18 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { ConfigService } from "./config.service";
-import { ServiceHelper } from "./service.helper";
-import { StatisticsModel } from "../model/statisticsModel";
-import { firstValueFrom } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ConfigService } from './config.service';
+import { ServiceHelper } from './service.helper';
+import { StatisticsModel } from '../model/statisticsModel';
+import { firstValueFrom } from 'rxjs';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class StatisticsService {
-  serviceUrl = "statistics";
+  serviceUrl = 'statistics';
 
   constructor(
     private http: HttpClient,
     private serviceHelper: ServiceHelper,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   public getStatistics(year: number): Promise<StatisticsModel> {
@@ -29,8 +29,8 @@ export class StatisticsService {
     return firstValueFrom(
       this.http.get<StatisticsModel>(
         `${this.configService.apiUrlBase}${this.serviceUrl}/${year}`,
-        this.serviceHelper.getHttpOptions()
-      )
+        this.serviceHelper.getHttpOptions(),
+      ),
     );
   }
 }

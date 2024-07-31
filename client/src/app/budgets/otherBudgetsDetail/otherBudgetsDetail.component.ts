@@ -1,14 +1,14 @@
-import { Component, OnInit } from "@angular/core";
-import { Location } from "@angular/common";
-import { Budget } from "../../model/budget";
-import { BudgetService } from "../../services/budget.service";
-import { ActivatedRoute } from "@angular/router";
-import { User } from "../../model/user";
+import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Budget } from '../../model/budget';
+import { BudgetService } from '../../services/budget.service';
+import { ActivatedRoute } from '@angular/router';
+import { User } from '../../model/user';
 
 @Component({
-  selector: "app-other-budgets-detail",
-  templateUrl: "otherBudgetsDetail.component.html",
-  styleUrls: ["otherBudgetsDetail.component.css"],
+  selector: 'app-other-budgets-detail',
+  templateUrl: 'otherBudgetsDetail.component.html',
+  styleUrls: ['otherBudgetsDetail.component.css'],
 })
 export class OtherBudgetsDetailComponent implements OnInit {
   budget: Budget;
@@ -18,7 +18,7 @@ export class OtherBudgetsDetailComponent implements OnInit {
   constructor(
     private budgetService: BudgetService,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -26,7 +26,7 @@ export class OtherBudgetsDetailComponent implements OnInit {
   }
 
   getUserBudget(): void {
-    const id = this.route.snapshot.paramMap.get("id");
+    const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
       return;
@@ -50,15 +50,11 @@ export class OtherBudgetsDetailComponent implements OnInit {
   }
 
   save(): void {
-    this.budgetService
-      .updateBudget(this.budget.id, this.budget.amount)
-      .subscribe(() => {
-        if (this.selectedUserId != this.budget.user.id) {
-          this.budgetService
-            .transferBudget(this.budget.id, this.selectedUserId)
-            .subscribe();
-        }
-        this.goBack();
-      });
+    this.budgetService.updateBudget(this.budget.id, this.budget.amount).subscribe(() => {
+      if (this.selectedUserId != this.budget.user.id) {
+        this.budgetService.transferBudget(this.budget.id, this.selectedUserId).subscribe();
+      }
+      this.goBack();
+    });
   }
 }

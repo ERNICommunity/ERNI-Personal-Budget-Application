@@ -3,18 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { RequestsComponent } from './requests.component';
 
 const requestRoutes: Routes = [
-    {
-      path: 'requests',
-      component: RequestsComponent,
-    }
-  ];
+  {
+    path: 'requests',
+    component: RequestsComponent,
+  },
+];
 
-  @NgModule({
-    imports: [
-      RouterModule.forChild(requestRoutes)
-    ],
-    exports: [
-      RouterModule
-    ]
-  })
-  export class RequestsRoutingModule { }
+@NgModule({
+  imports: [RouterModule.forChild(requestRoutes)],
+  exports: [RouterModule],
+})
+export class RequestsRoutingModule {}

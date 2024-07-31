@@ -6,18 +6,12 @@ import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class ViewerGuard implements CanActivate {
-    constructor(private auth: AuthenticationService) {}
+  constructor(private auth: AuthenticationService) {}
 
-    canActivate(
-        _route: ActivatedRouteSnapshot,
-        _state: RouterStateSnapshot
-    ):
-        | Observable<boolean | UrlTree>
-        | Promise<boolean | UrlTree>
-        | boolean
-        | UrlTree {
-        return this.auth.userInfo$.pipe(
-            map((_) => !!_ && (_.isAdmin || _.isFinance))
-        );
-    }
+  canActivate(
+    _route: ActivatedRouteSnapshot,
+    _state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.auth.userInfo$.pipe(map((_) => !!_ && (_.isAdmin || _.isFinance)));
+  }
 }

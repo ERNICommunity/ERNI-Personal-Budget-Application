@@ -1,4 +1,4 @@
-import { BudgetTypeEnum } from "./budgetTypeEnum";
+import { BudgetTypeEnum } from './budgetTypeEnum';
 
 export interface BudgetStatisticsModel {
   budgetType: BudgetTypeEnum;

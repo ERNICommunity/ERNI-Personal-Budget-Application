@@ -6,28 +6,28 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
 import { StatisticsComponent } from './statistics/statistics.component';
 
 @NgModule({
-    declarations: [StatisticsComponent],
-    imports: [
-        CommonModule,
-        SharedModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                canActivate: [AdminRoleGuard],
-                children: [
-                    {
-                        path: '',
-                        redirectTo: new Date().getFullYear().toString(),
-                        pathMatch: 'full'
-                    },
-                    {
-                        path: ':year',
-                        component: StatisticsComponent,
-                        canActivate: [AdminRoleGuard]
-                    }
-                ]
-            }
-        ])
-    ]
+  declarations: [StatisticsComponent],
+  imports: [
+    CommonModule,
+    SharedModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        canActivate: [AdminRoleGuard],
+        children: [
+          {
+            path: '',
+            redirectTo: new Date().getFullYear().toString(),
+            pathMatch: 'full',
+          },
+          {
+            path: ':year',
+            component: StatisticsComponent,
+            canActivate: [AdminRoleGuard],
+          },
+        ],
+      },
+    ]),
+  ],
 })
 export class StatisticsModule {}
