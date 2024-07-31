@@ -4,13 +4,10 @@ import { HttpClient } from "@angular/common/http";
 import { User } from "../model/user";
 import { ConfigService } from "./config.service";
 import { ServiceHelper } from "./service.helper";
-import { switchMap } from "rxjs/operators";
 import { UserUpdateModel } from "../model/userUpdateModel";
 
 @Injectable({ providedIn: "root" })
 export class UserService {
-  private currentUser: string = "currentUser";
-
   url = "User";
 
   constructor(

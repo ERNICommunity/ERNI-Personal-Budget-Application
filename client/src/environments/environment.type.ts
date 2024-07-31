@@ -5,4 +5,4 @@ export interface Environment  {
     msalLoginRedirectUri: string,
     msalLogoutRedirectUri: string,
     clientId: string
-};
+}
