@@ -3,32 +3,31 @@ import {
   TemplateRef,
   ViewContainerRef,
   Input,
-  OnDestroy,
 } from "@angular/core";
-import { BehaviorSubject, combineLatest, Subscription } from "rxjs";
+import { BehaviorSubject, combineLatest } from "rxjs";
 import { distinctUntilChanged, map } from "rxjs/operators";
 import { AuthenticationService } from "../../services/authentication.service";
 import {
   AuthorizationPolicy,
   PolicyNames,
 } from "../../services/authorization-policy";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Directive({ selector: "[pbaAuth]" })
-export class AuthDirective implements OnDestroy {
-  subscription: Subscription;
-
+export class AuthDirective {
   constructor(
     private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
-    authService: AuthenticationService
+    private authService: AuthenticationService,
   ) {
-    this.subscription = combineLatest([this.policy, authService.userInfo$])
+    combineLatest([this.policy, this.authService.userInfo$])
       .pipe(
         distinctUntilChanged(),
         map(([policy, userInfo]) =>
           !policy ? true : AuthorizationPolicy.evaluate(policy, userInfo)
         ),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        takeUntilDestroyed()
       )
       .subscribe((visible) => {
         if (visible) {
@@ -37,10 +36,6 @@ export class AuthDirective implements OnDestroy {
           this.viewContainer.clear();
         }
       });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   policy = new BehaviorSubject<PolicyNames | null | undefined>(undefined);

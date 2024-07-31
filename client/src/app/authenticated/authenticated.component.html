@@ -1,60 +1,7 @@
-<p-menubar [model]="mainNavItems()">
-  <ng-template pTemplate="start">
-    <a class="p-menuitem-link font-bold mr-2" routerLink="/">
-      <span class="mr-1 text-xl">💰</span>
-      <span>PBA</span>
-    </a>
-  </ng-template>
-  <ng-template pTemplate="item" let-item>
-    <ng-container *ngIf="item.route; else urlRef">
-      <a pRipple class="p-menuitem-link" [routerLink]="item.route" [routerLinkActive]="['p-menuitem-active']">
-        @if (item.icon) {
-          <i class="mr-2" [class]="item.icon"></i>
-        }
-        <span>{{ item.label }}</span>
-      </a>
-    </ng-container>
-    <ng-template #urlRef>
-      <a *ngIf="item.url" [href]="item.url" [target]="item.target" class="p-menuitem-link">
-        @if (item.icon) {
-          <i class="mr-2" [class]="item.icon"></i>
-        }
-        <span>{{ item.label }}</span>
-      </a>
-    </ng-template>
-  </ng-template>
-  <ng-template pTemplate="end">
-    <p-menu #menu [popup]="true" [model]="userMenuItems" styleClass="w-15rem">
-      <ng-template pTemplate="end">
-        <div class="flex align-items-center p-2 pl-3">
-          <p-avatar image="/assets/avatar.svg" class="mr-2" shape="circle" />
-          @if (authService.userInfo$ | async; as userInfo) {
-            <div class="flex flex-column">
-              <div class="font-bold">{{ userInfo.name }}</div>
-              @if (userInfo.isAdmin) {
-                <div class="text-sm">[Admin]</div>
-              }
-              @if (userInfo.isFinance) {
-                <div class="text-sm">[Finance]</div>
-              }
-              @if (userInfo.isSuperior) {
-                <div class="text-sm">[Superior]</div>
-              }
-            </div>
-          }
-        </div>
-      </ng-template>
-    </p-menu>
-    <p-button (click)="menu.toggle($event)" [text]="true" severity="secondary" icon="pi pi-user" [size]="'large'"/>
-  </ng-template>
-</p-menubar>
-
-<main>
-  <div class="grid justify-content-center">
-    <div class="col-12 md:col-10">
-      <app-alert></app-alert>
-      <router-outlet></router-outlet>
-    </div>
+<main class="grid justify-content-center">
+  <div class="col-12 md:col-10">
+    <app-alert></app-alert>
+    <router-outlet></router-outlet>
   </div>
 </main>
 

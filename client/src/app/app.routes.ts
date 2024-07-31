@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
 import { LoginComponent } from './login/login.component';
-import { AutheticatedGuard } from './services/guards/authenticated.guard';
+import { AuthenticatedGuard } from './services/guards/authenticated.guard';
 
 export const rootRouterConfig: Routes = [
     {
@@ -13,7 +13,7 @@ export const rootRouterConfig: Routes = [
     {
         path: '',
         component: AuthenticatedComponent,
-        canActivate: [AutheticatedGuard],
+        canActivate: [AuthenticatedGuard],
         children: [
             {
                 path: 'my-budget',
