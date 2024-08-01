@@ -1,49 +1,88 @@
 <p-dialog
   [header]="isNewRequest() ? 'Create New Request' : 'Request Details'"
   [(visible)]="showDialog"
-  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-  [style]="{ width: '50vw' }"
+  [breakpoints]="{ '575px': '90vw', '1199px': '85vw', '1499px': '70vw' }"
+  [style]="{ width: '50vw', 'max-width': '100rem', 'min-height': '20rem' }"
   [draggable]="false"
   [modal]="true"
   [resizable]="false"
   (onHide)="onHide()">
-  <app-alert id="addRequestError"></app-alert>
+  <app-alert id="addRequestError" />
 
-  <div class="grid">
-    @if (request(); as request) {
-      <div class="col">
-        <app-basic-request-info-editor
-          [request]="request"
-          [isReadonly]="request.state !== RequestState.Pending || isSaveInProgress()"></app-basic-request-info-editor>
-
-        @if (request.state === RequestState.Approved || request.state === RequestState.Rejected) {
-          <div class="field mb-0">
-            <label for="requestState">State</label>
-            <div
-              id="requestState"
-              class="font-bold"
-              [ngClass]="request.state === RequestState.Approved ? 'text-green-600' : 'text-red-600'">
-              <span>{{ request.state === RequestState.Approved ? 'Request Approved' : 'Request Rejected' }}</span>
-            </div>
-          </div>
-        }
+  @if (isRequestLoading()) {
+    @defer (on timer(200)) {
+      <div class="flex align-items-center justify-content-center mt-5">
+        <p-progressSpinner styleClass="w-5rem h-5rem" animationDuration="1s" ariaLabel="loading" />
       </div>
     }
-    <div class="col">
-      <app-file-list
-        [uploadEnabled]="this.request()?.state === RequestState.Pending && !isSaveInProgress()"
-        [files]="files()"
-        (newImageAdded)="onNewImageAdded($event)"></app-file-list>
-    </div>
-  </div>
+  } @else {
+    <form>
+      <div class="grid">
+        @if (request(); as request) {
+          <div class="col p-fluid">
+            <div class="field">
+              <label for="title">Title</label>
+              <input
+                id="title"
+                class="w-full"
+                [class.ng-dirty]="title.invalid && (title.dirty || title.touched)"
+                aria-describedby="title-desc title-error"
+                type="text"
+                pInputText
+                required
+                #title="ngModel"
+                [(ngModel)]="request.title"
+                [ngModelOptions]="{ standalone: true }"
+                [disabled]="request.state !== RequestState.Pending || isSaveInProgress()" />
+              <small id="title-desc" class="block">Short summary of what you are going to buy.</small>
+              @if (title.invalid && (title.dirty || title.touched)) {
+                <small id="title-error" class="p-error block">Title is required.</small>
+              }
+            </div>
 
-  <div class="flex justify-content-end">
-    <p-button
-      *ngIf="request()?.state === RequestState.Pending"
-      class="block mt-2"
-      [icon]="isNewRequest() ? '' : 'pi pi-save'"
-      [loading]="isSaveInProgress()"
-      [label]="isNewRequest() ? 'Create Request' : 'Update Request'"
-      (click)="save()"></p-button>
-  </div>
+            <div class="field">
+              <label for="amount">Amount</label>
+              <p-inputNumber
+                inputId="amount"
+                class="block max-w-15rem"
+                [(ngModel)]="request.amount"
+                [ngModelOptions]="{ standalone: true }"
+                [min]="0"
+                mode="currency"
+                currency="EUR"
+                [disabled]="request.state !== RequestState.Pending || isSaveInProgress()" />
+            </div>
+
+            @if (request.state === RequestState.Approved || request.state === RequestState.Rejected) {
+              <div class="field">
+                <div class="mb-2">State</div>
+                <div
+                  class="font-bold"
+                  [ngClass]="request.state === RequestState.Approved ? 'text-green-600' : 'text-red-600'">
+                  {{ request.state === RequestState.Approved ? 'Request Approved' : 'Request Rejected' }}
+                </div>
+              </div>
+            }
+          </div>
+        }
+        <div class="col-12 md:col-6">
+          <app-file-list
+            [uploadEnabled]="this.request()?.state === RequestState.Pending && !isSaveInProgress()"
+            [(files)]="attachments"
+            (newFileAdded)="onNewFileAdded($event)" />
+        </div>
+      </div>
+
+      <div class="flex justify-content-end mt-3">
+        <p-button
+          *ngIf="request()?.state === RequestState.Pending"
+          class="block mt-2"
+          type="submit"
+          [icon]="isNewRequest() ? '' : 'pi pi-save'"
+          [loading]="isSaveInProgress()"
+          [label]="isNewRequest() ? 'Create Request' : 'Update Request'"
+          (click)="save()" />
+      </div>
+    </form>
+  }
 </p-dialog>

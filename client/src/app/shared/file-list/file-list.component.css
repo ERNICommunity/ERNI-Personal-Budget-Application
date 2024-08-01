@@ -1,11 +1,8 @@
-.fileLists {
-  display: block;
-  overflow-y: auto;
-  overflow-x: hidden;
+/* Needed to change color of the dropzone during dragging */
+.p-draggable-enter {
+  background-color: var(--surface-200);
 }
 
-ul.no-bullets {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+ul > li + li {
+  border-top: 1px solid var(--surface-200);
 }
