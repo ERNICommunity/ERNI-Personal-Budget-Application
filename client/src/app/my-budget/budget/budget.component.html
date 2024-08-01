@@ -23,9 +23,13 @@
         </div>
 
         @if (budget().isEditable) {
-          <a class="block" pTooltip="Create new request" [showDelay]="300" routerLink="new-request/{{ budget().id }}">
-            <p-button icon="pi pi-plus" [rounded]="true"></p-button>
-          </a>
+          <p-button
+            ariaLabel="Create new request"
+            icon="pi pi-plus"
+            pTooltip="Create new request"
+            [showDelay]="300"
+            routerLink="new-request/{{ budget().id }}"
+            [rounded]="true" />
         }
       </div>
 
@@ -58,7 +62,7 @@
           <th class="w-10rem text-right">Amount</th>
           <th class="w-10rem text-center">Create Date</th>
           <th class="w-10rem text-center">Request State</th>
-          <th class="w-9rem">Action</th>
+          <th class="w-7rem text-center">Action</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-request>
@@ -87,6 +91,7 @@
                 [rounded]="true"
                 severity="secondary"
                 routerLink="request/{{ request.id }}"
+                [ariaLabel]="request.state === requestStateType.Pending ? 'Edit request' : 'Open request'"
                 [pTooltip]="request.state === requestStateType.Pending ? 'Edit request' : 'Open request'"
                 [showDelay]="300" />
               @if (request.state === requestStateType.Pending && budget().isEditable) {
@@ -94,6 +99,7 @@
                   icon="pi pi-trash"
                   [rounded]="true"
                   [severity]="'danger'"
+                  ariaLabel="Delete request"
                   pTooltip="Delete request"
                   [showDelay]="300"
                   (click)="openDeleteConfirmationModal(request)" />

@@ -43,7 +43,13 @@
           </div>
         </ng-template>
       </p-menu>
-      <p-button (click)="menu.toggle($event)" [text]="true" severity="secondary" icon="pi pi-user" [size]="'large'" />
+      <p-button
+        [text]="true"
+        severity="secondary"
+        icon="pi pi-user"
+        [size]="'large'"
+        ariaLabel="Open user info"
+        (click)="menu.toggle($event)" />
     }
   </ng-template>
 </p-menubar>
