@@ -1,1 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+
+html {
+  /* This sets the scaling of the app because almost all spacings leverage on rem units */
+  font-size: 14px
+}
