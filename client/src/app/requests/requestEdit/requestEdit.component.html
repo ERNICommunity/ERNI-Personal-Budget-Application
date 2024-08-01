@@ -28,6 +28,7 @@
                 [class.ng-dirty]="title.invalid && (title.dirty || title.touched)"
                 aria-describedby="title-desc title-error"
                 type="text"
+                [maxLength]="1000"
                 pInputText
                 required
                 #title="ngModel"
@@ -48,6 +49,7 @@
                 [(ngModel)]="request.amount"
                 [ngModelOptions]="{ standalone: true }"
                 [min]="0"
+                [max]="1000000"
                 mode="currency"
                 currency="EUR"
                 [disabled]="request.state !== RequestState.Pending || isSaveInProgress()" />
