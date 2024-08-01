@@ -11,7 +11,10 @@
     @for (budget of budgets(); track budget.id) {
       <app-budget [budget]="budget"></app-budget>
     } @empty {
-      <p class="mt-3 text-center text-xl">Sorry, no budgets are available for this year.</p>
+      <div class="flex flex-column align-items-center">
+        <p class="mt-3 text-center text-xl">Sorry, no budgets are available for this year.</p>
+        <img ngSrc="/assets/empty-wallet.png" width="300" height="303" alt="" />
+      </div>
     }
   </div>
 }

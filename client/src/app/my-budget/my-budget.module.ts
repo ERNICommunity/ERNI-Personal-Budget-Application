@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MyBudgetComponent } from './myBudget.component';
 import { RouterModule } from '@angular/router';
 import { BudgetComponent } from './budget/budget.component';
@@ -35,6 +35,7 @@ import { MoneyConfettiDirective } from '../shared/directives/money-confetti.dire
       },
     ]),
     MoneyConfettiDirective,
+    NgOptimizedImage,
   ],
 })
 export class MyBudgetModule {}
