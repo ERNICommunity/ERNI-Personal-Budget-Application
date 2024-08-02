@@ -47,7 +47,7 @@ export class FileListComponent {
   #invoiceImageService = inject(InvoiceImageService);
 
   download(imageId: number) {
-    this.#invoiceImageService.getInvoiceImage(imageId);
+    this.#invoiceImageService.openInvoiceDocument(imageId);
   }
 
   onFileSelect(e: Event) {
