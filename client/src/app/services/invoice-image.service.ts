@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from './config.service';
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { ServiceHelper } from './service.helper';
 import { InvoiceImage } from '../model/InvoiceImage';
 import { map } from 'rxjs/operators';
@@ -42,11 +42,26 @@ export class InvoiceImageService {
     );
   }
 
-  public async getInvoiceImage(imageId: number) {
-    const token = await this.getDownloadToken(imageId);
-    const downloadLink = `${this.configService.apiUrlBase}${this.requestUrl}/image/${token}/${imageId}`;
+  /**
+   * Starts downloading process for the given invoice document.
+   * @param documentId
+   */
+  public async downloadInvoiceDocument(documentId: number): Promise<void> {
+    const token = await this.getDownloadToken(documentId);
+    const documentUrl = `${this.configService.apiUrlBase}${this.requestUrl}/image/${token}/${documentId}`;
+    window.open(documentUrl, '_blank');
+  }
 
-    window.open(downloadLink, '_blank');
+  /**
+   * Downloads and opens given invoice document in a new browser tab.
+   * @param documentId
+   */
+  public async openInvoiceDocument(documentId: number): Promise<void> {
+    const token = await this.getDownloadToken(documentId);
+    const documentUrl = `${this.configService.apiUrlBase}${this.requestUrl}/image/${token}/${documentId}`;
+    const documentBlob = await lastValueFrom(this.http.get(documentUrl, { responseType: 'blob' }));
+    const documentLink = URL.createObjectURL(documentBlob);
+    window.open(documentLink, '_blank');
   }
 
   public addInvoiceImage(invoiceImage: InvoiceImage): Observable<InvoiceUploadStatus> {

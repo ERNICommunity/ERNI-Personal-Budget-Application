@@ -35,7 +35,7 @@ export class RequestDetailComponent implements OnInit {
   }
 
   download(imageId: number) {
-    this.invoiceImageService.getInvoiceImage(imageId);
+    this.invoiceImageService.downloadInvoiceDocument(imageId);
   }
 
   public getRequest(id: number): void {
