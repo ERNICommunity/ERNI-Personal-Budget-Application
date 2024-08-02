@@ -3,23 +3,21 @@ import { InvoiceImageService } from '../../services/invoice-image.service';
 import { SharedModule } from '../shared.module';
 import { DragDropModule } from 'primeng/dragdrop';
 
-export type InvoiceStatus = NewInvoiceStatus | InProgressInvoiceStatus | SavedInvoiceStatus;
+export type Invoice = NotUploadedInvoice | UploadingInvoice | UploadedInvoice;
 
-export interface NewInvoiceStatus {
-  code: 'new';
+export interface NotUploadedInvoice {
+  status: 'not-uploaded';
   file: File;
+  name: string;
 }
-export interface InProgressInvoiceStatus {
-  code: 'in-progress';
+export interface UploadingInvoice {
+  status: 'uploading';
   progress: number;
+  name: string;
 }
-export interface SavedInvoiceStatus {
-  code: 'saved';
+export interface UploadedInvoice {
+  status: 'uploaded';
   id: number;
-}
-
-export interface Invoice {
-  status: InvoiceStatus;
   name: string;
 }
 

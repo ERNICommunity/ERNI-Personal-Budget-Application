@@ -3,6 +3,6 @@
   background-color: var(--surface-200);
 }
 
-ul > li + li {
-  border-top: 1px solid var(--surface-200);
+ul > li {
+  height: 32px
 }
