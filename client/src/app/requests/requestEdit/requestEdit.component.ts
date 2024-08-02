@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { RequestService } from '../../services/request.service';
 import { AlertService } from '../../services/alert.service';
 import { AlertType } from '../../model/alert.model';
@@ -7,22 +17,23 @@ import { BudgetTypeEnum } from '../../model/budgetTypeEnum';
 import { Request } from '../../model/request/request';
 import { PatchRequest } from '../../model/PatchRequest';
 import { NewRequest } from '../../model/newRequest';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RequestApprovalState } from '../../model/requestState';
 import { InvoiceImageService } from '../../services/invoice-image.service';
-import { FileListComponent, Invoice, NewInvoiceStatus } from '../../shared/file-list/file-list.component';
-import { concatMap, defaultIfEmpty, map, tap } from 'rxjs/operators';
-import { finalize, forkJoin, Observable, Subject } from 'rxjs';
+import { FileListComponent, Invoice, NotUploadedInvoice } from '../../shared/file-list/file-list.component';
+import { catchError, concatMap, defaultIfEmpty, filter, map, switchMap, tap } from 'rxjs/operators';
+import { finalize, forkJoin, Observable, of } from 'rxjs';
 import { InvoiceImage } from '../../model/InvoiceImage';
-import { Router } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { readFile } from '../../shared/utils/rx-file-reader';
 
 @Component({
   selector: 'app-request-edit',
   templateUrl: 'requestEdit.component.html',
   standalone: true,
   imports: [SharedModule, FileListComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequestEditComponent {
   // route params as inputs
@@ -87,17 +98,15 @@ export class RequestEditComponent {
     const attachments$ = this.invoiceImageService.getInvoiceImages(requestId).pipe(
       map((names) =>
         names.map<Invoice>((invoice) => ({
+          status: 'uploaded',
+          id: invoice.id,
           name: invoice.name,
-          status: { code: 'saved', id: invoice.id },
         })),
       ),
       tap((attachments) => this.attachments.set(attachments)),
     );
 
-    forkJoin({
-      request: request$,
-      attachments: attachments$,
-    })
+    forkJoin([request$, attachments$])
       .pipe(
         finalize(() => this.isRequestLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
@@ -106,71 +115,85 @@ export class RequestEditComponent {
   }
 
   public onNewFileAdded(files: File[]) {
-    for (let i = 0; i < files.length; i++) {
-      const selectedFile = files[i];
+    const newAttachments: Invoice[] = files.map((file) => ({
+      status: 'not-uploaded',
+      file,
+      name: file.name,
+    }));
+    this.attachments.update((attachments) => [...attachments, ...newAttachments]);
 
-      const attachment: Invoice = {
-        status: { code: 'new', file: selectedFile },
-        name: selectedFile.name,
-      };
-      this.attachments.update((files) => [...files, attachment]);
-
-      const requestId = this.requestId();
-      if (requestId) {
-        this.uploadAttachment(requestId, attachment, selectedFile);
-      }
+    // when we add attachments to existing request then we upload them right away
+    const requestId = this.requestId();
+    if (requestId) {
+      this.uploadAttachments(requestId, newAttachments).subscribe();
     }
   }
 
-  private uploadAttachments(requestId: number): Observable<number[] | null> {
-    const uploads$ = this.attachments()
-      .filter(
-        (attachment): attachment is { status: NewInvoiceStatus; name: string } => attachment.status.code === 'new',
-      )
-      .map((attachment) => this.uploadAttachment(requestId, attachment, attachment.status.file));
+  private uploadAttachments(requestId: number, attachments: Invoice[]): Observable<number[]> {
+    const uploadAttachmentTasks = attachments
+      .filter((attachment): attachment is NotUploadedInvoice => attachment.status === 'not-uploaded')
+      .map((attachment) =>
+        this.uploadAttachment(requestId, attachment, attachment.file).pipe(
+          catchError((err) => {
+            const error = 'message' in err ? err.message : JSON.stringify(err);
+            this.alertService.error('Error during uploading attachment: ' + JSON.stringify(error), 'addRequestError');
 
-    return forkJoin(uploads$).pipe(defaultIfEmpty(null));
+            // in case of error during upload we remove the problematic file from the list
+            this.attachments.update((attachments) => attachments.filter((f) => f.name !== attachment.name));
+
+            return of(null);
+          }),
+        ),
+      );
+
+    return forkJoin(uploadAttachmentTasks).pipe(
+      map((results) => results.filter((result): result is number => !!result)),
+      defaultIfEmpty([]),
+    );
   }
 
   private uploadAttachment(requestId: number, attachment: Invoice, file: File): Observable<number> {
-    const result = new Subject<number>();
-
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-    fileReader.onload = () => {
-      if (fileReader.result) {
-        const payload: InvoiceImage = {
+    return readFile(file).pipe(
+      map((fileReaderResult): InvoiceImage => {
+        if (!fileReaderResult) {
+          throw new Error(`File '${file.name}' was not able to be read.`);
+        }
+        return {
           requestId: requestId,
-          data: fileReader.result.toString().replace('data:', '').replace(/^.+,/, ''),
+          data: fileReaderResult.toString().replace('data:', '').replace(/^.+,/, ''),
           filename: attachment.name,
           mimeType: file.type,
         };
-
+      }),
+      tap(() => {
         this.updateAttachmentState({
           ...attachment,
-          status: { code: 'in-progress', progress: 0 },
+          status: 'uploading',
+          progress: 0,
         });
-
-        const uploadInfo = this.invoiceImageService.addInvoiceImage(payload);
-
-        uploadInfo.progress.subscribe((progress) =>
-          this.updateAttachmentState({
-            ...attachment,
-            status: { code: 'in-progress', progress },
+      }),
+      switchMap((payload) =>
+        this.invoiceImageService.addInvoiceImage(payload).pipe(
+          tap((result) => {
+            if (result.status === 'in-progress') {
+              this.updateAttachmentState({
+                ...attachment,
+                status: 'uploading',
+                progress: result.progress,
+              });
+            } else {
+              this.updateAttachmentState({
+                ...attachment,
+                status: 'uploaded',
+                id: result.id,
+              });
+            }
           }),
-        );
-        uploadInfo.id.subscribe((id) =>
-          this.updateAttachmentState({
-            ...attachment,
-            status: { code: 'saved', id },
-          }),
-        );
-
-        uploadInfo.id.subscribe(result);
-      }
-    };
-
-    return result;
+          filter((result) => result.status === 'completed'),
+          map((result) => result.id),
+        ),
+      ),
+    );
   }
 
   public save() {
@@ -189,8 +212,6 @@ export class RequestEditComponent {
     const requestId = this.requestId();
     const title: string = request.title;
     const amount: number = request.amount;
-
-    this.isSaveInProgress.set(true);
 
     if (budgetId) {
       this.saveNewRequest({
@@ -214,25 +235,32 @@ export class RequestEditComponent {
         ? this.requestService.addTeamRequest(payload)
         : this.requestService.addRequest(payload);
 
-    request$.pipe(concatMap((requestId) => this.uploadAttachments(requestId))).subscribe({
-      next: (_) => {
-        this.isSaveInProgress.set(false);
-        this.dataChangeNotificationService.notify();
-        this.alertService.alert({
-          message: 'Request created successfully',
-          type: AlertType.Success,
-          life: 3_000,
-          keepAfterRouteChange: true,
-        });
+    this.isSaveInProgress.set(true);
 
-        this.router.navigate(['../../'], { relativeTo: this.route });
-      },
-      error: (err) => {
-        this.dataChangeNotificationService.notify();
-        this.isSaveInProgress.set(false);
-        this.alertService.error('Error while creating request: ' + JSON.stringify(err), 'addRequestError');
-      },
-    });
+    request$
+      .pipe(
+        concatMap((requestId) => this.uploadAttachments(requestId, this.attachments())),
+        finalize(() => {
+          this.isSaveInProgress.set(false);
+          this.dataChangeNotificationService.notify();
+        }),
+      )
+      .subscribe({
+        next: (_) => {
+          this.alertService.alert({
+            message: 'Request created successfully',
+            type: AlertType.Success,
+            life: 3_000,
+            keepAfterRouteChange: true,
+          });
+
+          this.router.navigate(['../../'], { relativeTo: this.route });
+        },
+        error: (err) => {
+          const error = 'message' in err ? err.message : JSON.stringify(err);
+          this.alertService.error('Error while creating request: ' + JSON.stringify(error), 'addRequestError');
+        },
+      });
   }
 
   private editExistingRequest(payload: PatchRequest): void {
@@ -241,24 +269,30 @@ export class RequestEditComponent {
         ? this.requestService.updateTeamRequest(payload)
         : this.requestService.updateRequest(payload);
 
-    request$.subscribe({
-      next: () => {
-        this.isSaveInProgress.set(false);
-        this.dataChangeNotificationService.notify();
-        this.alertService.alert({
-          message: 'Request updated',
-          type: AlertType.Success,
-          life: 3_000,
-          keepAfterRouteChange: true,
-        });
-        this.router.navigate(['../../'], { relativeTo: this.route });
-      },
-      error: (err) => {
-        this.dataChangeNotificationService.notify();
-        this.isSaveInProgress.set(false);
-        this.alertService.error('Error while creating request: ' + JSON.stringify(err.error), 'addRequestError');
-      },
-    });
+    this.isSaveInProgress.set(true);
+
+    request$
+      .pipe(
+        finalize(() => {
+          this.isSaveInProgress.set(false);
+          this.dataChangeNotificationService.notify();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.alert({
+            message: 'Request updated',
+            type: AlertType.Success,
+            life: 3_000,
+            keepAfterRouteChange: true,
+          });
+          this.router.navigate(['../../'], { relativeTo: this.route });
+        },
+        error: (err) => {
+          const error = 'message' in err ? err.message : JSON.stringify(err);
+          this.alertService.error('Error while editing existing request: ' + JSON.stringify(error), 'addRequestError');
+        },
+      });
   }
 
   public onHide(): void {
