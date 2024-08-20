@@ -4,5 +4,16 @@
 }
 
 ul > li {
-  height: 32px
+  height: 32px;
+}
+
+:host ::ng-deep .spinner {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.upload-progress-bar {
+  display: block;
+  position: relative;
+  bottom: 6px;
 }
