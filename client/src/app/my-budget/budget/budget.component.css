@@ -3,3 +3,17 @@
 :host ::ng-deep .p-panel-content:empty {
   display: none !important;
 }
+
+/* Hides progress bar value if there is not enough space for it */
+:host ::ng-deep p-progressBar .p-progressbar-label {
+  white-space: nowrap;
+}
+:host ::ng-deep p-progressBar .p-progressbar-value {
+  container-type: inline-size;
+}
+@container (max-width: 40px) {
+  :host ::ng-deep p-progressBar .p-progressbar-label {
+    display: none;
+  }
+}
+
