@@ -21,7 +21,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RequestApprovalState } from '../../model/requestState';
 import { InvoiceImageService } from '../../services/invoice-image.service';
 import { FileListComponent, Invoice, NotUploadedInvoice } from '../../shared/file-list/file-list.component';
-import { catchError, concatMap, defaultIfEmpty, filter, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatMap, defaultIfEmpty, filter, map, min, switchMap, tap } from 'rxjs/operators';
 import { finalize, forkJoin, Observable, of } from 'rxjs';
 import { InvoiceImage } from '../../model/InvoiceImage';
 import { SharedModule } from '../../shared/shared.module';
@@ -308,4 +308,6 @@ export class RequestEditComponent {
       ..._.map((attachment) => (attachment.name !== updatedAttachment.name ? attachment : updatedAttachment)),
     ]);
   }
+
+  protected readonly min = min;
 }
