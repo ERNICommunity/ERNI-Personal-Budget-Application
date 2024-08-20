@@ -92,7 +92,7 @@ export class BudgetComponent {
 
   openDeleteConfirmationModal(request: Request) {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete the request "${request.title}"?`,
+      message: `Are you sure you want to delete the request "<strong><em>${request.title}<em/></strong>"?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
