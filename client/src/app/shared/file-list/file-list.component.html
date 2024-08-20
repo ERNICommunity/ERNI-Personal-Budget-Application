@@ -19,34 +19,43 @@
   }
 }
 
-@if (files().length > 0) {
+@if (uiFileList().length > 0) {
   <ul class="list-none p-0 m-0">
-    @for (file of files(); track file.name) {
+    @for (file of uiFileList(); track file.name) {
       <li>
-        <div class="flex align-items-center gap-2">
+        <div class="flex align-items-center gap-2 h-full">
           <i class="pi pi-file text-color-secondary"></i>
           <div class="overflow-hidden text-overflow-ellipsis white-space-nowrap text-color-secondary">
             {{ file.name }}
           </div>
           @if (file.status === 'not-uploaded') {
             <div class="ml-auto">
-              <button class="block p-2 p-button p-button-rounded p-button-link p-button-text p-button-danger">
-                <i class="pi pi-times" role="button" tabindex="0" (click)="removeFile(file)"></i>
+              <button
+                class="block p-2 p-button p-button-rounded p-button-link p-button-text p-button-danger"
+                (click)="removeFile(file)">
+                <i class="pi pi-times" role="button" tabindex="0"></i>
               </button>
             </div>
           }
+
           @if (file.status === 'uploaded') {
             <div class="ml-auto">
-              <button class="block p-2 p-button p-button-rounded p-button-link p-button-text p-button-secondary">
-                <i class="pi pi-download" role="button" tabindex="0" (click)="download(file.id)"></i>
+              <button
+                class="block p-2 p-button p-button-rounded p-button-link p-button-text p-button-secondary"
+                (click)="download(file)">
+                <i class="pi pi-download" role="button" tabindex="0"></i>
               </button>
+            </div>
+          } @else if (file.status === 'downloading') {
+            <div class="ml-auto">
+              <p-progressSpinner [style]="{ 'margin-right': '2px' }" styleClass="spinner" />
             </div>
           }
         </div>
         @if (file.status === 'uploading') {
           <p-progressBar
-            class="block mt-1"
-            [style]="{ height: '0.5rem' }"
+            class="upload-progress-bar"
+            [style]="{ height: '0.4rem' }"
             [value]="file.progress"
             [showValue]="false" />
         }

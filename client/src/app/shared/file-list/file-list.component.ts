@@ -1,4 +1,4 @@
-import { Component, input, inject, ChangeDetectionStrategy, output, model, signal } from '@angular/core';
+import { Component, input, inject, ChangeDetectionStrategy, output, model, signal, effect } from '@angular/core';
 import { InvoiceImageService } from '../../services/invoice-image.service';
 import { SharedModule } from '../shared.module';
 import { DragDropModule } from 'primeng/dragdrop';
@@ -26,6 +26,13 @@ const MAX_FILE_SIZE_IN_BYTES = 2_000_000;
 const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'application/pdf'];
 const ALLOWED_FILE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.pdf'];
 
+interface DownloadingInvoice {
+  status: 'downloading';
+  name: string;
+}
+
+type UiInvoice = Invoice | DownloadingInvoice;
+
 @Component({
   selector: 'app-file-list',
   templateUrl: './file-list.component.html',
@@ -37,6 +44,7 @@ const ALLOWED_FILE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.pdf'];
 export class FileListComponent {
   uploadEnabled = input<boolean>(true);
   files = model.required<Invoice[]>();
+  uiFileList = signal<UiInvoice[]>([]);
 
   newFileAdded = output<File[]>();
 
@@ -46,8 +54,27 @@ export class FileListComponent {
 
   #invoiceImageService = inject(InvoiceImageService);
 
-  download(imageId: number) {
-    this.#invoiceImageService.openInvoiceDocument(imageId);
+  constructor() {
+    effect(() => this.uiFileList.set([...this.files()]), { allowSignalWrites: true });
+  }
+
+  async download(file: UiInvoice): Promise<void> {
+    if (file.status === 'uploaded') {
+      this.updateFile({ ...file, status: 'downloading' });
+      await this.#invoiceImageService.openInvoiceDocument(file.id);
+      this.updateFile({ ...file, status: 'uploaded' });
+    }
+  }
+
+  private updateFile(file: UiInvoice): void {
+    this.uiFileList.update((files) =>
+      files.map((f) => {
+        if (f.name !== file.name) {
+          return f;
+        }
+        return { ...file };
+      }),
+    );
   }
 
   onFileSelect(e: Event) {
