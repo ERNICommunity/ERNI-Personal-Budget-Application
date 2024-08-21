@@ -30,7 +30,7 @@ steps:
   - task: AzureStaticWebApp@0
     displayName: Deploy Static Web App
     inputs:
-      workingDirectory: "./client/dist"
+      workingDirectory: "./client/dist/browser"
       skip_app_build: true
       skip_api_build: true
       azure_static_web_apps_api_token: "$(DeploymentToken)"
