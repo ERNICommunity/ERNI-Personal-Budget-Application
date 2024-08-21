@@ -89,16 +89,18 @@
             <div class="flex gap-2">
               <p-button
                 [icon]="request.state === requestStateType.Pending ? 'pi pi-file-edit' : 'pi pi-eye'"
+                [text]="true"
                 [rounded]="true"
-                severity="secondary"
+                severity="info"
                 routerLink="request/{{ request.id }}"
-                [ariaLabel]="request.state === requestStateType.Pending ? 'Edit request' : 'Open request'"
-                [pTooltip]="request.state === requestStateType.Pending ? 'Edit request' : 'Open request'"
+                [ariaLabel]="request.state === requestStateType.Pending ? 'Edit request' : 'View request'"
+                [pTooltip]="request.state === requestStateType.Pending ? 'Edit request' : 'View request'"
                 tooltipPosition="left"
                 [showDelay]="300" />
               @if (request.state === requestStateType.Pending && budget().isEditable) {
                 <p-button
                   icon="pi pi-trash"
+                  [text]="true"
                   [rounded]="true"
                   [severity]="'danger'"
                   ariaLabel="Delete request"
