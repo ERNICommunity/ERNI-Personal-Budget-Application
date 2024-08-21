@@ -162,7 +162,9 @@ export class RequestListComponent implements OnInit, OnDestroy {
     this.requests.set(requests);
   });
 
-  filteredRequests = computed(() => filterRequests(this.requests(), this.searchTerm()));
+  filteredRequests = computed(() =>
+    filterRequests(this.requests(), this.searchTerm() ?? '' /* WHY CAN THIS BE UNDEFINED? */),
+  );
 
   removeEvent$ = new Subject<ResetEvent<Request> | RemoveEvent>();
 
