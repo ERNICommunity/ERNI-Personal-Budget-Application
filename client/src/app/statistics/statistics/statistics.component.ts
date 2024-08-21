@@ -12,10 +12,10 @@ import { StatisticsService } from '../../services/statistics.service';
 })
 export class StatisticsComponent implements OnInit {
   years: MenuItem[];
-  selectedYear: MenuItem;
+  selectedYear?: MenuItem;
   currentYear: number;
 
-  statistics: StatisticsModel;
+  statistics?: StatisticsModel;
 
   constructor(
     config: ConfigService,
