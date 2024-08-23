@@ -108,7 +108,7 @@ export class FileListComponent {
     this.newFileAdded.emit(files);
   }
 
-  removeFile(file: Invoice): void {
+  removeFile(file: UiInvoice): void {
     this.files.update((files) => files.filter((f) => f.name !== file.name));
   }
 }
