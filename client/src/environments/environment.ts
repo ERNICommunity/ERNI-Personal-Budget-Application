@@ -9,9 +9,10 @@ export const environment: Environment = {
   production: false,
   apiBaseUrl: 'http://localhost:5001/api/',
   protectedResourceMap: {
-    'http://localhost:5001/**': ['api://4ff8e6de-fdac-4249-b61b-1cc75a27ea19/pba_client']
+    'http://localhost:5001/**': ['api://4ff8e6de-fdac-4249-b61b-1cc75a27ea19/pba_client'],
+    'https://graph.microsoft.com/v1.0/me': ['user.read'],
   },
   msalLoginRedirectUri: 'http://localhost:4200',
   msalLogoutRedirectUri: 'http://localhost:4200',
-  clientId: '6c1acfc8-935d-438d-b9be-208ca6493601'
+  clientId: '6c1acfc8-935d-438d-b9be-208ca6493601',
 };
