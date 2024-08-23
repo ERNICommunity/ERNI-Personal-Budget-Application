@@ -43,6 +43,14 @@ const budgetTypeToIcon: Record<BudgetTypeEnum, string | null> = {
   [BudgetTypeEnum.TeamBudget]: null,
 };
 
+const budgetTypeToInfoLink: Record<BudgetTypeEnum, string | null> = {
+  [BudgetTypeEnum.PersonalBudget]: 'https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx',
+  [BudgetTypeEnum.RecreationBudget]:
+    'https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Recreational-vouchers.aspx',
+  [BudgetTypeEnum.CommunityBudget]: null,
+  [BudgetTypeEnum.TeamBudget]: null,
+};
+
 @Component({
   selector: 'app-budget',
   templateUrl: './budget.component.html',
@@ -79,6 +87,9 @@ export class BudgetComponent {
     }
 
     return budgetTypeToIcon[this.budget().type] ?? null;
+  });
+  budgetInfoLink = computed(() => {
+    return budgetTypeToInfoLink[this.budget().type] ?? null;
   });
 
   getRequestStateChipColor(state: RequestApprovalState): string | undefined {

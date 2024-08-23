@@ -69,12 +69,6 @@ export class AppComponent {
       accessRight: 'isAdmin',
       route: '/statistics',
     },
-    {
-      label: 'Conditions of use',
-      icon: 'pi pi-file',
-      url: 'https://erniegh.sharepoint.com/sites/people/benefit/ESK/Pages/Personal-budget.aspx',
-      target: '_blank',
-    },
   ];
 
   userInfo = toSignal(this.authService.userInfo$);
