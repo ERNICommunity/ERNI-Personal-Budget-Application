@@ -17,3 +17,15 @@
   }
 }
 
+.info-link {
+  color: var(--blue-400);
+  text-decoration: none;
+  vertical-align: middle;
+
+  &:visited {
+    color: var(--blue-400);
+  }
+  &:hover {
+    color: var(--blue-600);
+  }
+}
