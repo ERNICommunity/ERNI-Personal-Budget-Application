@@ -21,27 +21,27 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'budgets',
-        title: 'Budgets | PBA',
+        title: 'Budgets',
         loadChildren: () => import('./budgets/budgets.module').then((m) => m.BudgetsModule),
       },
       {
         path: 'requests',
-        title: 'Requests | PBA',
+        title: 'Requests',
         loadChildren: () => import('./requests/requests.module').then((m) => m.RequestsModule),
       },
       {
         path: 'employees',
-        title: 'Employees | PBA',
+        title: 'Employees',
         loadChildren: () => import('./users/users.module').then((m) => m.UsersModule),
       },
       {
         path: 'statistics',
-        title: 'Statistics | PBA',
+        title: 'Statistics',
         loadChildren: () => import('./statistics/statistics.module').then((m) => m.StatisticsModule),
       },
       {
         path: 'team-budget',
-        title: 'Team Budget | PBA',
+        title: 'Team Budget',
         loadChildren: () => import('./team-budget/team-budget.module').then((m) => m.TeamBudgetModule),
       },
     ],

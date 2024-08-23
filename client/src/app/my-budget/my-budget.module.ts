@@ -20,7 +20,7 @@ import { MoneyConfettiDirective } from '../shared/directives/money-confetti.dire
       },
       {
         path: ':year',
-        title: (route) => `My Budget - ${route.paramMap.get('year')} | PBA`,
+        title: (route) => `My Budget - ${route.paramMap.get('year')}`,
         component: MyBudgetComponent,
         children: [
           {
