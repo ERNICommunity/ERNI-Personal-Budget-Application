@@ -15,7 +15,7 @@ export class AuthDirective {
     combineLatest([this.policy, this.authService.userInfo$])
       .pipe(
         distinctUntilChanged(),
-        map(([policy, userInfo]) => (!policy ? true : AuthorizationPolicy.evaluate(policy, userInfo))),
+        map(([policy, userInfo]) => !!userInfo && (!policy ? true : AuthorizationPolicy.evaluate(policy, userInfo))),
         distinctUntilChanged(),
         takeUntilDestroyed(),
       )

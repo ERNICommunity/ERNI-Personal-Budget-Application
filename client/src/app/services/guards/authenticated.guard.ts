@@ -1,32 +1,21 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
-import { InteractionStatus } from '@azure/msal-browser';
-import { filter, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { inject } from '@angular/core';
+import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { AuthenticationService } from '../authentication.service';
 
-@Injectable({ providedIn: 'root' })
-export class AuthenticatedGuard implements CanActivate {
-  constructor(
-    private msalService: MsalService,
-    private router: Router,
-    private msalBroadcastService: MsalBroadcastService,
-  ) {}
+export function authenticatedGuard(): CanActivateFn {
+  return () => {
+    const authenticationService = inject(AuthenticationService);
+    const router = inject(Router);
 
-  isAuthenticated(): Observable<boolean> {
-    return this.msalBroadcastService.inProgress$.pipe(
-      filter((status: InteractionStatus) => status === InteractionStatus.None),
-      map(() => this.msalService.instance.getAllAccounts().length > 0),
-    );
-  }
-
-  canActivate(): Observable<boolean> | Promise<boolean> | boolean {
-    return this.isAuthenticated().pipe(
-      tap((isAuthenticated) => {
-        if (!isAuthenticated) {
-          this.router.navigate(['/login']);
+    return authenticationService.isAuthenticated().pipe(
+      map((isAuthenticated) => {
+        if (isAuthenticated) {
+          return true;
+        } else {
+          return new RedirectCommand(router.parseUrl('/login'), { skipLocationChange: true });
         }
       }),
     );
-  }
+  };
 }

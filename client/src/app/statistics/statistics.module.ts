@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
-import { AdminRoleGuard } from '../services/guards/admin-role.guard';
+import { adminGuard } from '../services/guards/admin.guard';
 import { StatisticsComponent } from './statistics/statistics.component';
 
 @NgModule({
@@ -13,7 +13,7 @@ import { StatisticsComponent } from './statistics/statistics.component';
     RouterModule.forChild([
       {
         path: '',
-        canActivate: [AdminRoleGuard],
+        canActivate: [adminGuard],
         children: [
           {
             path: '',
@@ -23,7 +23,6 @@ import { StatisticsComponent } from './statistics/statistics.component';
           {
             path: ':year',
             component: StatisticsComponent,
-            canActivate: [AdminRoleGuard],
           },
         ],
       },

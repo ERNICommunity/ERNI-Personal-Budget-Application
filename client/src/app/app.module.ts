@@ -23,6 +23,7 @@ import { MSALGuardConfigFactory, MSALInstanceFactory, MSALInterceptorConfigFacto
 import { SharedModule } from './shared/shared.module';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
 import { CustomTitleStrategy } from './services/custom-title-strategy.service';
+import { BrowserUtils } from '@azure/msal-browser';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,7 +32,10 @@ import { CustomTitleStrategy } from './services/custom-title-strategy.service';
     FormsModule,
     BrowserModule,
     SharedModule,
-    RouterModule.forRoot(rootRouterConfig, { bindToComponentInputs: true }),
+    RouterModule.forRoot(rootRouterConfig, {
+      initialNavigation: !BrowserUtils.isInIframe() && !BrowserUtils.isInPopup() ? 'enabledNonBlocking' : 'disabled',
+      bindToComponentInputs: true,
+    }),
     ReactiveFormsModule,
     BrowserAnimationsModule,
     AuthenticatedComponent,

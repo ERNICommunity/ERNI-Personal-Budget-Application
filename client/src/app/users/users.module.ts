@@ -6,7 +6,7 @@ import { UserDetailComponent } from './userDetail/userDetail.component';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AdminRoleGuard } from '../services/guards/admin-role.guard';
+import { adminGuard } from '../services/guards/admin.guard';
 import { UserState } from '../model/userState';
 import { SharedModule } from '../shared/shared.module';
 
@@ -21,7 +21,7 @@ import { SharedModule } from '../shared/shared.module';
       {
         path: '',
         component: UsersComponent,
-        canActivate: [AdminRoleGuard],
+        canActivate: [adminGuard],
         children: [
           { path: '', redirectTo: 'active', pathMatch: 'full' },
           {
