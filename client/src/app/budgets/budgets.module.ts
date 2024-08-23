@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AdminRoleGuard } from '../services/guards/admin-role.guard';
+import { adminGuard } from '../services/guards/admin.guard';
 import { OtherBudgetsDetailComponent } from './otherBudgetsDetail/otherBudgetsDetail.component';
 import { OtherBudgetsComponent } from './otherBudgets/otherBudgets.component';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,7 @@ import { CreateBudgetsComponent } from './create-budgets/create-budgets.componen
     RouterModule.forChild([
       {
         path: '',
-        canActivate: [AdminRoleGuard],
+        canActivate: [adminGuard],
         children: [
           {
             path: '',
@@ -27,12 +27,10 @@ import { CreateBudgetsComponent } from './create-budgets/create-budgets.componen
           {
             path: 'edit/:id',
             component: OtherBudgetsDetailComponent,
-            canActivate: [AdminRoleGuard],
           },
           {
             path: ':year/:budgetType',
             component: OtherBudgetsComponent,
-            canActivate: [AdminRoleGuard],
           },
         ],
       },

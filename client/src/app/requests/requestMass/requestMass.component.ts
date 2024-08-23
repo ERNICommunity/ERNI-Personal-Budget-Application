@@ -4,6 +4,7 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { MassRequest } from '../../model/massRequest';
 import { AlertService } from '../../services/alert.service';
 import { AlertType } from '../../model/alert.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-request-mass',
@@ -52,14 +53,15 @@ export class RequestMassComponent implements OnInit {
     const users = this.selectedUsers;
     this.busyIndicatorService.start();
 
-    const requestData = {
+    const requestData: MassRequest = {
       title: this.title,
       amount: this.amount,
       employees: users.map((_) => _.id),
-    } as MassRequest;
+    };
 
     this.requestService
       .addMassRequest(requestData)
+      .pipe(finalize(() => this.busyIndicatorService.end()))
       .subscribe(
         () => {
           this.alertService.alert({
@@ -67,13 +69,10 @@ export class RequestMassComponent implements OnInit {
             type: AlertType.Success,
             keepAfterRouteChange: true,
           });
-          this.busyIndicatorService.end();
         },
         (err) => {
           this.alertService.error('Error while creating request: ' + JSON.stringify(err.error));
-          this.busyIndicatorService.end();
         },
-      )
-      .add(() => this.busyIndicatorService.end());
+      );
   }
 }

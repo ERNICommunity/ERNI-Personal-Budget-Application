@@ -1,4 +1,4 @@
-import { Component, input, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RequestService } from '../../services/request.service';
 import { DataChangeNotificationService } from '../../services/dataChangeNotification.service';
 import { BudgetService } from '../../services/budget.service';
@@ -30,21 +30,35 @@ export interface BudgetModel {
   requests: Request[];
 }
 
+const requestStateChipColor: Record<RequestApprovalState, string | undefined> = {
+  [RequestApprovalState.Approved]: 'bg-green-100',
+  [RequestApprovalState.Pending]: undefined,
+  [RequestApprovalState.Rejected]: 'bg-red-100',
+};
+
+const budgetTypeToIcon: Record<BudgetTypeEnum, string | null> = {
+  [BudgetTypeEnum.PersonalBudget]: '💵',
+  [BudgetTypeEnum.RecreationBudget]: '🏖️',
+  [BudgetTypeEnum.CommunityBudget]: '🚴',
+  [BudgetTypeEnum.TeamBudget]: null,
+};
+
 @Component({
   selector: 'app-budget',
   templateUrl: './budget.component.html',
   styleUrls: ['./budget.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ConfirmationService],
 })
 export class BudgetComponent {
-  requestService = inject(RequestService);
-  budgetService = inject(BudgetService);
-  confirmationService = inject(ConfirmationService);
-  dataChangeNotificationService = inject(DataChangeNotificationService);
+  #requestService = inject(RequestService);
+  #budgetService = inject(BudgetService);
+  #confirmationService = inject(ConfirmationService);
+  #dataChangeNotificationService = inject(DataChangeNotificationService);
 
   budget = input.required<BudgetModel>();
 
-  budgetTypes = toSignal(this.budgetService.getBudgetsTypes(), { initialValue: [] });
+  budgetTypes = toSignal(this.#budgetService.getBudgetsTypes(), { initialValue: [] });
   budgetTypeName = computed(() => this.budgetTypes().find((type) => type.id == this.budget().type)?.name);
   budgetAmountPercentage = computed(() => (100 * this.budget().amountLeft) / this.budget().amount);
   budgetAmountProgressColor = computed(() => {
@@ -60,50 +74,27 @@ export class BudgetComponent {
     return '#55AB55';
   });
   budgetIcon = computed(() => {
-    const budgetTypeName = this.budgetTypeName();
-
-    if (!budgetTypeName) {
+    if (!this.budgetTypeName()) {
       return null;
     }
 
-    if (this.budget().type === BudgetTypeEnum.PersonalBudget) {
-      return '💵';
-    }
-    if (this.budget().type === BudgetTypeEnum.RecreationBudget) {
-      return '🏖️';
-    }
-    if (this.budget().type === BudgetTypeEnum.CommunityBudget) {
-      return '️🚴';
-    }
-    return null;
+    return budgetTypeToIcon[this.budget().type] ?? null;
   });
 
   getRequestStateChipColor(state: RequestApprovalState): string | undefined {
-    const requestStateChipColor: Record<RequestApprovalState, string | undefined> = {
-      [RequestApprovalState.Approved]: 'bg-green-100',
-      [RequestApprovalState.Pending]: undefined,
-      [RequestApprovalState.Rejected]: 'bg-red-100',
-    };
-
     return requestStateChipColor[state];
   }
 
   requestStateType = RequestApprovalState;
 
   openDeleteConfirmationModal(request: Request) {
-    this.confirmationService.confirm({
+    this.#confirmationService.confirm({
       message: `Are you sure you want to delete the request "<strong><em>${request.title}<em/></strong>"?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
-        this.requestService.deleteRequest(request.id).subscribe(() => {
-          this.dataChangeNotificationService.notify();
-        });
+        this.#requestService.deleteRequest(request.id).subscribe(() => this.#dataChangeNotificationService.notify());
       },
     });
-  }
-
-  onClick() {
-    console.log('click');
   }
 }

@@ -6,6 +6,7 @@ import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { Router } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-create-user',
@@ -68,6 +69,7 @@ export class CreateUserComponent implements OnInit {
 
     this.userService
       .createUser(userData)
+      .pipe(finalize(() => this.busyIndicatorService.end()))
       .subscribe(
         () => {
           this.alertService.success('User successfully was created.');
@@ -81,9 +83,6 @@ export class CreateUserComponent implements OnInit {
 
           this.alertService.error(error);
         },
-      )
-      .add(() => {
-        this.busyIndicatorService.end();
-      });
+      );
   }
 }

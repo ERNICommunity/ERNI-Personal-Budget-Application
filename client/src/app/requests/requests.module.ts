@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { RequestsComponent } from './requests.component';
-import { ViewerGuard } from '../services/guards/viewer.guard';
+import { viewerGuard } from '../services/guards/viewer.guard';
 import { RequestDetailComponent } from './requestDetail/requestDetail.component';
 import { RequestEditComponent } from './requestEdit/requestEdit.component';
 import { RequestListComponent } from './requestList/requestList.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { RequestMassComponent } from './requestMass/requestMass.component';
-import { AdminRoleGuard } from '../services/guards/admin-role.guard';
+import { adminGuard } from '../services/guards/admin.guard';
 
 @NgModule({
   declarations: [RequestsComponent, RequestListComponent, RequestDetailComponent, RequestMassComponent],
@@ -21,7 +21,7 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
       {
         path: '',
         component: RequestsComponent,
-        canActivate: [ViewerGuard],
+        canActivate: [viewerGuard],
         children: [
           {
             path: '',
@@ -31,12 +31,10 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
           {
             path: ':budgetType/:requestState/:year',
             component: RequestListComponent,
-            canActivate: [ViewerGuard],
             children: [
               {
                 path: 'detail/:requestId',
                 component: RequestDetailComponent,
-                canActivate: [ViewerGuard],
               },
               {
                 path: 'edit/:id',
@@ -47,7 +45,7 @@ import { AdminRoleGuard } from '../services/guards/admin-role.guard';
           {
             path: 'mass-request',
             component: RequestMassComponent,
-            canActivate: [AdminRoleGuard],
+            canActivate: [adminGuard],
           },
         ],
       },

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { BudgetService } from '../services/budget.service';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest } from 'rxjs';
@@ -10,6 +10,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-my-budget',
   templateUrl: './myBudget.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyBudgetComponent {
   #budgetService = inject(BudgetService);

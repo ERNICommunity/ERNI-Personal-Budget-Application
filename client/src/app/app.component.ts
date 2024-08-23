@@ -4,8 +4,6 @@ import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { AuthorizationPolicy, PolicyNames } from './services/authorization-policy';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthenticationService } from './services/authentication.service';
-import { Router } from '@angular/router';
-import { AuthenticatedGuard } from './services/guards/authenticated.guard';
 
 @Component({
   selector: 'app-root',
@@ -14,13 +12,14 @@ import { AuthenticatedGuard } from './services/guards/authenticated.guard';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
+  isIframe = window !== window.parent && !window.opener;
   userMenuItems: MenuItem[] = [
     {
       label: 'Log out',
       icon: 'pi pi-sign-out',
       url: '#',
       command: (event: MenuItemCommandEvent) => {
-        this.logout();
+        this.authService.logout();
         event.originalEvent?.preventDefault();
       },
     },
@@ -77,15 +76,16 @@ export class AppComponent {
   ];
 
   userInfo = toSignal(this.authService.userInfo$);
-  isAuthenticated = toSignal(this.authenticatedGuard.isAuthenticated(), { initialValue: false });
+  isAuthenticated = toSignal(this.authService.isAuthenticated(), { initialValue: false });
   mainNavItems: Signal<(MenuItem & { policy?: PolicyNames })[]> = computed(() => {
-    if (!this.userInfo() || !this.isAuthenticated()) {
+    const userInfo = this.userInfo();
+    if (!userInfo || !this.isAuthenticated()) {
       return [];
     }
 
     return this.#mainNavItems.map((item) => ({
       ...item,
-      visible: !item.accessRight || AuthorizationPolicy.evaluate(item.accessRight, this.userInfo()),
+      visible: !item.accessRight || AuthorizationPolicy.evaluate(item.accessRight, userInfo),
     }));
   });
 
@@ -94,15 +94,8 @@ export class AppComponent {
     // !!! DO NOT REMOVE THIS: MsalBroadcastService has to be injected/created, the login won't work otherwise
     private msalBroadcast: MsalBroadcastService,
     private authService: AuthenticationService,
-    private authenticatedGuard: AuthenticatedGuard,
-    private router: Router,
   ) {
     this.msal.handleRedirectObservable().subscribe();
     //this.msal.instance.handleRedirectPromise();
-  }
-
-  async logout(): Promise<void> {
-    await this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

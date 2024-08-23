@@ -8,7 +8,7 @@ import { TeamRequestComponent } from './team-request/team-request.component';
 import { CreateRequestComponent } from './create-request/create-request.component';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SharedModule } from '../shared/shared.module';
-import { SuperiorGuard } from '../services/guards/superior.guard';
+import { superiorGuard } from '../services/guards/superior.guard';
 
 @NgModule({
   declarations: [TeamBudgetComponent, TeamBudgetStateComponent, TeamRequestComponent, CreateRequestComponent],
@@ -21,7 +21,7 @@ import { SuperiorGuard } from '../services/guards/superior.guard';
     RouterModule.forChild([
       {
         path: '',
-        canActivate: [SuperiorGuard],
+        canActivate: [superiorGuard],
         children: [
           {
             path: '',
