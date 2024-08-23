@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, TitleStrategy } from '@angular/router';
 import { rootRouterConfig } from './app.routes';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +22,7 @@ import {
 import { MSALGuardConfigFactory, MSALInstanceFactory, MSALInterceptorConfigFactory } from './utils/msal';
 import { SharedModule } from './shared/shared.module';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
+import { CustomTitleStrategy } from './services/custom-title-strategy.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -52,6 +53,10 @@ import { AuthenticatedComponent } from './authenticated/authenticated.component'
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
       useFactory: MSALInterceptorConfigFactory,
+    },
+    {
+      provide: TitleStrategy,
+      useClass: CustomTitleStrategy,
     },
     MsalService,
     MsalBroadcastService,
