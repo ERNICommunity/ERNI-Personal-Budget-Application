@@ -9,9 +9,9 @@
     <i class="pi pi-cloud-upload text-7xl text-400"></i>
     <p class="text-center m-0">
       <span>Drag & drop to upload or</span>
-      <a class="p-link text-primary p-1 py-2 hover:bg-gray-100" role="button" tabindex="0" (click)="fileUpload.click()"
-        >browse</a
-      >
+      <button class="p-link text-primary p-1 py-2 hover:bg-gray-100" role="button" (click)="fileUpload.click()">
+        browse
+      </button>
     </p>
   </div>
   @if (errorMessage(); as errorMessage) {
