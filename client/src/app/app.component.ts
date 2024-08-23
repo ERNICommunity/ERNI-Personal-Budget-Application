@@ -4,6 +4,8 @@ import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { AuthorizationPolicy, PolicyNames } from './services/authorization-policy';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthenticationService } from './services/authentication.service';
+import { filter, map, startWith, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -89,11 +91,22 @@ export class AppComponent {
     }));
   });
 
+  avatarUrl$ = this.authService.userInfo$.pipe(
+    filter((userInfo) => !!userInfo),
+    switchMap(() =>
+      this.httpClient
+        .get('https://graph.microsoft.com/v1.0/me/photos/48x48/$value', { responseType: 'blob' })
+        .pipe(map((val) => URL.createObjectURL(val))),
+    ),
+    startWith(null),
+  );
+
   constructor(
     private msal: MsalService,
     // !!! DO NOT REMOVE THIS: MsalBroadcastService has to be injected/created, the login won't work otherwise
     private msalBroadcast: MsalBroadcastService,
     private authService: AuthenticationService,
+    private httpClient: HttpClient,
   ) {
     this.msal.handleRedirectObservable().subscribe();
     //this.msal.instance.handleRedirectPromise();

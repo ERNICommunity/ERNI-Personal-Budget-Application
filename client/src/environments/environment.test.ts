@@ -5,6 +5,7 @@ export const environment: Environment = {
   apiBaseUrl: 'https://ernipbaserver-test.azurewebsites.net/api/',
   protectedResourceMap: {
     'https://ernipbaserver-test.azurewebsites.net/**': ['api://4ff8e6de-fdac-4249-b61b-1cc75a27ea19/pba_client'],
+    'https://graph.microsoft.com/v1.0/me': ['user.read'],
   },
   msalLoginRedirectUri: 'https://ernipbaclient-test.azurewebsites.net',
   msalLogoutRedirectUri: 'https://ernipbaclient-test.azurewebsites.net',

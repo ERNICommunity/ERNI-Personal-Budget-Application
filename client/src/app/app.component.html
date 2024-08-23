@@ -24,32 +24,24 @@
   </ng-template>
   <ng-template pTemplate="end">
     @if (userInfo(); as userInfo) {
-      <p-menu #menu [popup]="true" [model]="userMenuItems" styleClass="w-15rem">
-        <ng-template pTemplate="end">
-          <div class="flex align-items-center p-2 pl-3">
-            <p-avatar image="/assets/avatar.svg" class="mr-2" shape="circle" />
-            <div class="flex flex-column">
-              <div class="font-bold">{{ userInfo.name }}</div>
-              <div class="text-sm">
-                @if (userInfo.isAdmin) {
-                  <span>[Admin]</span>
-                } @else if (userInfo.isFinance) {
-                  <span>[Finance]</span>
-                } @else if (userInfo.isSuperior) {
-                  <span>[Superior]</span>
-                }
-              </div>
-            </div>
+      <p-menu #menu [popup]="true" [model]="userMenuItems" styleClass="w-20rem">
+        <ng-template pTemplate="start">
+          <div class="p-2 pl-3">
+            <span class="font-bold">{{ userInfo.name }}</span>
+            @if (userInfo.isAdmin) {
+              <span class="font-light ml-1">[Admin]</span>
+            } @else if (userInfo.isFinance) {
+              <span class="font-light ml-1">[Finance]</span>
+            } @else if (userInfo.isSuperior) {
+              <span class="font-light ml-1">[Superior]</span>
+            }
           </div>
         </ng-template>
       </p-menu>
-      <p-button
-        [text]="true"
-        severity="secondary"
-        icon="pi pi-user"
-        [size]="'large'"
-        ariaLabel="Open user info"
-        (click)="menu.toggle($event)" />
+      @let avatarUrl = avatarUrl$ | async;
+      <button class="p-button p-button-rounded p-button-text" [style.padding]="'0.4rem'" (click)="menu.toggle($event)">
+        <p-avatar class="flex" [image]="avatarUrl ? avatarUrl : '/assets/avatar.svg'" shape="circle" />
+      </button>
     }
   </ng-template>
 </p-menubar>
