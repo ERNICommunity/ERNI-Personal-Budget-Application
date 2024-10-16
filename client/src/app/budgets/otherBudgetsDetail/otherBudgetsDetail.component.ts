@@ -1,58 +1,69 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Location } from '@angular/common';
-import { Budget } from '../../model/budget';
 import { BudgetService } from '../../services/budget.service';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '../../model/user';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-other-budgets-detail',
   templateUrl: 'otherBudgetsDetail.component.html',
   styleUrls: ['otherBudgetsDetail.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OtherBudgetsDetailComponent implements OnInit {
-  budget: Budget;
-  availableUsers: User[];
-  selectedUserId: number;
+export class OtherBudgetsDetailComponent {
+  selectedUserId = signal<number>(0);
 
-  constructor(
-    private budgetService: BudgetService,
-    private location: Location,
-    private route: ActivatedRoute,
-  ) {}
+  #budgetService = inject(BudgetService);
+  #location = inject(Location);
 
-  ngOnInit() {
-    this.getUserBudget();
+  budget = toSignal(
+    inject(ActivatedRoute).paramMap.pipe(
+      switchMap((paramMap) => {
+        const id = paramMap.get('id');
+
+        if (!id) {
+          return of(undefined);
+        }
+
+        return this.#budgetService.getBudget(parseInt(id));
+      }),
+    ),
+  );
+
+  constructor() {
+    effect(
+      () => {
+        const budget = this.budget();
+        if (budget) {
+          this.selectedUserId.set(budget.user.id);
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
-  getUserBudget(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-
-    if (!id) {
-      return;
-    }
-
-    this.budgetService.getBudget(parseInt(id)).subscribe((budget) => {
-      this.budget = budget;
-      this.selectedUserId = budget.user.id;
-      this.getAvailableUsers();
-    });
-  }
-
-  getAvailableUsers(): void {
-    this.budgetService
-      .getUsersAvailableForBudgetType(this.budget.type)
-      .subscribe((users) => (this.availableUsers = users));
-  }
+  public readonly availableUsers = toSignal(
+    toObservable(this.budget).pipe(
+      switchMap((budget) => (budget ? this.#budgetService.getUsersAvailableForBudgetType(budget.type) : [])),
+    ),
+  );
 
   goBack(): void {
-    this.location.back();
+    this.#location.back();
   }
 
   save(): void {
-    this.budgetService.updateBudget(this.budget.id, this.budget.amount).subscribe(() => {
-      if (this.selectedUserId != this.budget.user.id) {
-        this.budgetService.transferBudget(this.budget.id, this.selectedUserId).subscribe();
+    const budget = this.budget();
+    const selectedUserId = this.selectedUserId();
+
+    if (!budget) {
+      return;
+    }
+
+    this.#budgetService.updateBudget(budget.id, budget.amount).subscribe(() => {
+      if (selectedUserId !== budget.user.id) {
+        this.#budgetService.transferBudget(budget.id, selectedUserId).subscribe();
       }
       this.goBack();
     });

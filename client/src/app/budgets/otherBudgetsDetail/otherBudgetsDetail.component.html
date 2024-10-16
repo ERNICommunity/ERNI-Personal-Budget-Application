@@ -1,15 +1,19 @@
-<div *ngIf="budget">
+<div *ngIf="budget() as budget">
   <h2>Budget Edit - {{ budget.year }} - {{ budget.user.firstName }} {{ budget.user.lastName }}</h2>
   <form>
     <div class="form-group">
-      <label for="otherBudgetsDetailAmount"> Amount: </label>
-      <br />
-      <input
-        type="number"
-        name="otherBudgetsDetailAmount"
-        [(ngModel)]="budget.amount"
-        placeholder="0.00"
-        id="otherBudgetsDetailAmount" />
+      <div class="field">
+        <label for="amount">Amount</label>
+        <p-inputNumber
+          inputId="amount"
+          class="block max-w-15rem"
+          [(ngModel)]="budget.amount"
+          [ngModelOptions]="{ standalone: true }"
+          [min]="0"
+          [max]="1000000"
+          mode="currency"
+          currency="EUR" />
+      </div>
     </div>
     <div *ngIf="budget.type === 2" class="form-group">
       <label for="otherBudgetsDetailUser"> Assigned user: </label>
@@ -18,15 +22,15 @@
         [(ngModel)]="selectedUserId"
         id="otherBudgetsDetailUser"
         name="otherBudgetsDetailUser">
-        <option *ngFor="let user of availableUsers" [ngValue]="user.id">
+        <option *ngFor="let user of availableUsers()" [ngValue]="user.id">
           {{ user.lastName }} {{ user.firstName }}
         </option>
       </select>
     </div>
     <br />
     <div class="form-group">
-      <button class="btn btn-primary mr-1" (click)="goBack()">back</button>
-      <button class="btn btn-success" (click)="save()">save</button>
+      <button pButton (click)="goBack()">back</button>
+      <button pButton (click)="save()">save</button>
     </div>
   </form>
 </div>
